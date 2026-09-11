@@ -1,0 +1,184 @@
+// Searcher AI — ma'lumotlar bazasi sxemasi
+//
+// Dizayn qarorlari:
+//  · Generatsiya natijalari `Json` ustunda saqlanadi. AI javobining shakli
+//    modullar rivojlangani sayin o'zgaradi — har o'zgarishda migratsiya
+//    yozmaslik uchun. Shakl `lib/validations/` dagi zod sxemalari bilan
+//    kod tomonida qat'iy tekshiriladi.
+//  · Har bir generatsiya jadvalida `status` bor — AI so'rovi uzoq davom etadi,
+//    shuning uchun yozuv avval PENDING bo'lib yaratiladi, keyin to'ldiriladi.
+//    Bu Step 5 (performance) da fon rejimiga o'tish uchun zamin.
+//  · Foydalanuvchi o'chirilsa uning barcha kontenti ham o'chadi (Cascade).
+
+// Prisma 7: klient `lib/generated/prisma` ga generatsiya qilinadi va
+// ulanish manzili (DATABASE_URL) sxemada emas, `prisma7.config.ts` da turadi.
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Sanoq turlari ───────────────────────────────────────────────────────────
+
+enum Role {
+  TEACHER
+  ADMIN
+}
+
+/// Interfeys va generatsiya tili. TZ: o'zbek, rus, ingliz.
+enum Language {
+  UZ
+  RU
+  EN
+}
+
+/// Uzoq davom etadigan AI generatsiyasining holati.
+enum GenerationStatus {
+  PENDING
+  READY
+  FAILED
+}
+
+/// Dars turi — TZ'dagi "yangi mavzu / mustahkamlash / nazorat".
+enum LessonType {
+  NEW_TOPIC
+  REINFORCEMENT
+  ASSESSMENT
+}
+
+// ─── Modellar ────────────────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  /// bcrypt/argon2 hash. Parol hech qachon ochiq saqlanmaydi.
+  passwordHash String
+  fullName     String
+  /// Ixtiyoriy — TZ'da telefon orqali kirish ham ko'rsatilgan.
+  phone        String?  @unique
+  role         Role     @default(TEACHER)
+  /// Foydalanuvchining standart interfeys tili.
+  language     Language @default(UZ)
+  /// Profil ma'lumotlari: maktab, ish tajribasi, o'qitadigan fanlar.
+  /// Auth moduli kengaytirishi uchun moslashuvchan qoldirilgan.
+  profile      Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lessonPlans    LessonPlan[]
+  presentations  Presentation[]
+  calendarPlans  CalendarPlan[]
+
+  @@index([createdAt])
+}
+
+model LessonPlan {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Fan nomi, masalan "Matematika", "Tarix".
+  subject String
+  /// Sinf/daraja. Matn — "7-sinf", "1-kurs" kabi qiymatlar uchun.
+  grade   String
+  topic   String
+  /// Dars davomiyligi, daqiqada.
+  durationMinutes Int        @default(45)
+  lessonType      LessonType @default(NEW_TOPIC)
+  language        Language   @default(UZ)
+
+  status GenerationStatus @default(PENDING)
+  /// Struktura qilingan dars ishlanmasi. Shakli: lib/validations/lesson-plan.ts
+  /// (maqsad, kutilayotgan natijalar, bosqichlar, metodlar, uy vazifasi).
+  content Json?
+  /// status = FAILED bo'lganda sababi — foydalanuvchiga ko'rsatish uchun.
+  errorMessage String?
+
+  /// Generatsiya kuzatuvi (Step 5 da o'lchash uchun): qaysi model, qancha token.
+  aiModel     String?
+  aiDurationMs Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  presentations Presentation[]
+
+  /// Foydalanuvchining o'z darslari ro'yxati — eng yangisi birinchi.
+  @@index([userId, createdAt])
+  /// "Matematika 7-sinf" bo'yicha filtr va kesh uchun.
+  @@index([subject, grade])
+  @@index([status])
+}
+
+model Presentation {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Dars ishlanmasiga bog'lanish IXTIYORIY — TZ'ga ko'ra prezentatsiya
+  /// alohida kiritilgan mavzudan ham yaratilishi mumkin.
+  /// Dars o'chirilsa prezentatsiya qoladi, faqat bog'lanish uziladi (SetNull).
+  lessonPlanId String?
+  lessonPlan   LessonPlan? @relation(fields: [lessonPlanId], references: [id], onDelete: SetNull)
+
+  title    String
+  language Language @default(UZ)
+
+  status GenerationStatus @default(PENDING)
+  /// Slaydlar strukturasi (sarlavha + bullet'lar). Shakli:
+  /// lib/validations/presentation.ts
+  content Json?
+
+  /// Generatsiya qilingan .pptx fayl manzili. Mahalliy muhitda — disk yo'li,
+  /// productionda — S3/R2 kabi obyekt saqlagichdagi URL.
+  fileUrl  String?
+  /// Fayl hajmi, baytda — yuklab olish UI'sida ko'rsatish uchun.
+  fileSize Int?
+  slideCount Int?
+
+  errorMessage String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([lessonPlanId])
+  @@index([status])
+}
+
+model CalendarPlan {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  subject String
+  grade   String
+  /// Davr nomi — "1-chorak", "2026-2027 o'quv yili".
+  period  String
+  /// Davr uzunligi, haftada.
+  weeks   Int
+  /// Haftalik dars soati.
+  hoursPerWeek Int
+  language     Language @default(UZ)
+
+  status GenerationStatus @default(PENDING)
+  /// Jadval qatorlari. Shakli: lib/validations/calendar-plan.ts
+  content Json?
+
+  /// Generatsiya qilingan .xlsx fayl manzili.
+  fileUrl  String?
+  fileSize Int?
+
+  errorMessage String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([subject, grade])
+  @@index([status])
+}

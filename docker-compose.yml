@@ -1,0 +1,33 @@
+# Searcher AI — mahalliy ishlab chiqish muhiti.
+#
+# Ishga tushirish:  docker compose up -d
+# To'xtatish:       docker compose down
+# Ma'lumotni ham o'chirish: docker compose down -v
+#
+# Hostda 5433 portiga ulanadi (5432 ni mahalliy Postgres egallab turishi mumkin).
+# Ulanish: postgresql://searcher:searcher_dev_password@localhost:5433/searcher_ai
+
+services:
+  db:
+    image: postgres:18-alpine
+    container_name: searcher-ai-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: searcher
+      POSTGRES_PASSWORD: searcher_dev_password
+      POSTGRES_DB: searcher_ai
+      # Tartiblash (collation) o'zbek/rus harflari bilan to'g'ri ishlashi uchun
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+    ports:
+      - "5433:5432"
+    volumes:
+      - searcher_db_data:/var/lib/postgresql/data
+    healthcheck:
+      # Prisma migratsiyasi baza tayyor bo'lishini kutishi uchun
+      test: ["CMD-SHELL", "pg_isready -U searcher -d searcher_ai"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  searcher_db_data:
