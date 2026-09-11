@@ -11,6 +11,7 @@ import { z } from "zod";
  */
 
 process.env.DATABASE_URL ??= "postgresql://u:p@localhost:5432/d";
+process.env.AUTH_SECRET ??= "sinov-uchun-kalit-kamida-32-belgi-boisin!!";
 
 function request(body?: unknown): Request {
   return new Request("http://localhost:3000/api/test", {

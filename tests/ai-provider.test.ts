@@ -20,6 +20,9 @@ import {
 // process.env ni o'zgartirish yetarli — qayta import kerak emas.
 function configure(overrides: Record<string, string>): void {
   process.env.DATABASE_URL = "postgresql://u:p@localhost:5432/d";
+  // `lib/env.ts` BARCHA o'zgaruvchini birga tekshiradi — AUTH_SECRET
+  // bo'lmasa AI sinovlari ham yiqiladi.
+  process.env.AUTH_SECRET = "sinov-uchun-kalit-kamida-32-belgi-boisin!!";
   process.env.AI_API_KEY = "test-key";
   process.env.AI_PROVIDER = "openai";
   process.env.AI_MODEL = "mock-model";

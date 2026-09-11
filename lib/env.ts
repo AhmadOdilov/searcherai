@@ -38,6 +38,17 @@ const envSchema = z.object({
   DATABASE_URL: z.string().min(1),
   APP_URL: z.url().default("http://localhost:3000"),
 
+  /**
+   * Sessiya JWT'larini imzolash kaliti.
+   *
+   * Kamida 32 belgi — HS256 uchun xavfsiz uzunlik. Yangi kalit yaratish:
+   *   openssl rand -base64 48
+   *
+   * Kalit o'zgarsa BARCHA mavjud sessiyalar kuchdan qoladi (imzo mos kelmaydi)
+   * — foydalanuvchilar qaytadan kirishi kerak bo'ladi.
+   */
+  AUTH_SECRET: z.string().min(32, "AUTH_SECRET kamida 32 belgidan iborat bo'lishi kerak"),
+
   AI_PROVIDER: z.enum(AI_PROVIDERS).default("openai"),
   AI_API_KEY: z.string().default(""),
   AI_MODEL: z.string().default(""),

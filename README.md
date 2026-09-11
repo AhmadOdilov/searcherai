@@ -94,7 +94,8 @@ Tekshirish: <http://localhost:3000/api/health>
 | --- | --- |
 | `npm run dev` | Ishlab chiqish serveri |
 | `npm run build` | Production build |
-| `npm test` | Sinovlar (haqiqiy API kaliti kerak emas) |
+| `npm test` | Birlik sinovlari (baza va API kaliti kerak emas) |
+| `npm run test:e2e` | Uchidan-uchgacha sinovlar (serverni o'zi ko'taradi, baza kerak) |
 | `npm run typecheck` | TypeScript tekshiruvi |
 | `npm run lint` | ESLint |
 | `npm run format` | Prettier bilan formatlash |
@@ -102,6 +103,88 @@ Tekshirish: <http://localhost:3000/api/health>
 | `npm run db:migrate` | Migratsiya yaratish va qo'llash |
 | `npm run db:studio` | Prisma Studio (bazani ko'rish) |
 | `npm run db:reset` | Bazani tozalab qaytadan qurish |
+
+---
+
+## Autentifikatsiya
+
+### Oqim
+
+```
+/register → hisob yaratiladi → sessiya darhol beriladi → /dashboard
+/login    → parol tekshiriladi → sessiya beriladi      → /dashboard
+/logout   → sessiya BAZADAN o'chiriladi + cookie tozalanadi → /login
+```
+
+### Sessiya qanday ishlaydi
+
+Ikki qatlamli: bazadagi `Session` yozuvi + uni ko'rsatuvchi imzolangan JWT
+cookie'da.
+
+Nega faqat JWT yetarli emas: imzolangan token muddati tugamaguncha yaroqli
+bo'lib qoladi, ya'ni "chiqish" faqat cookie'ni o'chiradi va o'g'irlangan
+token nusxasi ishlashda davom etadi. Bazada yozuv bo'lsa — uni o'chirish
+bilan sessiya **darhol** kuchdan qoladi. Buni sinov ham tekshiradi
+(`chiqqandan keyin ESKI cookie ham ishlamaydi`).
+
+Cookie sozlamalari: `httpOnly` (JS tega olmaydi — XSS bo'lsa ham
+o'g'irlanmaydi), `sameSite: lax` (boshqa saytdan yuborilgan so'rovda
+ketmaydi — CSRF himoyasi), productionda `secure`.
+
+### Himoya ikki darajada
+
+| Qatlam | Nima tekshiradi | Nima uchun |
+| --- | --- | --- |
+| `proxy.ts` | cookie bor va imzosi to'g'rimi | Qulaylik: foydalanuvchini `/login`ga yuboradi. Bazaga tegmaydi, chunki har so'rovda (prefetch'da ham) ishlaydi |
+| `requireUser()` | sessiya bazada hali mavjudmi | **Haqiqiy himoya.** API route'lar va sahifalar shundan foydalanadi |
+
+> Next.js 16'da `middleware.ts` eskirgan va `proxy.ts` ga nomlangan.
+> Vazifasi bir xil, faqat fayl va eksport nomi boshqa.
+
+### API route'da userId olish
+
+`userId` **hech qachon** so'rov tanasidan olinmaydi — faqat sessiyadan:
+
+```ts
+import { requireUser } from "@/lib/auth/session";
+
+export const POST = withErrorHandling(async (request) => {
+  const user = await requireUser();        // kirmagan bo'lsa 401
+  const input = await parseJsonBody(request, lessonPlanInputSchema);
+
+  const plan = await prisma.lessonPlan.create({
+    data: { ...input, userId: user.id },   // ← sessiyadan
+  });
+  return ok(plan, 201);
+});
+```
+
+Klient yuborgan `userId` ga ishonib bo'lmaydi: uni brauzer konsolidan
+o'zgartirib, boshqa foydalanuvchi nomidan yozish mumkin.
+
+### Klientda foydalanuvchi
+
+`useUser()` **so'rov yubormaydi** — `app/dashboard/layout.tsx` foydalanuvchini
+serverda o'qib, context orqali uzatadi:
+
+```tsx
+"use client";
+import { useUser } from "@/lib/hooks/use-user";
+
+export function Greeting() {
+  const user = useUser();           // { id, email, fullName, role, language }
+  return <p>Salom, {user.fullName}</p>;
+}
+```
+
+Bu hook faqat **ko'rsatish** uchun (ism, til, "chiqish" tugmasi). Ma'lumot
+yozishda `user.id` ni API'ga yubormang — yuqoridagi `requireUser()` ga qara.
+
+### MVP doirasidan tashqarida
+
+Ataylab kiritilmagan: parolni tiklash, email tasdiqlash, OAuth,
+rol-based ruxsatlar tizimi, CSRF tokeni (`sameSite: lax` MVP uchun yetarli),
+kirishga urinishlar chekloviga (rate limit).
 
 ---
 
@@ -183,9 +266,20 @@ Javoblar har doim bir xil shaklda:
 ```
 app/
   api/health/route.ts        sog'lik tekshiruvi
+  api/auth/{register,login,logout,me}/route.ts
+  login/ register/ dashboard/
+proxy.ts                     himoyalangan sahifalar (Next 16: middleware o'rniga)
+components/
+  auth-form.tsx              login/register uchun umumiy forma
+  logout-button.tsx  user-greeting.tsx
 lib/
   env.ts                     muhit o'zgaruvchilari — YAGONA o'qish joyi
   db.ts                      Prisma klient singleton
+  api-client.ts              brauzerdan API chaqirish
+  auth/
+    jwt.ts                   JWT imzo/tekshiruv (proxy ham ishlatadi)
+    session.ts               sessiya, parol hash, requireUser()
+  hooks/use-user.tsx         UserProvider + useUser()
   ai/
     provider.ts              AI qatlamining kirish nuqtasi
     types.ts                 umumiy tiplar va AiError
@@ -199,10 +293,12 @@ lib/
     with-error-handling.ts   route wrapper
   validations/
     common.ts                umumiy zod bo'laklari
+    auth.ts                  register/login sxemalari
 prisma/
   schema.prisma              DB sxemasi
   migrations/                migratsiyalar
-tests/                       sinovlar (mock AI server bilan)
+tests/                       birlik sinovlari (mock AI server bilan)
+  e2e/                       uchidan-uchgacha (haqiqiy server + baza)
 ```
 
 ---
@@ -212,7 +308,7 @@ tests/                       sinovlar (mock AI server bilan)
 | Modul | Holat |
 | --- | --- |
 | Skelet, DB, AI qatlami | ✅ tayyor |
-| Autentifikatsiya | ⬜ keyingi bosqich |
+| Autentifikatsiya | ✅ tayyor |
 | Dars ishlanmasi generatsiyasi | ⬜ |
 | Prezentatsiya (.pptx) | ⬜ |
 | Excel reja (.xlsx) | ⬜ |

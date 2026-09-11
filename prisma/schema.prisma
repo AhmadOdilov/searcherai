@@ -69,11 +69,39 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  sessions       Session[]
   lessonPlans    LessonPlan[]
   presentations  Presentation[]
   calendarPlans  CalendarPlan[]
 
   @@index([createdAt])
+}
+
+/// Sessiya — JWT cookie'ning bazadagi "ildizi".
+///
+/// Nega JWT'ning o'zi yetarli emas: imzolangan token muddati tugamaguncha
+/// yaroqli bo'lib qoladi. Ya'ni "chiqish" (logout) faqat cookie'ni o'chiradi,
+/// o'g'irlangan token esa ishlashda davom etadi. Bazada yozuv bo'lsa — uni
+/// o'chirish bilan sessiya DARHOL kuchdan qoladi.
+///
+/// JWT ichida faqat ikki narsa: sessiya id va foydalanuvchi id. Shu tufayli
+/// `proxy.ts` bazaga tegmasdan, faqat imzoni tekshirib qaror qabul qiladi.
+model Session {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  expiresAt DateTime
+  /// Diagnostika uchun: qaysi brauzer va qaysi manzildan kirilgan.
+  userAgent String?
+  ip        String?
+
+  createdAt DateTime @default(now())
+
+  /// Foydalanuvchining barcha sessiyalarini topish va o'chirish uchun.
+  @@index([userId])
+  /// Eskirgan sessiyalarni tozalash uchun.
+  @@index([expiresAt])
 }
 
 model LessonPlan {

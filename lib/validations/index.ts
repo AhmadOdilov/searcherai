@@ -7,7 +7,8 @@
  *   lib/validations/lesson-plan.ts    → Step 1 (dars ishlanmasi)
  *   lib/validations/presentation.ts   → Step 2 (prezentatsiya slaydlari)
  *   lib/validations/calendar-plan.ts  → Step 3 (Excel kalendar reja)
- *   lib/validations/auth.ts           → autentifikatsiya moduli
+ *   lib/validations/auth.ts           → autentifikatsiya ✅
  */
 
 export * from "@/lib/validations/common";
+export * from "@/lib/validations/auth";
