@@ -236,6 +236,84 @@ qayta urinadi — eksponensial kutish va `Retry-After` hurmati bilan.
 
 ---
 
+## Dars ishlanmasi moduli
+
+### Oqim
+
+```
+Forma → POST /api/lesson-plans
+  → LessonPlan yozuvi (status: PENDING)
+  → AI (generateJson + zod sxema)
+  → READY: content to'ldiriladi, aiDurationMs saqlanadi
+  → FAILED: errorMessage saqlanadi, «Qayta urinish» tugmasi paydo bo'ladi
+```
+
+Generatsiya MVP'da **sinxron** — route AI javobini kutadi (5–40 soniya).
+Fon rejimi keyingi bosqichda; yozuv `PENDING` bilan oldin yaratilgani uchun
+oqim o'zgarmaydi.
+
+### Nega yozuv AI'dan OLDIN yaratiladi
+
+1. AI yiqilsa foydalanuvchi ro'yxatda `FAILED` yozuvni ko'radi va bir tugma
+   bilan qayta urinadi — kiritgan ma'lumoti yo'qolmaydi.
+2. `aiDurationMs` saqlanadi — Step 5 (performance) uchun o'lchov.
+3. Fon rejimiga o'tishda kod tuzilishi o'zgarmaydi.
+
+### Sxemalar
+
+`lib/validations/lesson-plan.ts` da **ikki xil** sxema bor, ularni
+aralashtirmaslik kerak:
+
+| Sxema | Nima uchun |
+| --- | --- |
+| `lessonPlanInputSchema` | Foydalanuvchi formasidan keladigan ma'lumot |
+| `lessonPlanContentSchema` | AI qaytaradigan struktura + bazadagi `content` ni qayta o'qish |
+| `lessonPlanContentSchemaFor(dur)` | Yuqoridagi + bosqichlar vaqti yig'indisi tekshiruvi |
+
+`content` — Json ustun, ya'ni TypeScript uchun `unknown`. Uni `as` bilan
+tiplashtirish xavfli (eski yozuvlar boshqa shaklda bo'lishi mumkin), shuning
+uchun **har doim** `parseLessonPlanContent()` orqali o'qiladi — mos kelmasa
+`null` qaytadi va sahifa qulamaydi.
+
+### Vaqt yig'indisi
+
+Promptda bosqichlar yig'indisi dars davomiyligiga teng bo'lishi aniq son
+bilan talab qilinadi. Sxema esa **keng chegara** (50%–150%) qo'yadi:
+
+- qat'iy tenglik talab qilsak, 45 o'rniga 44 qaytganda butun generatsiya
+  yiqilardi — foydalanuvchi uchun bu "AI ishlamadi", holbuki natija yaroqli;
+- keng chegara mantiqsiz javoblarni (45 daqiqalik darsga 9 daqiqa) tutadi va
+  `generateJson` modelga xatoni aytib qayta so'raydi.
+
+Aniq yig'indi natija sahifasida ko'rsatiladi — mos kelmasa o'qituvchi ko'radi.
+
+### Ko'p tillilik
+
+Promptlar **to'liq** tarjima qilingan (`lib/lesson-plans/prompt.ts`), "javobni
+rus tilida ber" degan qo'shimcha emas. Sabab: model bunday ko'rsatmani
+ko'pincha qisman bajaradi — sarlavhalarni tarjima qilib, matnni prompt tilida
+qoldiradi.
+
+JSON **maydon nomlari** hamma tilda inglizcha qoladi — ular zod sxemasining
+kalitlari. Buni sinov tekshiradi.
+
+### Routelar
+
+| Route | Vazifasi |
+| --- | --- |
+| `POST /api/lesson-plans` | Yangi generatsiya |
+| `GET /api/lesson-plans` | Ro'yxat (`?status=`, `?limit=`, `?cursor=`) |
+| `GET /api/lesson-plans/[id]` | Bitta ishlanma |
+| `DELETE /api/lesson-plans/[id]` | O'chirish |
+| `POST /api/lesson-plans/[id]/regenerate` | Qayta generatsiya (o'rnida) |
+
+Egalik har bir so'rovda `where: { id, userId }` bilan tekshiriladi. Begona
+yozuv uchun **404** qaytadi, 403 emas — 403 "bu yozuv bor, lekin sizga
+tegishli emas" degan ma'noni berib, boshqa foydalanuvchilarning yozuvlari
+borligini oshkor qilardi.
+
+---
+
 ## API route yozish
 
 Har bir modulda `try/catch` takrorlanmaydi — umumiy wrapper bor:
@@ -267,7 +345,9 @@ Javoblar har doim bir xil shaklda:
 app/
   api/health/route.ts        sog'lik tekshiruvi
   api/auth/{register,login,logout,me}/route.ts
+  api/lesson-plans/...        dars ishlanmasi API'si
   login/ register/ dashboard/
+  dashboard/lesson-plans/     ro'yxat, /new forma, /[id] natija
 proxy.ts                     himoyalangan sahifalar (Next 16: middleware o'rniga)
 components/
   auth-form.tsx              login/register uchun umumiy forma
@@ -280,6 +360,10 @@ lib/
     jwt.ts                   JWT imzo/tekshiruv (proxy ham ishlatadi)
     session.ts               sessiya, parol hash, requireUser()
   hooks/use-user.tsx         UserProvider + useUser()
+  lesson-plans/
+    service.ts               generatsiya, ro'yxat, egalik tekshiruvi
+    prompt.ts                UZ/RU/EN promptlari
+    labels.ts                UI yorliqlari (keyinchalik i18n ga ko'chadi)
   ai/
     provider.ts              AI qatlamining kirish nuqtasi
     types.ts                 umumiy tiplar va AiError
@@ -294,6 +378,7 @@ lib/
   validations/
     common.ts                umumiy zod bo'laklari
     auth.ts                  register/login sxemalari
+    lesson-plan.ts           kirish + AI kontent sxemalari
 prisma/
   schema.prisma              DB sxemasi
   migrations/                migratsiyalar
@@ -309,7 +394,7 @@ tests/                       birlik sinovlari (mock AI server bilan)
 | --- | --- |
 | Skelet, DB, AI qatlami | ✅ tayyor |
 | Autentifikatsiya | ✅ tayyor |
-| Dars ishlanmasi generatsiyasi | ⬜ |
+| Dars ishlanmasi generatsiyasi | ✅ tayyor |
 | Prezentatsiya (.pptx) | ⬜ |
 | Excel reja (.xlsx) | ⬜ |
 | .docx / .pdf eksport | ⬜ |

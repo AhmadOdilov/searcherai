@@ -31,44 +31,59 @@ export default async function DashboardPage() {
         <UserGreeting />
 
         <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-          {MODULES.map((module) => (
-            <li
-              key={module.title}
-              className="rounded-xl border border-slate-200 bg-white p-4"
-            >
-              <p className="text-sm font-medium text-slate-900">{module.title}</p>
-              <p className="mt-1 text-xs text-slate-500">{module.description}</p>
-              <p className="mt-3 text-xs font-medium text-slate-400">Tez orada</p>
-            </li>
-          ))}
+          {MODULES.map((module) =>
+            module.href === null ? (
+              <li
+                key={module.title}
+                className="rounded-xl border border-slate-200 bg-white p-4"
+              >
+                <p className="text-sm font-medium text-slate-900">{module.title}</p>
+                <p className="mt-1 text-xs text-slate-500">{module.description}</p>
+                <p className="mt-3 text-xs font-medium text-slate-400">Tez orada</p>
+              </li>
+            ) : (
+              <li key={module.title}>
+                <Link
+                  href={module.href}
+                  className="block h-full rounded-xl border border-slate-200 bg-white p-4 transition hover:border-slate-300 hover:shadow-sm"
+                >
+                  <p className="text-sm font-medium text-slate-900">{module.title}</p>
+                  <p className="mt-1 text-xs text-slate-500">{module.description}</p>
+                  <p className="mt-3 text-xs font-medium text-slate-900">Ochish →</p>
+                </Link>
+              </li>
+            ),
+          )}
         </ul>
-
-        <p className="mt-8 text-xs text-slate-400">
-          Tizim holati:{" "}
-          <Link href="/api/health" className="underline">
-            /api/health
-          </Link>
-        </p>
       </div>
     </main>
   );
 }
 
-const MODULES = [
+/** `href: null` — modul hali yozilmagan. */
+const MODULES: Array<{
+  title: string;
+  description: string;
+  href: "/dashboard/lesson-plans" | null;
+}> = [
   {
     title: "Dars ishlanmasi",
     description: "Mavzu, sinf va fanni kiritib to'liq dars rejasini oling.",
+    href: "/dashboard/lesson-plans",
   },
   {
     title: "Prezentatsiya (.pptx)",
     description: "Dars asosida tayyor slaydlar avtomatik yaratiladi.",
+    href: null,
   },
   {
     title: "Kalendar reja (.xlsx)",
     description: "Chorak yoki yil uchun darslar jadvali Excel formatida.",
+    href: null,
   },
   {
     title: "Tarjima (UZ / RU / EN)",
     description: "Interfeys va generatsiya qilingan kontent uch tilda.",
+    href: null,
   },
 ];

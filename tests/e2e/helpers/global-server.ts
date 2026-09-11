@@ -1,4 +1,5 @@
 import { spawn, type ChildProcess } from "node:child_process";
+import { startMockAiServer, type MockAiServer } from "./mock-ai.ts";
 
 /**
  * E2E sinovlari uchun haqiqiy Next.js serverini ko'taradi.
@@ -16,6 +17,7 @@ const PORT = Number(process.env.E2E_PORT ?? 3100);
 export const BASE_URL = `http://127.0.0.1:${PORT}`;
 
 let server: ChildProcess | null = null;
+let mockAi: MockAiServer | null = null;
 
 /** Server javob berishini kutadi. */
 async function waitForServer(timeoutMs = 90_000): Promise<void> {
@@ -49,6 +51,19 @@ async function waitForServer(timeoutMs = 90_000): Promise<void> {
 export async function globalSetup(): Promise<void> {
   process.env.E2E_BASE_URL = BASE_URL;
 
+  // Soxta AI serveri `next dev` dan OLDIN ko'tariladi: uning manzili
+  // ilovaga muhit o'zgaruvchisi orqali beriladi, ya'ni jarayon
+  // ishga tushgandan keyin o'zgartirib bo'lmaydi.
+  mockAi = await startMockAiServer();
+  process.env.AI_PROVIDER = "openai";
+  process.env.AI_API_KEY = "mock-kalit";
+  process.env.AI_BASE_URL = mockAi.baseUrl;
+  process.env.AI_MODEL = "mock-lesson-model";
+  // Sinovlar tez tugashi uchun qayta urinish yo'q — qayta urinish
+  // mantig'i birlik sinovlarida (tests/ai-provider.test.ts) tekshirilgan.
+  process.env.AI_MAX_RETRIES = "0";
+  process.env.AI_TIMEOUT_MS = "15000";
+
   server = spawn("npx", ["next", "dev", "--port", String(PORT)], {
     // Serverning loglari sinov chiqishini to'ldirmasin, lekin xato
     // bo'lganda ko'rish uchun stderr ochiq qoladi.
@@ -64,6 +79,9 @@ export async function globalSetup(): Promise<void> {
 }
 
 export async function globalTeardown(): Promise<void> {
+  await mockAi?.close().catch(() => undefined);
+  mockAi = null;
+
   if (!server || server.exitCode !== null) return;
 
   // `next dev` o'z bola jarayonlarini yaratadi — butun guruhni to'xtatamiz.
