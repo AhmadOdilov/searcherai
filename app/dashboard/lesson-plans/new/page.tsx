@@ -21,15 +21,6 @@ import { LESSON_TYPES, GENERATION_LANGUAGES } from "@/lib/ui/options";
  * performance bosqichida qo'shiladi.)
  */
 
-/** Bosqichli xabarlarning TARJIMA KALITLARI. */
-const PROGRESS_KEYS = [
-  "progress.sent",
-  "progress.objective",
-  "progress.stages",
-  "progress.resources",
-  "progress.finishing",
-] as const;
-
 interface CreatedPlan {
   lessonPlan: { id: string };
 }
@@ -39,7 +30,6 @@ export default function NewLessonPlanPage() {
   const t = useTranslations("lessonPlans");
   const tRoot = useTranslations();
   const [submitting, setSubmitting] = useState(false);
-  const [progressIndex, setProgressIndex] = useState(0);
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
@@ -48,12 +38,6 @@ export default function NewLessonPlanPage() {
     setSubmitting(true);
     setFormError(null);
     setFieldErrors({});
-    setProgressIndex(0);
-
-    // Bosqichli xabarlarni almashtiramiz — kutish "tirik" ko'rinsin.
-    const ticker = setInterval(() => {
-      setProgressIndex((current) => Math.min(current + 1, PROGRESS_KEYS.length - 1));
-    }, 4000);
 
     const formData = new FormData(event.currentTarget);
     const body = Object.fromEntries(formData.entries());
@@ -75,8 +59,6 @@ export default function NewLessonPlanPage() {
         setFormError(tRoot("common.unexpectedError"));
       }
       setSubmitting(false);
-    } finally {
-      clearInterval(ticker);
     }
   }
 
@@ -173,19 +155,6 @@ export default function NewLessonPlanPage() {
         >
           {submitting ? tRoot("common.creating") : t("new.submit")}
         </button>
-
-        {submitting && (
-          <div
-            // Skrinrider o'zgarishni o'qishi uchun.
-            aria-live="polite"
-            className="rounded-lg bg-slate-50 px-3 py-3 text-center"
-          >
-            <p className="text-sm text-slate-700">{t(PROGRESS_KEYS[progressIndex])}</p>
-            <p className="mt-1 text-xs text-slate-400">
-              {tRoot("common.doNotClosePage")}
-            </p>
-          </div>
-        )}
       </form>
     </div>
   );

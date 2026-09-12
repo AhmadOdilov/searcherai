@@ -186,11 +186,30 @@ export async function generateText(
  * Sxemadan o'tmasa bir marta qayta urinadi — modellar ba'zan bir maydonni
  * tushirib qoldiradi, ikkinchi urinishda to'g'ri qaytaradi.
  */
+export interface GenerateJsonMeta extends GenerateTextResult {
+  /**
+   * AI'ga necha marta murojaat qilingani (1 yoki 2).
+   *
+   * 2 bo'lsa — birinchi javob sxemadan o'tmagan va modelga qayta so'rov
+   * ketgan. Bu generatsiya narxini va vaqtini IKKI BARAVAR oshiradi,
+   * shuning uchun bazaga yoziladi va `npm run ai:stats` bilan o'lchanadi.
+   */
+  schemaAttempts: number;
+  /**
+   * BARCHA urinishlarning umumiy vaqti.
+   *
+   * `durationMs` faqat oxirgi chaqiruvni o'lchaydi — qayta urinish
+   * bo'lganda u haqiqiy kutish vaqtidan kam ko'rsatardi.
+   */
+  totalDurationMs: number;
+}
+
 export async function generateJson<TSchema extends z.ZodType>(
   input: Omit<GenerateTextInput, "jsonMode"> & { schema: TSchema },
-): Promise<{ data: z.infer<TSchema>; meta: GenerateTextResult }> {
+): Promise<{ data: z.infer<TSchema>; meta: GenerateJsonMeta }> {
   const { schema, ...rest } = input;
   let lastIssue = "";
+  let spentMs = 0;
 
   for (let attempt = 0; attempt < 2; attempt++) {
     const meta = await generateText({
@@ -202,6 +221,8 @@ export async function generateJson<TSchema extends z.ZodType>(
           ? rest.prompt
           : `${rest.prompt}\n\nOLDINGI JAVOB XATO EDI. Sabab: ${lastIssue}\nIltimos, to'g'ri JSON qaytar.`,
     });
+
+    spentMs += meta.durationMs;
 
     // DIQQAT: `extractJsonText` ham shu try ichida — model JSON o'rniga
     // oddiy matn qaytarsa, aynan shu holat qayta urinishga arziydi.
@@ -225,7 +246,14 @@ export async function generateJson<TSchema extends z.ZodType>(
 
     const validated = schema.safeParse(parsedJson);
     if (validated.success) {
-      return { data: validated.data as z.infer<TSchema>, meta };
+      return {
+        data: validated.data as z.infer<TSchema>,
+        meta: {
+          ...meta,
+          schemaAttempts: attempt + 1,
+          totalDurationMs: spentMs,
+        },
+      };
     }
 
     lastIssue = validated.error.issues

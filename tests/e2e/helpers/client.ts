@@ -212,3 +212,45 @@ export async function clearAiPrompts(): Promise<void> {
   if (baseUrl === undefined || baseUrl === "") return;
   await fetch(`${baseUrl}/__prompts`, { method: "DELETE" });
 }
+
+/**
+ * Fon rejimidagi generatsiya tugashini kutadi.
+ *
+ * ── Nega kerak ────────────────────────────────────────────────────────────
+ * POST endi `202` va PENDING yozuvni qaytaradi — natija tayyor emas.
+ * Sinovlar natijani tekshirishdan oldin uni KUTISHI kerak, xuddi
+ * foydalanuvchi brauzeri kabi (polling).
+ *
+ * Cheksiz kutmaydi: `timeoutMs` dan oshsa xato tashlaydi va oxirgi
+ * holatni aytadi — shunda nosozlik sababi aniq bo'ladi.
+ */
+export async function waitForGeneration<T extends { status: string }>(
+  client: TestClient,
+  path: string,
+  payloadKey: string,
+  options: { timeoutMs?: number; intervalMs?: number } = {},
+): Promise<T> {
+  const { timeoutMs = 30_000, intervalMs = 100 } = options;
+  const deadline = Date.now() + timeoutMs;
+
+  let last: T | undefined;
+
+  while (Date.now() < deadline) {
+    const result = await client.request<Record<string, T>>(path);
+
+    if (!result.ok) {
+      throw new Error(
+        `${path} o'qib bo'lmadi: ${result.status} ${result.error?.code ?? ""}`,
+      );
+    }
+
+    last = result.data![payloadKey];
+    if (last.status !== "PENDING") return last;
+
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+  }
+
+  throw new Error(
+    `${path} ${timeoutMs}ms ichida tugamadi (oxirgi holat: ${last?.status ?? "noma'lum"})`,
+  );
+}

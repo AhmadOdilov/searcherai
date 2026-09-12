@@ -100,6 +100,7 @@ Tekshirish: <http://localhost:3000/api/health>
 | `npm run lint` | ESLint |
 | `npm run format` | Prettier bilan formatlash |
 | `npm run ai:smoke` | AI qatlamini haqiqiy provider bilan sinash |
+| `npm run ai:stats` | Generatsiya statistikasi (qayta urinish, davomiylik) |
 | `npm run db:migrate` | Migratsiya yaratish va qo'llash |
 | `npm run db:studio` | Prisma Studio (bazani ko'rish) |
 | `npm run db:reset` | Bazani tozalab qaytadan qurish |
@@ -549,6 +550,85 @@ uchun cookie'ga yozadi.
 xil. Buni sinov avtomatik tekshiradi (`tests/i18n-messages.test.ts`):
 yetishmagan/ortiqcha kalitlar, bo'sh qiymatlar, TODO qoldiqlari va hatto
 `{parametr}` o'rinbosarlarining mosligi.
+
+---
+
+## Fon generatsiyasi (performance)
+
+### Oldin / keyin
+
+| | Oldin | Keyin |
+| --- | --- | --- |
+| POST javobi | 10–60 soniya kutish | **~0.2 soniya**, `202 Accepted` |
+| Foydalanuvchi | Formada qotib turadi | Natija sahifasida, jarayon ko'rinadi |
+| Sahifani yopsa | Ish bekor ketadi | Generatsiya davom etadi |
+| Brauzer | "Javob bermayapti" chiqishi mumkin | Muammo yo'q |
+
+### Qanday ishlaydi
+
+```
+POST /api/{resource}
+  → PENDING yozuv yaratiladi
+  → 202 + { id, status: "PENDING" } DARHOL qaytadi
+  → after(): generatsiya javobdan KEYIN davom etadi
+Frontend
+  → natija sahifasiga o'tadi (URL darhol almashadi)
+  → GenerationProgress har 2 soniyada holatni so'raydi
+  → READY/FAILED bo'lgach router.refresh()
+```
+
+### Nega `after()`, navbat emas
+
+Uch variant ko'rildi:
+
+| Variant | Xulosa |
+| --- | --- |
+| **`after()`** (Next.js primitivi) | **Tanlandi** — qo'shimcha xizmat yo'q, javob yuborilgach ishlaydi |
+| `void doWork()` | Next.js javob tugagach ishni to'xtatishi mumkin |
+| Redis + BullMQ | To'g'ri, lekin yangi xizmat + deploy + nosozlik nuqtasi. MVP muddatiga arzimaydi |
+
+Bazadagi `status` ustuni allaqachon navbat vazifasini bajaradi
+(PENDING → READY/FAILED).
+
+> **`maxDuration` tuzog'i:** route'larda qiymat **literal** yozilgan
+> (`export const maxDuration = 300`). Next.js segment sozlamalarini build
+> paytida statik o'qiydi va import qilingan konstantani hisoblay olmaydi —
+> "Invalid segment configuration export" xatosi chiqadi.
+
+### Osilib qolgan yozuvlar
+
+Fon ishi tugamay qolishi mumkin (server qayta ishga tushdi, `maxDuration`
+tugadi). Bunda yozuv mangu PENDING qolardi.
+
+`markStaleAsFailed()` 5 daqiqadan uzoq PENDING turgan yozuvlarni FAILED
+qiladi. Tekshiruv ro'yxat/detal **o'qish yo'lida** bajariladi — alohida
+cron kerak emas. Polling hook'ning chegarasi (6 daqiqa) bundan **uzunroq**,
+shunda foydalanuvchi sababni ko'radi; buni sinov ham tekshiradi.
+
+### Qayta urinish tannarxi
+
+`npm run ai:stats` — `aiAttempts` va `aiDurationMs` ustunlaridan
+statistika: qayta urinish ulushi, o'rtacha/p50/p95 davomiylik. Ulush 20%
+dan oshsa, skript prompt yaxshilash bo'yicha aniq tavsiya beradi.
+
+`generateJson` endi `schemaAttempts` va `totalDurationMs` qaytaradi —
+ilgari `durationMs` faqat OXIRGI chaqiruvni o'lchardi va qayta urinish
+bo'lganda haqiqiy kutish vaqtidan kam ko'rsatardi.
+
+### O'lchangan natijalar
+
+| Tekshiruv | Natija |
+| --- | --- |
+| POST javob vaqti (kalendar reja) | 223 ms |
+| Klient bundle (barcha chunk'lar) | 768 KB |
+| `pptxgenjs` / `exceljs` klientda | yo'q ✓ |
+| SQL so'rovlar `/dashboard` uchun | ~1.4 (ya'ni `cache()` ishlayapti) |
+
+### Sahifalash
+
+Ro'yxat sahifalari **20 ta** yozuv bilan ochiladi (ilgari 50), qolgani
+"Ko'proq yuklash" tugmasi bilan. Birinchi sahifa SERVERDA render
+qilinadi — qo'shimcha HTTP so'rovsiz.
 
 ---
 

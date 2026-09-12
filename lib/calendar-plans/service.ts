@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { generateJson } from "@/lib/ai/provider";
 import { AiError } from "@/lib/ai/types";
 import { apiErrors } from "@/lib/api/errors";
+import { markStaleAsFailed } from "@/lib/generation/stale";
 import { getEnv } from "@/lib/env";
 import { generateXlsx } from "@/lib/xlsx/generate";
 import { buildSystemPrompt, buildUserPrompt } from "@/lib/calendar-plans/prompt";
@@ -70,10 +71,11 @@ export function estimateMaxTokens(weeks: number): number {
 }
 
 /**
- * Kalendar reja yaratadi: PENDING yozuv → AI → .xlsx fayl → READY/FAILED.
+ * PENDING yozuv yaratadi va uni DARHOL qaytaradi.
  *
- * Avvalgi modullardagi kabi yozuv AI'dan OLDIN yaratiladi — xato bo'lsa
- * foydalanuvchi ro'yxatda FAILED yozuvni ko'rib qayta urinadi.
+ * Bu modul uchun fon rejimi AYNIQSA muhim: generatsiya 40-60 soniya
+ * oladi, ya'ni sinxron rejimda brauzer "javob bermayapti" deb
+ * ko'rsatishi mumkin edi.
  */
 export async function createCalendarPlan(
   userId: string,
@@ -91,17 +93,25 @@ export async function createCalendarPlan(
       language: input.language,
       status: "PENDING",
     },
-    select: { id: true },
+    select: DETAIL_FIELDS,
   });
 
-  return runGeneration(created.id, input);
+  return created;
+}
+
+/** Yaratilgan yozuv uchun generatsiyani bajaradi — FON ishi. */
+export async function runCalendarPlanGeneration(
+  id: string,
+  input: CalendarPlanInput,
+): Promise<void> {
+  await runGeneration(id, input);
 }
 
 /** Mavjud yozuvni qayta generatsiya qiladi — parametrlar yozuvdan olinadi. */
 export async function regenerateCalendarPlan(
   id: string,
   userId: string,
-): Promise<CalendarPlanDetail> {
+): Promise<{ record: CalendarPlanDetail; input: CalendarPlanInput }> {
   const existing = await prisma.calendarPlan.findFirst({
     where: { id, userId },
     select: {
@@ -124,7 +134,7 @@ export async function regenerateCalendarPlan(
     await deleteGeneratedFile("xlsx", existing.filePath);
   }
 
-  await prisma.calendarPlan.update({
+  const reset = await prisma.calendarPlan.update({
     where: { id },
     data: {
       status: "PENDING",
@@ -133,24 +143,25 @@ export async function regenerateCalendarPlan(
       fileSize: null,
       rowCount: null,
     },
+    select: DETAIL_FIELDS,
   });
 
-  return runGeneration(id, {
-    subject: existing.subject,
-    grade: existing.grade,
-    period: existing.period,
-    startDate: existing.startDate,
-    weeks: existing.weeks,
-    hoursPerWeek: existing.hoursPerWeek,
-    language: existing.language,
-  });
+  return {
+    record: reset,
+    input: {
+      subject: existing.subject,
+      grade: existing.grade,
+      period: existing.period,
+      startDate: existing.startDate,
+      weeks: existing.weeks,
+      hoursPerWeek: existing.hoursPerWeek,
+      language: existing.language,
+    },
+  };
 }
 
 /** AI chaqiruvi, .xlsx yasash va saqlash — ikki oqim uchun umumiy qism. */
-async function runGeneration(
-  id: string,
-  input: CalendarPlanInput,
-): Promise<CalendarPlanDetail> {
+async function runGeneration(id: string, input: CalendarPlanInput): Promise<void> {
   try {
     const { data, meta } = await generateJson({
       schema: calendarPlanContentSchemaFor(input),
@@ -165,7 +176,7 @@ async function runGeneration(
     const { buffer, rowCount } = await generateXlsx(data, input.language);
     const { filePath, fileSize } = await saveGeneratedFile("xlsx", id, buffer);
 
-    return prisma.calendarPlan.update({
+    await prisma.calendarPlan.update({
       where: { id },
       data: {
         status: "READY",
@@ -177,9 +188,9 @@ async function runGeneration(
         errorMessage: null,
         aiModel: meta.model,
         // Kamida 1 ms — UI "0 soniyada yaratilgan" deb ko'rsatmasligi uchun.
-        aiDurationMs: Math.max(meta.durationMs, 1),
+        aiDurationMs: Math.max(meta.totalDurationMs, 1),
+        aiAttempts: meta.schemaAttempts,
       },
-      select: DETAIL_FIELDS,
     });
   } catch (caught) {
     /*
@@ -224,6 +235,8 @@ export async function listCalendarPlans(userId: string, query: CalendarPlanListQ
 
 /** Bitta reja — faqat egasi uchun. Topilmasa `null`. */
 export async function getCalendarPlan(id: string, userId: string) {
+  await markStaleAsFailed("calendarPlan", userId);
+
   return prisma.calendarPlan.findFirst({
     where: { id, userId },
     select: DETAIL_FIELDS,

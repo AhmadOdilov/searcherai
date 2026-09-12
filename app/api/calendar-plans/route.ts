@@ -1,6 +1,11 @@
 import { ok, parseJsonBody, withErrorHandling } from "@/lib/api/with-error-handling";
 import { requireUser } from "@/lib/auth/session";
-import { createCalendarPlan, listCalendarPlans } from "@/lib/calendar-plans/service";
+import {
+  createCalendarPlan,
+  listCalendarPlans,
+  runCalendarPlanGeneration,
+} from "@/lib/calendar-plans/service";
+import { runInBackground } from "@/lib/generation/background";
 import {
   calendarPlanInputSchema,
   calendarPlanListQuerySchema,
@@ -9,9 +14,9 @@ import {
 /**
  * `POST /api/calendar-plans` — kalendar-tematik reja generatsiya qiladi.
  *
- * DIQQAT: bu eng SEKIN modul. 30-70 qatorli javob 40-60 soniya olishi
- * mumkin. MVP'da sinxron qoldirilgan (fon rejimi Step 5 da), frontend esa
- * kutish uzoq bo'lishini aniq ogohlantiradi.
+ * Bu eng SEKIN modul (40-60 soniya), shuning uchun fon rejimi ayniqsa
+ * muhim: route PENDING yozuvni yaratib `202 Accepted` qaytaradi,
+ * generatsiya esa javob yuborilgandan keyin davom etadi.
  */
 export const POST = withErrorHandling(async (request) => {
   const user = await requireUser();
@@ -19,8 +24,23 @@ export const POST = withErrorHandling(async (request) => {
 
   const calendarPlan = await createCalendarPlan(user.id, input);
 
-  return ok({ calendarPlan }, 201);
+  runInBackground(`calendar-plan:${calendarPlan.id}`, () =>
+    runCalendarPlanGeneration(calendarPlan.id, input),
+  );
+
+  return ok({ calendarPlan }, 202);
 });
+
+/**
+ * Generatsiya javob yuborilgandan KEYIN davom etadi (`after()`), shuning
+ * uchun route'ning umumiy chegarasi uzoq bo'lishi kerak.
+ *
+ * DIQQAT: bu qiymat LITERAL bo'lishi shart — Next.js segment
+ * sozlamalarini build paytida statik o'qiydi va import qilingan
+ * konstantani hisoblay olmaydi ("Invalid segment configuration export").
+ * Manba: `GENERATION_MAX_DURATION` (lib/generation/background.ts).
+ */
+export const maxDuration = 300;
 
 /** `GET /api/calendar-plans` — foydalanuvchining ro'yxati. */
 export const GET = withErrorHandling(async (request) => {

@@ -6,6 +6,8 @@ import { getLessonPlan } from "@/lib/lesson-plans/service";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { PlanActions } from "@/components/lesson-plans/plan-actions";
 import { ErrorPanel } from "@/components/ui/error-panel";
+import { GenerationProgress } from "@/components/ui/generation-progress";
+import { PROGRESS_KEYS, TYPICAL_SECONDS } from "@/lib/lesson-plans/labels";
 import { formatDate } from "@/lib/ui/labels";
 import { translateStoredError } from "@/lib/i18n/stored-error";
 import type { UiLocale } from "@/lib/i18n/config";
@@ -101,10 +103,20 @@ export default async function LessonPlanDetailPage({
         />
       )}
 
+      {/*
+        PENDING holatida jarayon KUZATILADI: komponent har 2 soniyada
+        yozuvni so'rab turadi va tugagach sahifani yangilaydi. Ilgari bu
+        yerda shunchaki "birozdan so'ng yangilang" degan matn turardi.
+      */}
       {plan.status === "PENDING" && (
-        <p className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          Dars ishlanmasi hali yaratilmoqda. Sahifani birozdan so&apos;ng yangilang.
-        </p>
+        <GenerationProgress
+          resource="/api/lesson-plans"
+          payloadKey="lessonPlan"
+          recordId={plan.id}
+          progressKeys={PROGRESS_KEYS}
+          namespace="lessonPlans"
+          typicalSeconds={TYPICAL_SECONDS}
+        />
       )}
 
       {plan.status === "READY" && content === null && (

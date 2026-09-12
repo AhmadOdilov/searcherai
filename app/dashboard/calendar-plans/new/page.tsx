@@ -22,23 +22,11 @@ import {
  * ketadi. Shuning uchun kutish vaqti OLDINDAN, forma ustida aytiladi.
  */
 
-/** Bosqichli xabarlarning TARJIMA KALITLARI. */
-const PROGRESS_KEYS = [
-  "progress.sent",
-  "progress.sequence",
-  "progress.distribute",
-  "progress.hours",
-  "progress.file",
-  "progress.finishing",
-] as const;
-
 export default function NewCalendarPlanPage() {
   const router = useRouter();
   const t = useTranslations("calendarPlans");
   const tRoot = useTranslations();
   const [submitting, setSubmitting] = useState(false);
-  const [progressIndex, setProgressIndex] = useState(0);
-  const [elapsed, setElapsed] = useState(0);
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
@@ -50,15 +38,6 @@ export default function NewCalendarPlanPage() {
     setSubmitting(true);
     setFormError(null);
     setFieldErrors({});
-    setProgressIndex(0);
-    setElapsed(0);
-
-    const ticker = setInterval(() => {
-      setProgressIndex((current) => Math.min(current + 1, PROGRESS_KEYS.length - 1));
-    }, 8000);
-    // O'tgan vaqtni ko'rsatamiz — uzoq kutishda "ishlayaptimi?" degan
-    // savol tug'ilmasin.
-    const clock = setInterval(() => setElapsed((value) => value + 1), 1000);
 
     const formData = new FormData(event.currentTarget);
     const body = Object.fromEntries(formData.entries());
@@ -78,9 +57,6 @@ export default function NewCalendarPlanPage() {
         setFormError(tRoot("common.unexpectedError"));
       }
       setSubmitting(false);
-    } finally {
-      clearInterval(ticker);
-      clearInterval(clock);
     }
   }
 
@@ -272,25 +248,6 @@ export default function NewCalendarPlanPage() {
         >
           {submitting ? tRoot("common.creating") : t("new.submit")}
         </button>
-
-        {submitting && (
-          <div
-            aria-live="polite"
-            className="rounded-lg bg-slate-50 px-3 py-3 text-center"
-          >
-            <p className="text-sm text-slate-700">{t(PROGRESS_KEYS[progressIndex])}</p>
-            <p className="mt-1 text-xs text-slate-400">
-              {t("detail.elapsed", { seconds: elapsed })}
-            </p>
-            {/* Ayniqsa uzoq cho'zilsa qo'shimcha tinchlantirish. */}
-            {elapsed > 45 && (
-              <p className="mt-1.5 text-xs text-amber-700">
-                Uzun davr uchun biroz ko&apos;proq vaqt ketmoqda — jarayon hali davom
-                etyapti.
-              </p>
-            )}
-          </div>
-        )}
       </form>
     </div>
   );

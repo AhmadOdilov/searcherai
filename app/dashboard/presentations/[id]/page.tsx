@@ -7,6 +7,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { PresentationActions } from "@/components/presentations/presentation-actions";
 import { formatDate, formatFileSize } from "@/lib/ui/labels";
 import { ErrorPanel } from "@/components/ui/error-panel";
+import { GenerationProgress } from "@/components/ui/generation-progress";
+import { PROGRESS_KEYS, TYPICAL_SECONDS } from "@/lib/presentations/labels";
 import { translateStoredError } from "@/lib/i18n/stored-error";
 import type { UiLocale } from "@/lib/i18n/config";
 import {
@@ -117,10 +119,20 @@ export default async function PresentationDetailPage({
         />
       )}
 
+      {/*
+        PENDING holatida jarayon KUZATILADI: komponent har 2 soniyada
+        yozuvni so'rab turadi va tugagach sahifani yangilaydi. Ilgari bu
+        yerda shunchaki "birozdan so'ng yangilang" degan matn turardi.
+      */}
       {presentation.status === "PENDING" && (
-        <p className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          {t("detail.pending")}
-        </p>
+        <GenerationProgress
+          resource="/api/presentations"
+          payloadKey="presentation"
+          recordId={presentation.id}
+          progressKeys={PROGRESS_KEYS}
+          namespace="presentations"
+          typicalSeconds={TYPICAL_SECONDS}
+        />
       )}
 
       {presentation.status === "READY" && content === null && (

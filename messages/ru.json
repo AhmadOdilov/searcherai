@@ -25,7 +25,11 @@
     "language": "Язык",
     "doNotClosePage": "Ответ ИИ может занять до 30 секунд — не закрывайте страницу.",
     "unexpectedError": "Произошла непредвиденная ошибка. Попробуйте ещё раз.",
-    "seconds": "{count} секунд"
+    "seconds": "{count} секунд",
+    "elapsedOfTypical": "прошло {elapsed} секунд · обычно занимает ~{typical} секунд",
+    "canLeavePage": "Даже если вы закроете страницу, генерация продолжится — можно вернуться позже.",
+    "loadMore": "Загрузить ещё",
+    "loading": "Загрузка…"
   },
   "status": {
     "PENDING": "Создаётся",
@@ -307,7 +311,8 @@
       "presentationFileNotReady": "Файл презентации ещё не готов.",
       "calendarPlanFileNotReady": "Файл Excel ещё не готов.",
       "presentationFileMissing": "Файл не найден. Попробуйте создать презентацию заново.",
-      "calendarPlanFileMissing": "Файл не найден. Попробуйте создать календарный план заново."
+      "calendarPlanFileMissing": "Файл не найден. Попробуйте создать календарный план заново.",
+      "generationTimedOut": "Генерация не завершилась. Нажмите кнопку «Повторить»."
     },
     "validation": {
       "emailRequired": "Введите эл. почту",

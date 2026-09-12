@@ -127,8 +127,14 @@ model LessonPlan {
   errorMessage String?
 
   /// Generatsiya kuzatuvi (Step 5 da o'lchash uchun): qaysi model, qancha token.
-  aiModel     String?
+  aiModel      String?
   aiDurationMs Int?
+  /// AI'ga necha marta murojaat qilingani.
+  ///
+  /// 1 dan katta bo'lsa — birinchi javob zod sxemasidan o'tmagan va
+  /// modelga qayta so'rov ketgan. Bu generatsiya narxini IKKI BARAVAR
+  /// oshiradi, shuning uchun alohida o'lchanadi (`npm run ai:stats`).
+  aiAttempts   Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -187,6 +193,12 @@ model Presentation {
   /// Generatsiya kuzatuvi (Step 5 da o'lchash uchun).
   aiModel      String?
   aiDurationMs Int?
+  /// AI'ga necha marta murojaat qilingani.
+  ///
+  /// 1 dan katta bo'lsa — birinchi javob zod sxemasidan o'tmagan va
+  /// modelga qayta so'rov ketgan. Bu generatsiya narxini IKKI BARAVAR
+  /// oshiradi, shuning uchun alohida o'lchanadi (`npm run ai:stats`).
+  aiAttempts   Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -235,6 +247,12 @@ model CalendarPlan {
   /// Generatsiya kuzatuvi (Step 5 da o'lchash uchun).
   aiModel      String?
   aiDurationMs Int?
+  /// AI'ga necha marta murojaat qilingani.
+  ///
+  /// 1 dan katta bo'lsa — birinchi javob zod sxemasidan o'tmagan va
+  /// modelga qayta so'rov ketgan. Bu generatsiya narxini IKKI BARAVAR
+  /// oshiradi, shuning uchun alohida o'lchanadi (`npm run ai:stats`).
+  aiAttempts   Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

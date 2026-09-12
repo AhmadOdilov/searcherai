@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { generateJson } from "@/lib/ai/provider";
 import { AiError } from "@/lib/ai/types";
 import { apiErrors } from "@/lib/api/errors";
+import { markStaleAsFailed } from "@/lib/generation/stale";
 import { buildSystemPrompt, buildUserPrompt } from "@/lib/lesson-plans/prompt";
 import {
   lessonPlanContentSchemaFor,
@@ -53,18 +54,11 @@ export type LessonPlanListItem = Awaited<
 export type LessonPlanDetail = NonNullable<Awaited<ReturnType<typeof getLessonPlan>>>;
 
 /**
- * Dars ishlanmasini generatsiya qiladi.
+ * PENDING yozuv yaratadi va uni DARHOL qaytaradi.
  *
- * Oqim: PENDING yozuv → AI → READY yoki FAILED.
- *
- * ── Nega avval PENDING yoziladi ───────────────────────────────────────────
- * Generatsiya sinxron bo'lsa ham yozuv OLDIN yaratiladi. Uch sabab:
- *  1. AI yiqilsa, foydalanuvchi ro'yxatda FAILED yozuvni ko'radi va
- *     "qayta urinish" tugmasini bosadi — kiritgan ma'lumoti yo'qolmaydi.
- *  2. Generatsiya qancha vaqt olgani (`aiDurationMs`) saqlanadi — Step 5
- *     (performance) uchun o'lchov.
- *  3. Keyinchalik fon rejimiga o'tganda oqim o'zgarmaydi: route yozuvni
- *     yaratib darhol qaytadi, generatsiya esa alohida ishlaydi.
+ * Generatsiya bu funksiyada BOSHLANMAYDI — route uni `runInBackground()`
+ * orqali javob yuborilgandan keyin ishga tushiradi. Shu tufayli
+ * foydalanuvchi 15 soniya kutish o'rniga darhol javob oladi.
  */
 export async function createLessonPlan(
   userId: string,
@@ -81,10 +75,24 @@ export async function createLessonPlan(
       language: input.language,
       status: "PENDING",
     },
-    select: { id: true },
+    select: DETAIL_FIELDS,
   });
 
-  return runGeneration(created.id, userId, input);
+  return created;
+}
+
+/**
+ * Yaratilgan yozuv uchun generatsiyani bajaradi — FON ishi.
+ *
+ * Route uni `runInBackground()` ichida chaqiradi. Xatolik bo'lsa yozuv
+ * FAILED qilinadi va xato yuqoriga uzatiladi (u yerda faqat loglanadi —
+ * javob allaqachon yuborilgan).
+ */
+export async function runLessonPlanGeneration(
+  id: string,
+  input: LessonPlanInput,
+): Promise<void> {
+  await runGeneration(id, input);
 }
 
 /**
@@ -96,7 +104,7 @@ export async function createLessonPlan(
 export async function regenerateLessonPlan(
   id: string,
   userId: string,
-): Promise<LessonPlanDetail> {
+): Promise<{ record: LessonPlanDetail; input: LessonPlanInput }> {
   const existing = await prisma.lessonPlan.findFirst({
     // `userId` shartda — boshqa foydalanuvchi yozuvini qayta generatsiya
     // qilib bo'lmaydi.
@@ -114,29 +122,29 @@ export async function regenerateLessonPlan(
 
   if (!existing) throw notFound();
 
-  await prisma.lessonPlan.update({
+  const reset = await prisma.lessonPlan.update({
     where: { id },
     // Eski xato xabarini tozalaymiz — aks holda muvaffaqiyatli natija
     // yonida eski xato ko'rinib turadi.
     data: { status: "PENDING", errorMessage: null },
+    select: DETAIL_FIELDS,
   });
 
-  return runGeneration(id, userId, {
-    subject: existing.subject,
-    grade: existing.grade,
-    topic: existing.topic,
-    durationMinutes: existing.durationMinutes,
-    lessonType: existing.lessonType,
-    language: existing.language,
-  });
+  return {
+    record: reset,
+    input: {
+      subject: existing.subject,
+      grade: existing.grade,
+      topic: existing.topic,
+      durationMinutes: existing.durationMinutes,
+      lessonType: existing.lessonType,
+      language: existing.language,
+    },
+  };
 }
 
 /** AI chaqiruvi va natijani saqlash — ikki oqim uchun umumiy qism. */
-async function runGeneration(
-  id: string,
-  userId: string,
-  input: LessonPlanInput,
-): Promise<LessonPlanDetail> {
+async function runGeneration(id: string, input: LessonPlanInput): Promise<void> {
   try {
     const { data, meta } = await generateJson({
       // Vaqt yig'indisi tekshiruvi shu darsning davomiyligiga bog'liq.
@@ -145,19 +153,19 @@ async function runGeneration(
       prompt: buildUserPrompt(input),
     });
 
-    const updated = await prisma.lessonPlan.update({
+    await prisma.lessonPlan.update({
       where: { id },
       data: {
         status: "READY",
         content: data,
         errorMessage: null,
         aiModel: meta.model,
-        aiDurationMs: meta.durationMs,
+        // BARCHA urinishlarning vaqti — qayta urinish bo'lganda
+        // `durationMs` haqiqiy kutish vaqtidan kam ko'rsatardi.
+        aiDurationMs: Math.max(meta.totalDurationMs, 1),
+        aiAttempts: meta.schemaAttempts,
       },
-      select: DETAIL_FIELDS,
     });
-
-    return updated;
   } catch (caught) {
     // Xatoni yozuvga belgilaymiz, keyin yuqoriga uzatamiz.
     //
@@ -214,6 +222,8 @@ export async function listLessonPlans(userId: string, query: LessonPlanListQuery
  * hujumchiga boshqa foydalanuvchilarning yozuvlari borligini bildiradi.
  */
 export async function getLessonPlan(id: string, userId: string) {
+  await markStaleAsFailed("lessonPlan", userId);
+
   return prisma.lessonPlan.findFirst({
     where: { id, userId },
     select: DETAIL_FIELDS,

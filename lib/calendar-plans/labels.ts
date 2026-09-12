@@ -40,3 +40,20 @@ export function formatShortDate(date: Date | string, locale: UiLocale): string {
     timeZone: "UTC",
   }).format(value);
 }
+
+/** Generatsiya bosqichlarining tarjima kalitlari. */
+export const PROGRESS_KEYS = [
+  "progress.sent",
+  "progress.sequence",
+  "progress.distribute",
+  "progress.hours",
+  "progress.file",
+  "progress.finishing",
+] as const;
+
+/**
+ * Odatdagi davomiylik, soniyada.
+ *
+ * Bu eng sekin modul — hafta soniga qarab 40-60 soniya.
+ */
+export const TYPICAL_SECONDS = 50;

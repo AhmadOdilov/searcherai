@@ -1,6 +1,11 @@
 import { ok, parseJsonBody, withErrorHandling } from "@/lib/api/with-error-handling";
 import { requireUser } from "@/lib/auth/session";
-import { createPresentation, listPresentations } from "@/lib/presentations/service";
+import {
+  createPresentation,
+  listPresentations,
+  runPresentationGeneration,
+} from "@/lib/presentations/service";
+import { runInBackground } from "@/lib/generation/background";
 import {
   presentationInputSchema,
   presentationListQuerySchema,
@@ -13,16 +18,37 @@ import {
  *   { "mode": "from-lesson-plan", "lessonPlanId": "..." }
  *   { "mode": "standalone", "topic": "...", "subject": "...", "grade": "..." }
  *
- * MVP'da sinxron — AI + .pptx yasash tugagach javob qaytadi.
+ * FON rejimida: PENDING yozuv yaratilib `202 Accepted` qaytadi,
+ * generatsiya esa javob yuborilgandan keyin davom etadi. Frontend
+ * `GET /api/presentations/[id]` ni so'rab turadi.
+ *
+ * Dars ishlanmasi TEKSHIRUVI esa sinxron: egalik va tayyorlik xatosi
+ * bo'lsa foydalanuvchi darhol bilishi kerak (404/400), keraksiz PENDING
+ * yozuv yaratilmasligi kerak.
  */
 export const POST = withErrorHandling(async (request) => {
   const user = await requireUser();
   const input = await parseJsonBody(request, presentationInputSchema);
 
-  const presentation = await createPresentation(user.id, input);
+  const { record, promptContext } = await createPresentation(user.id, input);
 
-  return ok({ presentation }, 201);
+  runInBackground(`presentation:${record.id}`, () =>
+    runPresentationGeneration(record.id, promptContext),
+  );
+
+  return ok({ presentation: record }, 202);
 });
+
+/**
+ * Generatsiya javob yuborilgandan KEYIN davom etadi (`after()`), shuning
+ * uchun route'ning umumiy chegarasi uzoq bo'lishi kerak.
+ *
+ * DIQQAT: bu qiymat LITERAL bo'lishi shart — Next.js segment
+ * sozlamalarini build paytida statik o'qiydi va import qilingan
+ * konstantani hisoblay olmaydi ("Invalid segment configuration export").
+ * Manba: `GENERATION_MAX_DURATION` (lib/generation/background.ts).
+ */
+export const maxDuration = 300;
 
 /** `GET /api/presentations` — foydalanuvchining ro'yxati. */
 export const GET = withErrorHandling(async (request) => {

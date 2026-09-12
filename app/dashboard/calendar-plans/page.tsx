@@ -1,20 +1,19 @@
 import Link from "next/link";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { listCalendarPlans } from "@/lib/calendar-plans/service";
-import { StatusBadge } from "@/components/ui/status-badge";
-import { formatDate, formatFileSize } from "@/lib/ui/labels";
-import { translateStoredError } from "@/lib/i18n/stored-error";
-import type { UiLocale } from "@/lib/i18n/config";
+import { CalendarPlanList } from "@/components/calendar-plans/plan-list";
+import { PAGE_SIZE } from "@/lib/ui/pagination";
 
 /** `/dashboard/calendar-plans` — kalendar rejalar ro'yxati. */
 export default async function CalendarPlansPage() {
   const user = (await getCurrentUser())!;
-  const { items } = await listCalendarPlans(user.id, { limit: 50 });
+  const { items, nextCursor } = await listCalendarPlans(user.id, {
+    limit: PAGE_SIZE,
+  });
 
   const t = await getTranslations("calendarPlans");
   const tRoot = await getTranslations();
-  const locale = (await getLocale()) as UiLocale;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
@@ -47,46 +46,7 @@ export default async function CalendarPlansPage() {
           </Link>
         </div>
       ) : (
-        <ul className="mt-6 space-y-2">
-          {items.map((item) => (
-            <li key={item.id}>
-              <Link
-                href={`/dashboard/calendar-plans/${item.id}`}
-                className="block rounded-xl border border-slate-200 bg-white p-4 transition hover:border-slate-300 hover:shadow-sm"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium text-slate-900">
-                      {item.title ?? `${item.subject} — ${item.period}`}
-                    </p>
-                    <p className="mt-1 text-xs text-slate-500">
-                      {item.subject} · {item.grade} ·{" "}
-                      {t("meta", {
-                        weeks: item.weeks,
-                        hours: item.hoursPerWeek,
-                      })}
-                      {item.rowCount !== null &&
-                        ` · ${t("rowCount", { count: item.rowCount })}`}
-                      {item.fileSize !== null &&
-                        ` · ${formatFileSize(item.fileSize, locale)}`}
-                    </p>
-                  </div>
-                  <StatusBadge status={item.status} />
-                </div>
-
-                {item.status === "FAILED" && item.errorMessage !== null && (
-                  <p className="mt-2 text-xs text-red-600">
-                    {translateStoredError(tRoot, item.errorMessage)}
-                  </p>
-                )}
-
-                <p className="mt-2 text-xs text-slate-400">
-                  {formatDate(item.createdAt, locale)}
-                </p>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <CalendarPlanList initialItems={items} initialCursor={nextCursor} />
       )}
     </div>
   );

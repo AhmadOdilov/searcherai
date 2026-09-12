@@ -64,7 +64,12 @@ export type LessonTypeCode = z.infer<typeof lessonTypeSchema>;
 /** cuid — Prisma `@default(cuid())` bilan yaratilgan identifikatorlar. */
 export const idSchema = z.string().min(1, "errors.validation.idRequired");
 
-/** Ro'yxatlarni sahifalash uchun. */
+/**
+ * Ro'yxatlarni sahifalash.
+ *
+ * Standart 20 — birinchi yuklanish tez bo'lsin. Ro'yxat sahifalari
+ * "Ko'proq yuklash" tugmasi bilan davomini oladi (`nextCursor`).
+ */
 export const paginationSchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
   cursor: z.string().optional(),

@@ -1,17 +1,26 @@
 import { ok, parseJsonBody, withErrorHandling } from "@/lib/api/with-error-handling";
 import { requireUser } from "@/lib/auth/session";
-import { createLessonPlan, listLessonPlans } from "@/lib/lesson-plans/service";
+import {
+  createLessonPlan,
+  listLessonPlans,
+  runLessonPlanGeneration,
+} from "@/lib/lesson-plans/service";
+import { runInBackground } from "@/lib/generation/background";
 import {
   lessonPlanInputSchema,
   lessonPlanListQuerySchema,
 } from "@/lib/validations/lesson-plan";
 
 /**
- * `POST /api/lesson-plans` — yangi dars ishlanmasini generatsiya qiladi.
+ * `POST /api/lesson-plans` — generatsiyani BOSHLAYDI.
  *
- * MVP'da SINXRON: AI javobini kutib, tayyor natijani qaytaradi. Bu bir
- * necha soniya (ba'zan 30+) olishi mumkin — frontend loading holatini
- * ko'rsatadi. Fon rejimi keyingi bosqichda.
+ * ── Fon rejimi ────────────────────────────────────────────────────────────
+ * Route AI javobini KUTMAYDI. U PENDING yozuvni yaratib `202 Accepted`
+ * qaytaradi, generatsiya esa javob yuborilgandan keyin davom etadi
+ * (`runInBackground` → Next.js `after()`).
+ *
+ * Frontend `GET /api/lesson-plans/[id]` ni so'rab turadi (polling) va
+ * status READY yoki FAILED bo'lguncha kutadi.
  */
 export const POST = withErrorHandling(async (request) => {
   // userId AYNAN sessiyadan — so'rov tanasidan emas.
@@ -20,8 +29,24 @@ export const POST = withErrorHandling(async (request) => {
 
   const plan = await createLessonPlan(user.id, input);
 
-  return ok({ lessonPlan: plan }, 201);
+  runInBackground(`lesson-plan:${plan.id}`, () =>
+    runLessonPlanGeneration(plan.id, input),
+  );
+
+  // 202 Accepted — "qabul qilindi, lekin hali bajarilmadi".
+  return ok({ lessonPlan: plan }, 202);
 });
+
+/**
+ * Generatsiya javob yuborilgandan KEYIN davom etadi (`after()`), shuning
+ * uchun route'ning umumiy chegarasi uzoq bo'lishi kerak.
+ *
+ * DIQQAT: bu qiymat LITERAL bo'lishi shart — Next.js segment
+ * sozlamalarini build paytida statik o'qiydi va import qilingan
+ * konstantani hisoblay olmaydi ("Invalid segment configuration export").
+ * Manba: `GENERATION_MAX_DURATION` (lib/generation/background.ts).
+ */
+export const maxDuration = 300;
 
 /**
  * `GET /api/lesson-plans` — foydalanuvchining dars ishlanmalari ro'yxati.

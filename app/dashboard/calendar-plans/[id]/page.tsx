@@ -7,6 +7,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { CalendarPlanActions } from "@/components/calendar-plans/plan-actions";
 import { formatDate, formatFileSize } from "@/lib/ui/labels";
 import { ErrorPanel } from "@/components/ui/error-panel";
+import { GenerationProgress } from "@/components/ui/generation-progress";
+import { PROGRESS_KEYS, TYPICAL_SECONDS } from "@/lib/calendar-plans/labels";
 import { translateStoredError } from "@/lib/i18n/stored-error";
 import type { UiLocale } from "@/lib/i18n/config";
 import { formatShortDate } from "@/lib/calendar-plans/labels";
@@ -96,10 +98,20 @@ export default async function CalendarPlanDetailPage({
         />
       )}
 
+      {/*
+        PENDING holatida jarayon KUZATILADI: komponent har 2 soniyada
+        yozuvni so'rab turadi va tugagach sahifani yangilaydi. Ilgari bu
+        yerda shunchaki "birozdan so'ng yangilang" degan matn turardi.
+      */}
       {plan.status === "PENDING" && (
-        <p className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          {t("detail.pending")}
-        </p>
+        <GenerationProgress
+          resource="/api/calendar-plans"
+          payloadKey="calendarPlan"
+          recordId={plan.id}
+          progressKeys={PROGRESS_KEYS}
+          namespace="calendarPlans"
+          typicalSeconds={TYPICAL_SECONDS}
+        />
       )}
 
       {plan.status === "READY" && content === null && (

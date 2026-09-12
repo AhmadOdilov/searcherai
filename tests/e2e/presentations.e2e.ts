@@ -7,6 +7,7 @@ import {
   clearAiPrompts,
   findAiPrompt,
   testEmail,
+  waitForGeneration,
 } from "./helpers/client";
 import {
   MARKER_BAD_SHAPE,
@@ -56,6 +57,31 @@ interface ListPayload {
   items: Array<{ id: string; topic: string; status: string }>;
 }
 
+/**
+ * POST yuboradi, 202 ni tekshiradi va generatsiya tugashini kutadi.
+ *
+ * Fon rejimida POST natijani qaytarmaydi — yozuv PENDING holatida keladi,
+ * generatsiya esa javobdan keyin davom etadi.
+ */
+async function createAndWait(
+  client: TestClient,
+  body: Record<string, unknown>,
+): Promise<PresentationPayload["presentation"]> {
+  const created = await client.request<PresentationPayload>("/api/presentations", {
+    method: "POST",
+    body,
+  });
+
+  assert.equal(created.status, 202, "fon rejimida 202 qaytishi kerak");
+  assert.equal(created.data!.presentation.status, "PENDING");
+
+  return waitForGeneration<PresentationPayload["presentation"]>(
+    client,
+    `/api/presentations/${created.data!.presentation.id}`,
+    "presentation",
+  );
+}
+
 async function signedInClient(suffix: string): Promise<TestClient> {
   const client = new TestClient();
   const result = await client.request("/api/auth/register", {
@@ -87,9 +113,15 @@ async function createLessonPlan(
       ...overrides,
     },
   });
-  assert.equal(result.status, 201, "dars ishlanmasi yaratilishi kerak");
-  assert.equal(result.data!.lessonPlan.status, "READY");
-  return result.data!.lessonPlan.id;
+  assert.equal(result.status, 202, "dars ishlanmasi qabul qilinishi kerak");
+
+  const plan = await waitForGeneration<LessonPlanPayload["lessonPlan"]>(
+    client,
+    `/api/lesson-plans/${result.data!.lessonPlan.id}`,
+    "lessonPlan",
+  );
+  assert.equal(plan.status, "READY");
+  return plan.id;
 }
 
 before(async () => {
@@ -104,13 +136,10 @@ describe("prezentatsiya — DARS ISHLANMASI asosida", () => {
     const client = await signedInClient("pr-darsdan");
     const lessonPlanId = await createLessonPlan(client);
 
-    const result = await client.request<PresentationPayload>("/api/presentations", {
-      method: "POST",
-      body: { mode: "from-lesson-plan", lessonPlanId },
+    const presentation = await createAndWait(client, {
+      mode: "from-lesson-plan",
+      lessonPlanId,
     });
-
-    assert.equal(result.status, 201);
-    const presentation = result.data!.presentation;
 
     assert.equal(presentation.status, "READY");
     assert.equal(
@@ -136,10 +165,7 @@ describe("prezentatsiya — DARS ISHLANMASI asosida", () => {
     // Dars ishlanmasi generatsiyasining promptlarini tashlab yuboramiz.
     await clearAiPrompts();
 
-    await client.request("/api/presentations", {
-      method: "POST",
-      body: { mode: "from-lesson-plan", lessonPlanId },
-    });
+    await createAndWait(client, { mode: "from-lesson-plan", lessonPlanId });
 
     const { system, user } = await findAiPrompt("Fotosintez va nafas olish");
 
@@ -233,13 +259,10 @@ describe("prezentatsiya — mustaqil rejim", () => {
   it("faqat mavzu bilan yaratadi", async () => {
     const client = await signedInClient("pr-mustaqil");
 
-    const result = await client.request<PresentationPayload>("/api/presentations", {
-      method: "POST",
-      body: { mode: "standalone", topic: "Suvning aylanishi" },
+    const presentation = await createAndWait(client, {
+      mode: "standalone",
+      topic: "Suvning aylanishi",
     });
-
-    assert.equal(result.status, 201);
-    const presentation = result.data!.presentation;
 
     assert.equal(presentation.status, "READY");
     assert.equal(presentation.lessonPlanId, null, "bog'lanmagan bo'lishi kerak");
@@ -250,30 +273,23 @@ describe("prezentatsiya — mustaqil rejim", () => {
   it("fan, sinf va til bilan yaratadi", async () => {
     const client = await signedInClient("pr-mustaqil-toliq");
 
-    const result = await client.request<PresentationPayload>("/api/presentations", {
-      method: "POST",
-      body: {
-        mode: "standalone",
-        topic: "Круговорот воды",
-        subject: "География",
-        grade: "6 класс",
-        language: "RU",
-      },
+    const presentation = await createAndWait(client, {
+      mode: "standalone",
+      topic: "Круговорот воды",
+      subject: "География",
+      grade: "6 класс",
+      language: "RU",
     });
 
-    assert.equal(result.status, 201);
-    assert.equal(result.data!.presentation.subject, "География");
-    assert.equal(result.data!.presentation.language, "RU");
+    assert.equal(presentation.subject, "География");
+    assert.equal(presentation.language, "RU");
   });
 
   it("promptda dars ishlanmasi bo'limi BO'LMAYDI", async () => {
     const client = await signedInClient("pr-mustaqil-prompt");
     await clearAiPrompts();
 
-    await client.request("/api/presentations", {
-      method: "POST",
-      body: { mode: "standalone", topic: "Suvning aylanishi" },
-    });
+    await createAndWait(client, { mode: "standalone", topic: "Suvning aylanishi" });
 
     const { user } = await findAiPrompt("Suvning aylanishi");
     assert.ok(!user.includes("Dars maqsadi"), "dars maqsadi bo'lmasligi kerak");
@@ -319,12 +335,10 @@ describe("prezentatsiya — muvaffaqiyatli natija", () => {
   it("fayl, slayd soni va kuzatuv maydonlari to'ldiriladi", async () => {
     const client = await signedInClient("pr-natija");
 
-    const result = await client.request<PresentationPayload>("/api/presentations", {
-      method: "POST",
-      body: { mode: "standalone", topic: "Fotosintez" },
+    const presentation = await createAndWait(client, {
+      mode: "standalone",
+      topic: "Fotosintez",
     });
-
-    const presentation = result.data!.presentation;
 
     assert.equal(presentation.status, "READY");
     assert.ok(presentation.filePath !== null, "filePath to'ldirilishi kerak");
@@ -353,62 +367,44 @@ describe("prezentatsiya — xato holatlari", () => {
   it("AI server xatosida FAILED qiladi", async () => {
     const client = await signedInClient("pr-xato-server");
 
-    const result = await client.request("/api/presentations", {
-      method: "POST",
-      body: { mode: "standalone", topic: `Mavzu ${MARKER_SERVER_ERROR}` },
+    const presentation = await createAndWait(client, {
+      mode: "standalone",
+      topic: `Mavzu ${MARKER_SERVER_ERROR}`,
     });
 
-    assert.equal(result.ok, false);
-    // Foydalanuvchiga texnik tafsilot ketmasligi kerak.
-    assert.ok(!result.error!.message.includes("500"));
-    assert.ok(!result.error!.message.includes("mock"));
-
-    const list = await client.request<ListPayload>("/api/presentations");
-    const failed = list.data!.items.find((item) => item.status === "FAILED");
-    assert.ok(failed, "FAILED yozuv ro'yxatda qolishi kerak");
-
-    const detail = await client.request<PresentationPayload>(
-      `/api/presentations/${failed.id}`,
-    );
-    assert.equal(detail.data!.presentation.status, "FAILED");
-    assert.ok(detail.data!.presentation.errorMessage !== null);
-    assert.ok(!detail.data!.presentation.errorMessage!.includes("mock"));
+    // Fon rejimida xato POST javobida kelmaydi — yozuvga yoziladi.
+    assert.equal(presentation.status, "FAILED");
+    assert.ok(presentation.errorMessage !== null);
+    assert.ok(!presentation.errorMessage!.includes("mock"));
+    assert.ok(!presentation.errorMessage!.includes("500"));
     // Yiqilgan generatsiyada fayl qolmasligi kerak.
-    assert.equal(detail.data!.presentation.filePath, null);
-  });
-
-  it("AI noto'g'ri JSON qaytarsa FAILED qiladi", async () => {
-    const client = await signedInClient("pr-xato-json");
-
-    const result = await client.request("/api/presentations", {
-      method: "POST",
-      body: { mode: "standalone", topic: `Mavzu ${MARKER_NOT_JSON}` },
-    });
-
-    assert.equal(result.ok, false);
+    assert.equal(presentation.filePath, null);
 
     const list = await client.request<ListPayload>("/api/presentations");
     assert.ok(list.data!.items.some((item) => item.status === "FAILED"));
   });
 
+  it("AI noto'g'ri JSON qaytarsa FAILED qiladi", async () => {
+    const client = await signedInClient("pr-xato-json");
+
+    const presentation = await createAndWait(client, {
+      mode: "standalone",
+      topic: `Mavzu ${MARKER_NOT_JSON}`,
+    });
+
+    assert.equal(presentation.status, "FAILED");
+  });
+
   it("AI sxemaga mos kelmaydigan javob bersa FAILED qiladi", async () => {
     const client = await signedInClient("pr-xato-sxema");
 
-    const result = await client.request("/api/presentations", {
-      method: "POST",
-      body: { mode: "standalone", topic: `Mavzu ${MARKER_BAD_SHAPE}` },
+    const presentation = await createAndWait(client, {
+      mode: "standalone",
+      topic: `Mavzu ${MARKER_BAD_SHAPE}`,
     });
 
-    assert.equal(result.ok, false);
-
-    const list = await client.request<ListPayload>("/api/presentations");
-    const failed = list.data!.items.find((item) => item.status === "FAILED");
-    assert.ok(failed);
-
-    const detail = await client.request<PresentationPayload>(
-      `/api/presentations/${failed.id}`,
-    );
-    assert.ok(detail.data!.presentation.errorMessage !== null);
+    assert.equal(presentation.status, "FAILED");
+    assert.ok(presentation.errorMessage !== null);
   });
 });
 
@@ -416,11 +412,11 @@ describe("yuklab olish", () => {
   it("to'g'ri MIME turi va Content-Disposition bilan qaytaradi", async () => {
     const client = await signedInClient("pr-yuklash");
 
-    const created = await client.request<PresentationPayload>("/api/presentations", {
-      method: "POST",
-      body: { mode: "standalone", topic: "Fotosintez" },
+    const created = await createAndWait(client, {
+      mode: "standalone",
+      topic: "Fotosintez",
     });
-    const id = created.data!.presentation.id;
+    const id = created.id;
 
     const response = await client.fetchRaw(`/api/presentations/${id}/download`);
 
@@ -451,11 +447,11 @@ describe("yuklab olish", () => {
     const owner = await signedInClient("pr-fayl-ega");
     const stranger = await signedInClient("pr-fayl-begona");
 
-    const created = await owner.request<PresentationPayload>("/api/presentations", {
-      method: "POST",
-      body: { mode: "standalone", topic: "Maxfiy prezentatsiya" },
+    const created = await createAndWait(owner, {
+      mode: "standalone",
+      topic: "Maxfiy prezentatsiya",
     });
-    const id = created.data!.presentation.id;
+    const id = created.id;
 
     // Egasi — ha.
     const byOwner = await owner.fetchRaw(`/api/presentations/${id}/download`);
@@ -472,15 +468,14 @@ describe("yuklab olish", () => {
 
   it("kirmagan foydalanuvchi faylni ololmaydi", async () => {
     const owner = await signedInClient("pr-fayl-anonim");
-    const created = await owner.request<PresentationPayload>("/api/presentations", {
-      method: "POST",
-      body: { mode: "standalone", topic: "Fotosintez" },
+    const created = await createAndWait(owner, {
+      mode: "standalone",
+      topic: "Fotosintez",
     });
 
-    const response = await fetch(
-      `${BASE_URL}/api/presentations/${created.data!.presentation.id}/download`,
-      { redirect: "manual" },
-    );
+    const response = await fetch(`${BASE_URL}/api/presentations/${created.id}/download`, {
+      redirect: "manual",
+    });
 
     assert.equal(response.status, 401);
   });
@@ -488,12 +483,11 @@ describe("yuklab olish", () => {
   it("FAILED prezentatsiyani yuklab bo'lmaydi", async () => {
     const client = await signedInClient("pr-fayl-failed");
 
-    await client.request("/api/presentations", {
-      method: "POST",
-      body: { mode: "standalone", topic: `Mavzu ${MARKER_SERVER_ERROR}` },
+    const failed = await createAndWait(client, {
+      mode: "standalone",
+      topic: `Mavzu ${MARKER_SERVER_ERROR}`,
     });
-    const list = await client.request<ListPayload>("/api/presentations");
-    const failedId = list.data!.items[0].id;
+    const failedId = failed.id;
 
     const response = await client.fetchRaw(`/api/presentations/${failedId}/download`);
     assert.equal(response.status, 400);
@@ -504,21 +498,27 @@ describe("qayta generatsiya va o'chirish", () => {
   it("qayta generatsiya yangi yozuv YARATMAYDI", async () => {
     const client = await signedInClient("pr-qayta");
 
-    const created = await client.request<PresentationPayload>("/api/presentations", {
-      method: "POST",
-      body: { mode: "standalone", topic: "Fotosintez" },
+    const created = await createAndWait(client, {
+      mode: "standalone",
+      topic: "Fotosintez",
     });
-    const id = created.data!.presentation.id;
+    const id = created.id;
 
-    const regenerated = await client.request<PresentationPayload>(
+    const accepted = await client.request<PresentationPayload>(
       `/api/presentations/${id}/regenerate`,
       { method: "POST" },
     );
+    assert.equal(accepted.status, 202);
 
-    assert.equal(regenerated.status, 200);
-    assert.equal(regenerated.data!.presentation.id, id);
-    assert.equal(regenerated.data!.presentation.status, "READY");
-    assert.ok(regenerated.data!.presentation.filePath !== null);
+    const regenerated = await waitForGeneration<PresentationPayload["presentation"]>(
+      client,
+      `/api/presentations/${id}`,
+      "presentation",
+    );
+
+    assert.equal(regenerated.id, id);
+    assert.equal(regenerated.status, "READY");
+    assert.ok(regenerated.filePath !== null);
 
     const list = await client.request<ListPayload>("/api/presentations");
     assert.equal(list.data!.items.length, 1);
@@ -528,13 +528,13 @@ describe("qayta generatsiya va o'chirish", () => {
     const owner = await signedInClient("pr-qayta-ega");
     const stranger = await signedInClient("pr-qayta-begona");
 
-    const created = await owner.request<PresentationPayload>("/api/presentations", {
-      method: "POST",
-      body: { mode: "standalone", topic: "Fotosintez" },
+    const created = await createAndWait(owner, {
+      mode: "standalone",
+      topic: "Fotosintez",
     });
 
     const attempt = await stranger.request(
-      `/api/presentations/${created.data!.presentation.id}/regenerate`,
+      `/api/presentations/${created.id}/regenerate`,
       { method: "POST" },
     );
     assert.equal(attempt.status, 404);
@@ -543,11 +543,11 @@ describe("qayta generatsiya va o'chirish", () => {
   it("o'chirilgandan keyin fayl ham berilmaydi", async () => {
     const client = await signedInClient("pr-ochirish");
 
-    const created = await client.request<PresentationPayload>("/api/presentations", {
-      method: "POST",
-      body: { mode: "standalone", topic: "Fotosintez" },
+    const created = await createAndWait(client, {
+      mode: "standalone",
+      topic: "Fotosintez",
     });
-    const id = created.data!.presentation.id;
+    const id = created.id;
 
     const deleted = await client.request(`/api/presentations/${id}`, {
       method: "DELETE",
@@ -565,11 +565,11 @@ describe("qayta generatsiya va o'chirish", () => {
     const owner = await signedInClient("pr-ochirish-ega");
     const stranger = await signedInClient("pr-ochirish-begona");
 
-    const created = await owner.request<PresentationPayload>("/api/presentations", {
-      method: "POST",
-      body: { mode: "standalone", topic: "Fotosintez" },
+    const created = await createAndWait(owner, {
+      mode: "standalone",
+      topic: "Fotosintez",
     });
-    const id = created.data!.presentation.id;
+    const id = created.id;
 
     const attempt = await stranger.request(`/api/presentations/${id}`, {
       method: "DELETE",
@@ -586,14 +586,8 @@ describe("ro'yxat", () => {
     const first = await signedInClient("pr-royxat-1");
     const second = await signedInClient("pr-royxat-2");
 
-    await first.request("/api/presentations", {
-      method: "POST",
-      body: { mode: "standalone", topic: "Birinchi mavzu" },
-    });
-    await second.request("/api/presentations", {
-      method: "POST",
-      body: { mode: "standalone", topic: "Ikkinchi mavzu" },
-    });
+    await createAndWait(first, { mode: "standalone", topic: "Birinchi mavzu" });
+    await createAndWait(second, { mode: "standalone", topic: "Ikkinchi mavzu" });
 
     const firstList = await first.request<ListPayload>("/api/presentations");
     const secondList = await second.request<ListPayload>("/api/presentations");

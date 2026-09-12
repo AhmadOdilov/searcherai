@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
-import { TestClient, cleanupTestUsers, testEmail } from "./helpers/client";
+import {
+  TestClient,
+  cleanupTestUsers,
+  testEmail,
+  waitForGeneration,
+} from "./helpers/client";
 import { MARKER_BAD_SHAPE, MARKER_SERVER_ERROR } from "./helpers/mock-ai";
 
 /**
@@ -8,7 +13,39 @@ import { MARKER_BAD_SHAPE, MARKER_SERVER_ERROR } from "./helpers/mock-ai";
  *
  * AI soxta server bilan almashtirilgan (`helpers/mock-ai.ts`), lekin
  * qolgan hamma narsa haqiqiy: HTTP, sessiya, baza, zod tekshiruvi.
+ *
+ * ── FON REJIMI ────────────────────────────────────────────────────────────
+ * POST endi `202` va PENDING yozuvni qaytaradi — natija tayyor emas.
+ * Shuning uchun sinovlar `waitForGeneration()` bilan tugashini kutadi,
+ * xuddi brauzer polling qilgani kabi.
+ *
+ * MUHIM natija: generatsiya XATOSI endi POST javobida kelmaydi. U
+ * yozuvning `status: FAILED` va `errorMessage` maydonlarida bo'ladi.
  */
+
+/** POST yuboradi, 202 ni tekshiradi va generatsiya tugashini kutadi. */
+async function createAndWait(
+  client: TestClient,
+  body: Record<string, unknown>,
+): Promise<LessonPlanPayload["lessonPlan"]> {
+  const created = await client.request<LessonPlanPayload>("/api/lesson-plans", {
+    method: "POST",
+    body,
+  });
+
+  assert.equal(created.status, 202, "fon rejimida 202 qaytishi kerak");
+  assert.equal(
+    created.data!.lessonPlan.status,
+    "PENDING",
+    "darhol PENDING qaytishi kerak",
+  );
+
+  return waitForGeneration<LessonPlanPayload["lessonPlan"]>(
+    client,
+    `/api/lesson-plans/${created.data!.lessonPlan.id}`,
+    "lessonPlan",
+  );
+}
 
 const PASSWORD = "juda-maxfiy-parol";
 
@@ -86,13 +123,7 @@ describe("dars ishlanmasi generatsiyasi", () => {
   it("to'liq ishlanma yaratadi va READY qiladi", async () => {
     const client = await signedInClient("lp-ok");
 
-    const result = await client.request<LessonPlanPayload>("/api/lesson-plans", {
-      method: "POST",
-      body: validInput(),
-    });
-
-    assert.equal(result.status, 201);
-    const plan = result.data!.lessonPlan;
+    const plan = await createAndWait(client, validInput());
 
     assert.equal(plan.status, "READY");
     assert.equal(plan.errorMessage, null);
@@ -126,13 +157,13 @@ describe("dars ishlanmasi generatsiyasi", () => {
     const client = await signedInClient("lp-vaqt");
 
     for (const durationMinutes of [40, 90]) {
-      const result = await client.request<LessonPlanPayload>("/api/lesson-plans", {
-        method: "POST",
-        body: validInput({ durationMinutes, topic: `Mavzu ${durationMinutes}` }),
-      });
+      const plan = await createAndWait(
+        client,
+        validInput({ durationMinutes, topic: `Mavzu ${durationMinutes}` }),
+      );
 
-      assert.equal(result.status, 201);
-      const stages = result.data!.lessonPlan.content!.stages;
+      assert.equal(plan.status, "READY");
+      const stages = plan.content!.stages;
       const total = stages.reduce((sum, stage) => sum + stage.durationMinutes, 0);
 
       assert.equal(
@@ -146,52 +177,36 @@ describe("dars ishlanmasi generatsiyasi", () => {
   it("AI xatosida FAILED qiladi va tushunarli xabar saqlaydi", async () => {
     const client = await signedInClient("lp-xato");
 
-    const result = await client.request("/api/lesson-plans", {
-      method: "POST",
-      // Bu mavzu soxta AI serverini 500 qaytarishga majbur qiladi.
-      body: validInput({ topic: `Mavzu ${MARKER_SERVER_ERROR}` }),
-    });
-
-    // So'rov xato bilan tugaydi...
-    assert.equal(result.ok, false);
-    assert.equal(result.status, 502, "server xatosi 502 bo'lib qaytishi kerak");
-    // ...lekin foydalanuvchiga texnik tafsilot ketmasligi kerak.
-    assert.ok(!result.error!.message.includes("500"));
-    assert.ok(!result.error!.message.includes("mock"));
-
-    // ...va yozuv ro'yxatda FAILED holatida qolishi kerak — foydalanuvchi
-    // uni ko'rib "qayta urinish" bosadi.
-    const list = await client.request<ListPayload>("/api/lesson-plans");
-    const failed = list.data!.items.find((item) => item.status === "FAILED");
-    assert.ok(failed, "FAILED yozuv ro'yxatda bo'lishi kerak");
-
-    const detail = await client.request<LessonPlanPayload>(
-      `/api/lesson-plans/${failed.id}`,
+    // Bu mavzu soxta AI serverini 500 qaytarishga majbur qiladi.
+    const plan = await createAndWait(
+      client,
+      validInput({ topic: `Mavzu ${MARKER_SERVER_ERROR}` }),
     );
-    assert.equal(detail.data!.lessonPlan.status, "FAILED");
-    assert.ok(
-      detail.data!.lessonPlan.errorMessage !== null,
-      "errorMessage saqlanishi kerak",
-    );
+
+    // Fon rejimida xato POST javobida KELMAYDI — u yozuvga yoziladi.
+    assert.equal(plan.status, "FAILED");
+    assert.ok(plan.errorMessage !== null, "errorMessage saqlanishi kerak");
     // errorMessage to'g'ridan-to'g'ri UI'da ko'rinadi — unda texnik
     // tafsilot bo'lmasligi kerak.
-    assert.ok(!detail.data!.lessonPlan.errorMessage!.includes("mock"));
-    assert.equal(detail.data!.lessonPlan.content, null);
+    assert.ok(!plan.errorMessage!.includes("mock"));
+    assert.ok(!plan.errorMessage!.includes("500"));
+    assert.equal(plan.content, null);
+
+    // Yozuv ro'yxatda ham FAILED bo'lib turishi kerak.
+    const list = await client.request<ListPayload>("/api/lesson-plans");
+    assert.ok(list.data!.items.some((item) => item.status === "FAILED"));
   });
 
   it("AI sxemaga mos kelmaydigan javob bersa ham FAILED qiladi", async () => {
     const client = await signedInClient("lp-format");
 
-    const result = await client.request("/api/lesson-plans", {
-      method: "POST",
-      body: validInput({ topic: `Mavzu ${MARKER_BAD_SHAPE}` }),
-    });
+    const plan = await createAndWait(
+      client,
+      validInput({ topic: `Mavzu ${MARKER_BAD_SHAPE}` }),
+    );
 
-    assert.equal(result.ok, false);
-
-    const list = await client.request<ListPayload>("/api/lesson-plans");
-    const failed = list.data!.items.find((item) => item.status === "FAILED");
-    assert.ok(failed, "sxemaga mos kelmagan javob FAILED bo'lishi kerak");
+    assert.equal(plan.status, "FAILED", "sxemaga mos kelmagan javob FAILED bo'ladi");
+    assert.ok(plan.errorMessage !== null);
   });
 
   it("noto'g'ri kirish ma'lumotini 400 bilan rad etadi", async () => {
@@ -229,23 +244,32 @@ describe("qayta generatsiya", () => {
     const client = await signedInClient("lp-qayta");
 
     // 1. Ataylab yiqitamiz.
-    await client.request("/api/lesson-plans", {
-      method: "POST",
-      body: validInput({ topic: `Kasrlar ${MARKER_SERVER_ERROR}` }),
-    });
+    const failed = await createAndWait(
+      client,
+      validInput({ topic: `Kasrlar ${MARKER_SERVER_ERROR}` }),
+    );
+    assert.equal(failed.status, "FAILED");
+    const failedId = failed.id;
 
     const listBefore = await client.request<ListPayload>("/api/lesson-plans");
     assert.equal(listBefore.data!.items.length, 1);
-    const failedId = listBefore.data!.items[0].id;
-    assert.equal(listBefore.data!.items[0].status, "FAILED");
 
-    // 2. Mavzuni tuzatib qayta urinish uchun — belgi olib tashlanishi kerak,
-    //    lekin qayta generatsiya PARAMETRLARNI YOZUVDAN oladi, ya'ni mavzu
-    //    hali ham belgi bilan. Demak yana yiqilishi kerak.
-    const retryFails = await client.request(`/api/lesson-plans/${failedId}/regenerate`, {
+    // 2. Qayta generatsiya PARAMETRLARNI YOZUVDAN oladi, ya'ni mavzu hali
+    //    ham belgi bilan. Demak yana yiqilishi kerak.
+    //
+    //    DIQQAT: fon rejimida `regenerate` ning O'ZI muvaffaqiyatli (202) —
+    //    generatsiya xatosi keyinroq yozuvga tushadi.
+    const accepted = await client.request(`/api/lesson-plans/${failedId}/regenerate`, {
       method: "POST",
     });
-    assert.equal(retryFails.ok, false, "bir xil parametr bilan yana yiqiladi");
+    assert.equal(accepted.status, 202, "qayta generatsiya qabul qilinadi");
+
+    const retried = await waitForGeneration<LessonPlanPayload["lessonPlan"]>(
+      client,
+      `/api/lesson-plans/${failedId}`,
+      "lessonPlan",
+    );
+    assert.equal(retried.status, "FAILED", "bir xil parametr bilan yana yiqiladi");
 
     // 3. Eng muhimi: yangi yozuv YARATILMAGAN bo'lishi kerak.
     const listAfter = await client.request<ListPayload>("/api/lesson-plans");
@@ -261,22 +285,26 @@ describe("qayta generatsiya", () => {
     const client = await signedInClient("lp-qayta-ok");
 
     // Muvaffaqiyatli yozuv yaratamiz, keyin qayta generatsiya qilamiz.
-    const created = await client.request<LessonPlanPayload>("/api/lesson-plans", {
-      method: "POST",
-      body: validInput(),
-    });
-    const planId = created.data!.lessonPlan.id;
+    const created = await createAndWait(client, validInput());
+    const planId = created.id;
 
-    const regenerated = await client.request<LessonPlanPayload>(
+    const accepted = await client.request<LessonPlanPayload>(
       `/api/lesson-plans/${planId}/regenerate`,
       { method: "POST" },
     );
+    assert.equal(accepted.status, 202);
+    assert.equal(accepted.data!.lessonPlan.status, "PENDING");
 
-    assert.equal(regenerated.status, 200);
-    assert.equal(regenerated.data!.lessonPlan.id, planId, "bir xil yozuv");
-    assert.equal(regenerated.data!.lessonPlan.status, "READY");
-    assert.equal(regenerated.data!.lessonPlan.errorMessage, null);
-    assert.ok(regenerated.data!.lessonPlan.content !== null);
+    const regenerated = await waitForGeneration<LessonPlanPayload["lessonPlan"]>(
+      client,
+      `/api/lesson-plans/${planId}`,
+      "lessonPlan",
+    );
+
+    assert.equal(regenerated.id, planId, "bir xil yozuv");
+    assert.equal(regenerated.status, "READY");
+    assert.equal(regenerated.errorMessage, null);
+    assert.ok(regenerated.content !== null);
   });
 });
 
@@ -285,14 +313,8 @@ describe("ro'yxat", () => {
     const first = await signedInClient("lp-royxat-1");
     const second = await signedInClient("lp-royxat-2");
 
-    await first.request("/api/lesson-plans", {
-      method: "POST",
-      body: validInput({ topic: "Birinchi foydalanuvchi mavzusi" }),
-    });
-    await second.request("/api/lesson-plans", {
-      method: "POST",
-      body: validInput({ topic: "Ikkinchi foydalanuvchi mavzusi" }),
-    });
+    await createAndWait(first, validInput({ topic: "Birinchi foydalanuvchi mavzusi" }));
+    await createAndWait(second, validInput({ topic: "Ikkinchi foydalanuvchi mavzusi" }));
 
     const firstList = await first.request<ListPayload>("/api/lesson-plans");
     const secondList = await second.request<ListPayload>("/api/lesson-plans");
@@ -308,10 +330,7 @@ describe("ro'yxat", () => {
     const client = await signedInClient("lp-tartib");
 
     for (const topic of ["Birinchi mavzu", "Ikkinchi mavzu", "Uchinchi mavzu"]) {
-      await client.request("/api/lesson-plans", {
-        method: "POST",
-        body: validInput({ topic }),
-      });
+      await createAndWait(client, validInput({ topic }));
     }
 
     const list = await client.request<ListPayload>("/api/lesson-plans");
@@ -324,14 +343,8 @@ describe("ro'yxat", () => {
   it("holat bo'yicha filtrlaydi", async () => {
     const client = await signedInClient("lp-filtr");
 
-    await client.request("/api/lesson-plans", {
-      method: "POST",
-      body: validInput({ topic: "Muvaffaqiyatli mavzu" }),
-    });
-    await client.request("/api/lesson-plans", {
-      method: "POST",
-      body: validInput({ topic: `Yiqilgan ${MARKER_SERVER_ERROR}` }),
-    });
+    await createAndWait(client, validInput({ topic: "Muvaffaqiyatli mavzu" }));
+    await createAndWait(client, validInput({ topic: `Yiqilgan ${MARKER_SERVER_ERROR}` }));
 
     const ready = await client.request<ListPayload>("/api/lesson-plans?status=READY");
     assert.equal(ready.data!.items.length, 1);
@@ -353,11 +366,11 @@ describe("egalik tekshiruvi", () => {
     const owner = await signedInClient("lp-ega");
     const stranger = await signedInClient("lp-begona");
 
-    const created = await owner.request<LessonPlanPayload>("/api/lesson-plans", {
-      method: "POST",
-      body: validInput({ topic: "Maxfiy dars mavzusi" }),
-    });
-    const planId = created.data!.lessonPlan.id;
+    const created = await createAndWait(
+      owner,
+      validInput({ topic: "Maxfiy dars mavzusi" }),
+    );
+    const planId = created.id;
 
     // Egasi o'qiy oladi.
     const byOwner = await owner.request<LessonPlanPayload>(`/api/lesson-plans/${planId}`);
@@ -374,11 +387,8 @@ describe("egalik tekshiruvi", () => {
     const owner = await signedInClient("lp-ega-ochirish");
     const stranger = await signedInClient("lp-begona-ochirish");
 
-    const created = await owner.request<LessonPlanPayload>("/api/lesson-plans", {
-      method: "POST",
-      body: validInput(),
-    });
-    const planId = created.data!.lessonPlan.id;
+    const created = await createAndWait(owner, validInput());
+    const planId = created.id;
 
     const attempt = await stranger.request(`/api/lesson-plans/${planId}`, {
       method: "DELETE",
@@ -394,15 +404,11 @@ describe("egalik tekshiruvi", () => {
     const owner = await signedInClient("lp-ega-qayta");
     const stranger = await signedInClient("lp-begona-qayta");
 
-    const created = await owner.request<LessonPlanPayload>("/api/lesson-plans", {
-      method: "POST",
-      body: validInput(),
-    });
+    const created = await createAndWait(owner, validInput());
 
-    const attempt = await stranger.request(
-      `/api/lesson-plans/${created.data!.lessonPlan.id}/regenerate`,
-      { method: "POST" },
-    );
+    const attempt = await stranger.request(`/api/lesson-plans/${created.id}/regenerate`, {
+      method: "POST",
+    });
     assert.equal(attempt.status, 404);
   });
 
@@ -417,11 +423,8 @@ describe("o'chirish", () => {
   it("egasi o'z yozuvini o'chiradi", async () => {
     const client = await signedInClient("lp-ochirish");
 
-    const created = await client.request<LessonPlanPayload>("/api/lesson-plans", {
-      method: "POST",
-      body: validInput(),
-    });
-    const planId = created.data!.lessonPlan.id;
+    const created = await createAndWait(client, validInput());
+    const planId = created.id;
 
     const deleted = await client.request(`/api/lesson-plans/${planId}`, {
       method: "DELETE",
@@ -439,11 +442,8 @@ describe("o'chirish", () => {
   it("ikki marta o'chirishga urinsa 404", async () => {
     const client = await signedInClient("lp-ikki-ochirish");
 
-    const created = await client.request<LessonPlanPayload>("/api/lesson-plans", {
-      method: "POST",
-      body: validInput(),
-    });
-    const planId = created.data!.lessonPlan.id;
+    const created = await createAndWait(client, validInput());
+    const planId = created.id;
 
     await client.request(`/api/lesson-plans/${planId}`, { method: "DELETE" });
     const second = await client.request(`/api/lesson-plans/${planId}`, {
@@ -459,14 +459,13 @@ describe("ko'p tillilik", () => {
     const client = await signedInClient("lp-tillar");
 
     for (const language of ["UZ", "RU", "EN"]) {
-      const result = await client.request<LessonPlanPayload>("/api/lesson-plans", {
-        method: "POST",
-        body: validInput({ language, topic: `Mavzu ${language}` }),
-      });
+      const plan = await createAndWait(
+        client,
+        validInput({ language, topic: `Mavzu ${language}` }),
+      );
 
-      assert.equal(result.status, 201);
-      assert.equal(result.data!.lessonPlan.language, language);
-      assert.equal(result.data!.lessonPlan.status, "READY");
+      assert.equal(plan.language, language);
+      assert.equal(plan.status, "READY");
     }
   });
 });

@@ -24,15 +24,6 @@ export interface LessonPlanOption {
 
 type Mode = "from-lesson-plan" | "standalone";
 
-/** Bosqichli xabarlarning TARJIMA KALITLARI. */
-const PROGRESS_KEYS = [
-  "progress.sent",
-  "progress.slides",
-  "progress.bullets",
-  "progress.file",
-  "progress.finishing",
-] as const;
-
 export function NewPresentationForm({
   lessonPlans,
   preselectedLessonPlanId,
@@ -54,7 +45,6 @@ export function NewPresentationForm({
   );
 
   const [submitting, setSubmitting] = useState(false);
-  const [progressIndex, setProgressIndex] = useState(0);
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
@@ -63,11 +53,6 @@ export function NewPresentationForm({
     setSubmitting(true);
     setFormError(null);
     setFieldErrors({});
-    setProgressIndex(0);
-
-    const ticker = setInterval(() => {
-      setProgressIndex((current) => Math.min(current + 1, PROGRESS_KEYS.length - 1));
-    }, 4000);
 
     const formData = new FormData(event.currentTarget);
 
@@ -101,8 +86,6 @@ export function NewPresentationForm({
         setFormError(tRoot("common.unexpectedError"));
       }
       setSubmitting(false);
-    } finally {
-      clearInterval(ticker);
     }
   }
 
@@ -234,15 +217,6 @@ export function NewPresentationForm({
       >
         {submitting ? tRoot("common.creating") : t("new.submit")}
       </button>
-
-      {submitting && (
-        <div aria-live="polite" className="rounded-lg bg-slate-50 px-3 py-3 text-center">
-          <p className="text-sm text-slate-700">{t(PROGRESS_KEYS[progressIndex])}</p>
-          <p className="mt-1 text-xs text-slate-400">
-            Bu 30 soniyagacha davom etishi mumkin — sahifani yopmang.
-          </p>
-        </div>
-      )}
 
       {mode === "from-lesson-plan" && lessonPlans.length === 0 && (
         <p className="text-xs text-slate-500">

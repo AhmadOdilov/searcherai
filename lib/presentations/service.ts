@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { generateJson } from "@/lib/ai/provider";
 import { AiError } from "@/lib/ai/types";
 import { apiErrors } from "@/lib/api/errors";
+import { markStaleAsFailed } from "@/lib/generation/stale";
 import { generatePptx } from "@/lib/pptx/generate";
 import {
   buildSystemPrompt,
@@ -146,15 +147,19 @@ async function resolveSource(
 }
 
 /**
- * Prezentatsiya yaratadi: PENDING yozuv → AI → .pptx fayl → READY/FAILED.
+ * PENDING yozuv yaratadi va uni DARHOL qaytaradi.
  *
- * Dars ishlanmasi modulidagi kabi yozuv AI'dan OLDIN yaratiladi — xato
- * bo'lsa foydalanuvchi ro'yxatda FAILED yozuvni ko'rib qayta urinadi.
+ * Generatsiya bu yerda boshlanmaydi — route uni `runInBackground()` orqali
+ * javob yuborilgandan keyin ishga tushiradi.
+ *
+ * `resolveSource` esa SINXRON qoladi: u dars ishlanmasining egaligini va
+ * tayyorligini tekshiradi, ya'ni xato bo'lsa foydalanuvchi DARHOL bilishi
+ * kerak (404/400), keraksiz PENDING yozuv yaratilmasligi kerak.
  */
 export async function createPresentation(
   userId: string,
   input: PresentationInput,
-): Promise<PresentationDetail> {
+): Promise<{ record: PresentationDetail; promptContext: PresentationPromptContext }> {
   const source = await resolveSource(userId, input);
 
   const created = await prisma.presentation.create({
@@ -167,17 +172,27 @@ export async function createPresentation(
       language: source.language,
       status: "PENDING",
     },
-    select: { id: true },
+    select: DETAIL_FIELDS,
   });
 
-  return runGeneration(created.id, source.promptContext);
+  return { record: created, promptContext: source.promptContext };
+}
+
+/**
+ * Yaratilgan yozuv uchun generatsiyani bajaradi — FON ishi.
+ */
+export async function runPresentationGeneration(
+  id: string,
+  promptContext: PresentationPromptContext,
+): Promise<void> {
+  await runGeneration(id, promptContext);
 }
 
 /** Mavjud yozuvni qayta generatsiya qiladi — parametrlar yozuvdan olinadi. */
 export async function regeneratePresentation(
   id: string,
   userId: string,
-): Promise<PresentationDetail> {
+): Promise<{ record: PresentationDetail; promptContext: PresentationPromptContext }> {
   const existing = await prisma.presentation.findFirst({
     where: { id, userId },
     select: {
@@ -221,7 +236,7 @@ export async function regeneratePresentation(
     await deletePresentationFile(existing.filePath);
   }
 
-  await prisma.presentation.update({
+  const reset = await prisma.presentation.update({
     where: { id },
     data: {
       status: "PENDING",
@@ -230,16 +245,17 @@ export async function regeneratePresentation(
       fileSize: null,
       slideCount: null,
     },
+    select: DETAIL_FIELDS,
   });
 
-  return runGeneration(id, promptContext);
+  return { record: reset, promptContext };
 }
 
 /** AI chaqiruvi, .pptx yasash va saqlash — ikki oqim uchun umumiy qism. */
 async function runGeneration(
   id: string,
   promptContext: PresentationPromptContext,
-): Promise<PresentationDetail> {
+): Promise<void> {
   try {
     const { data, meta } = await generateJson({
       schema: presentationContentSchema,
@@ -252,7 +268,7 @@ async function runGeneration(
     const { buffer, slideCount } = await generatePptx(data);
     const { filePath, fileSize } = await savePresentationFile(id, buffer);
 
-    return prisma.presentation.update({
+    await prisma.presentation.update({
       where: { id },
       data: {
         status: "READY",
@@ -264,9 +280,9 @@ async function runGeneration(
         errorMessage: null,
         aiModel: meta.model,
         // Kamida 1 ms — UI "0 soniyada yaratilgan" deb ko'rsatmasligi uchun.
-        aiDurationMs: Math.max(meta.durationMs, 1),
+        aiDurationMs: Math.max(meta.totalDurationMs, 1),
+        aiAttempts: meta.schemaAttempts,
       },
-      select: DETAIL_FIELDS,
     });
   } catch (caught) {
     /*
@@ -311,6 +327,8 @@ export async function listPresentations(userId: string, query: PresentationListQ
 
 /** Bitta prezentatsiya — faqat egasi uchun. Topilmasa `null`. */
 export async function getPresentation(id: string, userId: string) {
+  await markStaleAsFailed("presentation", userId);
+
   return prisma.presentation.findFirst({
     where: { id, userId },
     select: DETAIL_FIELDS,

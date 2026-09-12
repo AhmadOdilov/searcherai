@@ -25,7 +25,11 @@
     "language": "Til",
     "doNotClosePage": "AI javobi 30 soniyagacha davom etishi mumkin — sahifani yopmang.",
     "unexpectedError": "Kutilmagan xatolik yuz berdi. Qayta urinib ko'ring.",
-    "seconds": "{count} soniya"
+    "seconds": "{count} soniya",
+    "elapsedOfTypical": "{elapsed} soniya o'tdi · odatda ~{typical} soniya davom etadi",
+    "canLeavePage": "Sahifani yopsangiz ham generatsiya davom etadi — keyinroq qaytib kelishingiz mumkin.",
+    "loadMore": "Ko'proq yuklash",
+    "loading": "Yuklanmoqda…"
   },
   "status": {
     "PENDING": "Yaratilmoqda",
@@ -307,7 +311,8 @@
       "presentationFileNotReady": "Prezentatsiya fayli hali tayyor emas.",
       "calendarPlanFileNotReady": "Excel fayli hali tayyor emas.",
       "presentationFileMissing": "Fayl topilmadi. Prezentatsiyani qaytadan yaratib ko'ring.",
-      "calendarPlanFileMissing": "Fayl topilmadi. Kalendar rejani qaytadan yaratib ko'ring."
+      "calendarPlanFileMissing": "Fayl topilmadi. Kalendar rejani qaytadan yaratib ko'ring.",
+      "generationTimedOut": "Generatsiya tugamay qoldi. «Qayta urinish» tugmasini bosing."
     },
     "validation": {
       "emailRequired": "Emailni kiriting",
