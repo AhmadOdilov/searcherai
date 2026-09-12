@@ -44,6 +44,7 @@ const DETAIL_FIELDS = {
   content: true,
   aiModel: true,
   aiDurationMs: true,
+  aiAttempts: true,
   updatedAt: true,
 } as const;
 

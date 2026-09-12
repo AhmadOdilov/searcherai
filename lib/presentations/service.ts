@@ -48,6 +48,7 @@ const DETAIL_FIELDS = {
   filePath: true,
   aiModel: true,
   aiDurationMs: true,
+  aiAttempts: true,
   updatedAt: true,
 } as const;
 
