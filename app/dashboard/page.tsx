@@ -64,7 +64,11 @@ export default async function DashboardPage() {
 const MODULES: Array<{
   title: string;
   description: string;
-  href: "/dashboard/lesson-plans" | "/dashboard/presentations" | null;
+  href:
+    | "/dashboard/lesson-plans"
+    | "/dashboard/presentations"
+    | "/dashboard/calendar-plans"
+    | null;
 }> = [
   {
     title: "Dars ishlanmasi",
@@ -79,7 +83,7 @@ const MODULES: Array<{
   {
     title: "Kalendar reja (.xlsx)",
     description: "Chorak yoki yil uchun darslar jadvali Excel formatida.",
-    href: null,
+    href: "/dashboard/calendar-plans",
   },
   {
     title: "Tarjima (UZ / RU / EN)",

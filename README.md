@@ -387,12 +387,79 @@ qo'llab-quvvatlanmaydi.
 
 ### Ma'lum cheklov
 
-Foydalanuvchi o'chirilsa prezentatsiya yozuvlari cascade bilan o'chadi,
-lekin **diskdagi fayllar qoladi** — baza cascade'i fayl tizimini bilmaydi.
+Foydalanuvchi o'chirilsa prezentatsiya va kalendar reja yozuvlari cascade
+bilan o'chadi, lekin **diskdagi fayllar qoladi** — baza cascade'i fayl tizimini bilmaydi.
 Hozircha hisobni o'chirish funksiyasi yo'q, shuning uchun bu amalda
 uchramaydi. Qo'shilganda: avval fayllarni o'chirib, keyin foydalanuvchini
 o'chirish kerak (`tests/e2e/helpers/client.ts` dagi `cleanupTestUsers`
 xuddi shunday qiladi).
+
+---
+
+## Kalendar-tematik reja moduli (.xlsx)
+
+### Oqim
+
+```
+Forma → POST /api/calendar-plans
+  → CalendarPlan yozuvi (PENDING)
+  → hafta sanalari KODDA hisoblanadi va promptga qo'shiladi
+  → AI mavzularni haftalarga taqsimlaydi
+  → exceljs jadvalni yasaydi
+  → READY: filePath, rowCount, aiDurationMs
+```
+
+### Sanalarni AI hisoblamaydi
+
+Hafta oraliqlari `lib/calendar-plans/dates.ts` da hisoblanib, promptga
+**tayyor** holda beriladi; AI ularni faqat ko'chiradi.
+
+Sabab: modellar sana arifmetikasida ishonchsiz — 30 kunli oyni 31 deb,
+kabisa yilini unutib yuboradi. Oy, yil va kabisa chegaralari sinov bilan
+qoplangan.
+
+### Token chegarasi
+
+Bu modul boshqalardan uzunroq javob qaytaradi: bir o'quv yili ≈ 100 qator.
+Shuning uchun `estimateMaxTokens(weeks)` chegarani hafta soniga qarab
+hisoblaydi (`weeks × 400 + 2000`, `AI_MAX_TOKENS` dan past emas, 32000 dan
+yuqori emas). Standart 16000 bilan 52 haftalik reja javobi o'rtada kesilib,
+JSON buzilishi mumkin edi.
+
+### Excel formatlash
+
+`lib/xlsx/theme.ts` — rang, shrift, ustun kengliklari bir joyda.
+
+- Sarlavha qatori: qalin, to'q fon, oq matn
+- Barcha katakchalarda chegara
+- Sarlavha qatorlari **qotirilgan** (`ySplit: 2`) — 70 qatorli jadvalda
+  pastga tushganda ustun nomlari ko'rinib turadi
+- Bitta haftada bir nechta mavzu bo'lsa, hafta raqami va sanasi
+  birlashtiriladi
+- Oxirida "Jami" qatori
+
+> **ExcelJS tuzog'i:** ustun kengligi aynan `9` bo'lsa, ExcelJS uni o'zining
+> standart qiymati deb biladi va faylga **umuman yozmaydi**. Niyat jim
+> yo'qoladi. Shuning uchun hafta ustuni `10`, va sinov har bir ustun
+> kengligini alohida tekshiradi.
+
+### Sekinlik — ataylab sinxron
+
+Bu eng sekin modul (40-60 soniya). MVP'da sinxron qoldirilgan; fon rejimi
+Step 5 da. Forma kutish vaqtini **oldindan** ogohlantiradi, o'tgan soniyalarni
+ko'rsatadi va 45 soniyadan keyin qo'shimcha tinchlantiruvchi xabar beradi —
+foydalanuvchi sahifani yopib, generatsiyani bekorga ketkazmasligi uchun.
+
+### Routelar
+
+| Route | Vazifasi |
+| --- | --- |
+| `POST /api/calendar-plans` | Generatsiya |
+| `GET /api/calendar-plans` | Ro'yxat |
+| `GET /api/calendar-plans/[id]` | Bitta yozuv |
+| `GET /api/calendar-plans/[id]/download` | .xlsx yuklab olish |
+| `DELETE /api/calendar-plans/[id]` | O'chirish (yozuv + fayl) |
+| `POST /api/calendar-plans/[id]/regenerate` | Qayta generatsiya |
 
 ---
 
@@ -429,9 +496,11 @@ app/
   api/auth/{register,login,logout,me}/route.ts
   api/lesson-plans/...        dars ishlanmasi API'si
   api/presentations/...       prezentatsiya API'si + /download
+  api/calendar-plans/...      kalendar reja API'si + /download
   login/ register/ dashboard/
   dashboard/lesson-plans/     ro'yxat, /new forma, /[id] natija
   dashboard/presentations/    ro'yxat, /new forma, /[id] natija
+  dashboard/calendar-plans/   ro'yxat, /new forma, /[id] jadval
 proxy.ts                     himoyalangan sahifalar (Next 16: middleware o'rniga)
 components/
   auth-form.tsx              login/register uchun umumiy forma
@@ -447,6 +516,14 @@ lib/
   pptx/
     generate.ts              slaydlar JSON → .pptx Buffer (AI'dan mustaqil)
     theme.ts                 rang va o'lcham sxemasi
+  xlsx/
+    generate.ts              reja JSON → .xlsx Buffer (AI'dan mustaqil)
+    theme.ts                 rang, ustun kengliklari, chegaralar
+  storage/files.ts           umumiy fayl saqlagichi (pptx + xlsx)
+  calendar-plans/
+    service.ts               generatsiya oqimi + token hisobi
+    prompt.ts                UZ/RU/EN + tayyor hafta sanalari
+    dates.ts                 hafta oraliqlarini hisoblash
   presentations/
     service.ts               generatsiya oqimi
     prompt.ts                UZ/RU/EN + dars ishlanmasi konteksti
@@ -472,10 +549,11 @@ lib/
     auth.ts                  register/login sxemalari
     lesson-plan.ts           kirish + AI kontent sxemalari
     presentation.ts          ikki rejim + slaydlar sxemasi
+    calendar-plan.ts         kirish + haftalar/soatlar sxemasi
 prisma/
   schema.prisma              DB sxemasi
   migrations/                migratsiyalar
-storage/presentations/       generatsiya qilingan .pptx (git'ga tushmaydi)
+storage/                     generatsiya qilingan .pptx va .xlsx (git'ga tushmaydi)
 tests/                       birlik sinovlari (mock AI server bilan)
   e2e/                       uchidan-uchgacha (haqiqiy server + baza)
 ```
@@ -490,7 +568,7 @@ tests/                       birlik sinovlari (mock AI server bilan)
 | Autentifikatsiya | ✅ tayyor |
 | Dars ishlanmasi generatsiyasi | ✅ tayyor |
 | Prezentatsiya (.pptx) | ✅ tayyor |
-| Excel reja (.xlsx) | ⬜ |
+| Excel reja (.xlsx) | ✅ tayyor |
 | .docx / .pdf eksport | ⬜ |
 | Ko'p tillilik (UZ/RU/EN) | ⬜ |
 | AI qidiruv (Searcher) | ⬜ |

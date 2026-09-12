@@ -130,24 +130,32 @@ export class TestClient {
  * Sinov davomida yaratilgan foydalanuvchilarni va ularning FAYLLARINI
  * o'chiradi.
  *
- * DIQQAT: foydalanuvchi o'chirilganda prezentatsiya yozuvlari cascade
- * bilan o'chadi, lekin diskdagi .pptx fayllar QOLIB KETADI — baza
+ * DIQQAT: foydalanuvchi o'chirilganda prezentatsiya va kalendar reja yozuvlari cascade
+ * bilan o'chadi, lekin diskdagi .pptx/.xlsx fayllar QOLIB KETADI — baza
  * cascade'i fayl tizimini bilmaydi. Shuning uchun avval fayllar,
  * keyin foydalanuvchilar o'chiriladi.
  */
 export async function cleanupTestUsers(): Promise<void> {
   const { prisma } = await import("../../../lib/db");
-  const { deletePresentationFile } = await import("../../../lib/presentations/storage");
+  const { deleteGeneratedFile } = await import("../../../lib/storage/files");
 
-  const orphanFiles = await prisma.presentation.findMany({
-    where: {
-      filePath: { not: null },
-      user: { email: { startsWith: TEST_EMAIL_PREFIX } },
-    },
-    select: { filePath: true },
-  });
+  const testUser = { email: { startsWith: TEST_EMAIL_PREFIX } };
 
-  await Promise.all(orphanFiles.map((row) => deletePresentationFile(row.filePath!)));
+  const [presentations, calendarPlans] = await Promise.all([
+    prisma.presentation.findMany({
+      where: { filePath: { not: null }, user: testUser },
+      select: { filePath: true },
+    }),
+    prisma.calendarPlan.findMany({
+      where: { filePath: { not: null }, user: testUser },
+      select: { filePath: true },
+    }),
+  ]);
+
+  await Promise.all([
+    ...presentations.map((row) => deleteGeneratedFile("pptx", row.filePath!)),
+    ...calendarPlans.map((row) => deleteGeneratedFile("xlsx", row.filePath!)),
+  ]);
 
   await prisma.user.deleteMany({
     where: { email: { startsWith: TEST_EMAIL_PREFIX } },

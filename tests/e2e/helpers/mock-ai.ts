@@ -122,6 +122,56 @@ function isPresentationRequest(systemPrompt: string): boolean {
   return systemPrompt.includes('"slides"');
 }
 
+/** So'rov kalendar reja uchunmi. */
+function isCalendarPlanRequest(systemPrompt: string): boolean {
+  return systemPrompt.includes('"weekNumber"');
+}
+
+/**
+ * Promptdagi hafta sanalari ro'yxatini o'qiydi.
+ *
+ * Prompt "1. 14.09.2026 – 20.09.2026" ko'rinishidagi qatorlarni beradi;
+ * soxta AI ularni AYNAN ko'chiradi — haqiqiy model ham shunday qilishi
+ * kerak.
+ */
+function extractWeekRanges(prompt: string): Array<{ number: number; range: string }> {
+  const result: Array<{ number: number; range: string }> = [];
+  for (const line of prompt.split("\n")) {
+    const match = line.match(
+      /^(\d+)\.\s+(\d{2}\.\d{2}\.\d{4}\s+–\s+\d{2}\.\d{2}\.\d{4})$/,
+    );
+    if (match) result.push({ number: Number(match[1]), range: match[2] });
+  }
+  return result;
+}
+
+/** Promptdan haftalik soatni o'qiydi. */
+function extractHoursPerWeek(prompt: string): number {
+  const match = prompt.match(/(?:Haftalik soat|Часов в неделю|Hours per week):\s*(\d+)/);
+  return match ? Number(match[1]) : 2;
+}
+
+/** Sxemadan o'tadigan kalendar reja — sanalar promptdan ko'chiriladi. */
+function buildCalendarPlan(prompt: string) {
+  const ranges = extractWeekRanges(prompt);
+  const hoursPerWeek = extractHoursPerWeek(prompt);
+
+  return {
+    title: "Sinov fani — kalendar-tematik reja",
+    weeks: ranges.map(({ number, range }) => ({
+      weekNumber: number,
+      dateRange: range,
+      topics: [
+        {
+          name: `${number}-hafta mavzusi: asosiy tushunchalar`,
+          hours: hoursPerWeek,
+          note: number % 4 === 0 ? "Nazorat ishi" : undefined,
+        },
+      ],
+    })),
+  };
+}
+
 /** Sxemadan o'tadigan prezentatsiya (6 slayd: sarlavha + 4 mazmun + xulosa). */
 function buildPresentation(topic: string) {
   return {
@@ -243,15 +293,22 @@ export async function startMockAiServer(): Promise<MockAiServer> {
       }
 
       const presentation = isPresentationRequest(system);
+      const calendarPlan = isCalendarPlanRequest(system);
 
       let content: string;
       if (combined.includes(MARKER_BAD_SHAPE)) {
-        // Sxemaga mos kelmaydigan javob — har ikki modul uchun.
-        content = presentation
-          ? JSON.stringify({ title: "x", slides: [] })
-          : JSON.stringify({ objective: "yo'q", outcomes: [] });
+        // Sxemaga mos kelmaydigan javob — har uch modul uchun.
+        if (presentation) {
+          content = JSON.stringify({ title: "x", slides: [] });
+        } else if (calendarPlan) {
+          content = JSON.stringify({ title: "x", weeks: [] });
+        } else {
+          content = JSON.stringify({ objective: "yo'q", outcomes: [] });
+        }
       } else if (presentation) {
         content = JSON.stringify(buildPresentation(extractTopic(user)));
+      } else if (calendarPlan) {
+        content = JSON.stringify(buildCalendarPlan(user));
       } else {
         content = JSON.stringify(buildLessonPlan(extractDuration(user)));
       }

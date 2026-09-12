@@ -209,17 +209,32 @@ model CalendarPlan {
   weeks   Int
   /// Haftalik dars soati.
   hoursPerWeek Int
+  /// Davr boshlanish sanasi — hafta sanalarini hisoblash uchun.
+  startDate    DateTime
   language     Language @default(UZ)
+
+  /// AI tanlagan sarlavha. PENDING holatida hali bo'sh.
+  title String?
 
   status GenerationStatus @default(PENDING)
   /// Jadval qatorlari. Shakli: lib/validations/calendar-plan.ts
   content Json?
 
-  /// Generatsiya qilingan .xlsx fayl manzili.
-  fileUrl  String?
+  /// Generatsiya qilingan .xlsx faylning saqlagichdagi yo'li.
+  ///
+  /// Prezentatsiyadagi kabi fayllar `public/` da EMAS — `storage/` da.
+  /// Sababi: `public/` dagi fayllarni Next.js statik tarqatadi va yuklab
+  /// olishdagi egalik tekshiruvi chetlab o'tilardi.
+  filePath String?
   fileSize Int?
+  /// Jadvaldagi qatorlar soni — ro'yxatda ko'rsatish uchun.
+  rowCount Int?
 
   errorMessage String?
+
+  /// Generatsiya kuzatuvi (Step 5 da o'lchash uchun).
+  aiModel      String?
+  aiDurationMs Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
