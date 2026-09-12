@@ -1,4 +1,4 @@
-import { STATUS_LABELS, STATUS_STYLES } from "@/lib/lesson-plans/labels";
+import { STATUS_LABELS, STATUS_STYLES } from "@/lib/ui/labels";
 
 /** Generatsiya holati — rangli nishon. */
 export function StatusBadge({ status }: { status: "PENDING" | "READY" | "FAILED" }) {

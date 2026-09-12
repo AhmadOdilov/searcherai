@@ -43,3 +43,6 @@ next-env.d.ts
 
 # prisma generatsiya qilgan klient
 /lib/generated/
+
+# generatsiya qilingan fayllar (pptx, xlsx)
+/storage/

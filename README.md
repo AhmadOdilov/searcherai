@@ -314,6 +314,88 @@ borligini oshkor qilardi.
 
 ---
 
+## Prezentatsiya moduli (.pptx)
+
+### Ikki kirish nuqtasi
+
+```
+A) Dars ishlanmasidan (ASOSIY oqim)
+   { "mode": "from-lesson-plan", "lessonPlanId": "..." }
+   → mavzu, fan, sinf va TIL yozuvning o'zidan olinadi
+   → promptga dars maqsadi, natijalari va BOSQICHLARI kiritiladi
+   → har bir dars bosqichiga taxminan bitta slayd to'g'ri keladi
+
+B) Mustaqil
+   { "mode": "standalone", "topic": "...", "subject": "...", "grade": "..." }
+```
+
+Sxema `z.discriminatedUnion("mode", ...)` — oddiy `.optional()` maydonlar
+bilan qilinsa, "lessonPlanId ham, topic ham berilgan" yoki "ikkisi ham yo'q"
+kabi mantiqsiz holatlar o'tib ketardi.
+
+### Qatlamlar
+
+| Qatlam | Javobgarligi |
+| --- | --- |
+| `lib/pptx/generate.ts` | Slaydlar JSON → .pptx Buffer. **AI, baza va sessiyadan MUSTAQIL** |
+| `lib/pptx/theme.ts` | Rang, shrift, o'lchamlar — dizayn shu yerda |
+| `lib/presentations/prompt.ts` | UZ/RU/EN promptlari + dars ishlanmasi konteksti |
+| `lib/presentations/storage.ts` | Fayl saqlash/o'qish/o'chirish |
+| `lib/presentations/service.ts` | Oqim: PENDING → AI → .pptx → READY/FAILED |
+
+`generate.ts` ning mustaqilligi ataylab: uni sinovda hech narsa mock
+qilmasdan chaqirish mumkin, va fayl formatini o'zgartirganda AI qatlamiga
+tegish kerak emas.
+
+### Fayllar qayerda saqlanadi
+
+`storage/presentations/` — **`public/` da EMAS**.
+
+`public/` ichidagi hamma narsani Next.js statik tarqatadi: havolani bilgan
+har qanday odam, hatto tizimga kirmagan bo'lsa ham, faylni olardi — ya'ni
+yuklab olish route'idagi egalik tekshiruvi bekor bo'lardi. Fayl faqat
+`GET /api/presentations/[id]/download` orqali beriladi va har so'rovda
+foydalanuvchi hamda egalik tekshiriladi.
+
+Ikkinchi sabab: productionda (Vercel kabi) fayl tizimi faqat o'qish uchun
+ochiq — `public/` ga runtime'da yozib bo'lmaydi. Saqlagich alohida qatlam
+bo'lgani uchun S3/R2 ga o'tish faqat `storage.ts` ni o'zgartirishni talab
+qiladi.
+
+### Yuklab olish
+
+```
+content-type: application/vnd.openxmlformats-officedocument.presentationml.presentation
+content-disposition: attachment; filename="..."; filename*=UTF-8''...
+cache-control: private, no-store
+```
+
+`filename` va `filename*` ikkalasi ham beriladi: `oʻ`, `gʻ` va kirill
+harflari ASCII `filename` da ishlamaydi, `filename*` esa eski mijozlarda
+qo'llab-quvvatlanmaydi.
+
+### Routelar
+
+| Route | Vazifasi |
+| --- | --- |
+| `POST /api/presentations` | Generatsiya (ikki rejim) |
+| `GET /api/presentations` | Ro'yxat |
+| `GET /api/presentations/[id]` | Bitta yozuv |
+| `GET /api/presentations/[id]/download` | .pptx yuklab olish |
+| `DELETE /api/presentations/[id]` | O'chirish (yozuv + fayl) |
+| `POST /api/presentations/[id]/regenerate` | Qayta generatsiya |
+
+### Ma'lum cheklov
+
+Foydalanuvchi o'chirilsa prezentatsiya yozuvlari cascade bilan o'chadi,
+lekin **diskdagi fayllar qoladi** — baza cascade'i fayl tizimini bilmaydi.
+Hozircha hisobni o'chirish funksiyasi yo'q, shuning uchun bu amalda
+uchramaydi. Qo'shilganda: avval fayllarni o'chirib, keyin foydalanuvchini
+o'chirish kerak (`tests/e2e/helpers/client.ts` dagi `cleanupTestUsers`
+xuddi shunday qiladi).
+
+---
+
 ## API route yozish
 
 Har bir modulda `try/catch` takrorlanmaydi — umumiy wrapper bor:
@@ -346,8 +428,10 @@ app/
   api/health/route.ts        sog'lik tekshiruvi
   api/auth/{register,login,logout,me}/route.ts
   api/lesson-plans/...        dars ishlanmasi API'si
+  api/presentations/...       prezentatsiya API'si + /download
   login/ register/ dashboard/
   dashboard/lesson-plans/     ro'yxat, /new forma, /[id] natija
+  dashboard/presentations/    ro'yxat, /new forma, /[id] natija
 proxy.ts                     himoyalangan sahifalar (Next 16: middleware o'rniga)
 components/
   auth-form.tsx              login/register uchun umumiy forma
@@ -360,6 +444,14 @@ lib/
     jwt.ts                   JWT imzo/tekshiruv (proxy ham ishlatadi)
     session.ts               sessiya, parol hash, requireUser()
   hooks/use-user.tsx         UserProvider + useUser()
+  pptx/
+    generate.ts              slaydlar JSON → .pptx Buffer (AI'dan mustaqil)
+    theme.ts                 rang va o'lcham sxemasi
+  presentations/
+    service.ts               generatsiya oqimi
+    prompt.ts                UZ/RU/EN + dars ishlanmasi konteksti
+    storage.ts               fayl saqlagichi (public'dan tashqarida)
+  ui/labels.ts               modullar orasida umumiy yorliqlar
   lesson-plans/
     service.ts               generatsiya, ro'yxat, egalik tekshiruvi
     prompt.ts                UZ/RU/EN promptlari
@@ -379,9 +471,11 @@ lib/
     common.ts                umumiy zod bo'laklari
     auth.ts                  register/login sxemalari
     lesson-plan.ts           kirish + AI kontent sxemalari
+    presentation.ts          ikki rejim + slaydlar sxemasi
 prisma/
   schema.prisma              DB sxemasi
   migrations/                migratsiyalar
+storage/presentations/       generatsiya qilingan .pptx (git'ga tushmaydi)
 tests/                       birlik sinovlari (mock AI server bilan)
   e2e/                       uchidan-uchgacha (haqiqiy server + baza)
 ```
@@ -395,7 +489,7 @@ tests/                       birlik sinovlari (mock AI server bilan)
 | Skelet, DB, AI qatlami | ✅ tayyor |
 | Autentifikatsiya | ✅ tayyor |
 | Dars ishlanmasi generatsiyasi | ✅ tayyor |
-| Prezentatsiya (.pptx) | ⬜ |
+| Prezentatsiya (.pptx) | ✅ tayyor |
 | Excel reja (.xlsx) | ⬜ |
 | .docx / .pdf eksport | ⬜ |
 | Ko'p tillilik (UZ/RU/EN) | ⬜ |

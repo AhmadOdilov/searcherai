@@ -153,7 +153,16 @@ model Presentation {
   lessonPlanId String?
   lessonPlan   LessonPlan? @relation(fields: [lessonPlanId], references: [id], onDelete: SetNull)
 
-  title    String
+  /// Prezentatsiya mavzusi — dars ishlanmasidan ko'chiriladi yoki mustaqil
+  /// rejimda foydalanuvchi kiritadi. Qayta generatsiya uchun ham kerak.
+  topic   String
+  /// Mustaqil rejimda ixtiyoriy; dars ishlanmasidan kelganda to'ldiriladi.
+  subject String?
+  grade   String?
+
+  /// AI tanlagan sarlavha. PENDING holatida hali bo'sh — shuning uchun
+  /// ixtiyoriy. UI'da `title ?? topic` ko'rsatiladi.
+  title    String?
   language Language @default(UZ)
 
   status GenerationStatus @default(PENDING)
@@ -161,14 +170,23 @@ model Presentation {
   /// lib/validations/presentation.ts
   content Json?
 
-  /// Generatsiya qilingan .pptx fayl manzili. Mahalliy muhitda — disk yo'li,
-  /// productionda — S3/R2 kabi obyekt saqlagichdagi URL.
-  fileUrl  String?
+  /// Generatsiya qilingan .pptx faylning saqlagichdagi yo'li.
+  ///
+  /// DIQQAT: fayllar `public/` papkasida SAQLANMAYDI. Aks holda Next.js
+  /// ularni statik tarqatadi va yuklab olish route'idagi egalik tekshiruvi
+  /// chetlab o'tilardi — havolani bilgan har kim boshqa o'qituvchining
+  /// faylini olardi. Fayllar `storage/presentations/` da turadi va faqat
+  /// `GET /api/presentations/[id]/download` orqali beriladi.
+  filePath String?
   /// Fayl hajmi, baytda — yuklab olish UI'sida ko'rsatish uchun.
-  fileSize Int?
+  fileSize   Int?
   slideCount Int?
 
   errorMessage String?
+
+  /// Generatsiya kuzatuvi (Step 5 da o'lchash uchun).
+  aiModel      String?
+  aiDurationMs Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

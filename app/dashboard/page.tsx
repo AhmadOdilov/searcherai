@@ -64,7 +64,7 @@ export default async function DashboardPage() {
 const MODULES: Array<{
   title: string;
   description: string;
-  href: "/dashboard/lesson-plans" | null;
+  href: "/dashboard/lesson-plans" | "/dashboard/presentations" | null;
 }> = [
   {
     title: "Dars ishlanmasi",
@@ -74,7 +74,7 @@ const MODULES: Array<{
   {
     title: "Prezentatsiya (.pptx)",
     description: "Dars asosida tayyor slaydlar avtomatik yaratiladi.",
-    href: null,
+    href: "/dashboard/presentations",
   },
   {
     title: "Kalendar reja (.xlsx)",

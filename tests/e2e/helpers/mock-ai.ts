@@ -20,11 +20,23 @@ export const MARKER_SERVER_ERROR = "XATO-SERVER";
 /** Mavzuda shu so'z bo'lsa — sxemaga mos kelmaydigan javob. */
 export const MARKER_BAD_SHAPE = "XATO-FORMAT";
 
+/** Mavzuda shu so'z bo'lsa — umuman JSON bo'lmagan javob. */
+export const MARKER_NOT_JSON = "XATO-JSON";
+
 export interface MockAiServer {
   baseUrl: string;
   requestCount: number;
   /** Oxirgi so'rovdagi promptlar — tilni tekshirish uchun. */
   lastPrompts: { system: string; user: string } | null;
+  /**
+   * BARCHA so'rovlardagi promptlar.
+   *
+   * Nega kerak: integratsiya sinovi "dars ishlanmasi mazmuni AI'ga
+   * yuborilganmi?" degan savolga javob berishi kerak. Soxta server
+   * alohida jarayonda emas, SINOV jarayonida ishlaydi — shuning uchun
+   * sinov yuborilgan promptni to'g'ridan-to'g'ri o'qiy oladi.
+   */
+  prompts: Array<{ system: string; user: string }>;
   close(): Promise<void>;
 }
 
@@ -79,6 +91,12 @@ function buildStages(total: number) {
   ];
 }
 
+/** Promptdan mavzuni ajratib oladi — javob unga bog'liq bo'lsin. */
+function extractTopic(prompt: string): string {
+  const match = prompt.match(/(?:Mavzu|Тема|Topic):\s*(.+)/);
+  return match ? match[1].trim().slice(0, 100) : "Dars mavzusi";
+}
+
 function buildLessonPlan(total: number) {
   return {
     objective:
@@ -94,10 +112,87 @@ function buildLessonPlan(total: number) {
   };
 }
 
+/**
+ * So'rov prezentatsiya uchunmi yoki dars ishlanmasi uchunmi.
+ *
+ * Ikkisi bir xil endpointga (`/chat/completions`) keladi, shuning uchun
+ * system promptdagi sxema kalitiga qarab ajratamiz.
+ */
+function isPresentationRequest(systemPrompt: string): boolean {
+  return systemPrompt.includes('"slides"');
+}
+
+/** Sxemadan o'tadigan prezentatsiya (6 slayd: sarlavha + 4 mazmun + xulosa). */
+function buildPresentation(topic: string) {
+  return {
+    title: `${topic} — dars prezentatsiyasi`.slice(0, 150),
+    slides: [
+      {
+        type: "title",
+        heading: topic.slice(0, 120),
+        bullets: ["Biologiya · 7-sinf"],
+        speakerNotes: "Darsni savol bilan boshlang.",
+      },
+      {
+        type: "content",
+        heading: "Dars maqsadi",
+        bullets: ["Asosiy tushunchani o'zlashtirish", "Amaliy masalalarni yechish"],
+      },
+      {
+        type: "content",
+        heading: "Yangi mavzu",
+        bullets: ["Birinchi asosiy fikr", "Ikkinchi asosiy fikr", "Uchinchi fikr"],
+        speakerNotes: "Doskada sxema chizing.",
+      },
+      {
+        type: "content",
+        heading: "Misollar",
+        bullets: ["Birinchi misol", "Ikkinchi misol"],
+      },
+      {
+        type: "content",
+        heading: "Mustahkamlash",
+        bullets: ["Mustaqil mashq", "Juftlikda ishlash"],
+      },
+      {
+        type: "summary",
+        heading: "Xulosa",
+        bullets: ["Asosiy fikrni takrorlash", "Uyga vazifa"],
+      },
+    ],
+  };
+}
+
 export async function startMockAiServer(): Promise<MockAiServer> {
-  const state = { requestCount: 0, lastPrompts: null as MockAiServer["lastPrompts"] };
+  const state = {
+    requestCount: 0,
+    lastPrompts: null as MockAiServer["lastPrompts"],
+    prompts: [] as Array<{ system: string; user: string }>,
+  };
 
   const server: Server = createServer((req, res) => {
+    /*
+      Introspeksiya endpointi.
+
+      Nega kerak: soxta server TEST RUNNER jarayonida ishlaydi, sinov
+      fayllari esa alohida bola jarayonlarda. Ya'ni sinov `state.prompts`
+      ga to'g'ridan-to'g'ri tega olmaydi — ular boshqa xotirada.
+
+      Shuning uchun yozib olingan promptlar HTTP orqali beriladi. Sinov
+      `${process.env.AI_BASE_URL}/__prompts` ni o'qib, AI'ga nima
+      yuborilganini tekshiradi.
+    */
+    if (req.url === "/__prompts") {
+      if (req.method === "DELETE") {
+        state.prompts.length = 0;
+        res.writeHead(204).end();
+        return;
+      }
+      res.writeHead(200, { "content-type": "application/json" });
+      res.end(JSON.stringify({ prompts: state.prompts }));
+      return;
+    }
+
     const chunks: Buffer[] = [];
     req.on("data", (chunk: Buffer) => chunks.push(chunk));
     req.on("end", () => {
@@ -116,6 +211,7 @@ export async function startMockAiServer(): Promise<MockAiServer> {
       const system = messages.find((m) => m.role === "system")?.content ?? "";
       const user = messages.find((m) => m.role === "user")?.content ?? "";
       state.lastPrompts = { system, user };
+      state.prompts.push({ system, user });
 
       const combined = `${system}\n${user}`;
 
@@ -126,10 +222,39 @@ export async function startMockAiServer(): Promise<MockAiServer> {
         return;
       }
 
-      const content = combined.includes(MARKER_BAD_SHAPE)
-        ? // Sxemaga mos kelmaydi: `stages` yo'q, `objective` juda qisqa.
-          JSON.stringify({ objective: "yo'q", outcomes: [] })
-        : JSON.stringify(buildLessonPlan(extractDuration(user)));
+      if (combined.includes(MARKER_NOT_JSON)) {
+        res.writeHead(200, { "content-type": "application/json" });
+        res.end(
+          JSON.stringify({
+            model: "mock-model",
+            choices: [
+              {
+                message: {
+                  role: "assistant",
+                  content: "Kechirasiz, men bu so'rovni bajara olmayman.",
+                },
+                finish_reason: "stop",
+              },
+            ],
+            usage: { prompt_tokens: 10, completion_tokens: 10 },
+          }),
+        );
+        return;
+      }
+
+      const presentation = isPresentationRequest(system);
+
+      let content: string;
+      if (combined.includes(MARKER_BAD_SHAPE)) {
+        // Sxemaga mos kelmaydigan javob — har ikki modul uchun.
+        content = presentation
+          ? JSON.stringify({ title: "x", slides: [] })
+          : JSON.stringify({ objective: "yo'q", outcomes: [] });
+      } else if (presentation) {
+        content = JSON.stringify(buildPresentation(extractTopic(user)));
+      } else {
+        content = JSON.stringify(buildLessonPlan(extractDuration(user)));
+      }
 
       res.writeHead(200, { "content-type": "application/json" });
       res.end(
@@ -155,6 +280,9 @@ export async function startMockAiServer(): Promise<MockAiServer> {
     },
     get lastPrompts() {
       return state.lastPrompts;
+    },
+    get prompts() {
+      return state.prompts;
     },
     close: () =>
       new Promise<void>((resolve, reject) =>

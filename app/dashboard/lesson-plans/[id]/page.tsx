@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getLessonPlan } from "@/lib/lesson-plans/service";
-import { StatusBadge } from "@/components/lesson-plans/status-badge";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { PlanActions } from "@/components/lesson-plans/plan-actions";
 import {
   LANGUAGE_LABELS,
@@ -62,7 +62,18 @@ export default async function LessonPlanDetailPage({
         </p>
       </header>
 
-      <div className="mt-5">
+      <div className="mt-5 space-y-3">
+        {/* Prezentatsiya faqat TAYYOR ishlanmadan yaratiladi — mazmuni
+            bo'lmasa slaydlar tuzib bo'lmaydi. */}
+        {plan.status === "READY" && content !== null && (
+          <Link
+            href={`/dashboard/presentations/new?lessonPlanId=${plan.id}`}
+            className="inline-block rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-800"
+          >
+            Shundan prezentatsiya yaratish
+          </Link>
+        )}
+
         <PlanActions planId={plan.id} status={plan.status} />
       </div>
 

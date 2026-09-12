@@ -30,10 +30,37 @@ describe("sessiya JWT", () => {
       await import("../lib/auth/jwt");
 
     const token = await signSessionToken({ sid: "s", uid: "u" }, sessionExpiry());
-    // Oxirgi belgini o'zgartiramiz — imzo buziladi.
-    const tampered = token.slice(0, -1) + (token.endsWith("A") ? "B" : "A");
 
-    assert.equal(await verifySessionToken(tampered), null);
+    // DIQQAT: imzoning OXIRGI belgisini o'zgartirish yetarli EMAS.
+    // HS256 imzosi 32 bayt = 43 base64url belgi, ya'ni 258 bit sig'imi bor,
+    // lekin 256 biti ishlatiladi. Oxirgi belgining 2 biti "bo'sh" — shuning
+    // uchun 4 xil oxirgi belgi AYNAN bir xil baytlarga ochiladi va imzo
+    // hamon yaroqli qoladi. (Bu sinov ilgari ana shu sababdan goh o'tib,
+    // goh yiqilardi.)
+    //
+    // Shuning uchun har bir bo'lakni alohida buzib tekshiramiz.
+    const [header, payload, signature] = token.split(".");
+
+    const flip = (segment: string, index: number): string =>
+      segment.slice(0, index) +
+      (segment[index] === "a" ? "b" : "a") +
+      segment.slice(index + 1);
+
+    const tamperedCases = {
+      "imzo o'rtasi": [header, payload, flip(signature, 10)].join("."),
+      "ma'lumot qismi": [header, flip(payload, 5), signature].join("."),
+      "sarlavha qismi": [flip(header, 3), payload, signature].join("."),
+      imzosiz: [header, payload].join("."),
+      "bo'sh imzo": [header, payload, ""].join("."),
+    };
+
+    for (const [name, tampered] of Object.entries(tamperedCases)) {
+      assert.equal(
+        await verifySessionToken(tampered),
+        null,
+        `${name} buzilganda rad etilishi kerak`,
+      );
+    }
   });
 
   it("boshqa kalit bilan imzolangan tokenni rad etadi", async () => {

@@ -1,0 +1,303 @@
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+import {
+  MAX_SLIDES,
+  MIN_SLIDES,
+  parsePresentationContent,
+  presentationContentSchema,
+  presentationInputSchema,
+  presentationListQuerySchema,
+  type Slide,
+} from "../lib/validations/presentation";
+
+/**
+ * Prezentatsiya sxemalari sinovlari — baza va AI kerak emas.
+ */
+
+function slide(overrides: Partial<Slide> = {}): Slide {
+  return {
+    type: "content",
+    heading: "Slayd sarlavhasi",
+    bullets: ["Birinchi band", "Ikkinchi band"],
+    ...overrides,
+  };
+}
+
+function slides(count: number): Slide[] {
+  return Array.from({ length: count }, (_, index) =>
+    slide({ heading: `Slayd ${index + 1}` }),
+  );
+}
+
+describe("presentationInputSchema — dars ishlanmasi rejimi", () => {
+  it("lessonPlanId bilan o'tadi", () => {
+    const parsed = presentationInputSchema.parse({
+      mode: "from-lesson-plan",
+      lessonPlanId: "cmtwyd68o0002152e12qeo9zk",
+    });
+
+    assert.equal(parsed.mode, "from-lesson-plan");
+    assert.equal(
+      parsed.mode === "from-lesson-plan" ? parsed.lessonPlanId : null,
+      "cmtwyd68o0002152e12qeo9zk",
+    );
+  });
+
+  it("lessonPlanId BO'SH bo'lsa rad etadi", () => {
+    const result = presentationInputSchema.safeParse({
+      mode: "from-lesson-plan",
+      lessonPlanId: "",
+    });
+
+    assert.equal(result.success, false);
+    assert.ok(result.error!.issues.some((i) => i.path.includes("lessonPlanId")));
+  });
+
+  it("lessonPlanId umuman berilmasa rad etadi", () => {
+    const result = presentationInputSchema.safeParse({ mode: "from-lesson-plan" });
+    assert.equal(result.success, false);
+  });
+
+  it("lessonPlanId noto'g'ri TURDA bo'lsa rad etadi", () => {
+    for (const lessonPlanId of [123, null, {}, []]) {
+      const result = presentationInputSchema.safeParse({
+        mode: "from-lesson-plan",
+        lessonPlanId,
+      });
+      assert.equal(
+        result.success,
+        false,
+        `${JSON.stringify(lessonPlanId)} rad etilishi kerak`,
+      );
+    }
+  });
+
+  it("bu rejimda topic BERILSA ham e'tiborsiz qoladi", () => {
+    // Mavzu dars ishlanmasidan olinadi — so'rovdagi qiymat nomuvofiqlikka
+    // olib kelmasligi kerak.
+    const parsed = presentationInputSchema.parse({
+      mode: "from-lesson-plan",
+      lessonPlanId: "abc123",
+      topic: "Butunlay boshqa mavzu",
+      language: "EN",
+    });
+
+    assert.equal("topic" in parsed, false);
+    assert.equal("language" in parsed, false);
+  });
+});
+
+describe("presentationInputSchema — mustaqil rejim", () => {
+  it("faqat mavzu bilan o'tadi", () => {
+    const parsed = presentationInputSchema.parse({
+      mode: "standalone",
+      topic: "Fotosintez jarayoni",
+    });
+
+    assert.equal(parsed.mode, "standalone");
+    if (parsed.mode === "standalone") {
+      assert.equal(parsed.topic, "Fotosintez jarayoni");
+      assert.equal(parsed.language, "UZ", "til ko'rsatilmasa UZ");
+      assert.equal(parsed.subject, undefined);
+      assert.equal(parsed.grade, undefined);
+    }
+  });
+
+  it("fan va sinf bilan ham o'tadi", () => {
+    const parsed = presentationInputSchema.parse({
+      mode: "standalone",
+      topic: "Fotosintez",
+      subject: "Biologiya",
+      grade: "7-sinf",
+      language: "RU",
+    });
+
+    if (parsed.mode === "standalone") {
+      assert.equal(parsed.subject, "Biologiya");
+      assert.equal(parsed.grade, "7-sinf");
+      assert.equal(parsed.language, "RU");
+    }
+  });
+
+  it("mavzu bo'lmasa rad etadi", () => {
+    const result = presentationInputSchema.safeParse({ mode: "standalone" });
+    assert.equal(result.success, false);
+  });
+
+  it("juda qisqa mavzuni rad etadi", () => {
+    const result = presentationInputSchema.safeParse({
+      mode: "standalone",
+      topic: "ab",
+    });
+    assert.equal(result.success, false);
+  });
+
+  it("bo'shliqni kesadi", () => {
+    const parsed = presentationInputSchema.parse({
+      mode: "standalone",
+      topic: "  Fotosintez  ",
+      subject: "  Biologiya  ",
+    });
+
+    if (parsed.mode === "standalone") {
+      assert.equal(parsed.topic, "Fotosintez");
+      assert.equal(parsed.subject, "Biologiya");
+    }
+  });
+});
+
+describe("presentationInputSchema — rejim tanlanmagan holatlar", () => {
+  it("mode yo'q bo'lsa rad etadi", () => {
+    const result = presentationInputSchema.safeParse({ topic: "Fotosintez" });
+    assert.equal(result.success, false);
+  });
+
+  it("noma'lum mode ni rad etadi", () => {
+    const result = presentationInputSchema.safeParse({
+      mode: "boshqa-rejim",
+      topic: "Fotosintez",
+    });
+    assert.equal(result.success, false);
+  });
+
+  it("userId ni QABUL QILMAYDI", () => {
+    const parsed = presentationInputSchema.parse({
+      mode: "standalone",
+      topic: "Fotosintez",
+      userId: "begona-foydalanuvchi",
+    });
+    assert.equal("userId" in parsed, false);
+  });
+});
+
+describe("presentationContentSchema", () => {
+  it("to'g'ri slaydlarni qabul qiladi", () => {
+    const result = presentationContentSchema.safeParse({
+      title: "Fotosintez",
+      slides: slides(MIN_SLIDES),
+    });
+    assert.equal(result.success, true);
+  });
+
+  it(`${MIN_SLIDES} dan kam slaydni rad etadi`, () => {
+    const result = presentationContentSchema.safeParse({
+      title: "Fotosintez",
+      slides: slides(MIN_SLIDES - 1),
+    });
+
+    assert.equal(result.success, false);
+    assert.ok(result.error!.issues.some((i) => i.path[0] === "slides"));
+  });
+
+  it(`${MAX_SLIDES} dan ko'p slaydni rad etadi`, () => {
+    const result = presentationContentSchema.safeParse({
+      title: "Fotosintez",
+      slides: slides(MAX_SLIDES + 1),
+    });
+    assert.equal(result.success, false);
+  });
+
+  it("sarlavha slaydida BO'SH bandlar massiviga ruxsat beradi", () => {
+    const withEmptyBullets = slides(MIN_SLIDES);
+    withEmptyBullets[0] = { type: "title", heading: "Sarlavha", bullets: [] };
+
+    const result = presentationContentSchema.safeParse({
+      title: "Fotosintez",
+      slides: withEmptyBullets,
+    });
+    assert.equal(result.success, true);
+  });
+
+  it("noma'lum slayd turini rad etadi", () => {
+    const bad = slides(MIN_SLIDES);
+    // @ts-expect-error — ataylab noto'g'ri tur
+    bad[1].type = "video";
+
+    const result = presentationContentSchema.safeParse({
+      title: "Fotosintez",
+      slides: bad,
+    });
+    assert.equal(result.success, false);
+  });
+
+  it("JUDA UZUN bandni rad etadi (slaydga sig'maydi)", () => {
+    const bad = slides(MIN_SLIDES);
+    bad[1].bullets = ["x".repeat(300)];
+
+    const result = presentationContentSchema.safeParse({
+      title: "Fotosintez",
+      slides: bad,
+    });
+
+    assert.equal(result.success, false);
+    const issue = result.error!.issues.find((i) => i.path.includes("bullets"));
+    assert.ok(issue);
+    // Xato xabari modelga qayta so'rovda yuboriladi — tushunarli bo'lsin.
+    assert.match(issue.message, /sig'maydi/);
+  });
+
+  it("bitta slaydda 8 dan ko'p bandni rad etadi", () => {
+    const bad = slides(MIN_SLIDES);
+    bad[1].bullets = Array.from({ length: 9 }, (_, i) => `Band ${i + 1}`);
+
+    const result = presentationContentSchema.safeParse({
+      title: "Fotosintez",
+      slides: bad,
+    });
+    assert.equal(result.success, false);
+  });
+
+  it("so'zlovchi izohi ixtiyoriy", () => {
+    const withNotes = slides(MIN_SLIDES);
+    withNotes[1].speakerNotes = "Bu yerda doskada misol yozing.";
+
+    const result = presentationContentSchema.safeParse({
+      title: "Fotosintez",
+      slides: withNotes,
+    });
+    assert.equal(result.success, true);
+  });
+
+  it("sarlavhasiz rad etadi", () => {
+    const result = presentationContentSchema.safeParse({
+      slides: slides(MIN_SLIDES),
+    });
+    assert.equal(result.success, false);
+  });
+});
+
+describe("parsePresentationContent — bazadan o'qish", () => {
+  it("to'g'ri kontentni qaytaradi", () => {
+    const parsed = parsePresentationContent({
+      title: "Fotosintez",
+      slides: slides(MIN_SLIDES),
+    });
+
+    assert.ok(parsed);
+    assert.equal(parsed.slides.length, MIN_SLIDES);
+  });
+
+  it("noto'g'ri shaklda null qaytaradi, xato TASHLAMAYDI", () => {
+    assert.equal(parsePresentationContent(null), null);
+    assert.equal(parsePresentationContent("matn"), null);
+    assert.equal(parsePresentationContent({}), null);
+    assert.equal(parsePresentationContent({ title: "eski shakl" }), null);
+  });
+});
+
+describe("presentationListQuerySchema", () => {
+  it("standart limit 20", () => {
+    assert.equal(presentationListQuerySchema.parse({}).limit, 20);
+  });
+
+  it("holat filtrini qabul qiladi", () => {
+    assert.equal(presentationListQuerySchema.parse({ status: "READY" }).status, "READY");
+  });
+
+  it("noto'g'ri holatni rad etadi", () => {
+    assert.equal(
+      presentationListQuerySchema.safeParse({ status: "BOSHQA" }).success,
+      false,
+    );
+  });
+});

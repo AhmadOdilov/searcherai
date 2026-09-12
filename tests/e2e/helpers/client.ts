@@ -83,6 +83,30 @@ export class TestClient {
     return this.cookies.has(name);
   }
 
+  /**
+   * Xom `Response` qaytaradi — sarlavhalar va ikkilik (binary) tanani
+   * tekshirish uchun.
+   *
+   * `request()` javobni JSON deb o'qiydi, shuning uchun .pptx fayl kabi
+   * ikkilik javoblarga yaramaydi.
+   */
+  async fetchRaw(path: string, options: { method?: string } = {}): Promise<Response> {
+    const headers: Record<string, string> = {};
+    if (this.cookies.size > 0) {
+      headers.cookie = [...this.cookies.entries()]
+        .map(([name, value]) => `${name}=${value}`)
+        .join("; ");
+    }
+
+    const response = await fetch(`${BASE_URL}${path}`, {
+      method: options.method ?? "GET",
+      headers,
+      redirect: "manual",
+    });
+    this.storeCookies(response);
+    return response;
+  }
+
   /** Sahifaga murojaat — yo'naltirishni tekshirish uchun. */
   async visit(path: string): Promise<{ status: number; location: string | null }> {
     const headers: Record<string, string> = {};
@@ -102,10 +126,81 @@ export class TestClient {
   }
 }
 
-/** Sinov davomida yaratilgan foydalanuvchilarni o'chiradi. */
+/**
+ * Sinov davomida yaratilgan foydalanuvchilarni va ularning FAYLLARINI
+ * o'chiradi.
+ *
+ * DIQQAT: foydalanuvchi o'chirilganda prezentatsiya yozuvlari cascade
+ * bilan o'chadi, lekin diskdagi .pptx fayllar QOLIB KETADI — baza
+ * cascade'i fayl tizimini bilmaydi. Shuning uchun avval fayllar,
+ * keyin foydalanuvchilar o'chiriladi.
+ */
 export async function cleanupTestUsers(): Promise<void> {
   const { prisma } = await import("../../../lib/db");
+  const { deletePresentationFile } = await import("../../../lib/presentations/storage");
+
+  const orphanFiles = await prisma.presentation.findMany({
+    where: {
+      filePath: { not: null },
+      user: { email: { startsWith: TEST_EMAIL_PREFIX } },
+    },
+    select: { filePath: true },
+  });
+
+  await Promise.all(orphanFiles.map((row) => deletePresentationFile(row.filePath!)));
+
   await prisma.user.deleteMany({
     where: { email: { startsWith: TEST_EMAIL_PREFIX } },
   });
+}
+
+/**
+ * Soxta AI serveriga yuborilgan promptlarni o'qiydi.
+ *
+ * Soxta server alohida jarayonda (test runner ichida) ishlaydi, shuning
+ * uchun ular HTTP orqali olinadi — `startMockAiServer` dagi `/__prompts`
+ * endpointiga qara.
+ */
+export async function readAiPrompts(): Promise<Array<{ system: string; user: string }>> {
+  const baseUrl = process.env.AI_BASE_URL;
+  if (baseUrl === undefined || baseUrl === "") {
+    throw new Error("AI_BASE_URL sozlanmagan — globalSetup ishga tushmaganmi?");
+  }
+
+  const response = await fetch(`${baseUrl}/__prompts`);
+  const body = (await response.json()) as {
+    prompts: Array<{ system: string; user: string }>;
+  };
+  return body.prompts;
+}
+
+/**
+ * Berilgan matnni O'Z ICHIGA OLGAN promptni topadi.
+ *
+ * Nega shunchaki "oxirgi prompt" emas: prompt jurnali umumiy va unga
+ * boshqa generatsiyalar ham yozilishi mumkin. Mavzu bo'yicha qidirish esa
+ * qaysi chaqiruv tekshirilayotganini ANIQ belgilaydi — sinov "nechta
+ * so'rov bo'ldi" degan mo'rt taxminga tayanmaydi.
+ */
+export async function findAiPrompt(
+  needle: string,
+): Promise<{ system: string; user: string }> {
+  const prompts = await readAiPrompts();
+  const match = prompts.filter((prompt) => prompt.user.includes(needle));
+
+  if (match.length === 0) {
+    throw new Error(
+      `AI'ga "${needle}" matnli prompt yuborilmagan. ` +
+        `Jami ${prompts.length} ta prompt bor.`,
+    );
+  }
+  // Bir nechta bo'lsa oxirgisi — eng so'nggi chaqiruv.
+  return match.at(-1)!;
+}
+
+/** Yozib olingan promptlarni tozalaydi — sinovlar bir-biriga xalaqit bermasin. */
+export async function clearAiPrompts(): Promise<void> {
+  const baseUrl = process.env.AI_BASE_URL;
+  if (baseUrl === undefined || baseUrl === "") return;
+  await fetch(`${baseUrl}/__prompts`, { method: "DELETE" });
 }
