@@ -1,0 +1,344 @@
+{
+  "app": {
+    "name": "Searcher AI",
+    "tagline": "O'qituvchilar uchun AI-yordamchi",
+    "metaTitle": "Searcher AI — o'qituvchilar uchun AI-yordamchi",
+    "metaDescription": "Dars ishlanmasi, prezentatsiya, Excel reja va tarjima — sun'iy intellekt yordamida."
+  },
+  "common": {
+    "back": "Ro'yxatga qaytish",
+    "create": "Yangi yaratish",
+    "start": "Boshlash",
+    "download": "Yuklab olish",
+    "delete": "O'chirish",
+    "confirmDelete": "O'chirilsinmi?",
+    "confirmDeleteYes": "Ha, o'chirish",
+    "cancel": "Bekor qilish",
+    "deleting": "O'chirilmoqda…",
+    "retry": "Qayta urinish",
+    "regenerate": "Qaytadan yaratish",
+    "regenerating": "Qayta yaratilmoqda…",
+    "submitting": "Yuborilmoqda…",
+    "creating": "Yaratilmoqda…",
+    "optional": "Ixtiyoriy",
+    "total": "Jami",
+    "language": "Til",
+    "doNotClosePage": "AI javobi 30 soniyagacha davom etishi mumkin — sahifani yopmang.",
+    "unexpectedError": "Kutilmagan xatolik yuz berdi. Qayta urinib ko'ring.",
+    "seconds": "{count} soniya"
+  },
+  "status": {
+    "PENDING": "Yaratilmoqda",
+    "READY": "Tayyor",
+    "FAILED": "Xatolik"
+  },
+  "languages": {
+    "UZ": "O'zbek",
+    "RU": "Rus",
+    "EN": "Ingliz"
+  },
+  "locale": {
+    "switcherLabel": "Interfeys tili",
+    "uz": "O'zbekcha",
+    "ru": "Русский"
+  },
+  "home": {
+    "description": "O'qituvchilar uchun AI-yordamchi: dars ishlanmasi, prezentatsiya, Excel reja va ko'p tilli kontent — bir necha daqiqada.",
+    "openDashboard": "Ishchi sahifaga o'tish",
+    "register": "Ro'yxatdan o'tish",
+    "login": "Kirish"
+  },
+  "auth": {
+    "login": {
+      "title": "Hisobingizga kiring",
+      "submit": "Kirish",
+      "noAccount": "Hisobingiz yo'qmi?",
+      "registerLink": "Ro'yxatdan o'tish"
+    },
+    "register": {
+      "title": "Yangi hisob yarating",
+      "submit": "Ro'yxatdan o'tish",
+      "hasAccount": "Hisobingiz bormi?",
+      "loginLink": "Kirish"
+    },
+    "fields": {
+      "email": "Email",
+      "emailPlaceholder": "ism@maktab.uz",
+      "password": "Parol",
+      "passwordHint": "Kamida 8 belgi",
+      "fullName": "To'liq ism",
+      "fullNamePlaceholder": "Aziza Karimova"
+    },
+    "logout": "Chiqish",
+    "loggingOut": "Chiqilmoqda…"
+  },
+  "dashboard": {
+    "welcome": "Xush kelibsiz, {name}",
+    "subtitle": "Quyidagi modullar keyingi bosqichlarda qo'shiladi.",
+    "open": "Ochish →",
+    "comingSoon": "Tez orada",
+    "systemStatus": "Tizim holati:",
+    "modules": {
+      "lessonPlans": {
+        "title": "Dars ishlanmasi",
+        "description": "Mavzu, sinf va fanni kiritib to'liq dars rejasini oling."
+      },
+      "presentations": {
+        "title": "Prezentatsiya (.pptx)",
+        "description": "Dars asosida tayyor slaydlar avtomatik yaratiladi."
+      },
+      "calendarPlans": {
+        "title": "Kalendar reja (.xlsx)",
+        "description": "Chorak yoki yil uchun darslar jadvali Excel formatida."
+      },
+      "translation": {
+        "title": "Tarjima (UZ / RU / EN)",
+        "description": "Interfeys va generatsiya qilingan kontent uch tilda."
+      }
+    }
+  },
+  "lessonPlans": {
+    "title": "Dars ishlanmalari",
+    "empty": "Hozircha bo'sh.",
+    "count": "Jami {count} ta ishlanma.",
+    "emptyTitle": "Birinchi dars ishlanmangizni yarating",
+    "emptyDescription": "Fan, sinf va mavzuni kiritsangiz, tizim to'liq dars rejasini o'zi tuzadi.",
+    "new": {
+      "title": "Yangi dars ishlanmasi",
+      "subtitle": "Parametrlarni kiriting — qolganini tizim o'zi tuzadi.",
+      "submit": "Dars ishlanmasini yaratish"
+    },
+    "fields": {
+      "subject": "Fan",
+      "subjectPlaceholder": "Matematika",
+      "grade": "Sinf / daraja",
+      "gradePlaceholder": "7-sinf",
+      "topic": "Mavzu",
+      "topicPlaceholder": "Kasrlarni qo'shish va ayirish",
+      "duration": "Davomiylik",
+      "durationOption": "{minutes} daqiqa",
+      "lessonType": "Dars turi"
+    },
+    "types": {
+      "NEW_TOPIC": "Yangi mavzu",
+      "REINFORCEMENT": "Mustahkamlash",
+      "ASSESSMENT": "Nazorat / baholash"
+    },
+    "progress": {
+      "sent": "So'rov yuborildi…",
+      "objective": "Dars maqsadi belgilanmoqda…",
+      "stages": "Bosqichlar va vaqt taqsimoti tuzilmoqda…",
+      "resources": "Resurslar va baholash mezonlari qo'shilmoqda…",
+      "finishing": "Yakunlanmoqda…"
+    },
+    "detail": {
+      "meta": "{subject} · {grade} · {type} · {duration} daqiqa · {language} tili",
+      "generatedIn": "{seconds} soniyada yaratilgan",
+      "createPresentation": "Shundan prezentatsiya yaratish",
+      "objective": "Dars maqsadi",
+      "outcomes": "Kutilayotgan natijalar",
+      "resources": "Kerakli resurslar",
+      "stages": "Dars bosqichlari",
+      "assessment": "Baholash mezonlari",
+      "teacher": "O'qituvchi",
+      "students": "O'quvchilar",
+      "minutesShort": "{minutes} daq.",
+      "totalMinutes": "Jami {minutes} daqiqa",
+      "durationMismatch": "Bosqichlar yig'indisi {actual} daqiqa (dars {expected} daqiqa) — vaqtni o'zingiz moslashtirishingiz mumkin.",
+      "pending": "Dars ishlanmasi hali yaratilmoqda. Sahifani birozdan so'ng yangilang.",
+      "failedTitle": "Dars ishlanmasini yaratib bo'lmadi",
+      "failedHint": "Yuqoridagi «Qayta urinish» tugmasini bosing — kiritgan ma'lumotlaringiz saqlangan.",
+      "brokenContent": "Natija saqlangan, lekin uni o'qib bo'lmadi (format mos kelmadi). «Qaytadan yaratish» tugmasini bosing."
+    }
+  },
+  "presentations": {
+    "title": "Prezentatsiyalar",
+    "empty": "Hozircha bo'sh.",
+    "count": "Jami {count} ta prezentatsiya.",
+    "emptyTitle": "Birinchi prezentatsiyangizni yarating",
+    "emptyDescription": "Mavjud dars ishlanmasidan yoki faqat mavzu kiritib — tizim tayyor slaydlarni o'zi tuzadi.",
+    "standalone": "Mustaqil prezentatsiya",
+    "fromLessonPlan": "Dars ishlanmasi asosida",
+    "slideCount": "{count} slayd",
+    "new": {
+      "title": "Yangi prezentatsiya",
+      "subtitle": "Mavjud dars ishlanmasidan yoki mustaqil ravishda yaratish mumkin.",
+      "submit": "Prezentatsiya yaratish",
+      "modeQuestion": "Qanday yaratamiz?",
+      "modeFromPlan": "Dars ishlanmasidan",
+      "modeFromPlanHint": "Slaydlar dars bosqichlariga mos tuziladi",
+      "modeFromPlanDisabled": "Tayyor dars ishlanmasi yo'q",
+      "modeStandalone": "Mustaqil",
+      "modeStandaloneHint": "Faqat mavzu kiritiladi",
+      "lessonPlanField": "Dars ishlanmasi",
+      "lessonPlanHint": "Fan, sinf va til dars ishlanmasidan olinadi.",
+      "noPlansPrefix": "Tayyor dars ishlanmasi yo'q.",
+      "noPlansLink": "Avval dars ishlanmasi yarating",
+      "noPlansSuffix": "yoki mustaqil rejimni tanlang.",
+      "topicPlaceholder": "Fotosintez jarayoni",
+      "subjectPlaceholder": "Biologiya",
+      "gradePlaceholder": "7-sinf"
+    },
+    "progress": {
+      "sent": "So'rov yuborildi…",
+      "slides": "Slaydlar tuzilmoqda…",
+      "bullets": "Matn qisqartirilib, bandlarga bo'linmoqda…",
+      "file": "PowerPoint fayli yasalmoqda…",
+      "finishing": "Yakunlanmoqda…"
+    },
+    "detail": {
+      "readyTitle": "Prezentatsiya tayyor",
+      "readyHint": "PowerPoint (.pptx) formatida — yuklab olib tahrirlashingiz mumkin.",
+      "viewLessonPlan": "ishlanmani ko'rish",
+      "fromLessonPlanPrefix": "Dars ishlanmasi asosida —",
+      "slides": "Slaydlar ({count})",
+      "speakerNotes": "So'zlovchi izohi:",
+      "slideTypes": {
+        "title": "Sarlavha",
+        "content": "Mazmun",
+        "summary": "Xulosa"
+      },
+      "pending": "Prezentatsiya hali yaratilmoqda. Sahifani birozdan so'ng yangilang.",
+      "failedTitle": "Prezentatsiyani yaratib bo'lmadi",
+      "failedHint": "Yuqoridagi «Qayta urinish» tugmasini bosing — kiritgan ma'lumotlaringiz saqlangan.",
+      "brokenContent": "Slaydlar saqlangan, lekin ularni o'qib bo'lmadi (format mos kelmadi). «Qaytadan yaratish» tugmasini bosing."
+    }
+  },
+  "calendarPlans": {
+    "title": "Kalendar-tematik rejalar",
+    "empty": "Hozircha bo'sh.",
+    "count": "Jami {count} ta reja.",
+    "emptyTitle": "Birinchi kalendar rejangizni yarating",
+    "emptyDescription": "Fan, davr va haftalik soatni kiritsangiz, tizim butun chorak uchun darslar jadvalini tuzib, Excel faylini tayyorlaydi.",
+    "meta": "{weeks} hafta · haftasiga {hours} soat",
+    "rowCount": "{count} qator",
+    "new": {
+      "title": "Yangi kalendar-tematik reja",
+      "subtitle": "Butun davr uchun darslar jadvali tuziladi va Excel faylida beriladi.",
+      "submit": "Kalendar reja yaratish",
+      "slowWarningLabel": "Diqqat:",
+      "slowWarning": "bu eng uzun generatsiya — davr uzunligiga qarab 40-60 soniya davom etishi mumkin. Boshlangach sahifani yopmang."
+    },
+    "fields": {
+      "period": "Davr",
+      "periodOption": "{label} ({weeks} hafta)",
+      "startDate": "Boshlanish sanasi",
+      "weeks": "Haftalar",
+      "hoursPerWeek": "Haftalik soat",
+      "hoursOption": "{hours} soat"
+    },
+    "periods": {
+      "quarter1": "1-chorak",
+      "quarter2": "2-chorak",
+      "quarter3": "3-chorak",
+      "quarter4": "4-chorak",
+      "halfYear1": "1-yarim yil",
+      "halfYear2": "2-yarim yil",
+      "schoolYear": "O'quv yili"
+    },
+    "progress": {
+      "sent": "So'rov yuborildi…",
+      "sequence": "Mavzular ketma-ketligi tuzilmoqda…",
+      "distribute": "Mavzular haftalarga taqsimlanmoqda…",
+      "hours": "Soatlar hisoblanmoqda…",
+      "file": "Excel jadvali yasalmoqda…",
+      "finishing": "Yakunlanmoqda…"
+    },
+    "detail": {
+      "readyTitle": "Kalendar reja tayyor",
+      "readyHint": "Excel (.xlsx) formatida — yuklab olib tahrirlashingiz mumkin.",
+      "startsFrom": "{date} dan boshlab",
+      "tableTitle": "Jadval ({weeks} hafta, {rows} qator)",
+      "totalHours": "Jami {hours} soat",
+      "hoursMismatch": "Jami {actual} soat (kutilgani {expected}) — Excel'da o'zingiz moslashtirishingiz mumkin",
+      "columns": {
+        "week": "Hafta",
+        "dateRange": "Sana oralig'i",
+        "topic": "Mavzu",
+        "hours": "Soat",
+        "note": "Izoh"
+      },
+      "pending": "Kalendar reja hali yaratilmoqda. Sahifani birozdan so'ng yangilang.",
+      "failedTitle": "Kalendar rejani yaratib bo'lmadi",
+      "failedHint": "Yuqoridagi «Qayta urinish» tugmasini bosing — kiritgan ma'lumotlaringiz saqlangan.",
+      "brokenContent": "Reja saqlangan, lekin uni o'qib bo'lmadi (format mos kelmadi). «Qaytadan yaratish» tugmasini bosing.",
+      "elapsed": "{seconds} soniya o'tdi · odatda 40-60 soniya davom etadi",
+      "stillWorking": "Uzun davr uchun biroz ko'proq vaqt ketmoqda — jarayon hali davom etyapti.",
+      "doNotClosePage": "Bu 40-60 soniya davom etishi mumkin — sahifani yopmang."
+    }
+  },
+  "errors": {
+    "unknown": "Kutilmagan xatolik yuz berdi. Iltimos, qayta urinib ko'ring.",
+    "network": "Serverga ulanib bo'lmadi. Internet aloqasini tekshirib ko'ring.",
+    "badResponse": "Serverdan kutilmagan javob keldi.",
+    "ai": {
+      "not_configured": "AI xizmati hozircha sozlanmagan. Administrator bilan bog'laning.",
+      "auth": "AI xizmatiga ulanishda muammo bor. Administrator bilan bog'laning.",
+      "rate_limit": "Hozir so'rovlar juda ko'p. Iltimos, bir daqiqadan so'ng qayta urinib ko'ring.",
+      "quota": "AI xizmatining limiti tugagan. Administrator bilan bog'laning.",
+      "timeout": "AI javobi juda uzoq kutildi. Iltimos, qayta urinib ko'ring yoki mavzuni qisqartiring.",
+      "network": "AI xizmatiga ulanib bo'lmadi. Internet aloqasini tekshirib, qayta urinib ko'ring.",
+      "bad_request": "So'rov AI xizmati tomonidan qabul qilinmadi. Kiritilgan ma'lumotlarni tekshirib ko'ring.",
+      "server": "AI xizmatida vaqtinchalik nosozlik. Iltimos, birozdan so'ng qayta urinib ko'ring.",
+      "bad_response": "AI kutilgan formatda javob bermadi. Iltimos, qayta urinib ko'ring.",
+      "aborted": "So'rov bekor qilindi.",
+      "unknown": "Kutilmagan xatolik yuz berdi. Iltimos, qayta urinib ko'ring."
+    },
+    "api": {
+      "validation_error": "Kiritilgan ma'lumotlar to'g'ri emas.",
+      "unauthorized": "Davom etish uchun tizimga kiring.",
+      "forbidden": "Bu amalni bajarishga ruxsatingiz yo'q.",
+      "not_found": "So'ralgan ma'lumot topilmadi.",
+      "conflict": "Bu ma'lumot allaqachon mavjud.",
+      "internal_error": "Serverda xatolik yuz berdi. Iltimos, qayta urinib ko'ring.",
+      "not_configured": "Xizmat vaqtincha mavjud emas. Administrator bilan bog'laning.",
+      "invalidJsonBody": "So'rov tanasi to'g'ri JSON emas."
+    },
+    "domain": {
+      "lessonPlanNotFound": "Dars ishlanmasi topilmadi.",
+      "presentationNotFound": "Prezentatsiya topilmadi.",
+      "calendarPlanNotFound": "Kalendar reja topilmadi.",
+      "emailTaken": "Bu email allaqachon ro'yxatdan o'tgan. Kirishga urinib ko'ring.",
+      "invalidCredentials": "Email yoki parol noto'g'ri.",
+      "loginRequired": "Davom etish uchun tizimga kiring.",
+      "lessonPlanPending": "Dars ishlanmasi hali yaratilmoqda. Tayyor bo'lgach qayta urinib ko'ring.",
+      "lessonPlanFailed": "Bu dars ishlanmasi xato bilan tugagan. Avval uni qayta yaratib oling.",
+      "lessonPlanBroken": "Dars ishlanmasining mazmunini o'qib bo'lmadi. Avval uni qaytadan yaratib oling.",
+      "presentationFileNotReady": "Prezentatsiya fayli hali tayyor emas.",
+      "calendarPlanFileNotReady": "Excel fayli hali tayyor emas.",
+      "presentationFileMissing": "Fayl topilmadi. Prezentatsiyani qaytadan yaratib ko'ring.",
+      "calendarPlanFileMissing": "Fayl topilmadi. Kalendar rejani qaytadan yaratib ko'ring."
+    },
+    "validation": {
+      "emailRequired": "Emailni kiriting",
+      "emailTooLong": "Email juda uzun",
+      "emailInvalid": "Email formati to'g'ri emas",
+      "passwordTooShort": "Parol kamida 8 belgidan iborat bo'lishi kerak",
+      "passwordTooLong": "Parol 72 belgidan oshmasligi kerak",
+      "passwordRequired": "Parolni kiriting",
+      "fullNameRequired": "Ismni kiriting",
+      "fullNameTooLong": "Ism juda uzun",
+      "subjectTooShort": "Fan nomi kamida 2 belgidan iborat bo'lishi kerak",
+      "subjectTooLong": "Fan nomi juda uzun",
+      "gradeRequired": "Sinfni kiriting",
+      "gradeTooLong": "Sinf nomi juda uzun",
+      "topicTooShort": "Mavzu kamida 3 belgidan iborat bo'lishi kerak",
+      "topicTooLong": "Mavzu juda uzun",
+      "durationNotInteger": "Davomiylik butun son bo'lishi kerak",
+      "durationTooShort": "Dars kamida 10 daqiqa bo'lishi kerak",
+      "durationTooLong": "Dars 240 daqiqadan oshmasligi kerak",
+      "idRequired": "ID ko'rsatilmagan",
+      "periodRequired": "Davr nomini kiriting",
+      "periodTooLong": "Davr nomi juda uzun",
+      "weeksNotInteger": "Haftalar soni butun son bo'lishi kerak",
+      "weeksTooFew": "Kamida 1 hafta bo'lishi kerak",
+      "weeksTooMany": "52 haftadan ko'p bo'lmasligi kerak",
+      "hoursNotInteger": "Soat soni butun son bo'lishi kerak",
+      "hoursTooFew": "Kamida 1 soat bo'lishi kerak",
+      "hoursTooMany": "Haftalik 20 soatdan ko'p bo'lmasligi kerak",
+      "dateInvalid": "Sanani to'g'ri kiriting",
+      "dateOutOfRange": "Sana 2000-2100 oralig'ida bo'lishi kerak",
+      "invalidValue": "Qiymat to'g'ri emas"
+    }
+  }
+}

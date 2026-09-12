@@ -110,7 +110,7 @@ async function resolveSource(
   if (!plan) {
     // 404, 403 emas: boshqa foydalanuvchining yozuvi BORLIGINI ham
     // bildirmaymiz. Mavjud bo'lmagan id ham shu javobni oladi.
-    throw apiErrors.notFound("Dars ishlanmasi topilmadi.");
+    throw apiErrors.notFound("errors.domain.lessonPlanNotFound");
   }
 
   // Dars ishlanmasi hali tayyor bo'lmasa, uning mazmuni yo'q — bunday
@@ -122,11 +122,9 @@ async function resolveSource(
     throw apiErrors.validation(
       undefined,
       {
-        PENDING:
-          "Dars ishlanmasi hali yaratilmoqda. Tayyor bo'lgach qayta urinib ko'ring.",
-        FAILED: "Bu dars ishlanmasi xato bilan tugagan. Avval uni qayta yaratib oling.",
-        READY:
-          "Dars ishlanmasining mazmunini o'qib bo'lmadi. Avval uni qaytadan yaratib oling.",
+        PENDING: "errors.domain.lessonPlanPending",
+        FAILED: "errors.domain.lessonPlanFailed",
+        READY: "errors.domain.lessonPlanBroken",
       }[plan.status],
     );
   }
@@ -271,17 +269,20 @@ async function runGeneration(
       select: DETAIL_FIELDS,
     });
   } catch (caught) {
-    // `errorMessage` ga FOYDALANUVCHIGA ko'rsatiladigan xabar yoziladi —
-    // bu ustun to'g'ridan-to'g'ri UI'da ko'rinadi.
-    const userMessage =
-      caught instanceof AiError
-        ? caught.userMessage
-        : "Prezentatsiyani yaratishda xatolik yuz berdi.";
+    /*
+      `errorMessage` ustuniga TARJIMA KALITI yoziladi, tayyor matn emas.
+
+      Nega: yozuv bir marta yaratiladi, lekin ko'p marta ko'riladi —
+      foydalanuvchi orada interfeys tilini o'zgartirishi mumkin. Kalit
+      saqlansa, xabar har safar JORIY tilda ko'rsatiladi.
+    */
+    const messageKey =
+      caught instanceof AiError ? caught.messageKey : "errors.ai.unknown";
 
     await prisma.presentation
       .update({
         where: { id },
-        data: { status: "FAILED", errorMessage: userMessage },
+        data: { status: "FAILED", errorMessage: messageKey },
       })
       .catch(() => undefined);
 
@@ -355,5 +356,5 @@ export async function listLessonPlanOptions(userId: string) {
 }
 
 function notFound() {
-  return apiErrors.notFound("Prezentatsiya topilmadi.");
+  return apiErrors.notFound("errors.domain.presentationNotFound");
 }

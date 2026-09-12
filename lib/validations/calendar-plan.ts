@@ -18,8 +18,8 @@ import {
 export const periodSchema = z
   .string()
   .trim()
-  .min(2, "Davr nomini kiriting")
-  .max(100, "Davr nomi juda uzun");
+  .min(2, "errors.validation.periodRequired")
+  .max(100, "errors.validation.periodTooLong");
 
 /**
  * Davr uzunligi, haftada.
@@ -29,16 +29,16 @@ export const periodSchema = z
  */
 export const weeksSchema = z.coerce
   .number()
-  .int("Haftalar soni butun son bo'lishi kerak")
-  .min(1, "Kamida 1 hafta bo'lishi kerak")
-  .max(52, "52 haftadan ko'p bo'lmasligi kerak");
+  .int("errors.validation.weeksNotInteger")
+  .min(1, "errors.validation.weeksTooFew")
+  .max(52, "errors.validation.weeksTooMany");
 
 /** Haftalik dars soati. */
 export const hoursPerWeekSchema = z.coerce
   .number()
-  .int("Soat soni butun son bo'lishi kerak")
-  .min(1, "Kamida 1 soat bo'lishi kerak")
-  .max(20, "Haftalik 20 soatdan ko'p bo'lmasligi kerak");
+  .int("errors.validation.hoursNotInteger")
+  .min(1, "errors.validation.hoursTooFew")
+  .max(20, "errors.validation.hoursTooMany");
 
 /**
  * Boshlanish sanasi.
@@ -47,10 +47,10 @@ export const hoursPerWeekSchema = z.coerce
  * `z.coerce.date()` uni `Date` ga o'giradi; noto'g'ri qiymatda xato beradi.
  */
 export const startDateSchema = z.coerce
-  .date({ error: "Sanani to'g'ri kiriting" })
+  .date({ error: "errors.validation.dateInvalid" })
   .refine(
     (date) => date.getFullYear() >= 2000 && date.getFullYear() <= 2100,
-    "Sana 2000-2100 oralig'ida bo'lishi kerak",
+    "errors.validation.dateOutOfRange",
   );
 
 export const calendarPlanInputSchema = z.object({
@@ -72,6 +72,10 @@ export const calendarPlanListQuerySchema = paginationSchema.extend({
 export type CalendarPlanListQuery = z.infer<typeof calendarPlanListQuerySchema>;
 
 // ─── 2. AI qaytaradigan struktura ────────────────────────────────────────────
+//
+// DIQQAT: quyidagi xabarlar TARJIMA KALITI EMAS, tabiiy matn. Ular
+// foydalanuvchiga ko'rsatilmaydi — `generateJson` ularni MODELGA qayta
+// so'rov bilan yuboradi, model esa kalitni emas, tushunarli matnni o'qiydi.
 
 /** Bitta hafta ichidagi bitta mavzu (jadvalda bitta qator). */
 export const calendarTopicSchema = z.object({
@@ -84,7 +88,7 @@ export const calendarTopicSchema = z.object({
   hours: z
     .number()
     .int("Soat butun son bo'lishi kerak")
-    .min(1, "Kamida 1 soat bo'lishi kerak")
+    .min(1, "errors.validation.hoursTooFew")
     .max(20, "Bitta mavzuga 20 soatdan ko'p ajratilmaydi"),
   /** Izoh — metod, resurs yoki nazorat turi. Ixtiyoriy. */
   note: z.string().trim().max(500, "Izoh juda uzun").optional(),
@@ -118,8 +122,8 @@ export const calendarPlanContentSchema = z.object({
   title: z.string().trim().min(5, "Sarlavha juda qisqa").max(200, "Sarlavha juda uzun"),
   weeks: z
     .array(calendarWeekSchema)
-    .min(1, "Kamida 1 hafta bo'lishi kerak")
-    .max(52, "52 haftadan ko'p bo'lmasligi kerak"),
+    .min(1, "errors.validation.weeksTooFew")
+    .max(52, "errors.validation.weeksTooMany"),
 });
 
 export type CalendarPlanContent = z.infer<typeof calendarPlanContentSchema>;

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ApiClientError, apiRequest } from "@/lib/api-client";
 
 /** Kalendar reja ustidagi amallar: qayta yaratish va o'chirish. */
@@ -13,6 +14,8 @@ export function CalendarPlanActions({
   status: "PENDING" | "READY" | "FAILED";
 }) {
   const router = useRouter();
+  const t = useTranslations("common");
+  const tModule = useTranslations("calendarPlans.detail");
   const [busy, setBusy] = useState<null | "retry" | "delete">(null);
   const [error, setError] = useState<string | null>(null);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -26,11 +29,7 @@ export function CalendarPlanActions({
       });
       router.refresh();
     } catch (caught) {
-      setError(
-        caught instanceof ApiClientError
-          ? caught.message
-          : "Qayta urinish muvaffaqiyatsiz tugadi.",
-      );
+      setError(caught instanceof ApiClientError ? caught.message : t("unexpectedError"));
     }
     setBusy(null);
   }
@@ -43,11 +42,7 @@ export function CalendarPlanActions({
       router.replace("/dashboard/calendar-plans");
       router.refresh();
     } catch (caught) {
-      setError(
-        caught instanceof ApiClientError
-          ? caught.message
-          : "O'chirish muvaffaqiyatsiz tugadi.",
-      );
+      setError(caught instanceof ApiClientError ? caught.message : t("unexpectedError"));
       setBusy(null);
     }
   }
@@ -66,22 +61,22 @@ export function CalendarPlanActions({
           }`}
         >
           {busy === "retry"
-            ? "Qayta yaratilmoqda…"
+            ? t("regenerating")
             : status === "FAILED"
-              ? "Qayta urinish"
-              : "Qaytadan yaratish"}
+              ? t("retry")
+              : t("regenerate")}
         </button>
 
         {confirmingDelete ? (
           <>
-            <span className="text-sm text-slate-600">O&apos;chirilsinmi?</span>
+            <span className="text-sm text-slate-600">{t("confirmDelete")}</span>
             <button
               type="button"
               onClick={handleDelete}
               disabled={busy !== null}
               className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-60"
             >
-              {busy === "delete" ? "O'chirilmoqda…" : "Ha, o'chirish"}
+              {busy === "delete" ? t("deleting") : t("confirmDeleteYes")}
             </button>
             <button
               type="button"
@@ -89,7 +84,7 @@ export function CalendarPlanActions({
               disabled={busy !== null}
               className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 transition hover:bg-slate-50"
             >
-              Bekor qilish
+              {t("cancel")}
             </button>
           </>
         ) : (
@@ -99,7 +94,7 @@ export function CalendarPlanActions({
             disabled={busy !== null}
             className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
           >
-            O&apos;chirish
+            {t("delete")}
           </button>
         )}
       </div>
@@ -112,7 +107,7 @@ export function CalendarPlanActions({
 
       {busy === "retry" && (
         <p aria-live="polite" className="mt-2 text-xs text-slate-500">
-          Bu 40-60 soniya davom etishi mumkin — sahifani yopmang.
+          {tModule("doNotClosePage")}
         </p>
       )}
     </div>

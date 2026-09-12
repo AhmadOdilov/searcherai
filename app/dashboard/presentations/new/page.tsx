@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { listLessonPlanOptions } from "@/lib/presentations/service";
 import { NewPresentationForm } from "@/components/presentations/new-form";
@@ -22,6 +23,9 @@ export default async function NewPresentationPage({
 
   const lessonPlans = await listLessonPlanOptions(user.id);
 
+  const t = await getTranslations("presentations");
+  const tRoot = await getTranslations();
+
   const requested = params.lessonPlanId;
   const preselectedId = typeof requested === "string" ? requested : null;
   // Faqat foydalanuvchining O'Z ro'yxatidagi id qabul qilinadi — begona
@@ -37,13 +41,11 @@ export default async function NewPresentationPage({
         href="/dashboard/presentations"
         className="text-sm text-slate-500 underline hover:text-slate-700"
       >
-        ← Ro&apos;yxatga qaytish
+        ← {tRoot("common.back")}
       </Link>
 
-      <h1 className="mt-4 text-xl font-semibold text-slate-900">Yangi prezentatsiya</h1>
-      <p className="mt-1 text-sm text-slate-500">
-        Mavjud dars ishlanmasidan yoki mustaqil ravishda yaratish mumkin.
-      </p>
+      <h1 className="mt-4 text-xl font-semibold text-slate-900">{t("new.title")}</h1>
+      <p className="mt-1 text-sm text-slate-500">{t("new.subtitle")}</p>
 
       <NewPresentationForm
         lessonPlans={lessonPlans.map((plan) => ({

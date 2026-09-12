@@ -73,27 +73,30 @@ const RETRYABLE: ReadonlySet<AiErrorKind> = new Set<AiErrorKind>([
 ]);
 
 /**
- * Foydalanuvchiga ko'rsatiladigan xabarlar — o'zbek tilida, texnik
- * tafsilotlarsiz. API kaliti yoki ichki manzillar hech qachon bu
- * xabarlarga tushmaydi.
+ * Xatolik turining TARJIMA KALITI.
+ *
+ * ── Nega matn emas, kalit ─────────────────────────────────────────────────
+ * Ilgari bu yerda tayyor o'zbekcha matnlar turardi. Interfeys ikki tilli
+ * bo'lgach bu ishlamay qoldi: AI qatlami so'rov qaysi tilda ekanini
+ * bilmaydi va bilishi ham shart emas — uning ishi AI bilan gaplashish.
+ *
+ * Endi u faqat KALIT qaytaradi, tarjima esa javob shakllanadigan joyda
+ * (`withErrorHandling`) qilinadi — o'sha yerda foydalanuvchi tili ma'lum.
+ *
+ * Kalitlar `messages/*.json` dagi `errors.ai.*` bo'limiga mos keladi.
  */
-const USER_MESSAGES: Record<AiErrorKind, string> = {
-  not_configured: "AI xizmati hozircha sozlanmagan. Administrator bilan bog'laning.",
-  auth: "AI xizmatiga ulanishda muammo bor. Administrator bilan bog'laning.",
-  rate_limit:
-    "Hozir so'rovlar juda ko'p. Iltimos, bir daqiqadan so'ng qayta urinib ko'ring.",
-  quota: "AI xizmatining limiti tugagan. Administrator bilan bog'laning.",
-  timeout:
-    "AI javobi juda uzoq kutildi. Iltimos, qayta urinib ko'ring yoki mavzuni qisqartiring.",
-  network:
-    "AI xizmatiga ulanib bo'lmadi. Internet aloqasini tekshirib, qayta urinib ko'ring.",
-  bad_request:
-    "So'rov AI xizmati tomonidan qabul qilinmadi. Kiritilgan ma'lumotlarni tekshirib ko'ring.",
-  server:
-    "AI xizmatida vaqtinchalik nosozlik. Iltimos, birozdan so'ng qayta urinib ko'ring.",
-  bad_response: "AI kutilgan formatda javob bermadi. Iltimos, qayta urinib ko'ring.",
-  aborted: "So'rov bekor qilindi.",
-  unknown: "Kutilmagan xatolik yuz berdi. Iltimos, qayta urinib ko'ring.",
+const MESSAGE_KEYS: Record<AiErrorKind, string> = {
+  not_configured: "errors.ai.not_configured",
+  auth: "errors.ai.auth",
+  rate_limit: "errors.ai.rate_limit",
+  quota: "errors.ai.quota",
+  timeout: "errors.ai.timeout",
+  network: "errors.ai.network",
+  bad_request: "errors.ai.bad_request",
+  server: "errors.ai.server",
+  bad_response: "errors.ai.bad_response",
+  aborted: "errors.ai.aborted",
+  unknown: "errors.ai.unknown",
 };
 
 export interface AiErrorOptions {
@@ -118,10 +121,9 @@ export class AiError extends Error {
   readonly retryAfterMs?: number;
 
   constructor(options: AiErrorOptions) {
-    // `message` — log uchun; foydalanuvchiga `userMessage` ketadi.
-    super(options.detail ?? USER_MESSAGES[options.kind], {
-      cause: options.cause,
-    });
+    // `message` — FAQAT log uchun. Foydalanuvchiga `messageKey` tarjimasi
+    // ketadi (`withErrorHandling` da).
+    super(options.detail ?? options.kind, { cause: options.cause });
     this.name = "AiError";
     this.kind = options.kind;
     this.status = options.status;
@@ -129,9 +131,16 @@ export class AiError extends Error {
     this.retryAfterMs = options.retryAfterMs;
   }
 
-  /** Foydalanuvchiga ko'rsatish uchun xavfsiz xabar. */
-  get userMessage(): string {
-    return USER_MESSAGES[this.kind];
+  /**
+   * Foydalanuvchiga ko'rsatiladigan xabarning TARJIMA KALITI.
+   *
+   * Bu qiymat ikki joyda ishlatiladi:
+   *  1. `withErrorHandling` — HTTP javobini shakllantirishda
+   *  2. Servis qatlami — `errorMessage` ustuniga YOZILADI, shunda yozuv
+   *     keyinroq foydalanuvchining JORIY tilida ko'rsatiladi
+   */
+  get messageKey(): string {
+    return MESSAGE_KEYS[this.kind];
   }
 
   get retryable(): boolean {

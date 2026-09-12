@@ -168,7 +168,7 @@ export const getCurrentUser = cache(
 export async function requireUser(): Promise<SessionUser> {
   const user = await getCurrentUser();
   if (!user) {
-    throw apiErrors.unauthorized("Davom etish uchun tizimga kiring.");
+    throw apiErrors.unauthorized("errors.domain.loginRequired");
   }
   return user;
 }

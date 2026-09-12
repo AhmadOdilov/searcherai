@@ -161,18 +161,20 @@ async function runGeneration(
   } catch (caught) {
     // Xatoni yozuvga belgilaymiz, keyin yuqoriga uzatamiz.
     //
-    // `errorMessage` ga FOYDALANUVCHIGA ko'rsatiladigan xabar yoziladi,
-    // texnik tafsilot emas: bu ustun to'g'ridan-to'g'ri UI'da ko'rinadi va
-    // unda API kaliti yoki ichki manzil bo'lmasligi kerak.
-    const userMessage =
-      caught instanceof AiError
-        ? caught.userMessage
-        : "Dars ishlanmasini yaratishda xatolik yuz berdi.";
+    /*
+      `errorMessage` ustuniga TARJIMA KALITI yoziladi, tayyor matn emas.
+
+      Nega: yozuv bir marta yaratiladi, lekin ko'p marta ko'riladi —
+      foydalanuvchi orada interfeys tilini o'zgartirishi mumkin. Kalit
+      saqlansa, xabar har safar JORIY tilda ko'rsatiladi.
+    */
+    const messageKey =
+      caught instanceof AiError ? caught.messageKey : "errors.ai.unknown";
 
     await prisma.lessonPlan
       .update({
         where: { id },
-        data: { status: "FAILED", errorMessage: userMessage },
+        data: { status: "FAILED", errorMessage: messageKey },
       })
       // Yozuvni belgilash muvaffaqiyatsiz bo'lsa ham asl xatoni yo'qotmaymiz.
       .catch(() => undefined);
@@ -231,5 +233,5 @@ export async function deleteLessonPlan(id: string, userId: string): Promise<void
 }
 
 function notFound() {
-  return apiErrors.notFound("Dars ishlanmasi topilmadi.");
+  return apiErrors.notFound("errors.domain.lessonPlanNotFound");
 }

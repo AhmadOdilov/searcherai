@@ -54,6 +54,10 @@ export const presentationListQuerySchema = paginationSchema.extend({
 export type PresentationListQuery = z.infer<typeof presentationListQuerySchema>;
 
 // ─── 2. AI qaytaradigan slaydlar strukturasi ─────────────────────────────────
+//
+// DIQQAT: quyidagi xabarlar TARJIMA KALITI EMAS, tabiiy matn. Ular
+// foydalanuvchiga ko'rsatilmaydi — `generateJson` ularni MODELGA qayta
+// so'rov bilan yuboradi, model esa kalitni emas, tushunarli matnni o'qiydi.
 
 /** Slayd turi — pptx qatlami har birini boshqacha chizadi. */
 export const slideTypeSchema = z.enum(["title", "content", "summary"]);

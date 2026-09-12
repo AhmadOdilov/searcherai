@@ -39,9 +39,7 @@ export const POST = withErrorHandling(async (request) => {
       caught instanceof Prisma.PrismaClientKnownRequestError &&
       caught.code === "P2002"
     ) {
-      throw apiErrors.conflict(
-        "Bu email allaqachon ro'yxatdan o'tgan. Kirishga urinib ko'ring.",
-      );
+      throw apiErrors.conflict("errors.domain.emailTaken");
     }
     throw caught;
   }

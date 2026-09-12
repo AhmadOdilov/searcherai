@@ -1,10 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getCalendarPlan } from "@/lib/calendar-plans/service";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { CalendarPlanActions } from "@/components/calendar-plans/plan-actions";
-import { LANGUAGE_LABELS, formatDate, formatFileSize } from "@/lib/ui/labels";
+import { formatDate, formatFileSize } from "@/lib/ui/labels";
+import { ErrorPanel } from "@/components/ui/error-panel";
+import { translateStoredError } from "@/lib/i18n/stored-error";
+import type { UiLocale } from "@/lib/i18n/config";
 import { formatShortDate } from "@/lib/calendar-plans/labels";
 import {
   parseCalendarPlanContent,
@@ -23,6 +27,10 @@ export default async function CalendarPlanDetailPage({
   const plan = await getCalendarPlan(id, user.id);
   if (!plan) notFound();
 
+  const t = await getTranslations("calendarPlans");
+  const tRoot = await getTranslations();
+  const locale = (await getLocale()) as UiLocale;
+
   const content = plan.content === null ? null : parseCalendarPlanContent(plan.content);
 
   return (
@@ -31,7 +39,7 @@ export default async function CalendarPlanDetailPage({
         href="/dashboard/calendar-plans"
         className="text-sm text-slate-500 underline hover:text-slate-700"
       >
-        ← Ro&apos;yxatga qaytish
+        ← {tRoot("common.back")}
       </Link>
 
       <header className="mt-4">
@@ -42,28 +50,32 @@ export default async function CalendarPlanDetailPage({
           <StatusBadge status={plan.status} />
         </div>
         <p className="mt-2 text-sm text-slate-500">
-          {plan.subject} · {plan.grade} · {plan.period} · {plan.weeks} hafta · haftasiga{" "}
-          {plan.hoursPerWeek} soat · {LANGUAGE_LABELS[plan.language]} tili
+          {plan.subject} · {plan.grade} · {plan.period} ·{" "}
+          {t("meta", { weeks: plan.weeks, hours: plan.hoursPerWeek })} ·{" "}
+          {tRoot(`languages.${plan.language}`)}
         </p>
         <p className="mt-1 text-xs text-slate-400">
-          {formatShortDate(plan.startDate)} dan boshlab · {formatDate(plan.createdAt)}
+          {t("detail.startsFrom", {
+            date: formatShortDate(plan.startDate, locale),
+          })}{" "}
+          · {formatDate(plan.createdAt, locale)}
           {plan.aiDurationMs !== null &&
-            ` · ${(plan.aiDurationMs / 1000).toFixed(1)} soniyada yaratilgan`}
+            ` · ${tRoot("lessonPlans.detail.generatedIn", {
+              seconds: (plan.aiDurationMs / 1000).toFixed(1),
+            })}`}
         </p>
       </header>
 
       {plan.status === "READY" && plan.filePath !== null && (
         <div className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-          <p className="text-sm font-medium text-emerald-900">Kalendar reja tayyor</p>
-          <p className="mt-1 text-xs text-emerald-800">
-            Excel (.xlsx) formatida — yuklab olib tahrirlashingiz mumkin.
-          </p>
+          <p className="text-sm font-medium text-emerald-900">{t("detail.readyTitle")}</p>
+          <p className="mt-1 text-xs text-emerald-800">{t("detail.readyHint")}</p>
           <a
             href={`/api/calendar-plans/${plan.id}/download`}
             className="mt-3 inline-block rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-800"
           >
-            Yuklab olish
-            {plan.fileSize !== null && ` · ${formatFileSize(plan.fileSize)}`}
+            {tRoot("common.download")}
+            {plan.fileSize !== null && ` · ${formatFileSize(plan.fileSize, locale)}`}
           </a>
         </div>
       )}
@@ -72,41 +84,39 @@ export default async function CalendarPlanDetailPage({
         <CalendarPlanActions planId={plan.id} status={plan.status} />
       </div>
 
-      {plan.status === "FAILED" && <ErrorPanel message={plan.errorMessage} />}
+      {plan.status === "FAILED" && (
+        <ErrorPanel
+          title={t("detail.failedTitle")}
+          hint={t("detail.failedHint")}
+          message={
+            plan.errorMessage === null
+              ? tRoot("errors.unknown")
+              : translateStoredError(tRoot, plan.errorMessage)
+          }
+        />
+      )}
 
       {plan.status === "PENDING" && (
         <p className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          Kalendar reja hali yaratilmoqda. Sahifani birozdan so&apos;ng yangilang.
+          {t("detail.pending")}
         </p>
       )}
 
       {plan.status === "READY" && content === null && (
         <ErrorPanel
-          message={
-            "Reja saqlangan, lekin uni o'qib bo'lmadi (format mos kelmadi). " +
-            "«Qaytadan yaratish» tugmasini bosing."
-          }
+          title={t("detail.failedTitle")}
+          hint={t("detail.failedHint")}
+          message={t("detail.brokenContent")}
         />
       )}
 
       {plan.status === "READY" && content !== null && (
-        <PlanTable content={content} expectedHours={plan.weeks * plan.hoursPerWeek} />
+        <PlanTable
+          content={content}
+          expectedHours={plan.weeks * plan.hoursPerWeek}
+          t={t}
+        />
       )}
-    </div>
-  );
-}
-
-function ErrorPanel({ message }: { message: string | null }) {
-  return (
-    <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
-      <p className="text-sm font-medium text-red-800">
-        Kalendar rejani yaratib bo&apos;lmadi
-      </p>
-      <p className="mt-1 text-sm text-red-700">{message ?? "Sabab aniqlanmadi."}</p>
-      <p className="mt-2 text-xs text-red-600">
-        Yuqoridagi «Qayta urinish» tugmasini bosing — kiritgan ma&apos;lumotlaringiz
-        saqlangan.
-      </p>
     </div>
   );
 }
@@ -117,28 +127,33 @@ function ErrorPanel({ message }: { message: string | null }) {
  * Excel faylidagi bilan bir xil tuzilish — o'qituvchi yuklab olmasdan ham
  * nima chiqqanini ko'radi.
  */
+type Translator = (key: string, values?: Record<string, string | number>) => string;
+
 function PlanTable({
   content,
   expectedHours,
+  t,
 }: {
   content: CalendarPlanContent;
   expectedHours: number;
+  t: Translator;
 }) {
   const hours = totalHours(content);
   const rows = totalRowCount(content);
   // AI soatni har doim aniq taqsimlay olmaydi — farqni yashirmaymiz.
   const mismatch = hours !== expectedHours;
+  const tRootTotal = t("detail.columns.hours") && t("detail.totalHours", { hours });
 
   return (
     <section className="mt-8">
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="text-xs font-semibold tracking-wide text-slate-500 uppercase">
-          Jadval ({content.weeks.length} hafta, {rows} qator)
+          {t("detail.tableTitle", { weeks: content.weeks.length, rows })}
         </h2>
         <p className={`text-xs ${mismatch ? "text-amber-700" : "text-slate-400"}`}>
           {mismatch
-            ? `Jami ${hours} soat (kutilgani ${expectedHours}) — Excel'da o'zingiz moslashtirishingiz mumkin`
-            : `Jami ${hours} soat`}
+            ? t("detail.hoursMismatch", { actual: hours, expected: expectedHours })
+            : t("detail.totalHours", { hours })}
         </p>
       </div>
 
@@ -147,11 +162,13 @@ function PlanTable({
         <table className="w-full min-w-[640px] border-collapse text-sm">
           <thead>
             <tr className="bg-slate-900 text-left text-xs text-white">
-              <th className="px-3 py-2.5 font-medium">Hafta</th>
-              <th className="px-3 py-2.5 font-medium">Sana oralig&apos;i</th>
-              <th className="px-3 py-2.5 font-medium">Mavzu</th>
-              <th className="px-3 py-2.5 text-center font-medium">Soat</th>
-              <th className="px-3 py-2.5 font-medium">Izoh</th>
+              <th className="px-3 py-2.5 font-medium">{t("detail.columns.week")}</th>
+              <th className="px-3 py-2.5 font-medium">{t("detail.columns.dateRange")}</th>
+              <th className="px-3 py-2.5 font-medium">{t("detail.columns.topic")}</th>
+              <th className="px-3 py-2.5 text-center font-medium">
+                {t("detail.columns.hours")}
+              </th>
+              <th className="px-3 py-2.5 font-medium">{t("detail.columns.note")}</th>
             </tr>
           </thead>
           <tbody>
@@ -191,7 +208,7 @@ function PlanTable({
             )}
             <tr className="border-t-2 border-slate-200 bg-slate-50 font-medium">
               <td colSpan={3} className="px-3 py-2.5 text-right text-slate-900">
-                Jami
+                {tRootTotal}
               </td>
               <td className="px-3 py-2.5 text-center text-slate-900">{hours}</td>
               <td />

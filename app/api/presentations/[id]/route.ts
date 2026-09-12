@@ -11,7 +11,7 @@ export const GET = withErrorHandling<RouteContext>(async (_request, context) => 
   const { id } = await context.params;
 
   const presentation = await getPresentation(id, user.id);
-  if (!presentation) throw apiErrors.notFound("Prezentatsiya topilmadi.");
+  if (!presentation) throw apiErrors.notFound("errors.domain.presentationNotFound");
 
   return ok({ presentation });
 });

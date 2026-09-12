@@ -1,10 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getPresentation } from "@/lib/presentations/service";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { PresentationActions } from "@/components/presentations/presentation-actions";
-import { LANGUAGE_LABELS, formatDate, formatFileSize } from "@/lib/ui/labels";
+import { formatDate, formatFileSize } from "@/lib/ui/labels";
+import { ErrorPanel } from "@/components/ui/error-panel";
+import { translateStoredError } from "@/lib/i18n/stored-error";
+import type { UiLocale } from "@/lib/i18n/config";
 import {
   parsePresentationContent,
   type PresentationContent,
@@ -20,6 +24,10 @@ export default async function PresentationDetailPage({
   const presentation = await getPresentation(id, user.id);
   if (!presentation) notFound();
 
+  const t = await getTranslations("presentations");
+  const tRoot = await getTranslations();
+  const locale = (await getLocale()) as UiLocale;
+
   const content =
     presentation.content === null ? null : parsePresentationContent(presentation.content);
 
@@ -29,7 +37,7 @@ export default async function PresentationDetailPage({
         href="/dashboard/presentations"
         className="text-sm text-slate-500 underline hover:text-slate-700"
       >
-        ← Ro&apos;yxatga qaytish
+        ← {tRoot("common.back")}
       </Link>
 
       <header className="mt-4">
@@ -41,25 +49,28 @@ export default async function PresentationDetailPage({
         </div>
         <p className="mt-2 text-sm text-slate-500">
           {[presentation.subject, presentation.grade].filter(Boolean).join(" · ") ||
-            "Mustaqil prezentatsiya"}
+            t("standalone")}
           {" · "}
-          {LANGUAGE_LABELS[presentation.language]} tili
-          {presentation.slideCount !== null && ` · ${presentation.slideCount} slayd`}
+          {tRoot(`languages.${presentation.language}`)}
+          {presentation.slideCount !== null &&
+            ` · ${t("slideCount", { count: presentation.slideCount })}`}
         </p>
         <p className="mt-1 text-xs text-slate-400">
-          {formatDate(presentation.createdAt)}
+          {formatDate(presentation.createdAt, locale)}
           {presentation.aiDurationMs !== null &&
-            ` · ${(presentation.aiDurationMs / 1000).toFixed(1)} soniyada yaratilgan`}
+            ` · ${tRoot("lessonPlans.detail.generatedIn", {
+              seconds: (presentation.aiDurationMs / 1000).toFixed(1),
+            })}`}
         </p>
 
         {presentation.lessonPlanId !== null && (
           <p className="mt-2 text-xs text-slate-500">
-            Dars ishlanmasi asosida —{" "}
+            {t("detail.fromLessonPlanPrefix")}{" "}
             <Link
               href={`/dashboard/lesson-plans/${presentation.lessonPlanId}`}
               className="underline hover:text-slate-700"
             >
-              ishlanmani ko&apos;rish
+              {t("detail.viewLessonPlan")}
             </Link>
           </p>
         )}
@@ -68,10 +79,8 @@ export default async function PresentationDetailPage({
       {/* ── Yuklab olish ─────────────────────────────────────────────── */}
       {presentation.status === "READY" && presentation.filePath !== null && (
         <div className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-          <p className="text-sm font-medium text-emerald-900">Prezentatsiya tayyor</p>
-          <p className="mt-1 text-xs text-emerald-800">
-            PowerPoint (.pptx) formatida — yuklab olib tahrirlashingiz mumkin.
-          </p>
+          <p className="text-sm font-medium text-emerald-900">{t("detail.readyTitle")}</p>
+          <p className="mt-1 text-xs text-emerald-800">{t("detail.readyHint")}</p>
           {/*
             Oddiy havola (fetch emas): brauzer faylni o'zi yuklab oladi va
             `Content-Disposition` sarlavhasidagi nomni ishlatadi. Cookie
@@ -81,9 +90,9 @@ export default async function PresentationDetailPage({
             href={`/api/presentations/${presentation.id}/download`}
             className="mt-3 inline-block rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-800"
           >
-            Yuklab olish
+            {tRoot("common.download")}
             {presentation.fileSize !== null &&
-              ` · ${formatFileSize(presentation.fileSize)}`}
+              ` · ${formatFileSize(presentation.fileSize, locale)}`}
           </a>
         </div>
       )}
@@ -97,42 +106,34 @@ export default async function PresentationDetailPage({
 
       {/* ── Holatga qarab mazmun ─────────────────────────────────────── */}
       {presentation.status === "FAILED" && (
-        <ErrorPanel message={presentation.errorMessage} />
+        <ErrorPanel
+          title={t("detail.failedTitle")}
+          hint={t("detail.failedHint")}
+          message={
+            presentation.errorMessage === null
+              ? tRoot("errors.unknown")
+              : translateStoredError(tRoot, presentation.errorMessage)
+          }
+        />
       )}
 
       {presentation.status === "PENDING" && (
         <p className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          Prezentatsiya hali yaratilmoqda. Sahifani birozdan so&apos;ng yangilang.
+          {t("detail.pending")}
         </p>
       )}
 
       {presentation.status === "READY" && content === null && (
         <ErrorPanel
-          message={
-            "Slaydlar saqlangan, lekin ularni o'qib bo'lmadi (format mos kelmadi). " +
-            "«Qaytadan yaratish» tugmasini bosing."
-          }
+          title={t("detail.failedTitle")}
+          hint={t("detail.failedHint")}
+          message={t("detail.brokenContent")}
         />
       )}
 
       {presentation.status === "READY" && content !== null && (
-        <SlidesPreview content={content} />
+        <SlidesPreview content={content} t={t} />
       )}
-    </div>
-  );
-}
-
-function ErrorPanel({ message }: { message: string | null }) {
-  return (
-    <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
-      <p className="text-sm font-medium text-red-800">
-        Prezentatsiyani yaratib bo&apos;lmadi
-      </p>
-      <p className="mt-1 text-sm text-red-700">{message ?? "Sabab aniqlanmadi."}</p>
-      <p className="mt-2 text-xs text-red-600">
-        Yuqoridagi «Qayta urinish» tugmasini bosing — kiritgan ma&apos;lumotlaringiz
-        saqlangan.
-      </p>
     </div>
   );
 }
@@ -143,11 +144,13 @@ function ErrorPanel({ message }: { message: string | null }) {
  * Fayl yuklab olinmasdan ham nima chiqqanini ko'rish uchun — o'qituvchi
  * PowerPoint ochmasdan tekshiradi va kerak bo'lsa qaytadan yaratadi.
  */
-function SlidesPreview({ content }: { content: PresentationContent }) {
+type Translator = (key: string, values?: Record<string, string | number>) => string;
+
+function SlidesPreview({ content, t }: { content: PresentationContent; t: Translator }) {
   return (
     <section className="mt-8">
       <h2 className="mb-3 text-xs font-semibold tracking-wide text-slate-500 uppercase">
-        Slaydlar ({content.slides.length})
+        {t("detail.slides", { count: content.slides.length })}
       </h2>
 
       <ol className="space-y-3">
@@ -184,7 +187,7 @@ function SlidesPreview({ content }: { content: PresentationContent }) {
                     : "bg-slate-100 text-slate-600"
                 }`}
               >
-                {SLIDE_TYPE_LABELS[slide.type]}
+                {t(`detail.slideTypes.${slide.type}`)}
               </span>
             </div>
 
@@ -212,7 +215,7 @@ function SlidesPreview({ content }: { content: PresentationContent }) {
                     : "border-slate-100 text-slate-500"
                 }`}
               >
-                <span className="font-medium">So&apos;zlovchi izohi: </span>
+                <span className="font-medium">{t("detail.speakerNotes")} </span>
                 {slide.speakerNotes}
               </p>
             )}
@@ -222,9 +225,3 @@ function SlidesPreview({ content }: { content: PresentationContent }) {
     </section>
   );
 }
-
-const SLIDE_TYPE_LABELS = {
-  title: "Sarlavha",
-  content: "Mazmun",
-  summary: "Xulosa",
-} as const;

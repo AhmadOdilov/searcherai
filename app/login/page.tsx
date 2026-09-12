@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { useTranslations } from "next-intl";
 import { AuthForm, Field } from "@/components/auth-form";
 
 /**
@@ -13,6 +14,8 @@ import { AuthForm, Field } from "@/components/auth-form";
  */
 function LoginForm() {
   const searchParams = useSearchParams();
+  const t = useTranslations("auth");
+
   // Proxy foydalanuvchini bu yerga yuborganda qaysi sahifani so'raganini
   // `?next=` da uzatadi — kirgandan keyin shu sahifaga qaytaramiz.
   const next = searchParams.get("next");
@@ -24,15 +27,15 @@ function LoginForm() {
 
   return (
     <AuthForm
-      title="Hisobingizga kiring"
-      submitLabel="Kirish"
+      title={t("login.title")}
+      submitLabel={t("login.submit")}
       endpoint="/api/auth/login"
       redirectTo={redirectTo}
       footer={
         <>
-          Hisobingiz yo&apos;qmi?{" "}
+          {t("login.noAccount")}{" "}
           <Link href="/register" className="font-medium text-slate-900 underline">
-            Ro&apos;yxatdan o&apos;tish
+            {t("login.registerLink")}
           </Link>
         </>
       }
@@ -40,15 +43,15 @@ function LoginForm() {
       {(errors) => (
         <>
           <Field
-            label="Email"
+            label={t("fields.email")}
             name="email"
             type="email"
             autoComplete="email"
-            placeholder="ism@maktab.uz"
+            placeholder={t("fields.emailPlaceholder")}
             errors={errors}
           />
           <Field
-            label="Parol"
+            label={t("fields.password")}
             name="password"
             type="password"
             autoComplete="current-password"

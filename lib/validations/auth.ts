@@ -4,8 +4,8 @@ import { languageSchema } from "@/lib/validations/common";
 /**
  * Autentifikatsiya sxemalari.
  *
- * Xato xabarlari o'zbek tilida — ular to'g'ridan-to'g'ri formada
- * foydalanuvchiga ko'rsatiladi (`fieldErrors` orqali).
+ * Xato xabarlari TARJIMA KALITI — ular `fieldErrors` orqali formaga
+ * chiqadi va `withErrorHandling` da so'rov tiliga o'giriladi.
  */
 
 /**
@@ -17,9 +17,9 @@ export const emailSchema = z
   .string()
   .trim()
   .toLowerCase()
-  .min(1, "Emailni kiriting")
-  .max(255, "Email juda uzun")
-  .pipe(z.email("Email formati to'g'ri emas"));
+  .min(1, "errors.validation.emailRequired")
+  .max(255, "errors.validation.emailTooLong")
+  .pipe(z.email("errors.validation.emailInvalid"));
 
 /**
  * Parol. MVP uchun ataylab oddiy qoida: uzunlik.
@@ -31,14 +31,14 @@ export const emailSchema = z
  */
 export const passwordSchema = z
   .string()
-  .min(8, "Parol kamida 8 belgidan iborat bo'lishi kerak")
-  .max(72, "Parol 72 belgidan oshmasligi kerak");
+  .min(8, "errors.validation.passwordTooShort")
+  .max(72, "errors.validation.passwordTooLong");
 
 export const fullNameSchema = z
   .string()
   .trim()
-  .min(2, "Ismni kiriting")
-  .max(120, "Ism juda uzun");
+  .min(2, "errors.validation.fullNameRequired")
+  .max(120, "errors.validation.fullNameTooLong");
 
 /** Ro'yxatdan o'tish. Rol so'ralmaydi — hozircha hamma o'qituvchi. */
 export const registerSchema = z.object({
@@ -60,7 +60,7 @@ export type RegisterInput = z.infer<typeof registerSchema>;
  */
 export const loginSchema = z.object({
   email: emailSchema,
-  password: z.string().min(1, "Parolni kiriting"),
+  password: z.string().min(1, "errors.validation.passwordRequired"),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;

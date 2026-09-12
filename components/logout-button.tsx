@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { apiRequest } from "@/lib/api-client";
 
 /**
@@ -12,12 +13,10 @@ import { apiRequest } from "@/lib/api-client";
  *    qaytib bo'lmasin.
  *  · `refresh` — server komponentlari keshini tozalaydi, aks holda eski
  *    foydalanuvchi ismi ekranda qolib qolishi mumkin.
- *
- * (`window.location.href` ham ishlardi, lekin u butun sahifani qaytadan
- * yuklaydi va Next.js buni tavsiya qilmaydi.)
  */
 export function LogoutButton() {
   const router = useRouter();
+  const t = useTranslations("auth");
   const [busy, setBusy] = useState(false);
 
   async function handleLogout() {
@@ -39,7 +38,7 @@ export function LogoutButton() {
       disabled={busy}
       className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
     >
-      {busy ? "Chiqilmoqda…" : "Chiqish"}
+      {busy ? t("loggingOut") : t("logout")}
     </button>
   );
 }

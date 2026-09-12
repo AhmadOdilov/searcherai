@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getLessonPlan } from "@/lib/lesson-plans/service";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { PlanActions } from "@/components/lesson-plans/plan-actions";
-import {
-  LANGUAGE_LABELS,
-  LESSON_TYPE_LABELS,
-  formatDate,
-} from "@/lib/lesson-plans/labels";
+import { ErrorPanel } from "@/components/ui/error-panel";
+import { formatDate } from "@/lib/ui/labels";
+import { translateStoredError } from "@/lib/i18n/stored-error";
+import type { UiLocale } from "@/lib/i18n/config";
 import {
   parseLessonPlanContent,
   totalStageMinutes,
@@ -31,6 +31,10 @@ export default async function LessonPlanDetailPage({
   // 404: boshqa foydalanuvchi yozuvi BORLIGINI ham bildirmaymiz.
   if (!plan) notFound();
 
+  const t = await getTranslations("lessonPlans");
+  const tRoot = await getTranslations();
+  const locale = (await getLocale()) as UiLocale;
+
   // `content` — Json ustun, ya'ni TypeScript uchun `unknown`. Shaklini
   // tekshirib o'qiymiz: sxema keyinchalik o'zgarsa, eski yozuv sahifani
   // qulatmasligi kerak.
@@ -42,7 +46,7 @@ export default async function LessonPlanDetailPage({
         href="/dashboard/lesson-plans"
         className="text-sm text-slate-500 underline hover:text-slate-700"
       >
-        ← Ro&apos;yxatga qaytish
+        ← {tRoot("common.back")}
       </Link>
 
       {/* ── Sarlavha ─────────────────────────────────────────────────── */}
@@ -52,13 +56,20 @@ export default async function LessonPlanDetailPage({
           <StatusBadge status={plan.status} />
         </div>
         <p className="mt-2 text-sm text-slate-500">
-          {plan.subject} · {plan.grade} · {LESSON_TYPE_LABELS[plan.lessonType]} ·{" "}
-          {plan.durationMinutes} daqiqa · {LANGUAGE_LABELS[plan.language]} tili
+          {t("detail.meta", {
+            subject: plan.subject,
+            grade: plan.grade,
+            type: t(`types.${plan.lessonType}`),
+            duration: plan.durationMinutes,
+            language: tRoot(`languages.${plan.language}`),
+          })}
         </p>
         <p className="mt-1 text-xs text-slate-400">
-          {formatDate(plan.createdAt)}
+          {formatDate(plan.createdAt, locale)}
           {plan.aiDurationMs !== null &&
-            ` · ${(plan.aiDurationMs / 1000).toFixed(1)} soniyada yaratilgan`}
+            ` · ${t("detail.generatedIn", {
+              seconds: (plan.aiDurationMs / 1000).toFixed(1),
+            })}`}
         </p>
       </header>
 
@@ -70,7 +81,7 @@ export default async function LessonPlanDetailPage({
             href={`/dashboard/presentations/new?lessonPlanId=${plan.id}`}
             className="inline-block rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-800"
           >
-            Shundan prezentatsiya yaratish
+            {t("detail.createPresentation")}
           </Link>
         )}
 
@@ -78,7 +89,17 @@ export default async function LessonPlanDetailPage({
       </div>
 
       {/* ── Holatga qarab mazmun ─────────────────────────────────────── */}
-      {plan.status === "FAILED" && <ErrorPanel message={plan.errorMessage} />}
+      {plan.status === "FAILED" && (
+        <ErrorPanel
+          title={t("detail.failedTitle")}
+          hint={t("detail.failedHint")}
+          message={
+            plan.errorMessage === null
+              ? tRoot("errors.unknown")
+              : translateStoredError(tRoot, plan.errorMessage)
+          }
+        />
+      )}
 
       {plan.status === "PENDING" && (
         <p className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
@@ -88,42 +109,30 @@ export default async function LessonPlanDetailPage({
 
       {plan.status === "READY" && content === null && (
         <ErrorPanel
-          message={
-            "Natija saqlangan, lekin uni o'qib bo'lmadi (format mos kelmadi). " +
-            "«Qaytadan yaratish» tugmasini bosing."
-          }
+          title={t("detail.failedTitle")}
+          hint={t("detail.failedHint")}
+          message={t("detail.brokenContent")}
         />
       )}
 
       {plan.status === "READY" && content !== null && (
-        <LessonPlanView content={content} durationMinutes={plan.durationMinutes} />
+        <LessonPlanView content={content} durationMinutes={plan.durationMinutes} t={t} />
       )}
-    </div>
-  );
-}
-
-function ErrorPanel({ message }: { message: string | null }) {
-  return (
-    <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
-      <p className="text-sm font-medium text-red-800">
-        Dars ishlanmasini yaratib bo&apos;lmadi
-      </p>
-      <p className="mt-1 text-sm text-red-700">{message ?? "Sabab aniqlanmadi."}</p>
-      <p className="mt-2 text-xs text-red-600">
-        Yuqoridagi «Qayta urinish» tugmasini bosing — kiritgan ma&apos;lumotlaringiz
-        saqlangan.
-      </p>
     </div>
   );
 }
 
 /** Tayyor dars ishlanmasini o'qish uchun qulay ko'rinishda ko'rsatadi. */
+type Translator = (key: string, values?: Record<string, string | number>) => string;
+
 function LessonPlanView({
   content,
   durationMinutes,
+  t,
 }: {
   content: LessonPlanContent;
   durationMinutes: number;
+  t: Translator;
 }) {
   const stagesTotal = totalStageMinutes(content);
   // AI vaqtni har doim aniq taqsimlay olmaydi — farqni yashirmaymiz,
@@ -132,11 +141,11 @@ function LessonPlanView({
 
   return (
     <div className="mt-8 space-y-8">
-      <Section title="Dars maqsadi">
+      <Section title={t("detail.objective")}>
         <p className="text-sm leading-relaxed text-slate-700">{content.objective}</p>
       </Section>
 
-      <Section title="Kutilayotgan natijalar">
+      <Section title={t("detail.outcomes")}>
         <ul className="space-y-1.5">
           {content.outcomes.map((outcome, index) => (
             <li key={index} className="flex gap-2 text-sm text-slate-700">
@@ -147,7 +156,7 @@ function LessonPlanView({
         </ul>
       </Section>
 
-      <Section title="Kerakli resurslar">
+      <Section title={t("detail.resources")}>
         <ul className="flex flex-wrap gap-2">
           {content.resources.map((resource, index) => (
             <li
@@ -161,11 +170,14 @@ function LessonPlanView({
       </Section>
 
       <Section
-        title="Dars bosqichlari"
+        title={t("detail.stages")}
         note={
           mismatch
-            ? `Bosqichlar yig'indisi ${stagesTotal} daqiqa (dars ${durationMinutes} daqiqa) — vaqtni o'zingiz moslashtirishingiz mumkin.`
-            : `Jami ${stagesTotal} daqiqa`
+            ? t("detail.durationMismatch", {
+                actual: stagesTotal,
+                expected: durationMinutes,
+              })
+            : t("detail.totalMinutes", { minutes: stagesTotal })
         }
         noteTone={mismatch ? "warning" : "muted"}
       >
@@ -178,7 +190,7 @@ function LessonPlanView({
                   {stage.name}
                 </h3>
                 <span className="shrink-0 rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
-                  {stage.durationMinutes} daq.
+                  {t("detail.minutesShort", { minutes: stage.durationMinutes })}
                 </span>
               </div>
 
@@ -207,7 +219,7 @@ function LessonPlanView({
 
       {content.assessmentCriteria !== undefined &&
         content.assessmentCriteria.length > 0 && (
-          <Section title="Baholash mezonlari">
+          <Section title={t("detail.assessment")}>
             <ul className="space-y-1.5">
               {content.assessmentCriteria.map((criterion, index) => (
                 <li key={index} className="flex gap-2 text-sm text-slate-700">

@@ -182,16 +182,20 @@ async function runGeneration(
       select: DETAIL_FIELDS,
     });
   } catch (caught) {
-    // `errorMessage` ga FOYDALANUVCHIGA ko'rsatiladigan xabar yoziladi.
-    const userMessage =
-      caught instanceof AiError
-        ? caught.userMessage
-        : "Kalendar rejani yaratishda xatolik yuz berdi.";
+    /*
+      `errorMessage` ustuniga TARJIMA KALITI yoziladi, tayyor matn emas.
+
+      Nega: yozuv bir marta yaratiladi, lekin ko'p marta ko'riladi —
+      foydalanuvchi orada interfeys tilini o'zgartirishi mumkin. Kalit
+      saqlansa, xabar har safar JORIY tilda ko'rsatiladi.
+    */
+    const messageKey =
+      caught instanceof AiError ? caught.messageKey : "errors.ai.unknown";
 
     await prisma.calendarPlan
       .update({
         where: { id },
-        data: { status: "FAILED", errorMessage: userMessage },
+        data: { status: "FAILED", errorMessage: messageKey },
       })
       .catch(() => undefined);
 
@@ -245,5 +249,5 @@ export async function deleteCalendarPlan(id: string, userId: string): Promise<vo
 }
 
 function notFound() {
-  return apiErrors.notFound("Kalendar reja topilmadi.");
+  return apiErrors.notFound("errors.domain.calendarPlanNotFound");
 }

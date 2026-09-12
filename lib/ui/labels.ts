@@ -1,39 +1,33 @@
-import type { LanguageCode } from "@/lib/validations/common";
+import { INTL_LOCALES, type UiLocale } from "@/lib/i18n/config";
 
 /**
- * Modullar ORASIDA umumiy bo'lgan UI yorliqlari.
+ * Modullar orasida umumiy formatlash yordamchilari.
  *
- * Dars ishlanmasi, prezentatsiya va (keyinchalik) Excel reja — hammasi
- * bir xil `GenerationStatus` oqimidan foydalanadi, shuning uchun holat
- * yorliqlari shu yerda. Modulga XOS yorliqlar esa o'z papkasida qoladi
- * (masalan `lib/lesson-plans/labels.ts` dagi dars turlari).
+ * ── Matnlar bu yerdan KO'CHIRILDI ─────────────────────────────────────────
+ * Ilgari bu faylda `STATUS_LABELS`, `LANGUAGE_LABELS` kabi tayyor o'zbekcha
+ * matnlar turardi. Endi ular `messages/*.json` da (`status.*`,
+ * `languages.*`) va `useTranslations()` orqali olinadi.
  *
- * DIQQAT: matnlar hozircha faqat o'zbek tilida — interfeys tarjimasi (i18n)
- * keyingi bosqichda qo'shiladi va bu qiymatlar tarjima kalitlariga ko'chadi.
+ * Bu yerda faqat FORMATLASH qoldi — u tarjima emas, `Intl` ishi.
  */
 
-export const STATUS_LABELS = {
-  PENDING: "Yaratilmoqda",
-  READY: "Tayyor",
-  FAILED: "Xatolik",
-} as const;
-
+/** Holat nishonining rangi — bu tarjima emas, shuning uchun shu yerda. */
 export const STATUS_STYLES = {
   PENDING: "bg-amber-50 text-amber-700 ring-amber-200",
   READY: "bg-emerald-50 text-emerald-700 ring-emerald-200",
   FAILED: "bg-red-50 text-red-700 ring-red-200",
 } as const;
 
-export const LANGUAGE_LABELS: Record<LanguageCode, string> = {
-  UZ: "O'zbek",
-  RU: "Rus",
-  EN: "Ingliz",
-};
-
-/** Sanani o'qilishi qulay ko'rinishda. */
-export function formatDate(value: Date | string): string {
+/**
+ * Sanani o'qilishi qulay ko'rinishda — INTERFEYS tiliga qarab.
+ *
+ * `uz-UZ` va `ru-RU` sana tartibini bir xil (kun.oy.yil) beradi, lekin
+ * oy nomlari va ajratgichlar farq qilishi mumkin — shuning uchun locale
+ * uzatiladi.
+ */
+export function formatDate(value: Date | string, locale: UiLocale): string {
   const date = typeof value === "string" ? new Date(value) : value;
-  return new Intl.DateTimeFormat("uz-UZ", {
+  return new Intl.DateTimeFormat(INTL_LOCALES[locale], {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -42,10 +36,21 @@ export function formatDate(value: Date | string): string {
   }).format(date);
 }
 
-/** Fayl hajmi — yuklab olish tugmasida ko'rsatish uchun. */
-export function formatFileSize(bytes: number): string {
+/**
+ * Fayl hajmi.
+ *
+ * Birliklar (B, KB, MB) xalqaro — tarjima qilinmaydi. Son formati esa
+ * tilga qarab o'zgaradi (masalan kasr ajratgichi).
+ */
+export function formatFileSize(bytes: number, locale: UiLocale): string {
   if (bytes < 1024) return `${bytes} B`;
+
+  const format = (value: number, digits: number) =>
+    new Intl.NumberFormat(INTL_LOCALES[locale], {
+      maximumFractionDigits: digits,
+    }).format(value);
+
   const kilobytes = bytes / 1024;
-  if (kilobytes < 1024) return `${Math.round(kilobytes)} KB`;
-  return `${(kilobytes / 1024).toFixed(1)} MB`;
+  if (kilobytes < 1024) return `${format(kilobytes, 0)} KB`;
+  return `${format(kilobytes / 1024, 1)} MB`;
 }

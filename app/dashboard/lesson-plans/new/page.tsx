@@ -3,12 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ApiClientError, apiRequest } from "@/lib/api-client";
-import {
-  DURATION_OPTIONS,
-  LANGUAGE_LABELS,
-  LESSON_TYPE_LABELS,
-} from "@/lib/lesson-plans/labels";
+import { DURATION_OPTIONS } from "@/lib/lesson-plans/labels";
+import { LESSON_TYPES, GENERATION_LANGUAGES } from "@/lib/ui/options";
 
 /**
  * `/dashboard/lesson-plans/new` — dars ishlanmasi yaratish formasi.
@@ -23,13 +21,14 @@ import {
  * performance bosqichida qo'shiladi.)
  */
 
-const PROGRESS_MESSAGES = [
-  "So'rov yuborildi…",
-  "Dars maqsadi belgilanmoqda…",
-  "Bosqichlar va vaqt taqsimoti tuzilmoqda…",
-  "Resurslar va baholash mezonlari qo'shilmoqda…",
-  "Yakunlanmoqda…",
-];
+/** Bosqichli xabarlarning TARJIMA KALITLARI. */
+const PROGRESS_KEYS = [
+  "progress.sent",
+  "progress.objective",
+  "progress.stages",
+  "progress.resources",
+  "progress.finishing",
+] as const;
 
 interface CreatedPlan {
   lessonPlan: { id: string };
@@ -37,6 +36,8 @@ interface CreatedPlan {
 
 export default function NewLessonPlanPage() {
   const router = useRouter();
+  const t = useTranslations("lessonPlans");
+  const tRoot = useTranslations();
   const [submitting, setSubmitting] = useState(false);
   const [progressIndex, setProgressIndex] = useState(0);
   const [formError, setFormError] = useState<string | null>(null);
@@ -51,7 +52,7 @@ export default function NewLessonPlanPage() {
 
     // Bosqichli xabarlarni almashtiramiz — kutish "tirik" ko'rinsin.
     const ticker = setInterval(() => {
-      setProgressIndex((current) => Math.min(current + 1, PROGRESS_MESSAGES.length - 1));
+      setProgressIndex((current) => Math.min(current + 1, PROGRESS_KEYS.length - 1));
     }, 4000);
 
     const formData = new FormData(event.currentTarget);
@@ -71,7 +72,7 @@ export default function NewLessonPlanPage() {
         if (error.fieldErrors) setFieldErrors(error.fieldErrors);
         else setFormError(error.message);
       } else {
-        setFormError("Kutilmagan xatolik yuz berdi. Qayta urinib ko'ring.");
+        setFormError(tRoot("common.unexpectedError"));
       }
       setSubmitting(false);
     } finally {
@@ -85,13 +86,11 @@ export default function NewLessonPlanPage() {
         href="/dashboard/lesson-plans"
         className="text-sm text-slate-500 underline hover:text-slate-700"
       >
-        ← Ro&apos;yxatga qaytish
+        ← {tRoot("common.back")}
       </Link>
 
-      <h1 className="mt-4 text-xl font-semibold text-slate-900">Yangi dars ishlanmasi</h1>
-      <p className="mt-1 text-sm text-slate-500">
-        Parametrlarni kiriting — qolganini tizim o&apos;zi tuzadi.
-      </p>
+      <h1 className="mt-4 text-xl font-semibold text-slate-900">{t("new.title")}</h1>
+      <p className="mt-1 text-sm text-slate-500">{t("new.subtitle")}</p>
 
       <form
         onSubmit={handleSubmit}
@@ -105,57 +104,62 @@ export default function NewLessonPlanPage() {
         )}
 
         <TextField
-          label="Fan"
+          label={t("fields.subject")}
           name="subject"
-          placeholder="Matematika"
+          placeholder={t("fields.subjectPlaceholder")}
           errors={fieldErrors}
           disabled={submitting}
         />
         <TextField
-          label="Sinf / daraja"
+          label={t("fields.grade")}
           name="grade"
-          placeholder="7-sinf"
+          placeholder={t("fields.gradePlaceholder")}
           errors={fieldErrors}
           disabled={submitting}
         />
         <TextField
-          label="Mavzu"
+          label={t("fields.topic")}
           name="topic"
-          placeholder="Kasrlarni qo'shish va ayirish"
+          placeholder={t("fields.topicPlaceholder")}
           errors={fieldErrors}
           disabled={submitting}
         />
 
         <div className="grid gap-5 sm:grid-cols-3">
           <SelectField
-            label="Davomiylik"
+            label={t("fields.duration")}
             name="durationMinutes"
             defaultValue="45"
             options={DURATION_OPTIONS.map((minutes) => ({
               value: String(minutes),
-              label: `${minutes} daqiqa`,
+              label: t("fields.durationOption", { minutes }),
             }))}
             errors={fieldErrors}
             disabled={submitting}
           />
           <SelectField
-            label="Dars turi"
+            label={t("fields.lessonType")}
             name="lessonType"
             defaultValue="NEW_TOPIC"
-            options={Object.entries(LESSON_TYPE_LABELS).map(([value, label]) => ({
+            options={LESSON_TYPES.map((value) => ({
               value,
-              label,
+              label: t(`types.${value}`),
             }))}
             errors={fieldErrors}
             disabled={submitting}
           />
+          {/*
+            DIQQAT: bu GENERATSIYA tili — dars ishlanmasi qaysi tilda
+            yoziladi. Interfeys tilidan MUSTAQIL: o'qituvchi interfeysni
+            ruscha ishlatib, darsni o'zbekcha so'rashi mumkin.
+          */}
           <SelectField
-            label="Til"
+            label={tRoot("common.language")}
             name="language"
             defaultValue="UZ"
-            options={Object.entries(LANGUAGE_LABELS).map(([value, label]) => ({
+            options={GENERATION_LANGUAGES.map((value) => ({
               value,
-              label,
+              label: tRoot(`languages.${value}`),
             }))}
             errors={fieldErrors}
             disabled={submitting}
@@ -167,7 +171,7 @@ export default function NewLessonPlanPage() {
           disabled={submitting}
           className="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {submitting ? "Yaratilmoqda…" : "Dars ishlanmasini yaratish"}
+          {submitting ? tRoot("common.creating") : t("new.submit")}
         </button>
 
         {submitting && (
@@ -176,9 +180,9 @@ export default function NewLessonPlanPage() {
             aria-live="polite"
             className="rounded-lg bg-slate-50 px-3 py-3 text-center"
           >
-            <p className="text-sm text-slate-700">{PROGRESS_MESSAGES[progressIndex]}</p>
+            <p className="text-sm text-slate-700">{t(PROGRESS_KEYS[progressIndex])}</p>
             <p className="mt-1 text-xs text-slate-400">
-              Bu 30 soniyagacha davom etishi mumkin — sahifani yopmang.
+              {tRoot("common.doNotClosePage")}
             </p>
           </div>
         )}

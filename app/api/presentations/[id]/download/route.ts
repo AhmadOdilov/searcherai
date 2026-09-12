@@ -27,17 +27,17 @@ export const GET = withErrorHandling<RouteContext>(async (_request, context) => 
   const { id } = await context.params;
 
   const presentation = await getPresentation(id, user.id);
-  if (!presentation) throw apiErrors.notFound("Prezentatsiya topilmadi.");
+  if (!presentation) throw apiErrors.notFound("errors.domain.presentationNotFound");
 
   if (presentation.status !== "READY" || presentation.filePath === null) {
-    throw apiErrors.validation(undefined, "Prezentatsiya fayli hali tayyor emas.");
+    throw apiErrors.validation(undefined, "errors.domain.presentationFileNotReady");
   }
 
   const buffer = await readPresentationFile(presentation.filePath);
   if (buffer === null) {
     // Yozuv bazada bor, lekin fayl diskda yo'q — masalan saqlagich
     // tozalangan. Foydalanuvchiga nima qilishni aytamiz.
-    throw apiErrors.notFound("Fayl topilmadi. Prezentatsiyani qaytadan yaratib ko'ring.");
+    throw apiErrors.notFound("errors.domain.presentationFileMissing");
   }
 
   const fileName = presentation.title ?? presentation.topic;

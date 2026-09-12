@@ -3,6 +3,7 @@ import { z } from "zod";
 import { ApiError } from "@/lib/api/errors";
 import { AiError } from "@/lib/ai/types";
 import { EnvError } from "@/lib/env";
+import { translateFieldErrors, translateKey } from "@/lib/i18n/translate";
 
 /**
  * API route'lar uchun umumiy xatolik qayta ishlovchisi.
@@ -28,9 +29,20 @@ export type ApiFailure = {
   ok: false;
   error: {
     code: string;
-    /** Foydalanuvchiga ko'rsatish uchun xabar (o'zbek tilida). */
+    /**
+     * Foydalanuvchiga ko'rsatish uchun xabar — SO'ROV TILIDA tarjima
+     * qilingan.
+     *
+     * Tarjima aynan shu yerda, javob shakllanayotganda qilinadi: xato
+     * tashlangan joy (servis qatlami) foydalanuvchi tilini bilmaydi.
+     */
     message: string;
-    /** Forma maydonlari bo'yicha xatolar, bo'lsa. */
+    /**
+     * Tarjima kaliti — klient o'zi tarjima qilmoqchi bo'lsa yoki xato
+     * turini dasturiy aniqlashi kerak bo'lsa.
+     */
+    messageKey: string;
+    /** Forma maydonlari bo'yicha xatolar (tarjima qilingan), bo'lsa. */
     fieldErrors?: Record<string, string[]>;
   };
 };
@@ -44,24 +56,39 @@ export function withErrorHandling<TContext>(
     try {
       return await handler(request, context);
     } catch (caught) {
-      return toErrorResponse(caught, request);
+      return await toErrorResponse(caught, request);
     }
   };
 }
 
-function jsonError(
+async function jsonError(
   status: number,
   code: string,
-  message: string,
-  fieldErrors?: Record<string, string[]>,
-): NextResponse<ApiFailure> {
+  messageKey: string,
+  fieldErrorKeys?: Record<string, string[]>,
+): Promise<NextResponse<ApiFailure>> {
+  const message = await translateKey(messageKey);
+  const fieldErrors =
+    fieldErrorKeys === undefined ? undefined : await translateFieldErrors(fieldErrorKeys);
+
   return NextResponse.json<ApiFailure>(
-    { ok: false, error: { code, message, ...(fieldErrors ? { fieldErrors } : {}) } },
+    {
+      ok: false,
+      error: {
+        code,
+        message,
+        messageKey,
+        ...(fieldErrors ? { fieldErrors } : {}),
+      },
+    },
     { status },
   );
 }
 
-function toErrorResponse(caught: unknown, request: Request): NextResponse<ApiFailure> {
+async function toErrorResponse(
+  caught: unknown,
+  request: Request,
+): Promise<NextResponse<ApiFailure>> {
   // Log — SERVER tomonida, to'liq tafsilot bilan.
   const route = `${request.method} ${new URL(request.url).pathname}`;
 
@@ -71,14 +98,14 @@ function toErrorResponse(caught: unknown, request: Request): NextResponse<ApiFai
     return jsonError(
       caught.httpStatus,
       caught.code,
-      caught.userMessage,
+      caught.messageKey,
       caught.fieldErrors,
     );
   }
 
   if (caught instanceof AiError) {
     console.error(`[api] ${route} → ai:${caught.kind}: ${caught.message}`);
-    return jsonError(caught.httpStatus, `ai_${caught.kind}`, caught.userMessage);
+    return jsonError(caught.httpStatus, `ai_${caught.kind}`, caught.messageKey);
   }
 
   if (caught instanceof z.ZodError) {
@@ -87,7 +114,7 @@ function toErrorResponse(caught: unknown, request: Request): NextResponse<ApiFai
     return jsonError(
       400,
       "validation_error",
-      "Kiritilgan ma'lumotlar to'g'ri emas.",
+      "errors.api.validation_error",
       z.flattenError(caught).fieldErrors as Record<string, string[]>,
     );
   }
@@ -95,20 +122,12 @@ function toErrorResponse(caught: unknown, request: Request): NextResponse<ApiFai
   if (caught instanceof EnvError) {
     // Sozlama xatosi — foydalanuvchi ayblanmaydi, lekin tafsilot ham berilmaydi.
     console.error(`[api] ${route} → env: ${caught.message}`);
-    return jsonError(
-      503,
-      "not_configured",
-      "Xizmat vaqtincha mavjud emas. Administrator bilan bog'laning.",
-    );
+    return jsonError(503, "not_configured", "errors.api.not_configured");
   }
 
   // Kutilmagan xatolik — to'liq loglaymiz, foydalanuvchiga umumiy xabar.
   console.error(`[api] ${route} → kutilmagan xatolik:`, caught);
-  return jsonError(
-    500,
-    "internal_error",
-    "Serverda xatolik yuz berdi. Iltimos, qayta urinib ko'ring.",
-  );
+  return jsonError(500, "internal_error", "errors.api.internal_error");
 }
 
 /**
@@ -126,7 +145,7 @@ export async function parseJsonBody<TSchema extends z.ZodType>(
     raw = await request.json();
   } catch (cause) {
     throw new ApiError("validation_error", {
-      userMessage: "So'rov tanasi to'g'ri JSON emas.",
+      messageKey: "errors.api.invalidJsonBody",
       detail: "request.json() muvaffaqiyatsiz",
       cause,
     });

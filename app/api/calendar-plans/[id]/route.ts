@@ -11,7 +11,7 @@ export const GET = withErrorHandling<RouteContext>(async (_request, context) => 
   const { id } = await context.params;
 
   const calendarPlan = await getCalendarPlan(id, user.id);
-  if (!calendarPlan) throw apiErrors.notFound("Kalendar reja topilmadi.");
+  if (!calendarPlan) throw apiErrors.notFound("errors.domain.calendarPlanNotFound");
 
   return ok({ calendarPlan });
 });

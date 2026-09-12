@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,19 +14,37 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Searcher AI — o'qituvchilar uchun AI-yordamchi",
-  description:
-    "Dars ishlanmasi, prezentatsiya, Excel reja va tarjima — sun'iy intellekt yordamida.",
-};
+/**
+ * Sahifa sarlavhasi ham tarjima qilinadi — u brauzer yorlig'ida va
+ * qidiruv natijalarida ko'rinadi.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("app");
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  // Til `i18n/request.ts` da aniqlangan: foydalanuvchi → cookie →
+  // brauzer tili → "uz".
+  const locale = await getLocale();
+
   return (
     <html
-      lang="uz"
+      // Ilgari qattiq "uz" edi. Bu skrinriderlar uchun muhim: ular
+      // matnni shu atributga qarab to'g'ri talaffuz qiladi.
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        {/*
+          Klient komponentlari `useTranslations()` ni shu provayder orqali
+          oladi. Tarjimalar `i18n/request.ts` dan avtomatik uzatiladi.
+        */}
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+      </body>
     </html>
   );
 }

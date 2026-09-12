@@ -92,7 +92,7 @@ function reportError(error: unknown): void {
   if (error instanceof AiError) {
     console.error(`  natija : ✗ XATO (${error.kind})`);
     console.error(`  texnik : ${error.message}`);
-    console.error(`  foydalanuvchiga: ${error.userMessage}`);
+    console.error(`  tarjima kaliti: ${error.messageKey}`);
     if (error.kind === "auth") {
       console.error("  → AI_API_KEY ni tekshiring.");
     }

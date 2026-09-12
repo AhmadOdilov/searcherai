@@ -37,17 +37,20 @@ describe("withErrorHandling", () => {
     const { apiErrors } = await import("../lib/api/errors");
 
     const handler = withErrorHandling(async () => {
-      throw apiErrors.notFound("Dars ishlanmasi topilmadi.");
+      throw apiErrors.notFound("errors.domain.lessonPlanNotFound");
     });
     const response = await handler(request(), {});
 
     assert.equal(response.status, 404);
     const json = (await response.json()) as {
       ok: boolean;
-      error: { code: string; message: string };
+      error: { code: string; message: string; messageKey: string };
     };
     assert.equal(json.ok, false);
     assert.equal(json.error.code, "not_found");
+    // Kalit javobda saqlanadi — klient xohlasa o'zi tarjima qiladi.
+    assert.equal(json.error.messageKey, "errors.domain.lessonPlanNotFound");
+    // `message` esa TARJIMA QILINGAN matn (sinovda standart til — o'zbek).
     assert.equal(json.error.message, "Dars ishlanmasi topilmadi.");
   });
 
@@ -69,8 +72,11 @@ describe("withErrorHandling", () => {
     assert.ok(!text.includes("sk-secret-123"), "kalit javobga tushmasligi kerak");
     assert.ok(!text.includes("429:"), "texnik tafsilot javobga tushmasligi kerak");
 
-    const json = JSON.parse(text) as { error: { code: string; message: string } };
+    const json = JSON.parse(text) as {
+      error: { code: string; message: string; messageKey: string };
+    };
     assert.equal(json.error.code, "ai_rate_limit");
+    assert.equal(json.error.messageKey, "errors.ai.rate_limit");
     assert.ok(json.error.message.includes("qayta urinib"));
   });
 
@@ -140,7 +146,10 @@ describe("parseJsonBody", () => {
     const response = await handler(broken, {});
 
     assert.equal(response.status, 400);
-    const json = (await response.json()) as { error: { message: string } };
+    const json = (await response.json()) as {
+      error: { message: string; messageKey: string };
+    };
+    assert.equal(json.error.messageKey, "errors.api.invalidJsonBody");
     assert.ok(json.error.message.includes("JSON"));
   });
 });

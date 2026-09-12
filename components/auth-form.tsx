@@ -2,7 +2,9 @@
 
 import { useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ApiClientError, apiRequest } from "@/lib/api-client";
+import { LocaleSwitcher } from "@/components/ui/locale-switcher";
 
 /**
  * Login va register formalari uchun umumiy qobiq.
@@ -36,6 +38,7 @@ export function AuthForm({
   redirectTo,
 }: AuthFormProps) {
   const router = useRouter();
+  const t = useTranslations("common");
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
@@ -61,15 +64,21 @@ export function AuthForm({
         // Maydon xatolari bo'lsa umumiy xabar ortiqcha shovqin bo'ladi.
         if (!error.fieldErrors) setFormError(error.message);
       } else {
-        setFormError("Kutilmagan xatolik yuz berdi. Qayta urinib ko'ring.");
+        setFormError(t("unexpectedError"));
       }
       setSubmitting(false);
     }
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12">
-      <div className="w-full max-w-sm">
+    <main className="flex min-h-screen flex-col bg-slate-50 px-4 py-6">
+      {/* Til almashtirgich KIRISHDAN oldin ham kerak — foydalanuvchi hali
+          tizimga kirmagan bo'lsa ham interfeysni o'z tilida ko'rsin. */}
+      <div className="flex justify-end">
+        <LocaleSwitcher />
+      </div>
+
+      <div className="mx-auto w-full max-w-sm flex-1 pt-10">
         <h1 className="mb-1 text-2xl font-semibold text-slate-900">Searcher AI</h1>
         <p className="mb-6 text-sm text-slate-500">{title}</p>
 
@@ -94,7 +103,7 @@ export function AuthForm({
             disabled={submitting}
             className="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {submitting ? "Yuborilmoqda…" : submitLabel}
+            {submitting ? t("submitting") : submitLabel}
           </button>
         </form>
 

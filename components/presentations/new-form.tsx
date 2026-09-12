@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ApiClientError, apiRequest } from "@/lib/api-client";
-import { LANGUAGE_LABELS } from "@/lib/ui/labels";
+import { GENERATION_LANGUAGES } from "@/lib/ui/options";
 
 /**
  * Prezentatsiya yaratish formasi.
@@ -23,13 +24,14 @@ export interface LessonPlanOption {
 
 type Mode = "from-lesson-plan" | "standalone";
 
-const PROGRESS_MESSAGES = [
-  "So'rov yuborildi…",
-  "Slaydlar tuzilmoqda…",
-  "Matn qisqartirilib, bandlarga bo'linmoqda…",
-  "PowerPoint fayli yasalmoqda…",
-  "Yakunlanmoqda…",
-];
+/** Bosqichli xabarlarning TARJIMA KALITLARI. */
+const PROGRESS_KEYS = [
+  "progress.sent",
+  "progress.slides",
+  "progress.bullets",
+  "progress.file",
+  "progress.finishing",
+] as const;
 
 export function NewPresentationForm({
   lessonPlans,
@@ -39,6 +41,8 @@ export function NewPresentationForm({
   preselectedLessonPlanId: string | null;
 }) {
   const router = useRouter();
+  const t = useTranslations("presentations");
+  const tRoot = useTranslations();
 
   // Dars ishlanmasi bo'lmasa mustaqil rejimdan boshlaymiz — bo'sh
   // dropdown ko'rsatishdan ko'ra shunisi tushunarli.
@@ -62,7 +66,7 @@ export function NewPresentationForm({
     setProgressIndex(0);
 
     const ticker = setInterval(() => {
-      setProgressIndex((current) => Math.min(current + 1, PROGRESS_MESSAGES.length - 1));
+      setProgressIndex((current) => Math.min(current + 1, PROGRESS_KEYS.length - 1));
     }, 4000);
 
     const formData = new FormData(event.currentTarget);
@@ -94,7 +98,7 @@ export function NewPresentationForm({
         if (error.fieldErrors) setFieldErrors(error.fieldErrors);
         else setFormError(error.message);
       } else {
-        setFormError("Kutilmagan xatolik yuz berdi. Qayta urinib ko'ring.");
+        setFormError(tRoot("common.unexpectedError"));
       }
       setSubmitting(false);
     } finally {
@@ -117,24 +121,24 @@ export function NewPresentationForm({
       {/* ── Rejim tanlash ──────────────────────────────────────────────── */}
       <fieldset disabled={submitting}>
         <legend className="mb-2 text-sm font-medium text-slate-700">
-          Qanday yaratamiz?
+          {t("new.modeQuestion")}
         </legend>
         <div className="grid gap-2 sm:grid-cols-2">
           <ModeOption
             value="from-lesson-plan"
             current={mode}
             onSelect={setMode}
-            title="Dars ishlanmasidan"
-            description="Slaydlar dars bosqichlariga mos tuziladi"
+            title={t("new.modeFromPlan")}
+            description={t("new.modeFromPlanHint")}
             disabled={lessonPlans.length === 0}
-            disabledHint="Tayyor dars ishlanmasi yo'q"
+            disabledHint={t("new.modeFromPlanDisabled")}
           />
           <ModeOption
             value="standalone"
             current={mode}
             onSelect={setMode}
-            title="Mustaqil"
-            description="Faqat mavzu kiritiladi"
+            title={t("new.modeStandalone")}
+            description={t("new.modeStandaloneHint")}
           />
         </div>
       </fieldset>
@@ -146,7 +150,7 @@ export function NewPresentationForm({
             htmlFor="lessonPlanId"
             className="mb-1.5 block text-sm font-medium text-slate-700"
           >
-            Dars ishlanmasi
+            {t("new.lessonPlanField")}
           </label>
           <select
             id="lessonPlanId"
@@ -161,9 +165,7 @@ export function NewPresentationForm({
               </option>
             ))}
           </select>
-          <p className="mt-1.5 text-xs text-slate-400">
-            Fan, sinf va til dars ishlanmasidan olinadi.
-          </p>
+          <p className="mt-1.5 text-xs text-slate-400">{t("new.lessonPlanHint")}</p>
           {fieldErrors.lessonPlanId !== undefined && (
             <p className="mt-1.5 text-xs text-red-600">
               {fieldErrors.lessonPlanId.join(" ")}
@@ -173,27 +175,27 @@ export function NewPresentationForm({
       ) : (
         <>
           <TextField
-            label="Mavzu"
+            label={tRoot("lessonPlans.fields.topic")}
             name="topic"
-            placeholder="Fotosintez jarayoni"
+            placeholder={t("new.topicPlaceholder")}
             required
             errors={fieldErrors}
             disabled={submitting}
           />
           <div className="grid gap-5 sm:grid-cols-3">
             <TextField
-              label="Fan"
+              label={tRoot("lessonPlans.fields.subject")}
               name="subject"
-              placeholder="Biologiya"
-              hint="Ixtiyoriy"
+              placeholder={t("new.subjectPlaceholder")}
+              hint={tRoot("common.optional")}
               errors={fieldErrors}
               disabled={submitting}
             />
             <TextField
-              label="Sinf"
+              label={tRoot("lessonPlans.fields.grade")}
               name="grade"
-              placeholder="7-sinf"
-              hint="Ixtiyoriy"
+              placeholder={t("new.gradePlaceholder")}
+              hint={tRoot("common.optional")}
               errors={fieldErrors}
               disabled={submitting}
             />
@@ -202,7 +204,7 @@ export function NewPresentationForm({
                 htmlFor="language"
                 className="mb-1.5 block text-sm font-medium text-slate-700"
               >
-                Til
+                {tRoot("common.language")}
               </label>
               <select
                 id="language"
@@ -211,9 +213,12 @@ export function NewPresentationForm({
                 disabled={submitting}
                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-100 disabled:bg-slate-50"
               >
-                {Object.entries(LANGUAGE_LABELS).map(([value, label]) => (
+                {/*
+                  GENERATSIYA tili — interfeys tilidan mustaqil.
+                */}
+                {GENERATION_LANGUAGES.map((value) => (
                   <option key={value} value={value}>
-                    {label}
+                    {tRoot(`languages.${value}`)}
                   </option>
                 ))}
               </select>
@@ -227,12 +232,12 @@ export function NewPresentationForm({
         disabled={submitting || (mode === "from-lesson-plan" && lessonPlanId === "")}
         className="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {submitting ? "Yaratilmoqda…" : "Prezentatsiya yaratish"}
+        {submitting ? tRoot("common.creating") : t("new.submit")}
       </button>
 
       {submitting && (
         <div aria-live="polite" className="rounded-lg bg-slate-50 px-3 py-3 text-center">
-          <p className="text-sm text-slate-700">{PROGRESS_MESSAGES[progressIndex]}</p>
+          <p className="text-sm text-slate-700">{t(PROGRESS_KEYS[progressIndex])}</p>
           <p className="mt-1 text-xs text-slate-400">
             Bu 30 soniyagacha davom etishi mumkin — sahifani yopmang.
           </p>
@@ -241,14 +246,14 @@ export function NewPresentationForm({
 
       {mode === "from-lesson-plan" && lessonPlans.length === 0 && (
         <p className="text-xs text-slate-500">
-          Tayyor dars ishlanmasi yo&apos;q.{" "}
+          {t("new.noPlansPrefix")}{" "}
           <Link
             href="/dashboard/lesson-plans/new"
             className="font-medium text-slate-900 underline"
           >
-            Avval dars ishlanmasi yarating
+            {t("new.noPlansLink")}
           </Link>{" "}
-          yoki mustaqil rejimni tanlang.
+          {t("new.noPlansSuffix")}
         </p>
       )}
     </form>

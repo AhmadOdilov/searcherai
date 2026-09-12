@@ -44,6 +44,10 @@ export const lessonPlanListQuerySchema = paginationSchema.extend({
 export type LessonPlanListQuery = z.infer<typeof lessonPlanListQuerySchema>;
 
 // ─── 2. AI qaytaradigan struktura ────────────────────────────────────────────
+//
+// DIQQAT: quyidagi xabarlar TARJIMA KALITI EMAS, tabiiy matn. Ular
+// foydalanuvchiga ko'rsatilmaydi — `generateJson` ularni MODELGA qayta
+// so'rov bilan yuboradi, model esa kalitni emas, tushunarli matnni o'qiydi.
 
 /**
  * Dars bosqichi — kirish, asosiy qism, mustahkamlash, uyga vazifa va h.k.

@@ -23,15 +23,15 @@ export const GET = withErrorHandling<RouteContext>(async (_request, context) => 
   const { id } = await context.params;
 
   const plan = await getCalendarPlan(id, user.id);
-  if (!plan) throw apiErrors.notFound("Kalendar reja topilmadi.");
+  if (!plan) throw apiErrors.notFound("errors.domain.calendarPlanNotFound");
 
   if (plan.status !== "READY" || plan.filePath === null) {
-    throw apiErrors.validation(undefined, "Excel fayli hali tayyor emas.");
+    throw apiErrors.validation(undefined, "errors.domain.calendarPlanFileNotReady");
   }
 
   const buffer = await readGeneratedFile("xlsx", plan.filePath);
   if (buffer === null) {
-    throw apiErrors.notFound("Fayl topilmadi. Kalendar rejani qaytadan yaratib ko'ring.");
+    throw apiErrors.notFound("errors.domain.calendarPlanFileMissing");
   }
 
   const fileName = plan.title ?? `${plan.subject} ${plan.period}`;

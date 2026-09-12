@@ -56,7 +56,9 @@ describe("registerSchema", () => {
     assert.equal(result.success, false);
     const issue = result.error!.issues.find((i) => i.path[0] === "password");
     assert.ok(issue);
-    assert.match(issue.message, /8 belgi/);
+    // Xabar endi TARJIMA KALITI — tarjima `withErrorHandling` da qilinadi,
+    // chunki sxema yaratilganda foydalanuvchi tili hali noma'lum.
+    assert.equal(issue.message, "errors.validation.passwordTooShort");
   });
 
   it("72 belgidan uzun parolni rad etadi", () => {

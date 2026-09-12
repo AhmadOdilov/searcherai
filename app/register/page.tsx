@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { AuthForm, Field } from "@/components/auth-form";
 
 /**
@@ -10,17 +11,19 @@ import { AuthForm, Field } from "@/components/auth-form";
  * uni so'rovdan olmaydi, sxemadagi standart qiymatni ishlatadi).
  */
 export default function RegisterPage() {
+  const t = useTranslations("auth");
+
   return (
     <AuthForm
-      title="Yangi hisob yarating"
-      submitLabel="Ro'yxatdan o'tish"
+      title={t("register.title")}
+      submitLabel={t("register.submit")}
       endpoint="/api/auth/register"
       redirectTo="/dashboard"
       footer={
         <>
-          Hisobingiz bormi?{" "}
+          {t("register.hasAccount")}{" "}
           <Link href="/login" className="font-medium text-slate-900 underline">
-            Kirish
+            {t("register.loginLink")}
           </Link>
         </>
       }
@@ -28,26 +31,26 @@ export default function RegisterPage() {
       {(errors) => (
         <>
           <Field
-            label="To'liq ism"
+            label={t("fields.fullName")}
             name="fullName"
             autoComplete="name"
-            placeholder="Aziza Karimova"
+            placeholder={t("fields.fullNamePlaceholder")}
             errors={errors}
           />
           <Field
-            label="Email"
+            label={t("fields.email")}
             name="email"
             type="email"
             autoComplete="email"
-            placeholder="ism@maktab.uz"
+            placeholder={t("fields.emailPlaceholder")}
             errors={errors}
           />
           <Field
-            label="Parol"
+            label={t("fields.password")}
             name="password"
             type="password"
             autoComplete="new-password"
-            hint="Kamida 8 belgi"
+            hint={t("fields.passwordHint")}
             errors={errors}
           />
         </>

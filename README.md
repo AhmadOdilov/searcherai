@@ -463,6 +463,95 @@ foydalanuvchi sahifani yopib, generatsiyani bekorga ketkazmasligi uchun.
 
 ---
 
+## Ko'p tillilik (i18n)
+
+Interfeys **ikki tilli**: o'zbek (standart) va rus. Kutubxona — `next-intl`.
+
+### Interfeys tili ≠ generatsiya tili
+
+Bu ikkisi **butunlay alohida** tushuncha:
+
+| | Interfeys tili | Generatsiya tili |
+| --- | --- | --- |
+| Nima | Tugmalar, sarlavhalar, xatolar | Dars ishlanmasi/slayd/jadval MATNI |
+| Qayerda | `User.language`, cookie | Har generatsiya formasida tanlanadi |
+| Tillar | uz, ru | UZ, RU, EN |
+
+O'qituvchi interfeysni ruscha ishlatib, dars ishlanmasini o'zbekcha
+so'rashi mumkin — bu qo'llab-quvvatlanadi va sinov bilan tekshiriladi.
+
+### URL'da til prefiksi yo'q
+
+next-intl'ning odatiy sozlamasi `/[locale]/...` segmentidan foydalanadi.
+Bizda til manbai boshqa, shuning uchun u ishlatilmadi: URL'ga til
+qo'shilsa, bir xil sahifaning ikki manzili paydo bo'lardi va `proxy.ts`
+hamda barcha havolalarni qayta yozishga to'g'ri kelardi.
+
+Til har so'rovda `lib/i18n/locale.ts` da aniqlanadi:
+
+```
+1. User.language      — kirgan foydalanuvchi ataylab tanlagan
+2. Cookie             — kirmagan foydalanuvchi tanlovi
+3. Accept-Language    — brauzer tili
+4. "uz"               — standart
+```
+
+Foydalanuvchi cookie'dan **ustun** turadi: u boshqa qurilmadan kirsa ham
+o'z tilini ko'rishi kerak.
+
+### Xato xabarlari — kalit, matn emas
+
+Xato tashlanadigan joy (servis qatlami, zod sxemasi) foydalanuvchi tilini
+bilmaydi va bilishi shart emas. Shuning uchun ular **tarjima kaliti**
+qaytaradi:
+
+```ts
+throw apiErrors.notFound("errors.domain.lessonPlanNotFound");
+// zod: .min(3, "errors.validation.topicTooShort")
+```
+
+Tarjima javob shakllanadigan joyda — `withErrorHandling` da — qilinadi,
+chunki aynan o'sha yerda so'rov tili ma'lum. Javobda ikkalasi ham bo'ladi:
+
+```json
+{ "ok": false, "error": {
+  "code": "not_found",
+  "message": "План урока не найден.",
+  "messageKey": "errors.domain.lessonPlanNotFound",
+  "fieldErrors": { "topic": ["Тема должна содержать не менее 3 символов"] }
+}}
+```
+
+> **Istisno:** AI **kontent** sxemalarining xabarlari tabiiy matn bo'lib
+> qoladi (`lessonPlanContentSchemaFor` va h.k.). Ular foydalanuvchiga
+> ko'rsatilmaydi — `generateJson` ularni MODELGA qayta so'rov bilan
+> yuboradi, model esa kalitni emas, tushunarli matnni o'qiydi.
+
+### `errorMessage` ustunida ham kalit
+
+`status = FAILED` bo'lganda bazaga kalit yoziladi. Sabab: yozuv bir marta
+yaratiladi, lekin ko'p marta ko'riladi — foydalanuvchi orada tilni
+o'zgartirishi mumkin.
+
+i18n'gacha yaratilgan yozuvlarda tayyor matn turibdi, shuning uchun
+`translateStoredError()` qiymat kalitga o'xshasa tarjima qiladi, aks
+holda borligicha ko'rsatadi.
+
+### Til almashtirgich
+
+Dashboard sarlavhasida va kirish/ro'yxat sahifalarida. `PUT
+/api/user/language` kirgan foydalanuvchi uchun `User.language` ga, hamma
+uchun cookie'ga yozadi.
+
+### Tarjima fayllari
+
+`messages/uz.json` va `messages/ru.json` — **264 kalit**, ikkalasida bir
+xil. Buni sinov avtomatik tekshiradi (`tests/i18n-messages.test.ts`):
+yetishmagan/ortiqcha kalitlar, bo'sh qiymatlar, TODO qoldiqlari va hatto
+`{parametr}` o'rinbosarlarining mosligi.
+
+---
+
 ## API route yozish
 
 Har bir modulda `try/catch` takrorlanmaydi — umumiy wrapper bor:
@@ -528,7 +617,13 @@ lib/
     service.ts               generatsiya oqimi
     prompt.ts                UZ/RU/EN + dars ishlanmasi konteksti
     storage.ts               fayl saqlagichi (public'dan tashqarida)
-  ui/labels.ts               modullar orasida umumiy yorliqlar
+  ui/labels.ts               sana/hajm formatlash (tilga qarab)
+  ui/options.ts              forma tanlovlari (kalitlar)
+  i18n/
+    config.ts                tillar, cookie nomi, Accept-Language tahlili
+    locale.ts                so'rov tilini aniqlash (server)
+    translate.ts             xato kalitlarini tarjima qilish
+    stored-error.ts          bazadagi eski matnlarni qo'llab-quvvatlash
   lesson-plans/
     service.ts               generatsiya, ro'yxat, egalik tekshiruvi
     prompt.ts                UZ/RU/EN promptlari
@@ -550,6 +645,8 @@ lib/
     lesson-plan.ts           kirish + AI kontent sxemalari
     presentation.ts          ikki rejim + slaydlar sxemasi
     calendar-plan.ts         kirish + haftalar/soatlar sxemasi
+i18n/request.ts              next-intl so'rov sozlamasi
+messages/                    uz.json, ru.json (264 kalit)
 prisma/
   schema.prisma              DB sxemasi
   migrations/                migratsiyalar
@@ -570,5 +667,5 @@ tests/                       birlik sinovlari (mock AI server bilan)
 | Prezentatsiya (.pptx) | ✅ tayyor |
 | Excel reja (.xlsx) | ✅ tayyor |
 | .docx / .pdf eksport | ⬜ |
-| Ko'p tillilik (UZ/RU/EN) | ⬜ |
+| Ko'p tillilik (interfeys UZ/RU) | ✅ tayyor |
 | AI qidiruv (Searcher) | ⬜ |

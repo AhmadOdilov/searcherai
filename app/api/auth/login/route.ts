@@ -56,5 +56,5 @@ export const POST = withErrorHandling(async (request) => {
 });
 
 function invalidCredentials() {
-  return apiErrors.unauthorized("Email yoki parol noto'g'ri.");
+  return apiErrors.unauthorized("errors.domain.invalidCredentials");
 }

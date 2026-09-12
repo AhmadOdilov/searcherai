@@ -20,7 +20,7 @@ export const GET = withErrorHandling<RouteContext>(async (_request, context) => 
   const plan = await getLessonPlan(id, user.id);
   if (!plan) {
     // 404, 403 emas — boshqa foydalanuvchi yozuvi BORLIGINI ham bildirmaymiz.
-    throw apiErrors.notFound("Dars ishlanmasi topilmadi.");
+    throw apiErrors.notFound("errors.domain.lessonPlanNotFound");
   }
 
   return ok({ lessonPlan: plan });

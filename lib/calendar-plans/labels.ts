@@ -1,19 +1,25 @@
+import { INTL_LOCALES, type UiLocale } from "@/lib/i18n/config";
+
 /**
- * Kalendar rejaga XOS interfeys yorliqlari.
+ * Kalendar rejaga xos UI qiymatlari.
  *
- * Umumiy yorliqlar (holat, til, sana) `lib/ui/labels.ts` da.
+ * Davr nomlari endi tarjima kalitlari orqali keladi — `PERIOD_PRESETS`
+ * faqat KALIT va hafta sonini saqlaydi, ko'rsatiladigan matn esa
+ * `calendarPlans.periods.*` dan olinadi.
  */
 
-/** Formada tanlash uchun tayyor davr variantlari. */
+/** Davr variantlari: tarjima kaliti + standart hafta soni. */
 export const PERIOD_PRESETS = [
-  { label: "1-chorak", weeks: 9 },
-  { label: "2-chorak", weeks: 7 },
-  { label: "3-chorak", weeks: 10 },
-  { label: "4-chorak", weeks: 8 },
-  { label: "1-yarim yil", weeks: 16 },
-  { label: "2-yarim yil", weeks: 18 },
-  { label: "O'quv yili", weeks: 34 },
+  { key: "quarter1", weeks: 9 },
+  { key: "quarter2", weeks: 7 },
+  { key: "quarter3", weeks: 10 },
+  { key: "quarter4", weeks: 8 },
+  { key: "halfYear1", weeks: 16 },
+  { key: "halfYear2", weeks: 18 },
+  { key: "schoolYear", weeks: 34 },
 ] as const;
+
+export type PeriodPresetKey = (typeof PERIOD_PRESETS)[number]["key"];
 
 /** Haftalik soat variantlari. */
 export const HOURS_PER_WEEK_OPTIONS = [1, 2, 3, 4, 5, 6] as const;
@@ -24,10 +30,13 @@ export function toDateInputValue(date: Date | string): string {
   return value.toISOString().slice(0, 10);
 }
 
-/** Sanani o'qish uchun "14.09.2026" ko'rinishida. */
-export function formatShortDate(date: Date | string): string {
+/** Sanani o'qish uchun — interfeys tiliga qarab. */
+export function formatShortDate(date: Date | string, locale: UiLocale): string {
   const value = typeof date === "string" ? new Date(date) : date;
-  const day = String(value.getUTCDate()).padStart(2, "0");
-  const month = String(value.getUTCMonth() + 1).padStart(2, "0");
-  return `${day}.${month}.${value.getUTCFullYear()}`;
+  return new Intl.DateTimeFormat(INTL_LOCALES[locale], {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(value);
 }

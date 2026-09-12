@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ApiClientError, apiRequest } from "@/lib/api-client";
-import { LANGUAGE_LABELS } from "@/lib/ui/labels";
+import { GENERATION_LANGUAGES } from "@/lib/ui/options";
 import {
   HOURS_PER_WEEK_OPTIONS,
   PERIOD_PRESETS,
@@ -21,17 +22,20 @@ import {
  * ketadi. Shuning uchun kutish vaqti OLDINDAN, forma ustida aytiladi.
  */
 
-const PROGRESS_MESSAGES = [
-  "So'rov yuborildi…",
-  "Mavzular ketma-ketligi tuzilmoqda…",
-  "Mavzular haftalarga taqsimlanmoqda…",
-  "Soatlar hisoblanmoqda…",
-  "Excel jadvali yasalmoqda…",
-  "Yakunlanmoqda…",
-];
+/** Bosqichli xabarlarning TARJIMA KALITLARI. */
+const PROGRESS_KEYS = [
+  "progress.sent",
+  "progress.sequence",
+  "progress.distribute",
+  "progress.hours",
+  "progress.file",
+  "progress.finishing",
+] as const;
 
 export default function NewCalendarPlanPage() {
   const router = useRouter();
+  const t = useTranslations("calendarPlans");
+  const tRoot = useTranslations();
   const [submitting, setSubmitting] = useState(false);
   const [progressIndex, setProgressIndex] = useState(0);
   const [elapsed, setElapsed] = useState(0);
@@ -50,7 +54,7 @@ export default function NewCalendarPlanPage() {
     setElapsed(0);
 
     const ticker = setInterval(() => {
-      setProgressIndex((current) => Math.min(current + 1, PROGRESS_MESSAGES.length - 1));
+      setProgressIndex((current) => Math.min(current + 1, PROGRESS_KEYS.length - 1));
     }, 8000);
     // O'tgan vaqtni ko'rsatamiz — uzoq kutishda "ishlayaptimi?" degan
     // savol tug'ilmasin.
@@ -71,7 +75,7 @@ export default function NewCalendarPlanPage() {
         if (error.fieldErrors) setFieldErrors(error.fieldErrors);
         else setFormError(error.message);
       } else {
-        setFormError("Kutilmagan xatolik yuz berdi. Qayta urinib ko'ring.");
+        setFormError(tRoot("common.unexpectedError"));
       }
       setSubmitting(false);
     } finally {
@@ -86,21 +90,16 @@ export default function NewCalendarPlanPage() {
         href="/dashboard/calendar-plans"
         className="text-sm text-slate-500 underline hover:text-slate-700"
       >
-        ← Ro&apos;yxatga qaytish
+        ← {tRoot("common.back")}
       </Link>
 
-      <h1 className="mt-4 text-xl font-semibold text-slate-900">
-        Yangi kalendar-tematik reja
-      </h1>
-      <p className="mt-1 text-sm text-slate-500">
-        Butun davr uchun darslar jadvali tuziladi va Excel faylida beriladi.
-      </p>
+      <h1 className="mt-4 text-xl font-semibold text-slate-900">{t("new.title")}</h1>
+      <p className="mt-1 text-sm text-slate-500">{t("new.subtitle")}</p>
 
       {/* Kutish vaqti OLDINDAN aytiladi — yuborgandan keyin emas. */}
       <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-800">
-        <span className="font-medium">Diqqat:</span> bu eng uzun generatsiya — davr
-        uzunligiga qarab <strong>40-60 soniya</strong> davom etishi mumkin. Boshlangach
-        sahifani yopmang.
+        <span className="font-medium">{t("new.slowWarningLabel")}</span>{" "}
+        {t("new.slowWarning")}
       </p>
 
       <form
@@ -116,16 +115,16 @@ export default function NewCalendarPlanPage() {
 
         <div className="grid gap-5 sm:grid-cols-2">
           <TextField
-            label="Fan"
+            label={tRoot("lessonPlans.fields.subject")}
             name="subject"
-            placeholder="Matematika"
+            placeholder={tRoot("lessonPlans.fields.subjectPlaceholder")}
             errors={fieldErrors}
             disabled={submitting}
           />
           <TextField
-            label="Sinf / daraja"
+            label={tRoot("lessonPlans.fields.grade")}
             name="grade"
-            placeholder="7-sinf"
+            placeholder={tRoot("lessonPlans.fields.gradePlaceholder")}
             errors={fieldErrors}
             disabled={submitting}
           />
@@ -136,24 +135,27 @@ export default function NewCalendarPlanPage() {
             htmlFor="period"
             className="mb-1.5 block text-sm font-medium text-slate-700"
           >
-            Davr
+            {t("fields.period")}
           </label>
           <select
             id="period"
             name="period"
-            defaultValue={PERIOD_PRESETS[0].label}
+            defaultValue={PERIOD_PRESETS[0].key}
             disabled={submitting}
             onChange={(event) => {
               const preset = PERIOD_PRESETS.find(
-                (item) => item.label === event.target.value,
+                (item) => item.key === event.target.value,
               );
               if (preset) setWeeks(preset.weeks);
             }}
             className={selectClasses(fieldErrors.period !== undefined)}
           >
             {PERIOD_PRESETS.map((preset) => (
-              <option key={preset.label} value={preset.label}>
-                {preset.label} ({preset.weeks} hafta)
+              <option key={preset.key} value={t(`periods.${preset.key}`)}>
+                {t("fields.periodOption", {
+                  label: t(`periods.${preset.key}`),
+                  weeks: preset.weeks,
+                })}
               </option>
             ))}
           </select>
@@ -168,7 +170,7 @@ export default function NewCalendarPlanPage() {
               htmlFor="startDate"
               className="mb-1.5 block text-sm font-medium text-slate-700"
             >
-              Boshlanish sanasi
+              {t("fields.startDate")}
             </label>
             <input
               id="startDate"
@@ -192,7 +194,7 @@ export default function NewCalendarPlanPage() {
               htmlFor="weeks"
               className="mb-1.5 block text-sm font-medium text-slate-700"
             >
-              Haftalar
+              {t("fields.weeks")}
             </label>
             <input
               id="weeks"
@@ -217,7 +219,7 @@ export default function NewCalendarPlanPage() {
               htmlFor="hoursPerWeek"
               className="mb-1.5 block text-sm font-medium text-slate-700"
             >
-              Haftalik soat
+              {t("fields.hoursPerWeek")}
             </label>
             <select
               id="hoursPerWeek"
@@ -228,7 +230,7 @@ export default function NewCalendarPlanPage() {
             >
               {HOURS_PER_WEEK_OPTIONS.map((hours) => (
                 <option key={hours} value={hours}>
-                  {hours} soat
+                  {t("fields.hoursOption", { hours })}
                 </option>
               ))}
             </select>
@@ -245,7 +247,7 @@ export default function NewCalendarPlanPage() {
             htmlFor="language"
             className="mb-1.5 block text-sm font-medium text-slate-700"
           >
-            Til
+            {tRoot("common.language")}
           </label>
           <select
             id="language"
@@ -254,9 +256,10 @@ export default function NewCalendarPlanPage() {
             disabled={submitting}
             className={selectClasses(false)}
           >
-            {Object.entries(LANGUAGE_LABELS).map(([value, label]) => (
+            {/* GENERATSIYA tili — interfeys tilidan mustaqil. */}
+            {GENERATION_LANGUAGES.map((value) => (
               <option key={value} value={value}>
-                {label}
+                {tRoot(`languages.${value}`)}
               </option>
             ))}
           </select>
@@ -267,7 +270,7 @@ export default function NewCalendarPlanPage() {
           disabled={submitting}
           className="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {submitting ? "Yaratilmoqda…" : "Kalendar reja yaratish"}
+          {submitting ? tRoot("common.creating") : t("new.submit")}
         </button>
 
         {submitting && (
@@ -275,9 +278,9 @@ export default function NewCalendarPlanPage() {
             aria-live="polite"
             className="rounded-lg bg-slate-50 px-3 py-3 text-center"
           >
-            <p className="text-sm text-slate-700">{PROGRESS_MESSAGES[progressIndex]}</p>
+            <p className="text-sm text-slate-700">{t(PROGRESS_KEYS[progressIndex])}</p>
             <p className="mt-1 text-xs text-slate-400">
-              {elapsed} soniya o&apos;tdi · odatda 40-60 soniya davom etadi
+              {t("detail.elapsed", { seconds: elapsed })}
             </p>
             {/* Ayniqsa uzoq cho'zilsa qo'shimcha tinchlantirish. */}
             {elapsed > 45 && (

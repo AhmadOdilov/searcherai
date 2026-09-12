@@ -203,8 +203,9 @@ describe("AI qatlami — xatoliklar", () => {
         assert.ok(error instanceof AiError);
         assert.equal(error.kind, "not_configured");
         assert.equal(error.httpStatus, 503);
-        // Foydalanuvchiga texnik tafsilot ketmasligi kerak
-        assert.ok(!error.userMessage.includes("AI_API_KEY"));
+        // Xabar TARJIMA KALITI bo'lishi kerak, tayyor matn emas — tarjima
+        // javob shakllanadigan joyda qilinadi.
+        assert.equal(error.messageKey, "errors.ai.not_configured");
         return true;
       },
     );
