@@ -56,6 +56,21 @@ const envSchema = z.object({
   AI_TIMEOUT_MS: z.coerce.number().int().positive().default(90_000),
   AI_MAX_RETRIES: z.coerce.number().int().min(0).max(5).default(2),
   AI_MAX_TOKENS: z.coerce.number().int().positive().default(16_000),
+
+  // ── Fayl saqlagichi ──────────────────────────────────────────────────
+  /**
+   * Qaysi saqlagich ishlatilsin:
+   *   "local" — disk (`storage/` papka). VPS va Docker uchun.
+   *   "s3"    — S3-mos xizmat (Cloudflare R2 / AWS S3 / MinIO).
+   *             Serverless (Vercel) uchun MAJBURIY, chunki u yerda fayl
+   *             tizimi faqat o'qish uchun ochiq.
+   */
+  STORAGE_DRIVER: z.enum(["local", "s3"]).default("local"),
+  S3_BUCKET: z.string().default(""),
+  S3_ENDPOINT: z.string().default(""),
+  S3_ACCESS_KEY: z.string().default(""),
+  S3_SECRET_KEY: z.string().default(""),
+  S3_REGION: z.string().default("auto"),
 });
 
 /**
@@ -113,6 +128,32 @@ export function getEnv(): AppEnv {
 
   const data = parsed.data;
   const defaults = PROVIDER_DEFAULTS[data.AI_PROVIDER];
+
+  /*
+    S3 tanlangan bo'lsa, majburiy sozlamalar borligini DARHOL tekshiramiz.
+
+    Aks holda xato faqat birinchi fayl saqlanganda — ya'ni generatsiya
+    tugagandan KEYIN — chiqardi va butun ish bekorga ketardi.
+  */
+  if (data.STORAGE_DRIVER === "s3") {
+    const missing = (
+      [
+        ["S3_BUCKET", data.S3_BUCKET],
+        ["S3_ACCESS_KEY", data.S3_ACCESS_KEY],
+        ["S3_SECRET_KEY", data.S3_SECRET_KEY],
+      ] as const
+    )
+      .filter(([, value]) => value === "")
+      .map(([name]) => name);
+
+    if (missing.length > 0) {
+      throw new EnvError(
+        `STORAGE_DRIVER="s3" tanlangan, lekin quyidagilar sozlanmagan: ` +
+          `${missing.join(", ")}.\n` +
+          `.env.example dagi S3 bo'limiga qarang.`,
+      );
+    }
+  }
 
   cached = {
     ...data,

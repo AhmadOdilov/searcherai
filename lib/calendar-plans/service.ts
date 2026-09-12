@@ -7,7 +7,7 @@ import { markStaleAsFailed } from "@/lib/generation/stale";
 import { getEnv } from "@/lib/env";
 import { generateXlsx } from "@/lib/xlsx/generate";
 import { buildSystemPrompt, buildUserPrompt } from "@/lib/calendar-plans/prompt";
-import { deleteGeneratedFile, saveGeneratedFile } from "@/lib/storage/files";
+import { deleteFile, saveFile } from "@/lib/storage/files";
 import {
   calendarPlanContentSchemaFor,
   totalRowCount,
@@ -131,7 +131,7 @@ export async function regenerateCalendarPlan(
 
   // Eski faylni o'chiramiz — yangisi uning o'rniga yoziladi.
   if (existing.filePath !== null) {
-    await deleteGeneratedFile("xlsx", existing.filePath);
+    await deleteFile("xlsx", existing.filePath);
   }
 
   const reset = await prisma.calendarPlan.update({
@@ -174,7 +174,7 @@ async function runGeneration(id: string, input: CalendarPlanInput): Promise<void
     // Fayl AI javobidan KEYIN yasaladi — AI yiqilsa keraksiz fayl
     // qolib ketmaydi.
     const { buffer, rowCount } = await generateXlsx(data, input.language);
-    const { filePath, fileSize } = await saveGeneratedFile("xlsx", id, buffer);
+    const { filePath, fileSize } = await saveFile("xlsx", id, buffer);
 
     await prisma.calendarPlan.update({
       where: { id },
@@ -257,7 +257,7 @@ export async function deleteCalendarPlan(id: string, userId: string): Promise<vo
   // Yozuv o'chgandan KEYIN fayl — aks holda fayl o'chib, yozuv qolib
   // ketishi mumkin edi (yanada yomon holat).
   if (existing.filePath !== null) {
-    await deleteGeneratedFile("xlsx", existing.filePath);
+    await deleteFile("xlsx", existing.filePath);
   }
 }
 

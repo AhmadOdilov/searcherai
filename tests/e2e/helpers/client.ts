@@ -137,7 +137,7 @@ export class TestClient {
  */
 export async function cleanupTestUsers(): Promise<void> {
   const { prisma } = await import("../../../lib/db");
-  const { deleteGeneratedFile } = await import("../../../lib/storage/files");
+  const { deleteFile } = await import("../../../lib/storage/files");
 
   const testUser = { email: { startsWith: TEST_EMAIL_PREFIX } };
 
@@ -153,8 +153,8 @@ export async function cleanupTestUsers(): Promise<void> {
   ]);
 
   await Promise.all([
-    ...presentations.map((row) => deleteGeneratedFile("pptx", row.filePath!)),
-    ...calendarPlans.map((row) => deleteGeneratedFile("xlsx", row.filePath!)),
+    ...presentations.map((row) => deleteFile("pptx", row.filePath!)),
+    ...calendarPlans.map((row) => deleteFile("xlsx", row.filePath!)),
   ]);
 
   await prisma.user.deleteMany({

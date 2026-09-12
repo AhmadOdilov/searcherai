@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { aiInfo } from "@/lib/ai/provider";
+import { storageDriverName } from "@/lib/storage/files";
 import { ok, withErrorHandling } from "@/lib/api/with-error-handling";
 
 /**
@@ -23,6 +24,8 @@ export const GET = withErrorHandling(async () => {
       model: ai.model,
       configured: ai.configured,
     },
+    // Qaysi saqlagich ishlayotgani — deploy'dan keyin tekshirish uchun.
+    storage: { driver: storageDriverName() },
     timestamp: new Date().toISOString(),
   });
 });

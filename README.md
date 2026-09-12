@@ -29,14 +29,28 @@ O'qituvchilar uchun AI-yordamchi platforma: dars ishlanmasi, prezentatsiya
 npm install
 ```
 
+> `postinstall` avtomatik `prisma generate` ni ishga tushiradi — Prisma
+> klienti git'ga tushmaydi, shuning uchun toza klonda uni yaratish shart.
+
 ### 2. Muhit o'zgaruvchilari
 
 ```bash
 cp .env.example .env
 ```
 
-Keyin `.env` ni tahrirlang. Eng kamida `DATABASE_URL` kerak; `AI_API_KEY`
-bo'lmasa ilova ishlaydi, faqat AI funksiyalari o'chadi.
+Keyin `.env` ni tahrirlang. **Ikki o'zgaruvchi MAJBURIY:**
+
+| O'zgaruvchi | Nima qilish kerak |
+| --- | --- |
+| `DATABASE_URL` | 3-qadamdagi variantga mos qiymatni qo'ying |
+| `AUTH_SECRET` | Yarating: `openssl rand -base64 48` |
+
+`AUTH_SECRET` bo'lmasa ilova ishga tushmaydi (sozlama xatosi bilan
+to'xtaydi). `AI_API_KEY` esa ixtiyoriy: bo'lmasa ilova ishlaydi va
+sahifalar ochiladi, faqat generatsiya «AI xizmati sozlanmagan» xatosi
+bilan tugaydi.
+
+To'liq ro'yxat — «Muhit o'zgaruvchilari» bo'limida.
 
 ### 3. Ma'lumotlar bazasi
 
@@ -81,10 +95,14 @@ Tekshirish: <http://localhost:3000/api/health>
   "data": {
     "status": "ok",
     "database": { "connected": true, "latencyMs": 56 },
-    "ai": { "provider": "openai", "model": "gpt-4o-mini", "configured": false }
+    "ai": { "provider": "openai", "model": "gpt-4o-mini", "configured": false },
+    "storage": { "driver": "local" }
   }
 }
 ```
+
+`ai.configured: false` — kalit qo'yilmagan. Generatsiyani sinash uchun
+`.env` ga `AI_API_KEY` qo'shing va serverni qayta ishga tushiring.
 
 ---
 
@@ -350,18 +368,12 @@ tegish kerak emas.
 
 ### Fayllar qayerda saqlanadi
 
-`storage/presentations/` — **`public/` da EMAS**.
+Ikki drayver, `.env` dagi `STORAGE_DRIVER` orqali tanlanadi — batafsil
+[Fayl saqlagichi](#fayl-saqlagichi) bo'limida.
 
-`public/` ichidagi hamma narsani Next.js statik tarqatadi: havolani bilgan
-har qanday odam, hatto tizimga kirmagan bo'lsa ham, faylni olardi — ya'ni
-yuklab olish route'idagi egalik tekshiruvi bekor bo'lardi. Fayl faqat
-`GET /api/presentations/[id]/download` orqali beriladi va har so'rovda
-foydalanuvchi hamda egalik tekshiriladi.
-
-Ikkinchi sabab: productionda (Vercel kabi) fayl tizimi faqat o'qish uchun
-ochiq — `public/` ga runtime'da yozib bo'lmaydi. Saqlagich alohida qatlam
-bo'lgani uchun S3/R2 ga o'tish faqat `storage.ts` ni o'zgartirishni talab
-qiladi.
+Ikkalasida ham fayl **`public/` da saqlanmaydi**: u yerdagi hamma narsani
+Next.js statik tarqatadi, ya'ni havolani bilgan har qanday odam faylni
+olardi va yuklab olish route'idagi egalik tekshiruvi bekor bo'lardi.
 
 ### Yuklab olish
 
@@ -389,11 +401,9 @@ qo'llab-quvvatlanmaydi.
 ### Ma'lum cheklov
 
 Foydalanuvchi o'chirilsa prezentatsiya va kalendar reja yozuvlari cascade
-bilan o'chadi, lekin **diskdagi fayllar qoladi** — baza cascade'i fayl tizimini bilmaydi.
-Hozircha hisobni o'chirish funksiyasi yo'q, shuning uchun bu amalda
-uchramaydi. Qo'shilganda: avval fayllarni o'chirib, keyin foydalanuvchini
-o'chirish kerak (`tests/e2e/helpers/client.ts` dagi `cleanupTestUsers`
-xuddi shunday qiladi).
+bilan o'chadi, lekin **saqlagichdagi fayllar qoladi** — baza cascade'i
+fayl tizimini ham, S3 ni ham bilmaydi. To'liq ro'yxat pastdagi
+«Ma'lum cheklovlar» bo'limida.
 
 ---
 
@@ -550,6 +560,66 @@ uchun cookie'ga yozadi.
 xil. Buni sinov avtomatik tekshiradi (`tests/i18n-messages.test.ts`):
 yetishmagan/ortiqcha kalitlar, bo'sh qiymatlar, TODO qoldiqlari va hatto
 `{parametr}` o'rinbosarlarining mosligi.
+
+---
+
+## Fayl saqlagichi
+
+Generatsiya qilingan `.pptx` va `.xlsx` fayllar ikki xil joyda saqlanishi
+mumkin. Yuqori qatlam (prezentatsiya, kalendar reja) qaysi drayver
+ishlayotganini **bilmaydi** — u faqat `saveFile()`, `getFile()`,
+`deleteFile()` ni chaqiradi.
+
+| Drayver | Qayerda | Qachon |
+| --- | --- | --- |
+| `local` | `storage/` papka | VPS, Docker, mahalliy ishlab chiqish |
+| `s3` | S3-mos xizmat | Vercel va boshqa serverless muhitlar |
+
+### local (standart)
+
+```bash
+STORAGE_DRIVER="local"
+```
+
+Boshqa sozlama kerak emas. Fayllar `storage/presentations/` va
+`storage/calendar-plans/` papkalariga yoziladi (git'ga tushmaydi).
+
+> **Serverless'da ISHLAMAYDI.** Vercel kabi muhitlarda fayl tizimi faqat
+> o'qish uchun ochiq. U yerda `s3` majburiy.
+
+### s3 (Cloudflare R2 / AWS S3 / MinIO)
+
+Uchala xizmat ham bir xil S3 API'siga ega — farq faqat `S3_ENDPOINT` da.
+
+```bash
+STORAGE_DRIVER="s3"
+S3_BUCKET="searcher-ai"
+S3_ACCESS_KEY="..."
+S3_SECRET_KEY="..."
+```
+
+| Xizmat | `S3_ENDPOINT` | `S3_REGION` |
+| --- | --- | --- |
+| Cloudflare R2 | `https://<account-id>.r2.cloudflarestorage.com` | `auto` |
+| AWS S3 | (bo'sh qoldiring) | `us-east-1` kabi |
+| MinIO | `http://localhost:9000` | `auto` |
+
+`STORAGE_DRIVER="s3"` tanlangan, lekin `S3_BUCKET`/`S3_ACCESS_KEY`/
+`S3_SECRET_KEY` to'ldirilmagan bo'lsa, ilova **ishga tushishda** xato
+beradi — generatsiya tugagandan keyin emas.
+
+### Drayver almashtirish
+
+Bazadagi `filePath` ustuniga **faqat fayl nomi** yoziladi (`abc123.pptx`),
+papka esa drayver tomonidan qo'shiladi. Shu tufayli drayverni almashtirish
+bazani o'zgartirishni talab qilmaydi — lekin **eski fayllar ko'chirilmaydi**,
+ularni qo'lda ko'chirish kerak.
+
+Joriy drayverni tekshirish:
+
+```bash
+curl -s localhost:3000/api/health | grep -o '"driver":"[a-z0-9]*"'
+```
 
 ---
 
@@ -734,6 +804,117 @@ storage/                     generatsiya qilingan .pptx va .xlsx (git'ga tushmay
 tests/                       birlik sinovlari (mock AI server bilan)
   e2e/                       uchidan-uchgacha (haqiqiy server + baza)
 ```
+
+---
+
+## Muhit o'zgaruvchilari
+
+| O'zgaruvchi | Majburiymi | Standart | Tavsif |
+| --- | --- | --- | --- |
+| `DATABASE_URL` | **ha** | — | PostgreSQL ulanish manzili |
+| `AUTH_SECRET` | **ha** | — | Sessiya JWT kaliti, ≥32 belgi. `openssl rand -base64 48` |
+| `APP_URL` | yo'q | `http://localhost:3000` | Ilova manzili |
+| `AI_PROVIDER` | yo'q | `openai` | `openai` yoki `anthropic` |
+| `AI_API_KEY` | yo'q\* | — | Bo'sh bo'lsa AI funksiyalari o'chadi, ilova ishlaydi |
+| `AI_MODEL` | yo'q | provider bo'yicha | `gpt-4o-mini` / `claude-opus-5` |
+| `AI_BASE_URL` | yo'q | provider bo'yicha | OpenRouter, Gemini, Groq, Ollama uchun |
+| `AI_TIMEOUT_MS` | yo'q | `90000` | Bitta AI so'rovining chegarasi |
+| `AI_MAX_RETRIES` | yo'q | `2` | Vaqtinchalik xatolarda qayta urinish |
+| `AI_MAX_TOKENS` | yo'q | `16000` | Javobdagi maksimal token (kalendar reja o'zi oshiradi) |
+| `STORAGE_DRIVER` | yo'q | `local` | `local` yoki `s3` |
+| `S3_BUCKET` | s3 uchun **ha** | — | Bucket nomi |
+| `S3_ENDPOINT` | yo'q | — | R2/MinIO uchun; AWS S3 da bo'sh |
+| `S3_ACCESS_KEY` | s3 uchun **ha** | — | |
+| `S3_SECRET_KEY` | s3 uchun **ha** | — | |
+| `S3_REGION` | yo'q | `auto` | AWS S3 da haqiqiy region |
+| `PRISMA_LOG_QUERIES` | yo'q | — | `1` — har bir SQL so'rovni loglaydi |
+
+\* `AI_API_KEY` bo'lmasa ilova ishga tushadi va sahifalar ochiladi, lekin
+har qanday generatsiya «AI xizmati sozlanmagan» xatosi bilan tugaydi.
+
+---
+
+## Deploy
+
+### Muhit tanlash — eng muhim qaror
+
+Generatsiya `after()` orqali javob yuborilgandan **keyin** davom etadi,
+ya'ni u platformaning funksiya davomiyligi chegarasiga bo'ysunadi.
+Route'larda `maxDuration = 300` (5 daqiqa) so'ralgan.
+
+| Muhit | Davomiylik chegarasi | Saqlagich | Xulosa |
+| --- | --- | --- | --- |
+| **VPS / Docker** | **chegara yo'q** | `local` ishlaydi | ✅ Tavsiya etiladi |
+| Vercel Pro | 300s gacha sozlanadi | `s3` majburiy | ✅ Ishlaydi |
+| Vercel Hobby (bepul) | ~60s | `s3` majburiy | ⚠️ **Xavfli** |
+
+> **Vercel bepul tarifi haqida ogohlantirish**
+>
+> Bepul tarifda funksiya davomiyligi ~60 soniya bilan chegaralangan.
+> Dars ishlanmasi va prezentatsiya odatda shu chegaraga sig'adi, lekin
+> **kalendar reja** (34+ haftalik davr, uzun javob, qayta urinish
+> ehtimoli bilan) chegaraga yaqin yoki undan oshib ketishi mumkin.
+>
+> Chegara oshsa generatsiya o'rtada uziladi va yozuv `PENDING` holatida
+> qoladi — `markStaleAsFailed()` uni 5 daqiqadan keyin `FAILED` qiladi,
+> foydalanuvchi «qayta urinish» tugmasini ko'radi. Ya'ni ilova qulamaydi,
+> lekin uzun kalendar rejalar **ishonchsiz** bo'ladi.
+>
+> Aniq chegaralar o'zgarib turadi — deploy'dan oldin Vercel hujjatlarini
+> tekshiring.
+>
+> **Tavsiya:** MVP topshirish uchun VPS (yoki Docker) ishonchliroq —
+> davomiylik chegarasi yo'q va `local` saqlagich qo'shimcha xizmatsiz
+> ishlaydi.
+
+### VPS / Docker
+
+```bash
+docker compose up -d          # PostgreSQL
+npm ci
+npm run db:deploy             # migratsiyalar
+npm run build
+npm start
+```
+
+`.env`: `STORAGE_DRIVER="local"` (standart). `storage/` papkasi yozish
+uchun ochiq bo'lishi kerak.
+
+### Vercel
+
+1. `STORAGE_DRIVER="s3"` va S3 sozlamalarini Environment Variables'ga
+   qo'shing (`local` u yerda **ishlamaydi**)
+2. Boshqariladigan PostgreSQL ulang (Neon, Supabase kabi)
+3. Pro tarifda ekaningizni tasdiqlang — yuqoridagi ogohlantirishga qarang
+
+### Deploy'dan keyin tekshirish
+
+```bash
+curl -s https://<domen>/api/health | python3 -m json.tool
+```
+
+`database.connected: true`, `ai.configured: true` va kutilgan
+`storage.driver` bo'lishi kerak.
+
+---
+
+## Ma'lum cheklovlar
+
+MVP doirasida **ataylab** qoldirilgan narsalar. Har biri ma'lum va
+hujjatlashtirilgan — kutilmagan nosozlik emas.
+
+| Cheklov | Ta'siri | Nima qilish kerak |
+| --- | --- | --- |
+| Hisob o'chirilganda fayllar qoladi | Saqlagichda yetim fayllar to'planadi | Hisobni o'chirish funksiyasi qo'shilganda avval fayllarni o'chirish |
+| CSRF tokeni yo'q | `sameSite: lax` cookie'ga tayanadi | Double-submit token qo'shish |
+| Kirishga urinishlar cheklanmagan | Brute-force faqat bcrypt sekinligiga tayanadi | IP/email bo'yicha rate limit |
+| Parolni tiklash yo'q | Parol unutilsa hisob yo'qoladi | Email orqali tiklash oqimi |
+| Email tasdiqlash yo'q | Soxta email bilan ro'yxatdan o'tish mumkin | Tasdiqlash havolasi |
+| Interfeys faqat UZ/RU | Inglizcha interfeys yo'q (generatsiya EN'da ishlaydi) | `messages/en.json` qo'shish |
+| Drayver almashtirilganda fayllar ko'chmaydi | `local` → `s3` da eski fayllar topilmaydi | Qo'lda ko'chirish |
+| `markStaleAsFailed` o'qish yo'lida | Har ro'yxat/detal o'qishda bitta `updateMany` | Yuklama oshsa cron'ga o'tkazish |
+| AI qidiruv (Searcher) moduli yo'q | TZ'dagi 5-funksiya | Alohida modul |
+| `.docx` / `.pdf` eksport yo'q | Faqat `.pptx` va `.xlsx` | TZ'da 19-sentabr uchun rejalashtirilgan edi |
 
 ---
 

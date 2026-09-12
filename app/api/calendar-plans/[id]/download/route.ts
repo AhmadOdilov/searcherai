@@ -2,11 +2,7 @@ import { withErrorHandling } from "@/lib/api/with-error-handling";
 import { apiErrors } from "@/lib/api/errors";
 import { requireUser } from "@/lib/auth/session";
 import { getCalendarPlan } from "@/lib/calendar-plans/service";
-import {
-  contentDispositionFor,
-  mimeTypeFor,
-  readGeneratedFile,
-} from "@/lib/storage/files";
+import { contentDispositionFor, mimeTypeFor, getFile } from "@/lib/storage/files";
 
 /**
  * `GET /api/calendar-plans/[id]/download` — .xlsx faylni yuklab olish.
@@ -29,7 +25,7 @@ export const GET = withErrorHandling<RouteContext>(async (_request, context) => 
     throw apiErrors.validation(undefined, "errors.domain.calendarPlanFileNotReady");
   }
 
-  const buffer = await readGeneratedFile("xlsx", plan.filePath);
+  const buffer = await getFile("xlsx", plan.filePath);
   if (buffer === null) {
     throw apiErrors.notFound("errors.domain.calendarPlanFileMissing");
   }

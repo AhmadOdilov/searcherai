@@ -2,11 +2,7 @@ import { withErrorHandling } from "@/lib/api/with-error-handling";
 import { apiErrors } from "@/lib/api/errors";
 import { requireUser } from "@/lib/auth/session";
 import { getPresentation } from "@/lib/presentations/service";
-import {
-  PPTX_MIME_TYPE,
-  contentDispositionFor,
-  readPresentationFile,
-} from "@/lib/presentations/storage";
+import { contentDispositionFor, getFile, mimeTypeFor } from "@/lib/storage/files";
 
 /**
  * `GET /api/presentations/[id]/download` — .pptx faylni yuklab olish.
@@ -33,7 +29,7 @@ export const GET = withErrorHandling<RouteContext>(async (_request, context) => 
     throw apiErrors.validation(undefined, "errors.domain.presentationFileNotReady");
   }
 
-  const buffer = await readPresentationFile(presentation.filePath);
+  const buffer = await getFile("pptx", presentation.filePath);
   if (buffer === null) {
     // Yozuv bazada bor, lekin fayl diskda yo'q — masalan saqlagich
     // tozalangan. Foydalanuvchiga nima qilishni aytamiz.
@@ -45,8 +41,8 @@ export const GET = withErrorHandling<RouteContext>(async (_request, context) => 
   return new Response(new Uint8Array(buffer), {
     status: 200,
     headers: {
-      "content-type": PPTX_MIME_TYPE,
-      "content-disposition": contentDispositionFor(fileName),
+      "content-type": mimeTypeFor("pptx"),
+      "content-disposition": contentDispositionFor(fileName, "pptx"),
       "content-length": String(buffer.length),
       // Shaxsiy fayl — hech qanday kesh (brauzer yoki proksi) saqlamasin.
       "cache-control": "private, no-store",

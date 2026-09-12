@@ -10,10 +10,7 @@ import {
   buildUserPrompt,
   type PresentationPromptContext,
 } from "@/lib/presentations/prompt";
-import {
-  deletePresentationFile,
-  savePresentationFile,
-} from "@/lib/presentations/storage";
+import { deleteFile, saveFile } from "@/lib/storage/files";
 import { parseLessonPlanContent } from "@/lib/validations/lesson-plan";
 import {
   presentationContentSchema,
@@ -233,7 +230,7 @@ export async function regeneratePresentation(
 
   // Eski faylni o'chiramiz — yangisi uning o'rniga yoziladi.
   if (existing.filePath !== null) {
-    await deletePresentationFile(existing.filePath);
+    await deleteFile("pptx", existing.filePath);
   }
 
   const reset = await prisma.presentation.update({
@@ -266,7 +263,7 @@ async function runGeneration(
     // Fayl AI javobidan KEYIN yasaladi — shu tartib muhim: AI yiqilsa
     // keraksiz fayl qolib ketmaydi.
     const { buffer, slideCount } = await generatePptx(data);
-    const { filePath, fileSize } = await savePresentationFile(id, buffer);
+    const { filePath, fileSize } = await saveFile("pptx", id, buffer);
 
     await prisma.presentation.update({
       where: { id },
@@ -351,7 +348,7 @@ export async function deletePresentation(id: string, userId: string): Promise<vo
   // Yozuv o'chgandan KEYIN fayl — aks holda fayl o'chib, yozuv qolib
   // ketishi mumkin edi (yanada yomon holat).
   if (existing.filePath !== null) {
-    await deletePresentationFile(existing.filePath);
+    await deleteFile("pptx", existing.filePath);
   }
 }
 

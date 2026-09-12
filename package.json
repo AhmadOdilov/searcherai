@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -21,6 +22,7 @@
     "ai:stats": "tsx --conditions=react-server --tsconfig tsconfig.json --env-file-if-exists=.env scripts/ai-stats.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1131.0",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "bcryptjs": "^3.0.3",
