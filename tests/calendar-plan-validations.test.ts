@@ -104,7 +104,8 @@ describe("calendarPlanInputSchema", () => {
   });
 
   it("mantiqsiz hafta sonini rad etadi", () => {
-    for (const weeks of [0, -5, 53, 100]) {
+    // 25+ — model chegarasidan oshadi (MAX_WEEKS = 24).
+    for (const weeks of [0, -5, 25, 53, 100]) {
       const result = calendarPlanInputSchema.safeParse({
         subject: "Matematika",
         grade: "7-sinf",
@@ -198,7 +199,7 @@ describe("calendarPlanContentSchema", () => {
     assert.equal(calendarPlanContentSchema.safeParse(withNote).success, true);
   });
 
-  it("hafta raqami 52 dan oshsa rad etadi", () => {
+  it("hafta raqami chegaradan oshsa rad etadi", () => {
     const bad = content(1);
     bad.weeks[0].weekNumber = 60;
 
@@ -248,16 +249,16 @@ describe("calendarPlanContentSchemaFor — hafta va soat tekshiruvi", () => {
   });
 
   it("boshqa parametrlar uchun chegara boshqacha", () => {
-    // 34 hafta × 3 soat uchun 34 haftalik reja o'tadi...
+    // 24 hafta × 3 soat uchun 24 haftalik reja o'tadi...
     assert.equal(
-      calendarPlanContentSchemaFor({ weeks: 34, hoursPerWeek: 3 }).safeParse(
-        content(34, 3),
+      calendarPlanContentSchemaFor({ weeks: 24, hoursPerWeek: 3 }).safeParse(
+        content(24, 3),
       ).success,
       true,
     );
     // ...lekin 9 hafta uchun o'tmaydi.
     assert.equal(
-      calendarPlanContentSchemaFor(params).safeParse(content(34, 3)).success,
+      calendarPlanContentSchemaFor(params).safeParse(content(24, 3)).success,
       false,
     );
   });
@@ -332,12 +333,12 @@ describe("buildWeekRanges — sana hisoblash", () => {
     assert.equal(ranges[0].label, "26.02.2027 – 04.03.2027");
   });
 
-  it("34 haftalik o'quv yili uchun ham to'g'ri ishlaydi", () => {
-    const ranges = buildWeekRanges(new Date("2026-09-01T00:00:00Z"), 34);
+  it("eng uzun ruxsat etilgan davr (24 hafta) uchun to'g'ri ishlaydi", () => {
+    const ranges = buildWeekRanges(new Date("2026-09-01T00:00:00Z"), 24);
 
-    assert.equal(ranges.length, 34);
-    // 34-hafta 33×7 = 231 kun keyin boshlanadi.
-    assert.equal(ranges[33].label, "20.04.2027 – 26.04.2027");
+    assert.equal(ranges.length, 24);
+    // 24-hafta 23×7 = 161 kun keyin boshlanadi.
+    assert.equal(ranges[23].label, "09.02.2027 – 15.02.2027");
   });
 });
 

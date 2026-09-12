@@ -429,6 +429,40 @@ Sabab: modellar sana arifmetikasida ishonchsiz — 30 kunli oyni 31 deb,
 kabisa yilini unutib yuboradi. Oy, yil va kabisa chegaralari sinov bilan
 qoplangan.
 
+### Maksimal davr — 24 hafta
+
+`MAX_WEEKS = 24`. Bu chegara **model imkoniyatidan** kelib chiqadi, mantiqdan
+emas: haqiqiy AI bilan o'lchanganda 24 haftadan uzun rejada model
+«ANIQ N ta hafta yoz» ko'rsatmasiga rioya qilmay, qisqa ro'yxat qaytaradi
+va generatsiya yiqiladi.
+
+O'lchov (18 hafta, UZ, 8 urinish):
+
+| Model | Muvaffaqiyat | O'rtacha vaqt |
+| --- | --- | --- |
+| `yandexgpt-5-pro` | **3/8** | 32s |
+| `qwen3-235b-a22b-fp8` | **8/8** | 64s |
+
+To'liq o'quv yili (34 hafta) hozircha qo'llab-quvvatlanmaydi —
+`PERIOD_PRESETS` da ham yo'q. Formada chegaradan oshsa ogohlantirish
+chiqadi va yuborish tugmasi o'chadi.
+
+### Alohida model
+
+Kalendar reja uchun `CALENDAR_PLAN_AI_MODEL` sozlanishi mumkin —
+belgilanmasa `AI_MODEL` ishlatiladi.
+
+Nega faqat bu modul: u eng uzun ro'yxatni generatsiya qiladi va modellar
+aynan shu vazifada keskin farq qiladi (yuqoridagi jadval). Dars ishlanmasi
+va prezentatsiyada bunday farq kuzatilmagan.
+
+Yandex uchun tavsiya etilgan sozlama:
+
+```bash
+AI_MODEL="gpt://<folder-id>/yandexgpt-5-pro/latest"
+CALENDAR_PLAN_AI_MODEL="gpt://<folder-id>/qwen3-235b-a22b-fp8/latest"
+```
+
 ### Token chegarasi
 
 Bu modul boshqalardan uzunroq javob qaytaradi: bir o'quv yili ≈ 100 qator.
@@ -456,9 +490,8 @@ JSON buzilishi mumkin edi.
 
 ### Sekinlik — ataylab sinxron
 
-Bu eng sekin modul (40-60 soniya). MVP'da sinxron qoldirilgan; fon rejimi
-Step 5 da. Forma kutish vaqtini **oldindan** ogohlantiradi, o'tgan soniyalarni
-ko'rsatadi va 45 soniyadan keyin qo'shimcha tinchlantiruvchi xabar beradi —
+Bu eng sekin modul: o'lchangan vaqt **52-82 soniya** (qwen3 bilan). Forma kutish vaqtini **oldindan** ogohlantiradi (60-90 soniya), o'tgan
+soniyalarni ko'rsatadi va qo'shimcha tinchlantiruvchi xabar beradi —
 foydalanuvchi sahifani yopib, generatsiyani bekorga ketkazmasligi uchun.
 
 ### Routelar
@@ -821,6 +854,7 @@ tests/                       birlik sinovlari (mock AI server bilan)
 | `AI_TIMEOUT_MS` | yo'q | `90000` | Bitta AI so'rovining chegarasi |
 | `AI_MAX_RETRIES` | yo'q | `2` | Vaqtinchalik xatolarda qayta urinish |
 | `AI_MAX_TOKENS` | yo'q | `16000` | Javobdagi maksimal token (kalendar reja o'zi oshiradi) |
+| `CALENDAR_PLAN_AI_MODEL` | yo'q | `AI_MODEL` | Kalendar reja uchun alohida model — sabab «Kalendar reja moduli» bo'limida |
 | `STORAGE_DRIVER` | yo'q | `local` | `local` yoki `s3` |
 | `S3_BUCKET` | s3 uchun **ha** | — | Bucket nomi |
 | `S3_ENDPOINT` | yo'q | — | R2/MinIO uchun; AWS S3 da bo'sh |
@@ -851,9 +885,9 @@ Route'larda `maxDuration = 300` (5 daqiqa) so'ralgan.
 > **Vercel bepul tarifi haqida ogohlantirish**
 >
 > Bepul tarifda funksiya davomiyligi ~60 soniya bilan chegaralangan.
-> Dars ishlanmasi va prezentatsiya odatda shu chegaraga sig'adi, lekin
-> **kalendar reja** (34+ haftalik davr, uzun javob, qayta urinish
-> ehtimoli bilan) chegaraga yaqin yoki undan oshib ketishi mumkin.
+> Dars ishlanmasi (5-19s) va prezentatsiya (4-7s) bemalol sig'adi, lekin
+> **kalendar reja O'LCHANGAN 52-82 soniya oladi** — ya'ni bepul tarifda
+> u muntazam uzilib turadi. Bu taxmin emas, haqiqiy AI bilan o'lchangan.
 >
 > Chegara oshsa generatsiya o'rtada uziladi va yozuv `PENDING` holatida
 > qoladi — `markStaleAsFailed()` uni 5 daqiqadan keyin `FAILED` qiladi,
@@ -911,6 +945,7 @@ hujjatlashtirilgan — kutilmagan nosozlik emas.
 | Parolni tiklash yo'q | Parol unutilsa hisob yo'qoladi | Email orqali tiklash oqimi |
 | Email tasdiqlash yo'q | Soxta email bilan ro'yxatdan o'tish mumkin | Tasdiqlash havolasi |
 | Interfeys faqat UZ/RU | Inglizcha interfeys yo'q (generatsiya EN'da ishlaydi) | `messages/en.json` qo'shish |
+| Kalendar reja ≤ 24 hafta | To'liq o'quv yili (34 hafta) tuzib bo'lmaydi | Davrni bo'lib generatsiya qilish yoki kuchliroq model |
 | Drayver almashtirilganda fayllar ko'chmaydi | `local` → `s3` da eski fayllar topilmaydi | Qo'lda ko'chirish |
 | `markStaleAsFailed` o'qish yo'lida | Har ro'yxat/detal o'qishda bitta `updateMany` | Yuklama oshsa cron'ga o'tkazish |
 | AI qidiruv (Searcher) moduli yo'q | TZ'dagi 5-funksiya | Alohida modul |

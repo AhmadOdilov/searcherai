@@ -101,10 +101,11 @@ describe("buildUserPrompt — SANALAR", () => {
   });
 
   it("BARCHA haftalar uchun sana beriladi", () => {
-    const prompt = buildUserPrompt(input({ weeks: 34 }));
+    // 24 — MAX_WEEKS, eng uzun ruxsat etilgan davr.
+    const prompt = buildUserPrompt(input({ weeks: 24 }));
 
     // Har bir hafta raqami alohida qatorda bo'lishi kerak.
-    for (const weekNumber of [1, 17, 34]) {
+    for (const weekNumber of [1, 12, 24]) {
       assert.match(
         prompt,
         new RegExp(`^${weekNumber}\\. \\d{2}\\.\\d{2}\\.\\d{4}`, "m"),

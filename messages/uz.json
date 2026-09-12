@@ -221,7 +221,7 @@
       "subtitle": "Butun davr uchun darslar jadvali tuziladi va Excel faylida beriladi.",
       "submit": "Kalendar reja yaratish",
       "slowWarningLabel": "Diqqat:",
-      "slowWarning": "bu eng uzun generatsiya — davr uzunligiga qarab 40-60 soniya davom etishi mumkin. Boshlangach sahifani yopmang."
+      "slowWarning": "bu eng uzun generatsiya — davr uzunligiga qarab 60-90 soniya davom etishi mumkin. Boshlangach sahifani yopmang."
     },
     "fields": {
       "period": "Davr",
@@ -229,7 +229,8 @@
       "startDate": "Boshlanish sanasi",
       "weeks": "Haftalar",
       "hoursPerWeek": "Haftalik soat",
-      "hoursOption": "{hours} soat"
+      "hoursOption": "{hours} soat",
+      "maxWeeksNotice": "Hozircha maksimal 24 haftalik reja qo'llab-quvvatlanadi (masalan yarim yil). To'liq o'quv yili keyingi versiyada qo'shiladi."
     },
     "periods": {
       "quarter1": "1-chorak",
@@ -237,8 +238,7 @@
       "quarter3": "3-chorak",
       "quarter4": "4-chorak",
       "halfYear1": "1-yarim yil",
-      "halfYear2": "2-yarim yil",
-      "schoolYear": "O'quv yili"
+      "halfYear2": "2-yarim yil"
     },
     "progress": {
       "sent": "So'rov yuborildi…",
@@ -266,7 +266,7 @@
       "failedTitle": "Kalendar rejani yaratib bo'lmadi",
       "failedHint": "Yuqoridagi «Qayta urinish» tugmasini bosing — kiritgan ma'lumotlaringiz saqlangan.",
       "brokenContent": "Reja saqlangan, lekin uni o'qib bo'lmadi (format mos kelmadi). «Qaytadan yaratish» tugmasini bosing.",
-      "elapsed": "{seconds} soniya o'tdi · odatda 40-60 soniya davom etadi",
+      "elapsed": "{seconds} soniya o'tdi · odatda 60-90 soniya davom etadi",
       "stillWorking": "Uzun davr uchun biroz ko'proq vaqt ketmoqda — jarayon hali davom etyapti.",
       "doNotClosePage": "Bu 40-60 soniya davom etishi mumkin — sahifani yopmang."
     }
@@ -337,7 +337,7 @@
       "periodTooLong": "Davr nomi juda uzun",
       "weeksNotInteger": "Haftalar soni butun son bo'lishi kerak",
       "weeksTooFew": "Kamida 1 hafta bo'lishi kerak",
-      "weeksTooMany": "52 haftadan ko'p bo'lmasligi kerak",
+      "weeksTooMany": "Hozircha maksimal 24 haftalik reja qo'llab-quvvatlanadi",
       "hoursNotInteger": "Soat soni butun son bo'lishi kerak",
       "hoursTooFew": "Kamida 1 soat bo'lishi kerak",
       "hoursTooMany": "Haftalik 20 soatdan ko'p bo'lmasligi kerak",

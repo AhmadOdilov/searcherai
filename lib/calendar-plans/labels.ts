@@ -8,7 +8,13 @@ import { INTL_LOCALES, type UiLocale } from "@/lib/i18n/config";
  * `calendarPlans.periods.*` dan olinadi.
  */
 
-/** Davr variantlari: tarjima kaliti + standart hafta soni. */
+/**
+ * Davr variantlari: tarjima kaliti + standart hafta soni.
+ *
+ * DIQQAT: "O'quv yili" (34 hafta) ATAYLAB yo'q. Model 24 haftadan uzun
+ * rejani ishonchli generatsiya qila olmaydi (o'lchangan) — shuning uchun
+ * chegara `MAX_WEEKS = 24`. Yarim yil variantlari eng uzuni.
+ */
 export const PERIOD_PRESETS = [
   { key: "quarter1", weeks: 9 },
   { key: "quarter2", weeks: 7 },
@@ -16,7 +22,6 @@ export const PERIOD_PRESETS = [
   { key: "quarter4", weeks: 8 },
   { key: "halfYear1", weeks: 16 },
   { key: "halfYear2", weeks: 18 },
-  { key: "schoolYear", weeks: 34 },
 ] as const;
 
 export type PeriodPresetKey = (typeof PERIOD_PRESETS)[number]["key"];
@@ -54,6 +59,8 @@ export const PROGRESS_KEYS = [
 /**
  * Odatdagi davomiylik, soniyada.
  *
- * Bu eng sekin modul — hafta soniga qarab 40-60 soniya.
+ * Bu eng sekin modul. Qiymat HAQIQIY o'lchovdan olingan: kalendar reja
+ * uchun ishlatiladigan model (qwen3-235b) 18-24 haftalik rejani 52-82
+ * soniyada tuzadi.
  */
-export const TYPICAL_SECONDS = 50;
+export const TYPICAL_SECONDS = 70;

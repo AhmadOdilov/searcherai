@@ -57,6 +57,18 @@ const envSchema = z.object({
   AI_MAX_RETRIES: z.coerce.number().int().min(0).max(5).default(2),
   AI_MAX_TOKENS: z.coerce.number().int().positive().default(16_000),
 
+  /**
+   * Kalendar reja uchun ALOHIDA model (ixtiyoriy).
+   *
+   * Nega kerak: bu modul eng uzun ro'yxatni (20+ hafta) generatsiya
+   * qiladi va modellar bu vazifada sezilarli farq qiladi — ba'zilari
+   * "ANIQ 24 ta hafta yoz" ko'rsatmasiga rioya qilmay, qisqa ro'yxat
+   * qaytaradi. Qolgan modullar uchun bunday muammo yo'q.
+   *
+   * Bo'sh qoldirilsa `AI_MODEL` ishlatiladi.
+   */
+  CALENDAR_PLAN_AI_MODEL: z.string().default(""),
+
   // ── Fayl saqlagichi ──────────────────────────────────────────────────
   /**
    * Qaysi saqlagich ishlatilsin:
@@ -93,6 +105,8 @@ export type AppEnv = z.infer<typeof envSchema> & {
   aiModel: string;
   /** AI_BASE_URL bo'sh bo'lsa provider standarti bilan to'ldirilgan manzil. */
   aiBaseUrl: string;
+  /** Kalendar reja uchun model — belgilanmasa `aiModel`. */
+  calendarPlanAiModel: string;
   /** Kalit mavjudmi — AI funksiyalarini yoqish/o'chirish uchun. */
   aiConfigured: boolean;
 };
@@ -158,6 +172,7 @@ export function getEnv(): AppEnv {
   cached = {
     ...data,
     aiModel: data.AI_MODEL || defaults.model,
+    calendarPlanAiModel: data.CALENDAR_PLAN_AI_MODEL || data.AI_MODEL || defaults.model,
     // Oxiridagi "/" ni olib tashlaymiz — URL yig'ishda ikkilanish bo'lmasin.
     aiBaseUrl: (data.AI_BASE_URL || defaults.baseUrl).replace(/\/+$/, ""),
     aiConfigured: data.AI_API_KEY.length > 0,

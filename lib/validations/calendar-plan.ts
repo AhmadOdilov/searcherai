@@ -24,14 +24,22 @@ export const periodSchema = z
 /**
  * Davr uzunligi, haftada.
  *
- * Yuqori chegara 52 — bir o'quv yili. Undan ko'pi mantiqsiz va AI javobini
- * juda uzaytirib, generatsiyani timeout'ga olib kelardi.
+ * ── Nega 24, 52 emas ──────────────────────────────────────────────────────
+ * Chegara MODEL imkoniyatidan kelib chiqadi, mantiqdan emas. Haqiqiy AI
+ * bilan o'lchandi: 24 haftagacha natija ishonchli, undan uzunda model
+ * "ANIQ N ta hafta yoz" ko'rsatmasiga rioya qilmay, qisqa ro'yxat
+ * qaytaradi va generatsiya yiqiladi.
+ *
+ * 24 hafta = yarim yil. To'liq o'quv yili (34 hafta) keyingi versiyada —
+ * uni bo'lib generatsiya qilish yoki boshqa model kerak bo'ladi.
  */
+export const MAX_WEEKS = 24;
+
 export const weeksSchema = z.coerce
   .number()
   .int("errors.validation.weeksNotInteger")
   .min(1, "errors.validation.weeksTooFew")
-  .max(52, "errors.validation.weeksTooMany");
+  .max(MAX_WEEKS, "errors.validation.weeksTooMany");
 
 /** Haftalik dars soati. */
 export const hoursPerWeekSchema = z.coerce
@@ -101,7 +109,7 @@ export const calendarWeekSchema = z.object({
     .number()
     .int("Hafta raqami butun son bo'lishi kerak")
     .min(1, "Hafta raqami 1 dan boshlanadi")
-    .max(52, "Hafta raqami 52 dan oshmaydi"),
+    .max(MAX_WEEKS, `Hafta raqami ${MAX_WEEKS} dan oshmaydi`),
   /**
    * Sana oralig'i — "14.09.2026 – 20.09.2026" kabi.
    *

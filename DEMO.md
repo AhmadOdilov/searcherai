@@ -146,14 +146,15 @@ interfeysni tushunadi.
 **Kalendar reja** — eng ta'sirli natija, lekin eng uzun kutish.
 
 1. **Kalendar reja** → **Yangi yaratish**
-2. Fan: `Matematika`, Davr: `1-chorak`, haftalik `2 soat`
+2. Fan: `Matematika`, Davr: `1-chorak` (9 hafta), haftalik `2 soat`
 3. Tayyor bo'lgach — jadvalni ko'rsating, keyin **Excel'da oching**
 
 > «Butun chorak uchun darslar jadvali — sanalar bilan, soatlar
 > hisoblangan holda. Bu odatda o'qituvchining bir necha soatlik ishi.»
 
-**Diqqat:** bu eng sekin modul. Vaqt tig'iz bo'lsa, uni oldindan
-yaratib qo'ying va faqat tayyor natijani ko'rsating.
+**Diqqat:** bu eng sekin modul — o'lchangan vaqt **52-82 soniya**. Vaqt
+tig'iz bo'lsa, uni oldindan yaratib qo'ying va faqat tayyor natijani
+ko'rsating. Qisqa davr (`1-chorak`, 9 hafta) uzunroq davrdan tezroq.
 
 ---
 

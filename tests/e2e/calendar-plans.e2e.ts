@@ -173,18 +173,34 @@ describe("kalendar reja — generatsiya", () => {
     assert.match(user, /4\. 05\.10\.2026 – 11\.10\.2026/);
   });
 
-  it("uzun davr (34 hafta) uchun ham ishlaydi", async () => {
+  it("eng uzun ruxsat etilgan davr (24 hafta) uchun ishlaydi", async () => {
     // Bu eng og'ir holat — token chegarasi yetishi tekshiriladi.
+    //
+    // 24 — MAX_WEEKS. Undan uzun davr ATAYLAB rad etiladi: haqiqiy AI
+    // bilan o'lchanganda model 24 haftadan uzun rejani ishonchli
+    // generatsiya qila olmaydi.
     const client = await signedInClient("cp-uzun");
 
     const plan = await createAndWait(
       client,
-      validInput({ period: "O'quv yili", weeks: 34, hoursPerWeek: 3 }),
+      validInput({ period: "Yarim yil", weeks: 24, hoursPerWeek: 3 }),
     );
 
     assert.equal(plan.status, "READY");
-    assert.equal(plan.content!.weeks.length, 34);
-    assert.equal(plan.rowCount, 34);
+    assert.equal(plan.content!.weeks.length, 24);
+    assert.equal(plan.rowCount, 24);
+  });
+
+  it("chegaradan uzun davrni RAD ETADI (400)", async () => {
+    const client = await signedInClient("cp-chegara");
+
+    const result = await client.request("/api/calendar-plans", {
+      method: "POST",
+      body: validInput({ period: "O'quv yili", weeks: 34 }),
+    });
+
+    assert.equal(result.status, 400);
+    assert.ok(result.error!.fieldErrors!.weeks, "weeks maydonida xato bo'lishi kerak");
   });
 
   it("uch tilda ham ishlaydi", async () => {

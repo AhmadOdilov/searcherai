@@ -170,6 +170,15 @@ async function runGeneration(id: string, input: CalendarPlanInput): Promise<void
       prompt: buildUserPrompt(input),
       // Uzun javob uchun kengaytirilgan chegara — yuqoridagi izohga qara.
       maxTokens: estimateMaxTokens(input.weeks),
+      /*
+        Bu modul uchun model ALOHIDA sozlanishi mumkin.
+
+        Sabab: uzun ro'yxat (20+ hafta) generatsiyasi modellarni sezilarli
+        farqlaydi — ba'zilari "ANIQ N ta hafta yoz" ko'rsatmasiga rioya
+        qilmaydi. Qolgan modullarda bunday muammo kuzatilmagan, shuning
+        uchun faqat shu yerda.
+      */
+      model: getEnv().calendarPlanAiModel,
     });
 
     // Fayl AI javobidan KEYIN yasaladi — AI yiqilsa keraksiz fayl

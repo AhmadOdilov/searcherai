@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ApiClientError, apiRequest } from "@/lib/api-client";
 import { GENERATION_LANGUAGES } from "@/lib/ui/options";
+import { MAX_WEEKS } from "@/lib/validations/calendar-plan";
 import {
   HOURS_PER_WEEK_OPTIONS,
   PERIOD_PRESETS,
@@ -177,7 +178,7 @@ export default function NewCalendarPlanPage() {
               name="weeks"
               type="number"
               min={1}
-              max={52}
+              max={MAX_WEEKS}
               required
               value={weeks}
               onChange={(event) => setWeeks(Number(event.target.value))}
@@ -185,8 +186,20 @@ export default function NewCalendarPlanPage() {
               aria-invalid={fieldErrors.weeks !== undefined}
               className={selectClasses(fieldErrors.weeks !== undefined)}
             />
-            {fieldErrors.weeks !== undefined && (
+            {fieldErrors.weeks !== undefined ? (
               <p className="mt-1.5 text-xs text-red-600">{fieldErrors.weeks.join(" ")}</p>
+            ) : (
+              /*
+                Chegara MODEL imkoniyatidan kelib chiqadi: 24 haftadan
+                uzun rejani AI ishonchli tuza olmaydi (haqiqiy o'lchov).
+                Foydalanuvchi buni OLDINDAN bilishi kerak — forma
+                yuborilib, generatsiya yiqilgandan keyin emas.
+              */
+              weeks > MAX_WEEKS && (
+                <p className="mt-1.5 text-xs text-amber-700">
+                  {t("fields.maxWeeksNotice")}
+                </p>
+              )
             )}
           </div>
 
@@ -243,7 +256,7 @@ export default function NewCalendarPlanPage() {
 
         <button
           type="submit"
-          disabled={submitting}
+          disabled={submitting || weeks > MAX_WEEKS}
           className="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {submitting ? tRoot("common.creating") : t("new.submit")}
