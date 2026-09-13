@@ -7,6 +7,11 @@ import {
   verifyPassword,
 } from "@/lib/auth/session";
 import { loginSchema } from "@/lib/validations/auth";
+import {
+  assertLoginAllowed,
+  clearLoginAttempts,
+  recordFailedLogin,
+} from "@/lib/auth/rate-limit";
 
 /**
  * `POST /api/auth/login` — tizimga kirish.
@@ -17,6 +22,10 @@ import { loginSchema } from "@/lib/validations/auth";
  */
 export const POST = withErrorHandling(async (request) => {
   const input = await parseJsonBody(request, loginSchema);
+
+  // Parolni tekshirishdan OLDIN: chegaradan oshgan bo'lsa 429.
+  // Aks holda hujumchi cheksiz urinib, bcrypt'ni yuklab turardi.
+  await assertLoginAllowed(input.email);
 
   const user = await prisma.user.findUnique({
     where: { email: input.email },
@@ -34,13 +43,19 @@ export const POST = withErrorHandling(async (request) => {
     // Javob vaqti mavjud email holatidagidek bo'lishi uchun — izohni
     // `equalizePasswordTiming` ichida qara.
     await equalizePasswordTiming(input.password);
+    await recordFailedLogin(input.email);
     throw invalidCredentials();
   }
 
   const passwordMatches = await verifyPassword(input.password, user.passwordHash);
   if (!passwordMatches) {
+    await recordFailedLogin(input.email);
     throw invalidCredentials();
   }
+
+  // Muvaffaqiyatli kirish — hisoblagich tozalanadi, aks holda o'z parolini
+  // bir necha marta xato yozgan foydalanuvchi keyin ham bloklanib turardi.
+  await clearLoginAttempts(input.email);
 
   await createSession(user.id);
 

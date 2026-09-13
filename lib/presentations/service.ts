@@ -195,6 +195,7 @@ export async function regeneratePresentation(
     where: { id, userId },
     select: {
       id: true,
+      status: true,
       topic: true,
       subject: true,
       grade: true,
@@ -205,6 +206,18 @@ export async function regeneratePresentation(
   });
 
   if (!existing) throw notFound();
+
+  /*
+    Allaqachon ishlayotgan generatsiyani IKKI MARTA boshlamaymiz.
+
+    Foydalanuvchi «Qayta urinish» tugmasini ikki marta bossa (yoki sahifani
+    yangilab qayta bossa), ilgari ikkita fon ishi bir vaqtda ishga tushardi:
+    ikkalasi bir qatorga yozardi va AI ikki marta chaqirilardi — ya'ni
+    ikki barobar pul. Endi ikkinchi so'rov 409 oladi.
+  */
+  if (existing.status === "PENDING") {
+    throw apiErrors.conflict("errors.domain.generationInProgress");
+  }
 
   // Dars ishlanmasiga bog'langan bo'lsa, uning mazmunini QAYTA o'qiymiz:
   // foydalanuvchi orada darsni qayta yaratgan bo'lishi mumkin.

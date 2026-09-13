@@ -18,6 +18,7 @@ export type ApiErrorCode =
   | "forbidden" // 403 — huquq yo'q
   | "not_found" // 404
   | "conflict" // 409 — masalan email allaqachon band
+  | "too_many_requests" // 429 — juda ko'p urinish (brute-force himoyasi)
   | "internal_error"; // 500
 
 const HTTP_STATUS: Record<ApiErrorCode, number> = {
@@ -26,6 +27,7 @@ const HTTP_STATUS: Record<ApiErrorCode, number> = {
   forbidden: 403,
   not_found: 404,
   conflict: 409,
+  too_many_requests: 429,
   internal_error: 500,
 };
 
@@ -36,6 +38,7 @@ const DEFAULT_MESSAGE_KEYS: Record<ApiErrorCode, string> = {
   forbidden: "errors.api.forbidden",
   not_found: "errors.api.not_found",
   conflict: "errors.api.conflict",
+  too_many_requests: "errors.api.too_many_requests",
   internal_error: "errors.api.internal_error",
 };
 

@@ -112,6 +112,7 @@ export async function regenerateLessonPlan(
     where: { id, userId },
     select: {
       id: true,
+      status: true,
       subject: true,
       grade: true,
       topic: true,
@@ -122,6 +123,18 @@ export async function regenerateLessonPlan(
   });
 
   if (!existing) throw notFound();
+
+  /*
+    Allaqachon ishlayotgan generatsiyani IKKI MARTA boshlamaymiz.
+
+    Foydalanuvchi «Qayta urinish» tugmasini ikki marta bossa (yoki sahifani
+    yangilab qayta bossa), ilgari ikkita fon ishi bir vaqtda ishga tushardi:
+    ikkalasi bir qatorga yozardi va AI ikki marta chaqirilardi — ya'ni
+    ikki barobar pul. Endi ikkinchi so'rov 409 oladi.
+  */
+  if (existing.status === "PENDING") {
+    throw apiErrors.conflict("errors.domain.generationInProgress");
+  }
 
   const reset = await prisma.lessonPlan.update({
     where: { id },

@@ -117,6 +117,7 @@ export async function regenerateCalendarPlan(
     where: { id, userId },
     select: {
       id: true,
+      status: true,
       subject: true,
       grade: true,
       period: true,
@@ -129,6 +130,18 @@ export async function regenerateCalendarPlan(
   });
 
   if (!existing) throw notFound();
+
+  /*
+    Allaqachon ishlayotgan generatsiyani IKKI MARTA boshlamaymiz.
+
+    Foydalanuvchi «Qayta urinish» tugmasini ikki marta bossa (yoki sahifani
+    yangilab qayta bossa), ilgari ikkita fon ishi bir vaqtda ishga tushardi:
+    ikkalasi bir qatorga yozardi va AI ikki marta chaqirilardi — ya'ni
+    ikki barobar pul. Endi ikkinchi so'rov 409 oladi.
+  */
+  if (existing.status === "PENDING") {
+    throw apiErrors.conflict("errors.domain.generationInProgress");
+  }
 
   // Eski faylni o'chiramiz — yangisi uning o'rniga yoziladi.
   if (existing.filePath !== null) {

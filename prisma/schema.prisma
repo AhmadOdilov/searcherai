@@ -104,6 +104,38 @@ model Session {
   @@index([expiresAt])
 }
 
+/// Muvaffaqiyatsiz kirish urinishlari — brute-force himoyasi.
+///
+/// ── Nega alohida jadval ───────────────────────────────────────────────────
+/// `Session` ga ustun qo'shib bo'lmaydi: sessiya faqat MUVAFFAQIYATLI
+/// kirishdan keyin paydo bo'ladi, hisoblash kerak bo'lgan narsa esa aynan
+/// muvaffaqiyatsiz urinishlar. `User` ga qo'shish ham ishlamaydi —
+/// mavjud bo'lmagan email bilan urinishni ham hisoblash kerak (aks holda
+/// hujumchi mavjud bo'lmagan emaillar orqali cheksiz urinadi).
+///
+/// ── Nega Redis emas ───────────────────────────────────────────────────────
+/// Yangi xizmat MVP uchun ortiqcha. Yozuvlar kam (faqat muvaffaqiyatsiz
+/// urinishlar) va ular eskirgach o'chiriladi.
+model LoginAttempt {
+  id String @id @default(cuid())
+
+  /// Kim urinayotgani: email (kichik harfda) yoki IP manzil.
+  ///
+  /// Ikkisi ALOHIDA yoziladi va alohida hisoblanadi. Sabab: bitta
+  /// emailga hujum va bitta IP dan ko'p emailga hujum — ikki xil holat,
+  /// ikkalasini ham to'xtatish kerak.
+  identifier String
+  /// "email" yoki "ip" — bir xil qiymat ikki turda bo'lishi mumkin emas,
+  /// lekin tur bo'yicha ajratish diagnostikani osonlashtiradi.
+  kind       String
+
+  createdAt DateTime @default(now())
+
+  /// Oyna ichidagi urinishlarni sanash va eskirganini tozalash uchun.
+  @@index([identifier, createdAt])
+  @@index([createdAt])
+}
+
 model LessonPlan {
   id     String @id @default(cuid())
   userId String

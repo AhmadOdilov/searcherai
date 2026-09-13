@@ -325,3 +325,89 @@ describe("himoyalangan sahifalar (proxy)", () => {
     assert.equal(result.data!.user, null);
   });
 });
+
+describe("kirish urinishlari cheklovi", () => {
+  /*
+    DIQQAT: barcha e2e sinovlari BITTA IP dan (127.0.0.1) keladi, ya'ni
+    IP hisoblagichi butun to'plam davomida to'planib boradi. Shuning uchun
+    bu yerda faqat EMAIL o'lchovi tekshiriladi — u har bir sinovda toza
+    boshlanadi (yangi email).
+
+    IP chegarasi ataylab ancha yuqori (30): bitta maktabdagi o'qituvchilar
+    bitta tashqi manzil ortida ishlaydi va bittasining xatosi butun
+    maktabni bloklamasligi kerak.
+  */
+  it("5 ta xato urinishdan keyin 429 qaytaradi", async () => {
+    const email = testEmail("rate-limit");
+    const client = new TestClient();
+
+    await client.request("/api/auth/register", {
+      method: "POST",
+      body: { email, password: PASSWORD, fullName: "Cheklov Sinovi" },
+    });
+
+    // 5 ta xato urinish — hammasi 401 bo'lishi kerak.
+    for (let attempt = 1; attempt <= 5; attempt++) {
+      const result = await client.request("/api/auth/login", {
+        method: "POST",
+        body: { email, password: "butunlay-boshqa-parol" },
+      });
+      assert.equal(result.status, 401, `${attempt}-urinish 401 bo'lishi kerak`);
+    }
+
+    // 6-urinish — endi bloklanadi.
+    const blocked = await client.request("/api/auth/login", {
+      method: "POST",
+      body: { email, password: "butunlay-boshqa-parol" },
+    });
+    assert.equal(blocked.status, 429, "6-urinishda 429 kutilgan");
+    assert.equal(blocked.error!.code, "too_many_requests");
+
+    // MUHIM: to'g'ri parol ham bloklanadi — aks holda cheklov ma'nosiz
+    // bo'lardi (hujumchi to'g'ri parolni topgan zahoti kirardi).
+    const evenCorrect = await client.request("/api/auth/login", {
+      method: "POST",
+      body: { email, password: PASSWORD },
+    });
+    assert.equal(evenCorrect.status, 429);
+  });
+
+  it("muvaffaqiyatli kirish hisoblagichni TOZALAYDI", async () => {
+    const email = testEmail("rate-clear");
+    const client = new TestClient();
+
+    await client.request("/api/auth/register", {
+      method: "POST",
+      body: { email, password: PASSWORD, fullName: "Tozalash Sinovi" },
+    });
+
+    // Chegaraga yetmasdan bir nechta xato urinish.
+    for (let attempt = 0; attempt < 3; attempt++) {
+      await client.request("/api/auth/login", {
+        method: "POST",
+        body: { email, password: "xato" },
+      });
+    }
+
+    // To'g'ri parol bilan kiramiz — hisoblagich tozalanishi kerak.
+    const success = await client.request("/api/auth/login", {
+      method: "POST",
+      body: { email, password: PASSWORD },
+    });
+    assert.equal(success.status, 200);
+
+    // Endi yana 5 ta xato urinish qilsak ham, 5-tasigacha 401 bo'lishi
+    // kerak — ya'ni hisoblagich noldan boshlangan.
+    for (let attempt = 1; attempt <= 5; attempt++) {
+      const result = await client.request("/api/auth/login", {
+        method: "POST",
+        body: { email, password: "xato" },
+      });
+      assert.equal(
+        result.status,
+        401,
+        `tozalashdan keyin ${attempt}-urinish 401 bo'lishi kerak`,
+      );
+    }
+  });
+});
