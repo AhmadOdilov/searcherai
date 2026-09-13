@@ -14,6 +14,7 @@ import {
   MARKER_NOT_JSON,
   MARKER_SERVER_ERROR,
 } from "./helpers/mock-ai.ts";
+import { text } from "./helpers/messages";
 
 /**
  * Prezentatsiya moduli — uchidan-uchgacha.
@@ -250,8 +251,9 @@ describe("prezentatsiya — DARS ISHLANMASI asosida", () => {
 
     assert.equal(result.ok, false);
     assert.equal(result.status, 400);
-    // Foydalanuvchiga NIMA QILISH kerakligi aytilsin.
-    assert.match(result.error!.message, /qayta yarat/i);
+    // Kutilgan matn tarjima faylidan olinadi: matn tahrirlansa sinov
+    // yiqilmaydi, lekin noto'g'ri xabar qaytsa — darhol ko'rinadi.
+    assert.equal(result.error!.message, text("uz", "errors.domain.lessonPlanFailed"));
   });
 });
 

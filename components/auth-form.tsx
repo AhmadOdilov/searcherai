@@ -3,21 +3,26 @@
 import { useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { GraduationCap } from "lucide-react";
 import { ApiClientError, apiRequest } from "@/lib/api-client";
 import { LocaleSwitcher } from "@/components/ui/locale-switcher";
+import { HelpLink } from "@/components/ui/help-link";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { FormError } from "@/components/ui/field";
 
 /**
- * Login va register formalari uchun umumiy qobiq.
+ * Kirish va ro'yxatdan o'tish formalari uchun umumiy qobiq.
  *
  * Ikkala sahifada bir xil bo'lgan narsalar shu yerda: yuborish holati,
- * xato ko'rsatish (umumiy va maydon bo'yicha), muvaffaqiyatda yo'naltirish.
- * Sahifalar faqat maydonlarni beradi.
- *
- * Dizayn ataylab minimal — chiroylashtirish keyingi bosqichda.
+ * xato ko'rsatish (umumiy va maydon bo'yicha), muvaffaqiyatda
+ * yo'naltirish. Sahifalar faqat maydonlarni beradi.
  */
 
 export interface AuthFormProps {
   title: string;
+  /** Sarlavha ostidagi bir jumlalik tushuntirish. */
+  description?: string;
   submitLabel: string;
   /** Qaysi endpointga yuborish: /api/auth/login yoki /api/auth/register. */
   endpoint: string;
@@ -31,6 +36,7 @@ export interface AuthFormProps {
 
 export function AuthForm({
   title,
+  description,
   submitLabel,
   endpoint,
   children,
@@ -39,6 +45,7 @@ export function AuthForm({
 }: AuthFormProps) {
   const router = useRouter();
   const t = useTranslations("common");
+  const tApp = useTranslations("app");
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
@@ -71,108 +78,50 @@ export function AuthForm({
   }
 
   return (
-    <main className="flex min-h-screen flex-col bg-slate-50 px-4 py-6">
+    <main className="flex min-h-screen flex-col bg-canvas px-4 py-4">
       {/* Til almashtirgich KIRISHDAN oldin ham kerak — foydalanuvchi hali
           tizimga kirmagan bo'lsa ham interfeysni o'z tilida ko'rsin. */}
       <div className="flex justify-end">
         <LocaleSwitcher />
       </div>
 
-      <div className="mx-auto w-full max-w-sm flex-1 pt-10">
-        <h1 className="mb-1 text-2xl font-semibold text-slate-900">Searcher AI</h1>
-        <p className="mb-6 text-sm text-slate-500">{title}</p>
-
-        <form
-          onSubmit={handleSubmit}
-          noValidate
-          className="space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
-        >
-          {formError !== null && (
-            <p
-              role="alert"
-              className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700"
-            >
-              {formError}
+      <div className="mx-auto w-full max-w-md flex-1 pt-6 pb-10">
+        <div className="text-center">
+          <span
+            aria-hidden
+            className="mx-auto flex size-14 items-center justify-center rounded-xl bg-primary-soft text-primary"
+          >
+            <GraduationCap className="size-8" />
+          </span>
+          <p className="mt-3 text-base font-semibold text-neutral-900">{tApp("name")}</p>
+          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-neutral-900">
+            {title}
+          </h1>
+          {description !== undefined && (
+            <p className="mt-2 text-base leading-relaxed text-neutral-600">
+              {description}
             </p>
           )}
+        </div>
 
-          {children(fieldErrors)}
+        <Card className="mt-6" padding="md">
+          <form onSubmit={handleSubmit} noValidate className="space-y-6">
+            {formError !== null && <FormError message={formError} />}
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {submitting ? t("submitting") : submitLabel}
-          </button>
-        </form>
+            {children(fieldErrors)}
 
-        <p className="mt-4 text-center text-sm text-slate-500">{footer}</p>
+            <Button type="submit" size="lg" fullWidth loading={submitting}>
+              {submitting ? t("submitting") : submitLabel}
+            </Button>
+          </form>
+        </Card>
+
+        <p className="mt-6 text-center text-base text-neutral-600">{footer}</p>
+
+        <div className="mt-8 flex justify-center">
+          <HelpLink />
+        </div>
       </div>
     </main>
-  );
-}
-
-export interface FieldProps {
-  label: string;
-  name: string;
-  type?: string;
-  autoComplete?: string;
-  required?: boolean;
-  defaultValue?: string;
-  placeholder?: string;
-  /** Yordamchi matn (masalan "kamida 8 belgi"). */
-  hint?: string;
-  errors: Record<string, string[]>;
-}
-
-export function Field({
-  label,
-  name,
-  type = "text",
-  autoComplete,
-  required = true,
-  defaultValue,
-  placeholder,
-  hint,
-  errors,
-}: FieldProps) {
-  const fieldErrors = errors[name];
-  const hasError = fieldErrors !== undefined && fieldErrors.length > 0;
-  const errorId = `${name}-error`;
-  const hintId = `${name}-hint`;
-
-  return (
-    <div>
-      <label htmlFor={name} className="mb-1.5 block text-sm font-medium text-slate-700">
-        {label}
-      </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        autoComplete={autoComplete}
-        required={required}
-        defaultValue={defaultValue}
-        placeholder={placeholder}
-        aria-invalid={hasError}
-        // Skrinrider xato yoki izohni o'qishi uchun.
-        aria-describedby={hasError ? errorId : hint ? hintId : undefined}
-        className={`w-full rounded-lg border px-3 py-2 text-sm text-slate-900 outline-none transition focus:ring-2 ${
-          hasError
-            ? "border-red-300 focus:border-red-400 focus:ring-red-100"
-            : "border-slate-300 focus:border-slate-400 focus:ring-slate-100"
-        }`}
-      />
-      {hasError ? (
-        <p id={errorId} className="mt-1.5 text-xs text-red-600">
-          {fieldErrors.join(" ")}
-        </p>
-      ) : hint ? (
-        <p id={hintId} className="mt-1.5 text-xs text-slate-400">
-          {hint}
-        </p>
-      ) : null}
-    </div>
   );
 }

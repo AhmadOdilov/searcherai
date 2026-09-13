@@ -1,19 +1,21 @@
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { listLessonPlanOptions } from "@/lib/presentations/service";
 import { NewPresentationForm } from "@/components/presentations/new-form";
+import { BackLink } from "@/components/ui/back-link";
+import { PageHeader } from "@/components/ui/card";
+import { HelpLink } from "@/components/ui/help-link";
 
 /**
  * `/dashboard/presentations/new` — prezentatsiya yaratish.
  *
  * Server Component: dars ishlanmalari ro'yxatini bazadan oladi va formaga
  * uzatadi. Forma o'zi klient komponenti (interaktiv), lekin ro'yxat uchun
- * qo'shimcha HTTP so'rov yubormaydi.
+ * qo'shimcha so'rov yubormaydi.
  *
- * `?lessonPlanId=` — dars ishlanmasi sahifasidagi "Shundan prezentatsiya
- * yaratish" tugmasi shu parametr bilan keladi va forma darhol to'g'ri
- * rejimda ochiladi.
+ * `?lessonPlanId=` — dars ishlanmasi sahifasidagi "Shu darsdan
+ * prezentatsiya yaratish" tugmasi shu parametr bilan keladi va forma
+ * darhol to'g'ri rejimda ochiladi.
  */
 export default async function NewPresentationPage({
   searchParams,
@@ -24,28 +26,23 @@ export default async function NewPresentationPage({
   const lessonPlans = await listLessonPlanOptions(user.id);
 
   const t = await getTranslations("presentations");
-  const tRoot = await getTranslations();
 
   const requested = params.lessonPlanId;
   const preselectedId = typeof requested === "string" ? requested : null;
-  // Faqat foydalanuvchining O'Z ro'yxatidagi id qabul qilinadi — begona
-  // id URL orqali kelsa e'tiborsiz qoldiriladi.
+  // Faqat foydalanuvchining O'Z ro'yxatidagi yozuv qabul qilinadi —
+  // begona manzil orqali kelsa e'tiborsiz qoldiriladi.
   const preselected =
     preselectedId !== null && lessonPlans.some((plan) => plan.id === preselectedId)
       ? preselectedId
       : null;
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10">
-      <Link
-        href="/dashboard/presentations"
-        className="text-sm text-slate-500 underline hover:text-slate-700"
-      >
-        ← {tRoot("common.back")}
-      </Link>
+    <div className="mx-auto max-w-2xl px-4 py-8 sm:py-12">
+      <BackLink href="/dashboard/presentations" />
 
-      <h1 className="mt-4 text-xl font-semibold text-slate-900">{t("new.title")}</h1>
-      <p className="mt-1 text-sm text-slate-500">{t("new.subtitle")}</p>
+      <div className="mt-4">
+        <PageHeader title={t("new.title")} description={t("new.subtitle")} />
+      </div>
 
       <NewPresentationForm
         lessonPlans={lessonPlans.map((plan) => ({
@@ -56,6 +53,10 @@ export default async function NewPresentationPage({
         }))}
         preselectedLessonPlanId={preselected}
       />
+
+      <div className="mt-10 flex justify-center border-t border-neutral-200 pt-6">
+        <HelpLink />
+      </div>
     </div>
   );
 }

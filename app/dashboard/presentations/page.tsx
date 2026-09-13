@@ -1,8 +1,12 @@
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { Presentation, Plus } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth/session";
 import { listPresentations } from "@/lib/presentations/service";
 import { PresentationList } from "@/components/presentations/presentation-list";
+import { PageHeader } from "@/components/ui/card";
+import { LinkButton } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { HelpLink } from "@/components/ui/help-link";
 import { PAGE_SIZE } from "@/lib/ui/pagination";
 
 /** `/dashboard/presentations` — prezentatsiyalar ro'yxati. */
@@ -16,41 +20,45 @@ export default async function PresentationsPage() {
   const tRoot = await getTranslations();
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-semibold text-slate-900">{t("title")}</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            {items.length === 0 ? t("empty") : t("count", { count: items.length })}
-          </p>
-        </div>
-        <Link
-          href="/dashboard/presentations/new"
-          className="shrink-0 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
-        >
-          {tRoot("common.create")}
-        </Link>
-      </div>
+    <div className="mx-auto max-w-4xl px-4 py-8 sm:py-12">
+      <PageHeader
+        title={t("title")}
+        // Har sahifada bitta jumla: bu yerda nima qilinadi.
+        description={t("pageHint")}
+        action={
+          <LinkButton
+            href="/dashboard/presentations/new"
+            size="lg"
+            icon={<Plus aria-hidden className="size-5" />}
+          >
+            {t("new.submit")}
+          </LinkButton>
+        }
+      />
 
       {items.length === 0 ? (
-        <div className="mt-8 rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center">
-          <p className="text-sm font-medium text-slate-900">
-            Birinchi prezentatsiyangizni yarating
-          </p>
-          <p className="mx-auto mt-1 max-w-sm text-sm text-slate-500">
-            Mavjud dars ishlanmasidan yoki faqat mavzu kiritib — tizim tayyor slaydlarni
-            o&apos;zi tuzadi.
-          </p>
-          <Link
-            href="/dashboard/presentations/new"
-            className="mt-5 inline-block rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
-          >
-            {tRoot("common.start")}
-          </Link>
-        </div>
+        <EmptyState
+          icon={<Presentation aria-hidden className="size-9" />}
+          title={t("emptyTitle")}
+          description={t("emptyDescription")}
+          action={
+            <LinkButton href="/dashboard/presentations/new" size="lg">
+              {tRoot("common.start")}
+            </LinkButton>
+          }
+        />
       ) : (
-        <PresentationList initialItems={items} initialCursor={nextCursor} />
+        <>
+          <p className="mt-6 text-base text-neutral-600">
+            {t("count", { count: items.length })}
+          </p>
+          <PresentationList initialItems={items} initialCursor={nextCursor} />
+        </>
       )}
+
+      <div className="mt-10 flex justify-center border-t border-neutral-200 pt-6">
+        <HelpLink />
+      </div>
     </div>
   );
 }

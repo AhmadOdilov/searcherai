@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { LogOut } from "lucide-react";
 import { apiRequest } from "@/lib/api-client";
+import { Button } from "@/components/ui/button";
 
 /**
  * Chiqish tugmasi.
@@ -13,6 +15,9 @@ import { apiRequest } from "@/lib/api-client";
  *    qaytib bo'lmasin.
  *  · `refresh` — server komponentlari keshini tozalaydi, aks holda eski
  *    foydalanuvchi ismi ekranda qolib qolishi mumkin.
+ *
+ * Telefonda faqat belgi ko'rinadi (joy tor), `sm` ekrandan boshlab matn
+ * ham qo'shiladi — belgi yolg'iz o'zi hamma uchun tushunarli emas.
  */
 export function LogoutButton() {
   const router = useRouter();
@@ -32,13 +37,15 @@ export function LogoutButton() {
   }
 
   return (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
+      size="sm"
       onClick={handleLogout}
-      disabled={busy}
-      className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
+      loading={busy}
+      aria-label={t("logout")}
+      icon={busy ? undefined : <LogOut aria-hidden className="size-5" />}
     >
-      {busy ? t("loggingOut") : t("logout")}
-    </button>
+      <span className="hidden sm:inline">{busy ? t("loggingOut") : t("logout")}</span>
+    </Button>
   );
 }

@@ -1,13 +1,19 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
+import { Presentation as PresentationIcon } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getPresentation } from "@/lib/presentations/service";
-import { StatusBadge } from "@/components/ui/status-badge";
 import { PresentationActions } from "@/components/presentations/presentation-actions";
 import { formatDate, formatFileSize } from "@/lib/ui/labels";
 import { ErrorPanel } from "@/components/ui/error-panel";
 import { GenerationProgress } from "@/components/ui/generation-progress";
+import { BackLink } from "@/components/ui/back-link";
+import { DetailHeader } from "@/components/ui/detail-header";
+import { DownloadPanel } from "@/components/ui/download-panel";
+import { PrintButton } from "@/components/ui/print-button";
+import { Card } from "@/components/ui/card";
+import { HelpLink } from "@/components/ui/help-link";
 import { PROGRESS_KEYS, TYPICAL_SECONDS } from "@/lib/presentations/labels";
 import { translateStoredError } from "@/lib/i18n/stored-error";
 import type { UiLocale } from "@/lib/i18n/config";
@@ -33,73 +39,74 @@ export default async function PresentationDetailPage({
   const content =
     presentation.content === null ? null : parsePresentationContent(presentation.content);
 
+  const metaParts = [
+    [presentation.subject, presentation.grade].filter(Boolean).join(" · ") ||
+      t("standalone"),
+    tRoot(`languages.${presentation.language}`),
+  ];
+  if (presentation.slideCount !== null) {
+    metaParts.push(t("slideCount", { count: presentation.slideCount }));
+  }
+
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <Link
-        href="/dashboard/presentations"
-        className="text-sm text-slate-500 underline hover:text-slate-700"
-      >
-        ← {tRoot("common.back")}
-      </Link>
+    <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
+      <BackLink href="/dashboard/presentations" />
 
-      <header className="mt-4">
-        <div className="flex items-start justify-between gap-3">
-          <h1 className="text-2xl font-semibold text-slate-900">
-            {presentation.title ?? presentation.topic}
-          </h1>
-          <StatusBadge status={presentation.status} />
-        </div>
-        <p className="mt-2 text-sm text-slate-500">
-          {[presentation.subject, presentation.grade].filter(Boolean).join(" · ") ||
-            t("standalone")}
-          {" · "}
-          {tRoot(`languages.${presentation.language}`)}
-          {presentation.slideCount !== null &&
-            ` · ${t("slideCount", { count: presentation.slideCount })}`}
-        </p>
-        <p className="mt-1 text-xs text-slate-400">
-          {formatDate(presentation.createdAt, locale)}
-          {presentation.aiDurationMs !== null &&
-            ` · ${tRoot("lessonPlans.detail.generatedIn", {
-              seconds: (presentation.aiDurationMs / 1000).toFixed(1),
-            })}`}
-        </p>
-
-        {presentation.lessonPlanId !== null && (
-          <p className="mt-2 text-xs text-slate-500">
-            {t("detail.fromLessonPlanPrefix")}{" "}
-            <Link
-              href={`/dashboard/lesson-plans/${presentation.lessonPlanId}`}
-              className="underline hover:text-slate-700"
-            >
-              {t("detail.viewLessonPlan")}
-            </Link>
-          </p>
-        )}
-      </header>
+      <DetailHeader
+        title={presentation.title ?? presentation.topic}
+        status={presentation.status}
+        meta={metaParts.join(" · ")}
+        date={`${formatDate(presentation.createdAt, locale)}${
+          presentation.aiDurationMs !== null
+            ? ` · ${tRoot("lessonPlans.detail.generatedIn", {
+                seconds: (presentation.aiDurationMs / 1000).toFixed(1),
+              })}`
+            : ""
+        }`}
+        extra={
+          presentation.lessonPlanId !== null ? (
+            <p className="mt-3 text-base text-neutral-600">
+              {t("detail.fromLessonPlanPrefix")}{" "}
+              <Link
+                href={`/dashboard/lesson-plans/${presentation.lessonPlanId}`}
+                className="font-medium text-primary underline underline-offset-4"
+              >
+                {t("detail.viewLessonPlan")}
+              </Link>
+            </p>
+          ) : undefined
+        }
+      />
 
       {/* ── Yuklab olish ─────────────────────────────────────────────── */}
       {presentation.status === "READY" && presentation.filePath !== null && (
-        <div className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-          <p className="text-sm font-medium text-emerald-900">{t("detail.readyTitle")}</p>
-          <p className="mt-1 text-xs text-emerald-800">{t("detail.readyHint")}</p>
-          {/*
-            Oddiy havola (fetch emas): brauzer faylni o'zi yuklab oladi va
-            `Content-Disposition` sarlavhasidagi nomni ishlatadi. Cookie
-            avtomatik ketadi, ya'ni egalik tekshiruvi ishlaydi.
-          */}
-          <a
-            href={`/api/presentations/${presentation.id}/download`}
-            className="mt-3 inline-block rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-800"
-          >
-            {tRoot("common.download")}
-            {presentation.fileSize !== null &&
-              ` · ${formatFileSize(presentation.fileSize, locale)}`}
-          </a>
-        </div>
+        <DownloadPanel
+          title={t("detail.readyTitle")}
+          hint={t("detail.readyHint")}
+          openWith={t("detail.openWith")}
+          formats={[
+            {
+              label: tRoot("common.downloadPowerPoint"),
+              href: `/api/presentations/${presentation.id}/download`,
+              icon: <PresentationIcon aria-hidden className="size-6 shrink-0" />,
+              sizeLabel:
+                presentation.fileSize !== null
+                  ? formatFileSize(presentation.fileSize, locale)
+                  : undefined,
+            },
+            {
+              // Slaydlar ro'yxatini qog'ozga chiqarish — o'qituvchi
+              // darsga qo'lida olib kirishi uchun.
+              label: tRoot("common.saveAsPdf"),
+              href: null,
+              icon: null,
+              action: <PrintButton />,
+            },
+          ]}
+        />
       )}
 
-      <div className="mt-5">
+      <div className="mt-4 print:hidden">
         <PresentationActions
           presentationId={presentation.id}
           status={presentation.status}
@@ -119,11 +126,6 @@ export default async function PresentationDetailPage({
         />
       )}
 
-      {/*
-        PENDING holatida jarayon KUZATILADI: komponent har 2 soniyada
-        yozuvni so'rab turadi va tugagach sahifani yangilaydi. Ilgari bu
-        yerda shunchaki "birozdan so'ng yangilang" degan matn turardi.
-      */}
       {presentation.status === "PENDING" && (
         <GenerationProgress
           resource="/api/presentations"
@@ -146,6 +148,10 @@ export default async function PresentationDetailPage({
       {presentation.status === "READY" && content !== null && (
         <SlidesPreview content={content} t={t} />
       )}
+
+      <div className="mt-10 flex justify-center border-t border-neutral-200 pt-6 print:hidden">
+        <HelpLink />
+      </div>
     </div>
   );
 }
@@ -161,76 +167,57 @@ type Translator = (key: string, values?: Record<string, string | number>) => str
 function SlidesPreview({ content, t }: { content: PresentationContent; t: Translator }) {
   return (
     <section className="mt-8">
-      <h2 className="mb-3 text-xs font-semibold tracking-wide text-slate-500 uppercase">
+      <h2 className="mb-4 text-2xl font-semibold text-neutral-900">
         {t("detail.slides", { count: content.slides.length })}
       </h2>
 
-      <ol className="space-y-3">
+      <ol className="space-y-4">
         {content.slides.map((slide, index) => (
-          <li
-            key={index}
-            className={`rounded-xl border p-4 ${
-              slide.type === "title"
-                ? "border-slate-800 bg-slate-900"
-                : slide.type === "summary"
-                  ? "border-slate-300 bg-slate-50"
-                  : "border-slate-200 bg-white"
-            }`}
-          >
-            <div className="flex items-baseline justify-between gap-3">
-              <h3
-                className={`text-sm font-semibold ${
-                  slide.type === "title" ? "text-white" : "text-slate-900"
-                }`}
-              >
-                <span
-                  className={`mr-1.5 ${
-                    slide.type === "title" ? "text-slate-500" : "text-slate-400"
-                  }`}
-                >
-                  {index + 1}.
+          <li key={index}>
+            <Card
+              padding="sm"
+              className={
+                slide.type === "title"
+                  ? "border-primary-border bg-primary-soft"
+                  : slide.type === "summary"
+                    ? "bg-neutral-50"
+                    : undefined
+              }
+            >
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <h3 className="text-lg font-semibold text-neutral-900">
+                  <span className="mr-2 text-neutral-400">{index + 1}.</span>
+                  {slide.heading}
+                </h3>
+                <span className="shrink-0 rounded-md bg-neutral-100 px-3 py-1 text-sm font-medium text-neutral-600">
+                  {t(`detail.slideTypes.${slide.type}`)}
                 </span>
-                {slide.heading}
-              </h3>
-              <span
-                className={`shrink-0 rounded-md px-2 py-0.5 text-xs font-medium ${
-                  slide.type === "title"
-                    ? "bg-slate-700 text-slate-200"
-                    : "bg-slate-100 text-slate-600"
-                }`}
-              >
-                {t(`detail.slideTypes.${slide.type}`)}
-              </span>
-            </div>
+              </div>
 
-            {slide.bullets.length > 0 && (
-              <ul className="mt-2.5 space-y-1.5">
-                {slide.bullets.map((bullet, bulletIndex) => (
-                  <li
-                    key={bulletIndex}
-                    className={`flex gap-2 text-sm ${
-                      slide.type === "title" ? "text-slate-300" : "text-slate-700"
-                    }`}
-                  >
-                    <span className="select-none text-slate-400">•</span>
-                    <span className="leading-relaxed">{bullet}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
+              {slide.bullets.length > 0 && (
+                <ul className="mt-3 space-y-2">
+                  {slide.bullets.map((bullet, bulletIndex) => (
+                    <li
+                      key={bulletIndex}
+                      className="flex gap-3 text-base text-neutral-700"
+                    >
+                      <span
+                        aria-hidden
+                        className="mt-2 size-1.5 shrink-0 rounded-full bg-primary"
+                      />
+                      <span className="leading-relaxed">{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
 
-            {slide.speakerNotes !== undefined && (
-              <p
-                className={`mt-3 border-t pt-2.5 text-xs leading-relaxed ${
-                  slide.type === "title"
-                    ? "border-slate-700 text-slate-400"
-                    : "border-slate-100 text-slate-500"
-                }`}
-              >
-                <span className="font-medium">{t("detail.speakerNotes")} </span>
-                {slide.speakerNotes}
-              </p>
-            )}
+              {slide.speakerNotes !== undefined && (
+                <p className="mt-4 border-t border-neutral-200 pt-3 text-base leading-relaxed text-neutral-600">
+                  <span className="font-medium">{t("detail.speakerNotes")} </span>
+                  {slide.speakerNotes}
+                </p>
+              )}
+            </Card>
           </li>
         ))}
       </ol>

@@ -1,9 +1,29 @@
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import {
+  BookOpen,
+  CalendarDays,
+  Languages,
+  Presentation,
+  Search,
+  type LucideIcon,
+} from "lucide-react";
 import { UserGreeting } from "@/components/user-greeting";
+import { Onboarding } from "@/components/dashboard/onboarding";
+import { Card, LinkCard } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { HelpLink } from "@/components/ui/help-link";
 
 /**
- * `/dashboard` — kirgan foydalanuvchining ishchi sahifasi.
+ * `/dashboard` — o'qituvchining ishchi sahifasi.
+ *
+ * ── Nega kartalar shu qadar katta ─────────────────────────────────────────
+ * Bu sahifa — ilovaning butun mazmuni. Foydalanuvchi bu yerga kelib
+ * "endi nima qilaman?" deb o'ylashi KERAK EMAS: uchta katta, rangli,
+ * belgili karta uchta savolga javob beradi — nima qila olaman, u nima
+ * qiladi, qayerga bosaman.
+ *
+ * Karta BUTUNLAY bosiladi (sarlavhasi emas) — telefonda barmoq bilan
+ * xato bosish deyarli imkonsiz bo'ladi.
  *
  * Avtorizatsiya va umumiy sarlavha `app/dashboard/layout.tsx` da.
  */
@@ -11,65 +31,149 @@ export default async function DashboardPage() {
   const t = await getTranslations("dashboard");
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:py-12">
       {/* Klient komponenti — foydalanuvchini contextdan oladi. */}
       <UserGreeting />
 
-      <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-        {MODULES.map((module) =>
-          module.href === null ? (
-            <li
-              key={module.key}
-              className="rounded-xl border border-slate-200 bg-white p-4"
-            >
-              <p className="text-sm font-medium text-slate-900">
-                {t(`modules.${module.key}.title`)}
-              </p>
-              <p className="mt-1 text-xs text-slate-500">
-                {t(`modules.${module.key}.description`)}
-              </p>
-              <p className="mt-3 text-xs font-medium text-slate-400">{t("comingSoon")}</p>
-            </li>
-          ) : (
+      {/*
+        Birinchi tashrifda qisqa qo'llanma. Ro'yxatdan o'tgan odam bo'sh
+        ekranga tushmasligi kerak — nimadan boshlashni ko'rsatamiz.
+      */}
+      <Onboarding />
+
+      {/*
+        ── Grid tartibi ────────────────────────────────────────────────────
+        Telefonda (390px) 2x2: to'rtta karta bir ekranga sig'adi va
+        o'qituvchi hammasini ko'radi — pastga aylantirish kerak emas.
+        Kartalar tor bo'lgani uchun bu yerda tavsif matni yashiriladi
+        (`hidden sm:block`), sarlavha va belgi esa qoladi.
+
+        `lg` dan boshlab 4x1: keng ekranda to'rtta karta bir qatorda,
+        bir qarashda o'qiladi.
+      */}
+      <ul className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        {READY_MODULES.map((module) => {
+          const Icon = module.icon;
+          return (
             <li key={module.key}>
-              <Link
+              {/*
+                `flex flex-col` + `mt-auto` — "Ochish" HAR DOIM kartaning
+                pastida turadi. Bo'lmasa sarlavhasi ikki qatorli karta
+                ("Kalendar-tematik reja") qo'shnisidan uzunroq bo'lib,
+                havolalar zinapoyaga o'xshab ketardi.
+              */}
+              <LinkCard
                 href={module.href}
-                className="block h-full rounded-xl border border-slate-200 bg-white p-4 transition hover:border-slate-300 hover:shadow-sm"
+                padding="sm"
+                className="group flex h-full flex-col"
               >
-                <p className="text-sm font-medium text-slate-900">
-                  {t(`modules.${module.key}.title`)}
+                <ModuleBody
+                  icon={<Icon aria-hidden className="size-7 sm:size-8" />}
+                  title={t(`modules.${module.key}.title`)}
+                  description={t(`modules.${module.key}.description`)}
+                />
+                <p className="mt-3 hidden pt-1 text-base font-medium text-primary sm:mt-auto sm:block">
+                  {t("open")}
                 </p>
-                <p className="mt-1 text-xs text-slate-500">
-                  {t(`modules.${module.key}.description`)}
-                </p>
-                <p className="mt-3 text-xs font-medium text-slate-900">{t("open")}</p>
-              </Link>
+              </LinkCard>
             </li>
-          ),
-        )}
+          );
+        })}
       </ul>
 
-      <p className="mt-8 text-xs text-slate-400">
-        {t("systemStatus")}{" "}
-        <Link href="/api/health" className="underline">
-          /api/health
-        </Link>
-      </p>
+      {/*
+        "Tez orada" moduli ishlaydiganlardan AJRATILGAN.
+
+        Ilgari u to'rtinchi karta bo'lib, qolganlari bilan bir qatorda
+        turardi — foydalanuvchi uni bosib ko'rib, hech narsa bo'lmagach
+        "ilova buzuq" degan xulosaga kelishi mumkin edi. Endi u pastda,
+        kichikroq va "hali tayyor emas" degani darhol ko'rinadi.
+      */}
+      {UPCOMING_MODULES.map((module) => {
+        const Icon = module.icon;
+        return (
+          <Card key={module.key} padding="sm" className="mt-4 opacity-75">
+            <div className="flex items-center gap-4">
+              <span
+                aria-hidden
+                className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400"
+              >
+                <Icon className="size-6" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-lg font-semibold text-neutral-700">
+                  {t(`modules.${module.key}.title`)}
+                </p>
+                <p className="mt-1 text-base leading-relaxed text-neutral-500">
+                  {t(`modules.${module.key}.description`)}
+                </p>
+              </div>
+              <Badge tone="neutral" className="hidden sm:inline-flex">
+                {t("comingSoon")}
+              </Badge>
+            </div>
+          </Card>
+        );
+      })}
+
+      <div className="mt-10 flex justify-center border-t border-neutral-200 pt-6">
+        <HelpLink />
+      </div>
     </div>
   );
 }
 
-/** `href: null` — modul hali yozilmagan. Matnlar tarjima kalitlaridan. */
-const MODULES: Array<{
-  key: "lessonPlans" | "presentations" | "calendarPlans" | "translation";
-  href:
-    | "/dashboard/lesson-plans"
-    | "/dashboard/presentations"
-    | "/dashboard/calendar-plans"
-    | null;
+/** Ishlaydigan modul kartasining ichi. */
+function ModuleBody({
+  icon,
+  title,
+  description,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}) {
+  return (
+    <>
+      <div className="flex size-12 items-center justify-center rounded-lg bg-primary-soft text-primary transition-colors group-hover:bg-primary group-hover:text-on-primary sm:size-14">
+        {icon}
+      </div>
+
+      <h2 className="mt-3 text-lg font-semibold text-neutral-900 sm:mt-4 sm:text-xl">
+        {title}
+      </h2>
+
+      {/*
+        Telefonda (2 ustunli grid) tavsif YASHIRILADI: 190px kenglikda
+        uch qatorli matn kartani cho'zib yuboradi va to'rttasi bir
+        ekranga sig'may qoladi. Sarlavha va belgi o'zi yetarli —
+        "Dars ishlanmasi" nomi allaqachon nima ekanini aytadi.
+      */}
+      <p className="mt-2 hidden text-base leading-relaxed text-neutral-600 sm:block">
+        {description}
+      </p>
+    </>
+  );
+}
+
+/**
+ * Ishlaydigan modullar — dashboard'dagi asosiy kartalar.
+ *
+ * Tartib ATAYLAB shunday: eng ko'p ishlatiladigani birinchi. O'qituvchi
+ * kuniga dars ishlanmasi yasaydi, kalendar rejani esa chorakda bir marta.
+ */
+const READY_MODULES: Array<{
+  key: "lessonPlans" | "presentations" | "calendarPlans" | "search";
+  icon: LucideIcon;
+  href: string;
 }> = [
-  { key: "lessonPlans", href: "/dashboard/lesson-plans" },
-  { key: "presentations", href: "/dashboard/presentations" },
-  { key: "calendarPlans", href: "/dashboard/calendar-plans" },
-  { key: "translation", href: null },
+  { key: "lessonPlans", icon: BookOpen, href: "/dashboard/lesson-plans" },
+  { key: "presentations", icon: Presentation, href: "/dashboard/presentations" },
+  { key: "search", icon: Search, href: "/dashboard/search" },
+  { key: "calendarPlans", icon: CalendarDays, href: "/dashboard/calendar-plans" },
+];
+
+/** Hali yozilmagan modullar — pastda, alohida va bosilmaydigan. */
+const UPCOMING_MODULES: Array<{ key: "translation"; icon: LucideIcon }> = [
+  { key: "translation", icon: Languages },
 ];

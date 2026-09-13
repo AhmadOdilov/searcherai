@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import { BASE_URL, TestClient, cleanupTestUsers, testEmail } from "./helpers/client";
+import { htmlIncludes, text } from "./helpers/messages";
 
 /**
  * Ikki tilli interfeys — uchidan-uchgacha.
@@ -12,6 +13,16 @@ import { BASE_URL, TestClient, cleanupTestUsers, testEmail } from "./helpers/cli
  */
 
 const PASSWORD = "juda-maxfiy-parol";
+
+/**
+ * Salomlashuv matnining `{name}` dan oldingi qismi.
+ *
+ * "Xush kelibsiz, {name}" — HTML'da ism o'rniga haqiqiy ism turadi,
+ * shuning uchun to'liq matnni qidirib bo'lmaydi.
+ */
+function greeting(locale: "uz" | "ru"): string {
+  return text(locale, "dashboard.welcome").split("{")[0];
+}
 
 /** Sahifani berilgan til bilan oladi. */
 async function fetchPage(
@@ -66,7 +77,7 @@ describe("i18n — kirmagan foydalanuvchi", () => {
 
     assert.equal(status, 200);
     assert.match(html, /lang="uz"/);
-    assert.match(html, /Hisobingizga kiring/);
+    assert.ok(htmlIncludes(html, text("uz", "auth.login.title")));
   });
 
   it("cookie orqali rus tiliga o'tadi", async () => {
@@ -76,8 +87,8 @@ describe("i18n — kirmagan foydalanuvchi", () => {
 
     assert.equal(status, 200);
     assert.match(html, /lang="ru"/);
-    assert.match(html, /Войдите в свой аккаунт/);
-    assert.ok(!html.includes("Hisobingizga kiring"));
+    assert.ok(htmlIncludes(html, text("ru", "auth.login.title")));
+    assert.ok(!htmlIncludes(html, text("uz", "auth.login.title")));
   });
 
   it("brauzer tilini hisobga oladi", async () => {
@@ -86,7 +97,7 @@ describe("i18n — kirmagan foydalanuvchi", () => {
     });
 
     assert.match(html, /lang="ru"/);
-    assert.match(html, /Войдите/);
+    assert.ok(htmlIncludes(html, text("ru", "auth.login.title")));
   });
 
   it("noma'lum brauzer tilida standart tilga tushadi", async () => {
@@ -104,23 +115,23 @@ describe("i18n — kirmagan foydalanuvchi", () => {
     });
 
     assert.match(html, /lang="uz"/);
-    assert.match(html, /Hisobingizga kiring/);
+    assert.ok(htmlIncludes(html, text("uz", "auth.login.title")));
   });
 
   it("ro'yxatdan o'tish sahifasi ham ikki tilda", async () => {
     const uz = await fetchPage("/register");
-    assert.match(uz.html, /Yangi hisob yarating/);
+    assert.ok(htmlIncludes(uz.html, text("uz", "auth.register.title")));
 
     const ru = await fetchPage("/register", { cookie: "searcher_locale=ru" });
-    assert.match(ru.html, /Создайте новый аккаунт/);
+    assert.ok(htmlIncludes(ru.html, text("ru", "auth.register.title")));
   });
 
   it("bosh sahifa ham ikki tilda", async () => {
     const uz = await fetchPage("/");
-    assert.match(uz.html, /Ro&#x27;yxatdan o&#x27;tish|Ro'yxatdan o'tish/);
+    assert.ok(htmlIncludes(uz.html, text("uz", "home.register")));
 
     const ru = await fetchPage("/", { cookie: "searcher_locale=ru" });
-    assert.match(ru.html, /Зарегистрироваться/);
+    assert.ok(htmlIncludes(ru.html, text("ru", "home.register")));
   });
 });
 
@@ -141,7 +152,8 @@ describe("i18n — kirgan foydalanuvchi", () => {
     const { html } = await fetchPage("/dashboard", { cookie: withUzCookie });
 
     assert.match(html, /lang="ru"/);
-    assert.match(html, /Добро пожаловать/);
+    // "Xush kelibsiz, {name}" — o'rinbosargacha bo'lgan qismi yetarli.
+    assert.ok(htmlIncludes(html, greeting("ru")));
   });
 
   it("dashboard ikkala tilda render bo'ladi", async () => {
@@ -149,8 +161,8 @@ describe("i18n — kirgan foydalanuvchi", () => {
 
     const uz = await fetchPage("/dashboard", { cookie });
     assert.equal(uz.status, 200);
-    assert.match(uz.html, /Xush kelibsiz/);
-    assert.match(uz.html, /Dars ishlanmasi/);
+    assert.ok(htmlIncludes(uz.html, greeting("uz")));
+    assert.ok(htmlIncludes(uz.html, text("uz", "dashboard.modules.lessonPlans.title")));
 
     await client.request("/api/user/language", {
       method: "PUT",
@@ -158,36 +170,28 @@ describe("i18n — kirgan foydalanuvchi", () => {
     });
 
     const ru = await fetchPage("/dashboard", { cookie });
-    assert.match(ru.html, /Добро пожаловать/);
-    assert.match(ru.html, /План урока/);
-    assert.ok(!ru.html.includes("Xush kelibsiz"));
+    assert.ok(htmlIncludes(ru.html, greeting("ru")));
+    assert.ok(htmlIncludes(ru.html, text("ru", "dashboard.modules.lessonPlans.title")));
+    assert.ok(!htmlIncludes(ru.html, greeting("uz")));
   });
 
   it("har uch modulning RO'YXAT sahifasi ikkala tilda", async () => {
     const { client, cookie } = await signedIn("i18n-royxat");
 
     const pages = [
-      {
-        path: "/dashboard/lesson-plans",
-        uz: "Dars ishlanmalari",
-        ru: "Планы уроков",
-      },
-      {
-        path: "/dashboard/presentations",
-        uz: "Prezentatsiyalar",
-        ru: "Презентации",
-      },
-      {
-        path: "/dashboard/calendar-plans",
-        uz: "Kalendar-tematik rejalar",
-        ru: "Календарно-тематические планы",
-      },
-    ];
+      { path: "/dashboard/lesson-plans", key: "lessonPlans.title" },
+      { path: "/dashboard/presentations", key: "presentations.title" },
+      { path: "/dashboard/calendar-plans", key: "calendarPlans.title" },
+    ].map((page) => ({
+      ...page,
+      uz: text("uz", page.key),
+      ru: text("ru", page.key),
+    }));
 
     for (const page of pages) {
       const uz = await fetchPage(page.path, { cookie });
       assert.equal(uz.status, 200, `${page.path} ochilishi kerak`);
-      assert.ok(uz.html.includes(page.uz), `${page.path}: "${page.uz}" yo'q`);
+      assert.ok(htmlIncludes(uz.html, page.uz), `${page.path}: "${page.uz}" yo'q`);
     }
 
     await client.request("/api/user/language", {
@@ -198,9 +202,9 @@ describe("i18n — kirgan foydalanuvchi", () => {
     for (const page of pages) {
       const ru = await fetchPage(page.path, { cookie });
       assert.equal(ru.status, 200);
-      assert.ok(ru.html.includes(page.ru), `${page.path}: "${page.ru}" yo'q`);
+      assert.ok(htmlIncludes(ru.html, page.ru), `${page.path}: "${page.ru}" yo'q`);
       assert.ok(
-        !ru.html.includes(page.uz),
+        !htmlIncludes(ru.html, page.uz),
         `${page.path}: rus tilida o'zbekcha "${page.uz}" qolgan`,
       );
     }
@@ -210,27 +214,19 @@ describe("i18n — kirgan foydalanuvchi", () => {
     const { client, cookie } = await signedIn("i18n-forma");
 
     const pages = [
-      {
-        path: "/dashboard/lesson-plans/new",
-        uz: "Yangi dars ishlanmasi",
-        ru: "Новый план урока",
-      },
-      {
-        path: "/dashboard/presentations/new",
-        uz: "Yangi prezentatsiya",
-        ru: "Новая презентация",
-      },
-      {
-        path: "/dashboard/calendar-plans/new",
-        uz: "Yangi kalendar-tematik reja",
-        ru: "Новый календарно-тематический план",
-      },
-    ];
+      { path: "/dashboard/lesson-plans/new", key: "lessonPlans.new.title" },
+      { path: "/dashboard/presentations/new", key: "presentations.new.title" },
+      { path: "/dashboard/calendar-plans/new", key: "calendarPlans.new.title" },
+    ].map((page) => ({
+      ...page,
+      uz: text("uz", page.key),
+      ru: text("ru", page.key),
+    }));
 
     for (const page of pages) {
       const uz = await fetchPage(page.path, { cookie });
       assert.equal(uz.status, 200, `${page.path} ochilishi kerak`);
-      assert.ok(uz.html.includes(page.uz), `${page.path}: "${page.uz}" yo'q`);
+      assert.ok(htmlIncludes(uz.html, page.uz), `${page.path}: "${page.uz}" yo'q`);
     }
 
     await client.request("/api/user/language", {
@@ -241,7 +237,7 @@ describe("i18n — kirgan foydalanuvchi", () => {
     for (const page of pages) {
       const ru = await fetchPage(page.path, { cookie });
       assert.equal(ru.status, 200);
-      assert.ok(ru.html.includes(page.ru), `${page.path}: "${page.ru}" yo'q`);
+      assert.ok(htmlIncludes(ru.html, page.ru), `${page.path}: "${page.ru}" yo'q`);
     }
   });
 
@@ -259,14 +255,14 @@ describe("i18n — kirgan foydalanuvchi", () => {
     const { html } = await fetchPage("/dashboard/lesson-plans/new", { cookie });
 
     // Interfeys ruscha
-    assert.match(html, /Новый план урока/);
+    assert.ok(htmlIncludes(html, text("ru", "lessonPlans.new.title")));
     // Lekin generatsiya tillari ro'yxati — uchala til
     assert.match(html, /value="UZ"/);
     assert.match(html, /value="RU"/);
     assert.match(html, /value="EN"/, "inglizcha generatsiya tanlovi qolishi kerak");
     // Va ular rus tilida nomlanadi
-    assert.match(html, /Узбекский/);
-    assert.match(html, /Английский/);
+    assert.ok(htmlIncludes(html, text("ru", "languages.UZ")));
+    assert.ok(htmlIncludes(html, text("ru", "languages.EN")));
   });
 });
 
@@ -322,8 +318,9 @@ describe("i18n — xato xabarlari", () => {
 
     assert.equal(uzResult.status, 400);
     const uzFields = uzResult.error!.fieldErrors!;
-    assert.ok(
-      uzFields.email[0].includes("format"),
+    assert.equal(
+      uzFields.email[0],
+      text("uz", "errors.validation.emailInvalid"),
       `o'zbekcha xato kutilgan, keldi: ${uzFields.email[0]}`,
     );
     // Kalit emas, tarjima qilingan matn bo'lishi kerak.
@@ -348,7 +345,10 @@ describe("i18n — xato xabarlari", () => {
       error: { fieldErrors: Record<string, string[]> };
     };
     assert.match(ruJson.error.fieldErrors.email[0], /[а-яА-Я]/, "ruscha xato kutilgan");
-    assert.match(ruJson.error.fieldErrors.password[0], /8 символов/);
+    assert.equal(
+      ruJson.error.fieldErrors.password[0],
+      text("ru", "errors.validation.passwordTooShort"),
+    );
   });
 
   it("domen xatolari ham tarjima qilinadi", async () => {

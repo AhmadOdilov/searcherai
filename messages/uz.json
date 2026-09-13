@@ -9,32 +9,41 @@
     "back": "Ro'yxatga qaytish",
     "create": "Yangi yaratish",
     "start": "Boshlash",
-    "download": "Yuklab olish",
+    "download": "Faylni yuklab olish",
     "delete": "O'chirish",
     "confirmDelete": "O'chirilsinmi?",
     "confirmDeleteYes": "Ha, o'chirish",
     "cancel": "Bekor qilish",
     "deleting": "O'chirilmoqda…",
     "retry": "Qayta urinish",
-    "regenerate": "Qaytadan yaratish",
-    "regenerating": "Qayta yaratilmoqda…",
+    "regenerate": "Qaytadan tayyorlash",
+    "regenerating": "Qaytadan tayyorlanmoqda…",
     "submitting": "Yuborilmoqda…",
-    "creating": "Yaratilmoqda…",
+    "creating": "Tayyorlanmoqda…",
     "optional": "Ixtiyoriy",
     "total": "Jami",
     "language": "Til",
-    "doNotClosePage": "AI javobi 30 soniyagacha davom etishi mumkin — sahifani yopmang.",
-    "unexpectedError": "Kutilmagan xatolik yuz berdi. Qayta urinib ko'ring.",
+    "doNotClosePage": "Bu 30 soniyagacha davom etishi mumkin — sahifani yopmang.",
+    "unexpectedError": "Nimadir noto'g'ri ketdi. Iltimos, qayta urinib ko'ring.",
     "seconds": "{count} soniya",
-    "elapsedOfTypical": "{elapsed} soniya o'tdi · odatda ~{typical} soniya davom etadi",
-    "canLeavePage": "Sahifani yopsangiz ham generatsiya davom etadi — keyinroq qaytib kelishingiz mumkin.",
-    "loadMore": "Ko'proq yuklash",
-    "loading": "Yuklanmoqda…"
+    "elapsedOfTypical": "{elapsed} soniya o'tdi. Odatda bu {typical} soniyacha davom etadi.",
+    "canLeavePage": "Sahifani yopsangiz ham ish davom etadi — keyinroq qaytib kelib natijani ko'rishingiz mumkin.",
+    "loadMore": "Yana ko'rsatish",
+    "loading": "Yuklanmoqda…",
+    "aiWorking": "Sun'iy intellekt siz uchun material tayyorlamoqda",
+    "almostReady": "Biroz kuting — tez orada tayyor bo'ladi.",
+    "contentLanguage": "Material qaysi tilda yozilsin?",
+    "contentLanguageHelp": "Bu — yaratiladigan materialning tili. Ilova tilidan farq qilishi mumkin: ilovani rus tilida ishlatib, darsni o'zbek tilida olsangiz ham bo'ladi.",
+    "downloadWord": "Word'da yuklab olish",
+    "downloadPowerPoint": "PowerPoint'da yuklab olish",
+    "downloadExcel": "Excel'da yuklab olish",
+    "saveAsPdf": "PDF qilib saqlash",
+    "backToDashboard": "Ish sahifasiga qaytish"
   },
   "status": {
-    "PENDING": "Yaratilmoqda",
+    "PENDING": "Tayyorlanmoqda",
     "READY": "Tayyor",
-    "FAILED": "Xatolik"
+    "FAILED": "Tayyor bo'lmadi"
   },
   "languages": {
     "UZ": "O'zbek",
@@ -47,9 +56,9 @@
     "ru": "Русский"
   },
   "home": {
-    "description": "O'qituvchilar uchun AI-yordamchi: dars ishlanmasi, prezentatsiya, Excel reja va ko'p tilli kontent — bir necha daqiqada.",
-    "openDashboard": "Ishchi sahifaga o'tish",
-    "register": "Ro'yxatdan o'tish",
+    "description": "Dars ishlanmasi, prezentatsiya va kalendar reja — bir necha daqiqada. Siz mavzuni yozasiz, qolganini men tayyorlab beraman.",
+    "openDashboard": "Ishni boshlash",
+    "register": "Yangi hisob yaratish",
     "login": "Kirish"
   },
   "auth": {
@@ -57,48 +66,64 @@
       "title": "Hisobingizga kiring",
       "submit": "Kirish",
       "noAccount": "Hisobingiz yo'qmi?",
-      "registerLink": "Ro'yxatdan o'tish"
+      "registerLink": "Ro'yxatdan o'tish",
+      "description": "Email va parolingizni yozing."
     },
     "register": {
       "title": "Yangi hisob yarating",
       "submit": "Ro'yxatdan o'tish",
       "hasAccount": "Hisobingiz bormi?",
-      "loginLink": "Kirish"
+      "loginLink": "Kirish",
+      "description": "Bir daqiqa vaqt oladi. Faqat ism, email va parol kerak."
     },
     "fields": {
       "email": "Email",
       "emailPlaceholder": "ism@maktab.uz",
       "password": "Parol",
       "passwordHint": "Kamida 8 belgi",
-      "fullName": "To'liq ism",
-      "fullNamePlaceholder": "Aziza Karimova"
+      "fullName": "Ismingiz va familiyangiz",
+      "fullNamePlaceholder": "Aziza Karimova",
+      "emailHelp": "Email — sizning ilovadagi nomingiz. Keyingi safar shu email bilan kirasiz.",
+      "fullNameHelp": "Ismingiz faqat sizga murojaat qilish uchun kerak — boshqa hech kimga ko'rsatilmaydi.",
+      "passwordHelp": "Parol hisobingizni himoya qiladi. Uni hech kimga aytmang."
     },
     "logout": "Chiqish",
     "loggingOut": "Chiqilmoqda…"
   },
   "dashboard": {
     "welcome": "Xush kelibsiz, {name}",
-    "subtitle": "Quyidagi modullar keyingi bosqichlarda qo'shiladi.",
-    "open": "Ochish →",
+    "subtitle": "Quyidagilardan birini tanlang — men siz uchun tayyorlab beraman.",
+    "open": "Ochish",
     "comingSoon": "Tez orada",
-    "systemStatus": "Tizim holati:",
     "modules": {
       "lessonPlans": {
         "title": "Dars ishlanmasi",
-        "description": "Mavzu, sinf va fanni kiritib to'liq dars rejasini oling."
+        "description": "Fan, sinf va mavzuni yozing — to'liq dars rejasi tayyor bo'ladi."
       },
       "presentations": {
-        "title": "Prezentatsiya (.pptx)",
-        "description": "Dars asosida tayyor slaydlar avtomatik yaratiladi."
+        "title": "Prezentatsiya (slaydlar)",
+        "description": "Darsingiz uchun tayyor slaydlar. Fayl PowerPoint'da ochiladi."
       },
       "calendarPlans": {
-        "title": "Kalendar reja (.xlsx)",
-        "description": "Chorak yoki yil uchun darslar jadvali Excel formatida."
+        "title": "Kalendar-tematik reja",
+        "description": "Chorak yoki yarim yil uchun darslar jadvali. Fayl Excel'da ochiladi."
       },
       "translation": {
-        "title": "Tarjima (UZ / RU / EN)",
-        "description": "Interfeys va generatsiya qilingan kontent uch tilda."
+        "title": "Tarjima (o'zbek / rus / ingliz)",
+        "description": "Materiallaringizni uch tilda oling."
+      },
+      "search": {
+        "title": "Savol berish",
+        "description": "Mavzu bo'yicha savolingizga javob va uni sinfda qanday tushuntirish bo'yicha maslahat."
       }
+    },
+    "onboarding": {
+      "title": "Nimadan boshlash kerak?",
+      "dismiss": "Yopish",
+      "step1": "Quyidagi katta kartalardan birini tanlang — masalan, «Dars ishlanmasi».",
+      "step2": "Fan, sinf va mavzuni yozing. Masalan: Matematika, 7-sinf, «Kasrlar bilan amallar».",
+      "step3": "Pastdagi katta tugmani bosing va bir daqiqacha kuting.",
+      "step4": "Tayyor bo'lgach natijani o'qing yoki faylni telefoningizga hamda kompyuteringizga yuklab oling."
     }
   },
   "lessonPlans": {
@@ -106,53 +131,74 @@
     "empty": "Hozircha bo'sh.",
     "count": "Jami {count} ta ishlanma.",
     "emptyTitle": "Birinchi dars ishlanmangizni yarating",
-    "emptyDescription": "Fan, sinf va mavzuni kiritsangiz, tizim to'liq dars rejasini o'zi tuzadi.",
+    "emptyDescription": "Fan, sinf va mavzuni yozsangiz, to'liq dars rejasi o'zi tayyorlanadi: maqsad, bosqichlar, vaqt taqsimoti va baholash bilan.",
     "new": {
       "title": "Yangi dars ishlanmasi",
-      "subtitle": "Parametrlarni kiriting — qolganini tizim o'zi tuzadi.",
-      "submit": "Dars ishlanmasini yaratish"
+      "subtitle": "Uch narsani yozing — qolganini men tayyorlab beraman.",
+      "submit": "Dars ishlanmasini tayyorlash",
+      "sectionAbout": "Dars nima haqida?",
+      "sectionHow": "Dars qanday o'tadi?",
+      "timeNotice": "Tayyorlash 10-20 soniya davom etadi."
     },
     "fields": {
       "subject": "Fan",
       "subjectPlaceholder": "Matematika",
-      "grade": "Sinf / daraja",
+      "grade": "Sinf",
       "gradePlaceholder": "7-sinf",
-      "topic": "Mavzu",
-      "topicPlaceholder": "Kasrlarni qo'shish va ayirish",
-      "duration": "Davomiylik",
+      "topic": "Dars mavzusi",
+      "topicPlaceholder": "Kasrlar bilan amallar",
+      "duration": "Dars necha daqiqa davom etadi?",
       "durationOption": "{minutes} daqiqa",
-      "lessonType": "Dars turi"
+      "lessonType": "Dars turi",
+      "subjectHint": "Siz dars beradigan fan nomi",
+      "subjectHelp": "Fan nomi kerak, chunki dars rejasining mazmuni fanga qarab butunlay boshqacha bo'ladi.",
+      "gradeHint": "Qaysi sinf o'quvchilari uchun",
+      "gradeHelp": "Sinf kerak, chunki bir mavzu 5-sinfda va 9-sinfda butunlay boshqacha tushuntiriladi.",
+      "topicHint": "Bugungi darsda nima o'tiladi",
+      "topicHelp": "Mavzuni qanchalik aniq yozsangiz, natija shunchalik mos bo'ladi. «Kasrlar» emas, «Kasrlarni qo'shish va ayirish» deb yozing.",
+      "durationHelp": "Dars bosqichlari shu vaqtga bo'lib chiqiladi.",
+      "lessonTypeHelp": "Dars turi uning tuzilishini belgilaydi: yangi mavzuda tushuntirishga, mustahkamlashda mashqlarga, nazoratda esa baholashga ko'proq vaqt ajratiladi."
     },
     "types": {
       "NEW_TOPIC": "Yangi mavzu",
       "REINFORCEMENT": "Mustahkamlash",
-      "ASSESSMENT": "Nazorat / baholash"
+      "ASSESSMENT": "Nazorat"
     },
     "progress": {
-      "sent": "So'rov yuborildi…",
+      "sent": "Boshladik…",
       "objective": "Dars maqsadi belgilanmoqda…",
-      "stages": "Bosqichlar va vaqt taqsimoti tuzilmoqda…",
-      "resources": "Resurslar va baholash mezonlari qo'shilmoqda…",
+      "stages": "Dars bosqichlari va vaqt tuzilmoqda…",
+      "resources": "Kerakli materiallar qo'shilmoqda…",
       "finishing": "Yakunlanmoqda…"
     },
     "detail": {
       "meta": "{subject} · {grade} · {type} · {duration} daqiqa · {language} tili",
       "generatedIn": "{seconds} soniyada yaratilgan",
-      "createPresentation": "Shundan prezentatsiya yaratish",
+      "createPresentation": "Shu darsdan prezentatsiya tayyorlash",
       "objective": "Dars maqsadi",
       "outcomes": "Kutilayotgan natijalar",
       "resources": "Kerakli resurslar",
       "stages": "Dars bosqichlari",
       "assessment": "Baholash mezonlari",
-      "teacher": "O'qituvchi",
-      "students": "O'quvchilar",
+      "teacher": "O'qituvchi nima qiladi",
+      "students": "O'quvchilar nima qiladi",
       "minutesShort": "{minutes} daq.",
       "totalMinutes": "Jami {minutes} daqiqa",
       "durationMismatch": "Bosqichlar yig'indisi {actual} daqiqa (dars {expected} daqiqa) — vaqtni o'zingiz moslashtirishingiz mumkin.",
       "pending": "Dars ishlanmasi hali yaratilmoqda. Sahifani birozdan so'ng yangilang.",
-      "failedTitle": "Dars ishlanmasini yaratib bo'lmadi",
-      "failedHint": "Yuqoridagi «Qayta urinish» tugmasini bosing — kiritgan ma'lumotlaringiz saqlangan.",
-      "brokenContent": "Natija saqlangan, lekin uni o'qib bo'lmadi (format mos kelmadi). «Qaytadan yaratish» tugmasini bosing."
+      "failedTitle": "Dars ishlanmasi tayyor bo'lmadi",
+      "failedHint": "«Qayta urinish» tugmasini bosing — yozganlaringiz saqlangan, qaytadan yozish shart emas.",
+      "brokenContent": "Natija tayyor bo'ldi, lekin uni ko'rsatib bo'lmadi. «Qaytadan tayyorlash» tugmasini bosing.",
+      "readyTitle": "Dars ishlanmasi tayyor",
+      "readyHint": "Uni Word'da yuklab olib tahrirlashingiz yoki PDF qilib saqlab, chop etishingiz mumkin.",
+      "openWith": "Word fayli Microsoft Word yoki Google Docs'da ochiladi. PDF esa telefon va kompyuterda o'zi ochiladi — hech narsa o'rnatish kerak emas.",
+      "stageColumn": "Bosqich"
+    },
+    "pageHint": "Bu yerda siz tayyorlagan dars ishlanmalari saqlanadi. Yangisini yaratish uchun tugmani bosing.",
+    "typeOptions": {
+      "NEW_TOPIC": "Yangi mavzu — birinchi marta tushuntiriladigan dars",
+      "REINFORCEMENT": "Mustahkamlash — o'tilganini mashq qilish darsi",
+      "ASSESSMENT": "Nazorat — bilimni tekshirish va baholash darsi"
     }
   },
   "presentations": {
@@ -160,31 +206,35 @@
     "empty": "Hozircha bo'sh.",
     "count": "Jami {count} ta prezentatsiya.",
     "emptyTitle": "Birinchi prezentatsiyangizni yarating",
-    "emptyDescription": "Mavjud dars ishlanmasidan yoki faqat mavzu kiritib — tizim tayyor slaydlarni o'zi tuzadi.",
+    "emptyDescription": "Tayyor dars ishlanmangizdan yoki shunchaki mavzu yozib — slaydlar o'zi tuziladi.",
     "standalone": "Mustaqil prezentatsiya",
     "fromLessonPlan": "Dars ishlanmasi asosida",
     "slideCount": "{count} slayd",
     "new": {
       "title": "Yangi prezentatsiya",
-      "subtitle": "Mavjud dars ishlanmasidan yoki mustaqil ravishda yaratish mumkin.",
-      "submit": "Prezentatsiya yaratish",
-      "modeQuestion": "Qanday yaratamiz?",
-      "modeFromPlan": "Dars ishlanmasidan",
+      "subtitle": "Tayyor darsingizdan yoki faqat mavzu bo'yicha tuzish mumkin.",
+      "submit": "Prezentatsiya tayyorlash",
+      "modeQuestion": "Qanday tayyorlaymiz?",
+      "modeFromPlan": "Tayyor darsimdan",
       "modeFromPlanHint": "Slaydlar dars bosqichlariga mos tuziladi",
-      "modeFromPlanDisabled": "Tayyor dars ishlanmasi yo'q",
-      "modeStandalone": "Mustaqil",
-      "modeStandaloneHint": "Faqat mavzu kiritiladi",
-      "lessonPlanField": "Dars ishlanmasi",
-      "lessonPlanHint": "Fan, sinf va til dars ishlanmasidan olinadi.",
-      "noPlansPrefix": "Tayyor dars ishlanmasi yo'q.",
-      "noPlansLink": "Avval dars ishlanmasi yarating",
-      "noPlansSuffix": "yoki mustaqil rejimni tanlang.",
+      "modeFromPlanDisabled": "Hali tayyor dars ishlanmangiz yo'q",
+      "modeStandalone": "Faqat mavzu bo'yicha",
+      "modeStandaloneHint": "Dars ishlanmasi kerak emas — mavzuni o'zingiz yozasiz",
+      "lessonPlanField": "Dars ishlanmasini tanlang",
+      "lessonPlanHint": "Fan, sinf va til shu darsdan olinadi.",
+      "noPlansPrefix": "Hali tayyor dars ishlanmangiz yo'q.",
+      "noPlansLink": "Avval dars ishlanmasi tayyorlang",
+      "noPlansSuffix": "yoki «Faqat mavzu bo'yicha» ni tanlang.",
       "topicPlaceholder": "Fotosintez jarayoni",
       "subjectPlaceholder": "Biologiya",
-      "gradePlaceholder": "7-sinf"
+      "gradePlaceholder": "7-sinf",
+      "timeNotice": "Tayyorlash 15-30 soniya davom etadi.",
+      "sectionChoosePlan": "Qaysi darsdan?",
+      "sectionTopic": "Mavzu va til",
+      "lessonPlanHelp": "Slaydlar shu darsning maqsadi va bosqichlari asosida tuziladi."
     },
     "progress": {
-      "sent": "So'rov yuborildi…",
+      "sent": "Boshladik…",
       "slides": "Slaydlar tuzilmoqda…",
       "bullets": "Matn qisqartirilib, bandlarga bo'linmoqda…",
       "file": "PowerPoint fayli yasalmoqda…",
@@ -192,7 +242,7 @@
     },
     "detail": {
       "readyTitle": "Prezentatsiya tayyor",
-      "readyHint": "PowerPoint (.pptx) formatida — yuklab olib tahrirlashingiz mumkin.",
+      "readyHint": "Slaydlarni yuklab olib, o'zingizga moslab tahrirlashingiz mumkin.",
       "viewLessonPlan": "ishlanmani ko'rish",
       "fromLessonPlanPrefix": "Dars ishlanmasi asosida —",
       "slides": "Slaydlar ({count})",
@@ -203,34 +253,44 @@
         "summary": "Xulosa"
       },
       "pending": "Prezentatsiya hali yaratilmoqda. Sahifani birozdan so'ng yangilang.",
-      "failedTitle": "Prezentatsiyani yaratib bo'lmadi",
-      "failedHint": "Yuqoridagi «Qayta urinish» tugmasini bosing — kiritgan ma'lumotlaringiz saqlangan.",
-      "brokenContent": "Slaydlar saqlangan, lekin ularni o'qib bo'lmadi (format mos kelmadi). «Qaytadan yaratish» tugmasini bosing."
-    }
+      "failedTitle": "Prezentatsiya tayyor bo'lmadi",
+      "failedHint": "«Qayta urinish» tugmasini bosing — yozganlaringiz saqlangan, qaytadan yozish shart emas.",
+      "brokenContent": "Slaydlar tayyor bo'ldi, lekin ularni ko'rsatib bo'lmadi. «Qaytadan tayyorlash» tugmasini bosing.",
+      "openWith": "Bu fayl Microsoft PowerPoint yoki Google Slides'da ochiladi. Telefonda ochish uchun PowerPoint ilovasini o'rnating."
+    },
+    "pageHint": "Bu yerda siz tayyorlagan slaydlar saqlanadi. Yangisini yaratish uchun tugmani bosing."
   },
   "calendarPlans": {
-    "title": "Kalendar-tematik rejalar",
+    "title": "Kalendar rejalar",
     "empty": "Hozircha bo'sh.",
     "count": "Jami {count} ta reja.",
     "emptyTitle": "Birinchi kalendar rejangizni yarating",
-    "emptyDescription": "Fan, davr va haftalik soatni kiritsangiz, tizim butun chorak uchun darslar jadvalini tuzib, Excel faylini tayyorlaydi.",
+    "emptyDescription": "Fan, davr va haftalik soatni yozsangiz, butun chorak uchun darslar jadvali tuziladi va Excel fayli tayyorlanadi.",
     "meta": "{weeks} hafta · haftasiga {hours} soat",
     "rowCount": "{count} qator",
     "new": {
-      "title": "Yangi kalendar-tematik reja",
+      "title": "Yangi kalendar reja",
       "subtitle": "Butun davr uchun darslar jadvali tuziladi va Excel faylida beriladi.",
-      "submit": "Kalendar reja yaratish",
+      "submit": "Kalendar reja tayyorlash",
       "slowWarningLabel": "Diqqat:",
-      "slowWarning": "bu eng uzun generatsiya — davr uzunligiga qarab 60-90 soniya davom etishi mumkin. Boshlangach sahifani yopmang."
+      "slowWarning": "bu eng uzun ish — davr uzunligiga qarab 60-90 soniya davom etishi mumkin. Boshlangandan keyin sahifani yopmang.",
+      "timeNotice": "Tayyorlash 60-90 soniya davom etadi. Sahifani yopmang.",
+      "sectionSubject": "Qaysi fan va sinf?",
+      "sectionPeriod": "Qaysi davr uchun?"
     },
     "fields": {
       "period": "Davr",
       "periodOption": "{label} ({weeks} hafta)",
       "startDate": "Boshlanish sanasi",
-      "weeks": "Haftalar",
-      "hoursPerWeek": "Haftalik soat",
+      "weeks": "Necha hafta?",
+      "hoursPerWeek": "Haftasiga necha soat?",
       "hoursOption": "{hours} soat",
-      "maxWeeksNotice": "Hozircha maksimal 24 haftalik reja qo'llab-quvvatlanadi (masalan yarim yil). To'liq o'quv yili keyingi versiyada qo'shiladi."
+      "maxWeeksNotice": "Hozircha eng ko'pi 24 haftalik reja tuziladi. Uzunroq davrni ikkiga bo'lib tayyorlang.",
+      "periodHelp": "Davr rejaning necha haftaga tuzilishini belgilaydi. Bir chorak taxminan 8-9 hafta.",
+      "startDateHelp": "Haftalar sanasi shu kundan boshlab hisoblanadi.",
+      "weeksHint": "Davrni tanlasangiz avtomatik to'ldiriladi",
+      "weeksHelp": "Haftalar soni rejada nechta qator bo'lishini belgilaydi.",
+      "hoursPerWeekHelp": "Dars jadvalingizda bu fan haftasiga necha marta bo'lsa, shuni tanlang."
     },
     "periods": {
       "quarter1": "1-chorak",
@@ -241,7 +301,7 @@
       "halfYear2": "2-yarim yil"
     },
     "progress": {
-      "sent": "So'rov yuborildi…",
+      "sent": "Boshladik…",
       "sequence": "Mavzular ketma-ketligi tuzilmoqda…",
       "distribute": "Mavzular haftalarga taqsimlanmoqda…",
       "hours": "Soatlar hisoblanmoqda…",
@@ -250,7 +310,7 @@
     },
     "detail": {
       "readyTitle": "Kalendar reja tayyor",
-      "readyHint": "Excel (.xlsx) formatida — yuklab olib tahrirlashingiz mumkin.",
+      "readyHint": "Jadvalni yuklab olib, maktabingiz talabiga moslab tahrirlashingiz mumkin.",
       "startsFrom": "{date} dan boshlab",
       "tableTitle": "Jadval ({weeks} hafta, {rows} qator)",
       "totalHours": "Jami {hours} soat",
@@ -263,18 +323,20 @@
         "note": "Izoh"
       },
       "pending": "Kalendar reja hali yaratilmoqda. Sahifani birozdan so'ng yangilang.",
-      "failedTitle": "Kalendar rejani yaratib bo'lmadi",
-      "failedHint": "Yuqoridagi «Qayta urinish» tugmasini bosing — kiritgan ma'lumotlaringiz saqlangan.",
-      "brokenContent": "Reja saqlangan, lekin uni o'qib bo'lmadi (format mos kelmadi). «Qaytadan yaratish» tugmasini bosing.",
+      "failedTitle": "Kalendar reja tayyor bo'lmadi",
+      "failedHint": "«Qayta urinish» tugmasini bosing — yozganlaringiz saqlangan, qaytadan yozish shart emas.",
+      "brokenContent": "Reja tayyor bo'ldi, lekin uni ko'rsatib bo'lmadi. «Qaytadan tayyorlash» tugmasini bosing.",
       "elapsed": "{seconds} soniya o'tdi · odatda 60-90 soniya davom etadi",
       "stillWorking": "Uzun davr uchun biroz ko'proq vaqt ketmoqda — jarayon hali davom etyapti.",
-      "doNotClosePage": "Bu 40-60 soniya davom etishi mumkin — sahifani yopmang."
-    }
+      "doNotClosePage": "Bu 60-90 soniya davom etishi mumkin — sahifani yopmang.",
+      "openWith": "Bu fayl Microsoft Excel yoki Google Sheets'da ochiladi. Telefonda ochish uchun Excel ilovasini o'rnating."
+    },
+    "pageHint": "Bu yerda siz tayyorlagan kalendar rejalar saqlanadi. Yangisini yaratish uchun tugmani bosing."
   },
   "errors": {
-    "unknown": "Kutilmagan xatolik yuz berdi. Iltimos, qayta urinib ko'ring.",
-    "network": "Serverga ulanib bo'lmadi. Internet aloqasini tekshirib ko'ring.",
-    "badResponse": "Serverdan kutilmagan javob keldi.",
+    "unknown": "Nimadir noto'g'ri ketdi. Iltimos, qayta urinib ko'ring.",
+    "network": "Internetga ulanib bo'lmadi. Aloqani tekshirib, qayta urinib ko'ring.",
+    "badResponse": "Nimadir noto'g'ri ketdi. Iltimos, qayta urinib ko'ring.",
     "ai": {
       "not_configured": "AI xizmati hozircha sozlanmagan. Administrator bilan bog'laning.",
       "auth": "AI xizmatiga ulanishda muammo bor. Administrator bilan bog'laning.",
@@ -289,61 +351,107 @@
       "unknown": "Kutilmagan xatolik yuz berdi. Iltimos, qayta urinib ko'ring."
     },
     "api": {
-      "validation_error": "Kiritilgan ma'lumotlar to'g'ri emas.",
-      "unauthorized": "Davom etish uchun tizimga kiring.",
+      "validation_error": "Kiritilgan ma'lumotlarda xatolik bor. Qizil bilan belgilangan maydonlarni tekshiring.",
+      "unauthorized": "Davom etish uchun hisobingizga kiring.",
       "forbidden": "Bu amalni bajarishga ruxsatingiz yo'q.",
-      "not_found": "So'ralgan ma'lumot topilmadi.",
-      "conflict": "Bu ma'lumot allaqachon mavjud.",
-      "internal_error": "Serverda xatolik yuz berdi. Iltimos, qayta urinib ko'ring.",
-      "not_configured": "Xizmat vaqtincha mavjud emas. Administrator bilan bog'laning.",
-      "invalidJsonBody": "So'rov tanasi to'g'ri JSON emas."
+      "not_found": "Bu material topilmadi. Ehtimol u o'chirilgan.",
+      "conflict": "Bu ish hozir bajarilmoqda. Biroz kuting.",
+      "internal_error": "Nimadir noto'g'ri ketdi. Iltimos, qayta urinib ko'ring.",
+      "not_configured": "Xizmat vaqtincha ishlamayapti. Biroz o'tib qayta urinib ko'ring.",
+      "invalidJsonBody": "So'rov noto'g'ri yuborildi. Sahifani yangilab, qayta urinib ko'ring.",
+      "too_many_requests": "Juda ko'p urinish bo'ldi. Biroz kutib, qayta urinib ko'ring."
     },
     "domain": {
       "lessonPlanNotFound": "Dars ishlanmasi topilmadi.",
       "presentationNotFound": "Prezentatsiya topilmadi.",
       "calendarPlanNotFound": "Kalendar reja topilmadi.",
-      "emailTaken": "Bu email allaqachon ro'yxatdan o'tgan. Kirishga urinib ko'ring.",
-      "invalidCredentials": "Email yoki parol noto'g'ri.",
+      "emailTaken": "Bu email allaqachon ro'yxatdan o'tgan. Kirish sahifasiga o'ting.",
+      "invalidCredentials": "Email yoki parol noto'g'ri. Yana bir marta tekshirib ko'ring.",
       "loginRequired": "Davom etish uchun tizimga kiring.",
-      "lessonPlanPending": "Dars ishlanmasi hali yaratilmoqda. Tayyor bo'lgach qayta urinib ko'ring.",
-      "lessonPlanFailed": "Bu dars ishlanmasi xato bilan tugagan. Avval uni qayta yaratib oling.",
-      "lessonPlanBroken": "Dars ishlanmasining mazmunini o'qib bo'lmadi. Avval uni qaytadan yaratib oling.",
-      "presentationFileNotReady": "Prezentatsiya fayli hali tayyor emas.",
-      "calendarPlanFileNotReady": "Excel fayli hali tayyor emas.",
-      "presentationFileMissing": "Fayl topilmadi. Prezentatsiyani qaytadan yaratib ko'ring.",
-      "calendarPlanFileMissing": "Fayl topilmadi. Kalendar rejani qaytadan yaratib ko'ring.",
-      "generationTimedOut": "Generatsiya tugamay qoldi. «Qayta urinish» tugmasini bosing."
+      "lessonPlanPending": "Bu dars ishlanmasi hali tayyorlanmoqda. Tayyor bo'lgach qayta urinib ko'ring.",
+      "lessonPlanFailed": "Bu dars ishlanmasi tayyor bo'lmagan. Avval uni qaytadan tayyorlang.",
+      "lessonPlanBroken": "Bu dars ishlanmasini o'qib bo'lmadi. Avval uni qaytadan tayyorlang.",
+      "presentationFileNotReady": "Fayl hali tayyor emas. Biroz kuting.",
+      "calendarPlanFileNotReady": "Fayl hali tayyor emas. Biroz kuting.",
+      "presentationFileMissing": "Fayl topilmadi. «Qaytadan tayyorlash» tugmasini bosing.",
+      "calendarPlanFileMissing": "Fayl topilmadi. «Qaytadan tayyorlash» tugmasini bosing.",
+      "generationTimedOut": "Tayyorlash tugamay qoldi. «Qayta urinish» tugmasini bosing.",
+      "generationInProgress": "Bu material hozir tayyorlanmoqda. Biroz kuting.",
+      "tooManyLoginAttempts": "Juda ko'p urinish bo'ldi. 5 daqiqadan so'ng qayta urinib ko'ring."
     },
     "validation": {
-      "emailRequired": "Emailni kiriting",
+      "emailRequired": "Emailingizni yozing",
       "emailTooLong": "Email juda uzun",
-      "emailInvalid": "Email formati to'g'ri emas",
-      "passwordTooShort": "Parol kamida 8 belgidan iborat bo'lishi kerak",
-      "passwordTooLong": "Parol 72 belgidan oshmasligi kerak",
-      "passwordRequired": "Parolni kiriting",
-      "fullNameRequired": "Ismni kiriting",
+      "emailInvalid": "Email noto'g'ri yozilgan. Masalan: ism@maktab.uz",
+      "passwordTooShort": "Parol kamida 8 belgidan iborat bo'lsin",
+      "passwordTooLong": "Parol juda uzun",
+      "passwordRequired": "Parolni yozing",
+      "fullNameRequired": "Ismingizni yozing",
       "fullNameTooLong": "Ism juda uzun",
-      "subjectTooShort": "Fan nomi kamida 2 belgidan iborat bo'lishi kerak",
+      "subjectTooShort": "Bu yerga fan nomini yozing (masalan: Matematika)",
       "subjectTooLong": "Fan nomi juda uzun",
-      "gradeRequired": "Sinfni kiriting",
+      "gradeRequired": "Bu yerga sinfni yozing (masalan: 7-sinf)",
       "gradeTooLong": "Sinf nomi juda uzun",
-      "topicTooShort": "Mavzu kamida 3 belgidan iborat bo'lishi kerak",
+      "topicTooShort": "Bu yerga darsingiz mavzusini yozing (masalan: Kasrlar bilan amallar)",
       "topicTooLong": "Mavzu juda uzun",
-      "durationNotInteger": "Davomiylik butun son bo'lishi kerak",
-      "durationTooShort": "Dars kamida 10 daqiqa bo'lishi kerak",
-      "durationTooLong": "Dars 240 daqiqadan oshmasligi kerak",
-      "idRequired": "ID ko'rsatilmagan",
-      "periodRequired": "Davr nomini kiriting",
+      "durationNotInteger": "Davomiylikni ro'yxatdan tanlang",
+      "durationTooShort": "Dars kamida 10 daqiqa bo'lsin",
+      "durationTooLong": "Dars 240 daqiqadan uzun bo'lmasin",
+      "idRequired": "Kerakli ma'lumot topilmadi. Sahifani yangilang.",
+      "periodRequired": "Davrni tanlang",
       "periodTooLong": "Davr nomi juda uzun",
-      "weeksNotInteger": "Haftalar soni butun son bo'lishi kerak",
-      "weeksTooFew": "Kamida 1 hafta bo'lishi kerak",
-      "weeksTooMany": "Hozircha maksimal 24 haftalik reja qo'llab-quvvatlanadi",
-      "hoursNotInteger": "Soat soni butun son bo'lishi kerak",
-      "hoursTooFew": "Kamida 1 soat bo'lishi kerak",
-      "hoursTooMany": "Haftalik 20 soatdan ko'p bo'lmasligi kerak",
-      "dateInvalid": "Sanani to'g'ri kiriting",
-      "dateOutOfRange": "Sana 2000-2100 oralig'ida bo'lishi kerak",
-      "invalidValue": "Qiymat to'g'ri emas"
+      "weeksNotInteger": "Haftalar sonini raqam bilan yozing",
+      "weeksTooFew": "Kamida 1 hafta bo'lsin",
+      "weeksTooMany": "Hozircha eng ko'pi 24 hafta uchun reja tuziladi",
+      "hoursNotInteger": "Soat sonini ro'yxatdan tanlang",
+      "hoursTooFew": "Kamida 1 soat bo'lsin",
+      "hoursTooMany": "Haftasiga 20 soatdan ko'p bo'lmasin",
+      "dateInvalid": "Sanani tanlang",
+      "dateOutOfRange": "Sana noto'g'ri — yaqin yillardan birini tanlang",
+      "invalidValue": "Qiymat to'g'ri emas",
+      "questionTooShort": "Savolingizni to'liqroq yozing (kamida bir jumla)",
+      "questionTooLong": "Savol juda uzun — asosiysini qoldiring"
+    }
+  },
+  "errorPage": {
+    "title": "Nimadir noto'g'ri ketdi",
+    "description": "Xavotir olmang — yozganlaringiz saqlangan. Qayta urinib ko'ring.",
+    "retry": "Qayta urinish"
+  },
+  "notFoundPage": {
+    "title": "Bu sahifa topilmadi",
+    "description": "Ehtimol havola eskirgan yoki bu material o'chirilgan.",
+    "goHome": "Ish sahifasiga qaytish"
+  },
+  "support": {
+    "needHelp": "Yordam kerakmi? Bizga yozing:"
+  },
+  "search": {
+    "title": "Savol berish",
+    "pageHint": "Mavzu bo'yicha savolingizni yozing — qisqa javob, asosiy nuqtalar va darsda qanday ishlatish bo'yicha maslahat olasiz.",
+    "sectionQuestion": "Nimani bilmoqchisiz?",
+    "sectionContext": "Kim uchun?",
+    "contextHint": "Bularni to'ldirmasangiz ham javob olasiz, lekin to'ldirsangiz javob sizning sinfingizga mos bo'ladi.",
+    "fields": {
+      "question": "Savolingiz",
+      "questionPlaceholder": "Fotosintezni 6-sinf o'quvchisiga qanday tushuntirsam bo'ladi?",
+      "questionHint": "Oddiy so'zlar bilan yozing — xuddi hamkasbingizdan so'raganday",
+      "questionHelp": "Savol qanchalik aniq bo'lsa, javob shunchalik foydali bo'ladi. «Kasrlar» emas, «Kasrlarni qo'shishni qanday tushuntirsam bo'ladi?» deb yozing."
+    },
+    "submit": "Javob olish",
+    "asking": "Javob tayyorlanmoqda…",
+    "timeNotice": "Javob 5-15 soniyada tayyor bo'ladi.",
+    "answerTitle": "Javob",
+    "answerFor": "Savolingiz: {question}",
+    "keyPoints": "Asosiy nuqtalar",
+    "classroomIdeas": "Darsda qanday ishlatish",
+    "caution": "Diqqat qiling",
+    "emptyTitle": "Savolingizni yozing",
+    "emptyDescription": "Masalan, quyidagilardan biriga o'xshash savol bering:",
+    "examples": {
+      "first": "Fotosintezni 6-sinf o'quvchisiga qanday tushuntirsam bo'ladi?",
+      "second": "Kasrlarni qo'shishda o'quvchilar qanday xatolarga yo'l qo'yadi?",
+      "third": "Amir Temur davri haqida darsni qiziqarli boshlash uchun nima qilsam bo'ladi?"
     }
   }
 }

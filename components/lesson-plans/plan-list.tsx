@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import { StatusBadge } from "@/components/ui/status-badge";
+import { ListRow } from "@/components/ui/list-row";
 import { LoadMoreButton } from "@/components/ui/load-more-button";
 import { useLoadMore } from "@/lib/hooks/use-load-more";
 import { formatDate } from "@/lib/ui/labels";
@@ -13,10 +12,10 @@ import type { UiLocale } from "@/lib/i18n/config";
  * Dars ishlanmalari ro'yxati — klient komponenti.
  *
  * ── Nega klient ───────────────────────────────────────────────────────────
- * "Ko'proq yuklash" tugmasi holatni (yuklangan yozuvlar, kursor) saqlashi
- * kerak. Birinchi sahifa SERVERDA render qilinadi va shu yerga `props`
- * orqali keladi — ya'ni birinchi ko'rinish uchun qo'shimcha HTTP so'rov
- * YO'Q, faqat davomi olinadi.
+ * "Ko'proq ko'rsatish" tugmasi holatni (yuklangan yozuvlar, kursor)
+ * saqlashi kerak. Birinchi sahifa SERVERDA render qilinadi va shu yerga
+ * `props` orqali keladi — ya'ni birinchi ko'rinish uchun qo'shimcha
+ * so'rov YO'Q, faqat davomi olinadi.
  */
 
 export interface LessonPlanListItem {
@@ -50,36 +49,24 @@ export function LessonPlanList({
 
   return (
     <>
-      <ul className="mt-6 space-y-2">
+      <ul className="mt-6 space-y-3">
         {items.map((plan) => (
           <li key={plan.id}>
-            <Link
+            <ListRow
               href={`/dashboard/lesson-plans/${plan.id}`}
-              className="block rounded-xl border border-slate-200 bg-white p-4 transition hover:border-slate-300 hover:shadow-sm"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-slate-900">
-                    {plan.topic}
-                  </p>
-                  <p className="mt-1 text-xs text-slate-500">
-                    {plan.subject} · {plan.grade} · {t(`types.${plan.lessonType}`)} ·{" "}
-                    {t("fields.durationOption", { minutes: plan.durationMinutes })}
-                  </p>
-                </div>
-                <StatusBadge status={plan.status} />
-              </div>
-
-              {plan.status === "FAILED" && plan.errorMessage !== null && (
-                <p className="mt-2 text-xs text-red-600">
-                  {translateStoredError(tRoot, plan.errorMessage)}
-                </p>
-              )}
-
-              <p className="mt-2 text-xs text-slate-400">
-                {formatDate(plan.createdAt, locale)}
-              </p>
-            </Link>
+              title={plan.topic}
+              meta={`${plan.subject} · ${plan.grade} · ${t(`types.${plan.lessonType}`)} · ${t(
+                "fields.durationOption",
+                { minutes: plan.durationMinutes },
+              )}`}
+              status={plan.status}
+              errorText={
+                plan.status === "FAILED" && plan.errorMessage !== null
+                  ? translateStoredError(tRoot, plan.errorMessage)
+                  : null
+              }
+              date={formatDate(plan.createdAt, locale)}
+            />
           </li>
         ))}
       </ul>

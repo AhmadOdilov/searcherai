@@ -1,15 +1,14 @@
 "use client";
 
-import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import { StatusBadge } from "@/components/ui/status-badge";
+import { ListRow } from "@/components/ui/list-row";
 import { LoadMoreButton } from "@/components/ui/load-more-button";
 import { useLoadMore } from "@/lib/hooks/use-load-more";
 import { formatDate, formatFileSize } from "@/lib/ui/labels";
 import { translateStoredError } from "@/lib/i18n/stored-error";
 import type { UiLocale } from "@/lib/i18n/config";
 
-/** Prezentatsiyalar ro'yxati — "Ko'proq yuklash" bilan. */
+/** Prezentatsiyalar ro'yxati — "Ko'proq ko'rsatish" bilan. */
 
 export interface PresentationListItem {
   id: string;
@@ -44,46 +43,36 @@ export function PresentationList({
 
   return (
     <>
-      <ul className="mt-6 space-y-2">
-        {items.map((item) => (
-          <li key={item.id}>
-            <Link
-              href={`/dashboard/presentations/${item.id}`}
-              className="block rounded-xl border border-slate-200 bg-white p-4 transition hover:border-slate-300 hover:shadow-sm"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-slate-900">
-                    {item.title ?? item.topic}
-                  </p>
-                  <p className="mt-1 text-xs text-slate-500">
-                    {[item.subject, item.grade].filter(Boolean).join(" · ") ||
-                      t("standalone")}
-                    {item.slideCount !== null &&
-                      ` · ${t("slideCount", { count: item.slideCount })}`}
-                    {item.fileSize !== null &&
-                      ` · ${formatFileSize(item.fileSize, locale)}`}
-                  </p>
-                </div>
-                <StatusBadge status={item.status} />
-              </div>
+      <ul className="mt-6 space-y-3">
+        {items.map((item) => {
+          const parts = [
+            [item.subject, item.grade].filter(Boolean).join(" · ") || t("standalone"),
+          ];
+          if (item.slideCount !== null) {
+            parts.push(t("slideCount", { count: item.slideCount }));
+          }
+          if (item.fileSize !== null) {
+            parts.push(formatFileSize(item.fileSize, locale));
+          }
 
-              {item.lessonPlanId !== null && (
-                <p className="mt-2 text-xs text-slate-400">{t("fromLessonPlan")}</p>
-              )}
-
-              {item.status === "FAILED" && item.errorMessage !== null && (
-                <p className="mt-2 text-xs text-red-600">
-                  {translateStoredError(tRoot, item.errorMessage)}
-                </p>
-              )}
-
-              <p className="mt-2 text-xs text-slate-400">
-                {formatDate(item.createdAt, locale)}
-              </p>
-            </Link>
-          </li>
-        ))}
+          return (
+            <li key={item.id}>
+              <ListRow
+                href={`/dashboard/presentations/${item.id}`}
+                title={item.title ?? item.topic}
+                meta={parts.join(" · ")}
+                note={item.lessonPlanId !== null ? t("fromLessonPlan") : null}
+                status={item.status}
+                errorText={
+                  item.status === "FAILED" && item.errorMessage !== null
+                    ? translateStoredError(tRoot, item.errorMessage)
+                    : null
+                }
+                date={formatDate(item.createdAt, locale)}
+              />
+            </li>
+          );
+        })}
       </ul>
 
       <LoadMoreButton

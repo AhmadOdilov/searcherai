@@ -150,6 +150,18 @@ describe("parseJsonBody", () => {
       error: { message: string; messageKey: string };
     };
     assert.equal(json.error.messageKey, "errors.api.invalidJsonBody");
-    assert.ok(json.error.message.includes("JSON"));
+    /*
+      Xabar KALIT bo'yicha tekshiriladi, matn mazmuni bo'yicha emas.
+
+      Ilgari bu yerda `message.includes("JSON")` turardi. Lekin "JSON"
+      — dasturchi so'zi: o'qituvchi uni ko'rmasligi kerak, shuning
+      uchun matn "So'rov noto'g'ri yuborildi…" ga o'zgartirildi.
+      Sinov esa endi o'zgarmaydigan narsani — kalitni — tekshiradi.
+    */
+    assert.ok(json.error.message.length > 0, "xabar bo'sh bo'lmasligi kerak");
+    assert.ok(
+      !/JSON|API|null|undefined/.test(json.error.message),
+      "foydalanuvchiga texnik atama ko'rsatilmasligi kerak",
+    );
   });
 });
