@@ -1,0 +1,46 @@
+# Docker build kontekstiga TUSHMAYDIGAN narsalar.
+#
+# Ikki sabab:
+#  1. Tezlik — kontekst qanchalik kichik bo'lsa, build shunchalik tez
+#     boshlanadi (Docker butun papkani demon'ga yuboradi).
+#  2. XAVFSIZLIK — `.env` image ichiga tushib qolmasligi kerak. Next.js
+#     `standalone` natijasiga loyihadagi `.env*` fayllarni AVTOMATIK
+#     ko'chiradi, ya'ni bu qator bo'lmasa sirlar image'da qolardi.
+
+# ── Sirlar ───────────────────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# ── O'rnatilgan va yasalgan fayllar ─────────────────────────────────────────
+node_modules
+.next
+out
+build
+lib/generated
+*.tsbuildinfo
+
+# ── Generatsiya natijalari (volume'da yashaydi) ─────────────────────────────
+storage
+
+# ── Git va muharrir ─────────────────────────────────────────────────────────
+.git
+.gitignore
+.vscode
+.idea
+.DS_Store
+
+# ── Sinovlar va hujjatlar ───────────────────────────────────────────────────
+tests
+coverage
+*.md
+!README.md
+
+# ── Deploy fayllarining o'zi (image ichida kerak emas) ──────────────────────
+Dockerfile
+.dockerignore
+docker-compose*.yml
+nginx
+certbot
+backups

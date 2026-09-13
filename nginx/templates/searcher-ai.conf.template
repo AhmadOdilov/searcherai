@@ -1,0 +1,124 @@
+# Searcher AI — Nginx konfiguratsiyasi.
+#
+# ── Bu fayl SHABLON ──────────────────────────────────────────────────────────
+# `.template` kengaytmasi bilan `/etc/nginx/templates/` da yotgan fayllarni
+# rasmiy nginx image'i ishga tushishda `envsubst` orqali o'tkazadi va
+# natijani `/etc/nginx/conf.d/` ga yozadi. Ya'ni ${DOMAIN} shu yerda
+# haqiqiy domen nomiga aylanadi.
+#
+# Domen `.env` dagi DOMAIN o'zgaruvchisidan keladi — bu faylni tahrirlash
+# SHART EMAS.
+#
+# DIQQAT: compose'da `NGINX_ENVSUBST_FILTER=^DOMAIN$` qo'yilgan, shuning
+# uchun $host, $scheme kabi NGINX o'zgaruvchilariga tegilmaydi.
+
+# WebSocket uchun: `Connection` sarlavhasi so'rovga qarab "upgrade" yoki
+# bo'sh bo'lishi kerak.
+map $http_upgrade $connection_upgrade {
+  default upgrade;
+  ''      close;
+}
+
+# Ilova manzili o'zgaruvchida saqlanadi va Docker DNS orqali HAR SAFAR
+# qayta hal qilinadi. Oddiy `proxy_pass http://app:3000` yozilsa, Nginx
+# IP'ni faqat ishga tushganda bir marta o'qiydi — `app` konteyneri qayta
+# qurilib IP'si o'zgarsa, Nginx 502 bera boshlardi.
+map $host $searcher_app {
+  default "http://app:3000";
+}
+
+# ─── 1. HTTP (80) ────────────────────────────────────────────────────────────
+server {
+  listen 80;
+  listen [::]:80;
+  server_name ${DOMAIN};
+
+  # Let's Encrypt tekshiruvi HTTP orqali keladi — bu joy HTTPS'ga
+  # yo'naltirilmasligi kerak, aks holda sertifikat olinmaydi.
+  location /.well-known/acme-challenge/ {
+    root /var/www/certbot;
+  }
+
+  location / {
+    return 301 https://$host$request_uri;
+  }
+}
+
+# ─── 2. HTTPS (443) ──────────────────────────────────────────────────────────
+server {
+  listen 443 ssl;
+  listen [::]:443 ssl;
+  http2 on;
+  server_name ${DOMAIN};
+
+  # Sertifikatlar `scripts/init-ssl.sh` orqali olinadi. Skript avval
+  # VAQTINCHALIK o'z-o'zini imzolagan sertifikat yaratadi — bo'lmasa
+  # Nginx umuman ishga tushmas va certbot tekshiruvni o'tkaza olmasdi.
+  ssl_certificate     /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
+  include /etc/nginx/snippets/ssl.conf;
+
+  include /etc/nginx/snippets/gzip.conf;
+  include /etc/nginx/snippets/security-headers.conf;
+
+  resolver 127.0.0.11 valid=10s ipv6=off;
+
+  # Hozircha foydalanuvchi hech narsa yuklamaydi, lekin forma ma'lumotlari
+  # uchun qulay chegara. (Kelajakda rasm yuklash qo'shilsa oshiriladi.)
+  client_max_body_size 10m;
+
+  # Javob kutish vaqti — standart 60s. AI generatsiyasi undan uzoq davom
+  # etadi, shuning uchun bu yerda umumiy chegara ko'tarilgan. Eng sekin
+  # yo'nalishlar uchun pastda alohida, yanada uzun qiymat bor.
+  proxy_read_timeout 120s;
+  proxy_send_timeout 120s;
+
+  # ── Statik fayllar: hash'li nomlar, abadiy kesh ────────────────────────────
+  # `/_next/static/` ichidagi har bir fayl nomida mazmun hash'i bor. Fayl
+  # o'zgarsa nomi ham o'zgaradi, ya'ni eski nusxa hech qachon "eskirmaydi"
+  # — uni bir yilga keshlash mutlaqo xavfsiz va sahifa qayta ochilishini
+  # sezilarli tezlashtiradi.
+  location /_next/static/ {
+    proxy_pass $searcher_app;
+    include /etc/nginx/snippets/proxy.conf;
+
+    proxy_hide_header Cache-Control;
+    add_header Cache-Control "public, max-age=31536000, immutable" always;
+    include /etc/nginx/snippets/security-headers.conf;
+  }
+
+  # ── `public/` dagi fayllar: nomi o'zgarmaydi, shuning uchun 30 kun ─────────
+  location ~* \.(?:ico|png|jpe?g|gif|svg|webp|avif|woff2?|ttf|otf)$ {
+    proxy_pass $searcher_app;
+    include /etc/nginx/snippets/proxy.conf;
+
+    proxy_hide_header Cache-Control;
+    add_header Cache-Control "public, max-age=2592000" always;
+    include /etc/nginx/snippets/security-headers.conf;
+  }
+
+  # ── Generatsiya va yuklab olish: UZOQ kutish ──────────────────────────────
+  # Kalendar-tematik reja eng sekin modul: AI javobi 60-90 soniya olishi
+  # mumkin. Standart 60 soniyalik chegara bilan Nginx aynan shu paytda
+  # 504 qaytarardi — foydalanuvchi esa "ilova ishlamadi" deb o'ylardi.
+  #
+  # `proxy_buffering off` — yuklab olinayotgan .xlsx/.pptx fayl Nginx
+  # diskida to'planib turmasdan, darhol brauzerga oqib boradi.
+  location ~ ^/api/(lesson-plans|presentations|calendar-plans) {
+    proxy_pass $searcher_app;
+    include /etc/nginx/snippets/proxy.conf;
+
+    proxy_read_timeout 300s;
+    proxy_send_timeout 300s;
+    proxy_buffering off;
+    proxy_request_buffering off;
+
+    include /etc/nginx/snippets/security-headers.conf;
+  }
+
+  # ── Qolgan hamma narsa ────────────────────────────────────────────────────
+  location / {
+    proxy_pass $searcher_app;
+    include /etc/nginx/snippets/proxy.conf;
+  }
+}

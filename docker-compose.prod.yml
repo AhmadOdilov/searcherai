@@ -1,0 +1,144 @@
+# Searcher AI — production stack (VPS, Ubuntu + Docker).
+#
+# Ishga tushirish:
+#   ./scripts/deploy.sh
+# yoki qo'lda:
+#   docker compose -f docker-compose.prod.yml up -d --build
+#
+# ── Tarkib ───────────────────────────────────────────────────────────────────
+#   postgres — ma'lumotlar bazasi (volume'da, tashqariga port ochilmaydi)
+#   migrate  — BIR MARTALIK konteyner: `prisma migrate deploy`, so'ng tugaydi
+#   app      — Next.js serveri (standalone), faqat ichki tarmoqda
+#   nginx    — tashqi darvoza: 80/443, TLS, gzip, kesh
+#   certbot  — Let's Encrypt sertifikatini yangilab turadi
+#
+# ── Nima uchun app tashqariga port ochmaydi ─────────────────────────────────
+# `ports:` o'rniga `expose:` ishlatilgan. Shunda 3000-port faqat Docker
+# tarmog'i ichida ko'rinadi va hech kim `http://<vps-ip>:3000` orqali
+# Nginx'ni (ya'ni TLS'ni va tezlik cheklovlarini) chetlab o'tolmaydi.
+
+name: searcher-ai
+
+services:
+  # ─── Ma'lumotlar bazasi ────────────────────────────────────────────────────
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-searcher}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD .env da ko'rsatilmagan}
+      POSTGRES_DB: ${POSTGRES_DB:-searcher_ai}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+    volumes:
+      # DIQQAT: yo'l `/var/lib/postgresql` — `/data` QO'SHILMAYDI.
+      # Postgres 18 image'i ma'lumotni versiya bo'yicha ichki papkaga
+      # (`/var/lib/postgresql/18/docker`) joylaydi va volume aynan bir
+      # daraja YUQORIGA ulanishini kutadi. `/data` ga ulansa konteyner
+      # "unused mount/volume" deb ogohlantirib, umuman ko'tarilmaydi
+      # (mahalliy sinovda shunday bo'ldi).
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      # Migratsiya va ilova baza TAYYOR bo'lishini kutadi — aks holda ular
+      # "connection refused" bilan yiqilib, qayta ishga tushaverardi.
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-searcher} -d ${POSTGRES_DB:-searcher_ai}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  # ─── Migratsiyalar (bir martalik) ──────────────────────────────────────────
+  migrate:
+    build:
+      context: .
+      target: migrator
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-searcher}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-searcher_ai}?schema=public
+
+  # ─── Ilova ─────────────────────────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      target: runner
+      args:
+        # Brauzerga ketadigan qiymat — build paytida yozib qo'yiladi
+        # (Dockerfile'dagi izohga qarang).
+        NEXT_PUBLIC_SUPPORT_TELEGRAM: ${NEXT_PUBLIC_SUPPORT_TELEGRAM:-expelled_coders}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        # Migratsiya MUVAFFAQIYATLI tugamaguncha ilova ko'tarilmaydi.
+        # Aks holda yangi kod eski sxema ustida ishlab, chalkash xato berardi.
+        condition: service_completed_successfully
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      # Baza manzili HAR DOIM konteyner tarmog'idan olinadi — `.env` dagi
+      # `localhost:5432` (mahalliy ishlab chiqish qiymati) bu yerda
+      # ishlamaydi va uni unutib qoldirish eng ko'p uchraydigan xato.
+      DATABASE_URL: postgresql://${POSTGRES_USER:-searcher}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-searcher_ai}?schema=public
+    volumes:
+      # Generatsiya qilingan .pptx / .xlsx fayllar. Volume bo'lmasa har
+      # `docker compose up --build` da o'qituvchilarning fayllari yo'qolardi.
+      - storage_data:/app/storage
+    expose:
+      - "3000"
+
+  # ─── Nginx: TLS, gzip, kesh ────────────────────────────────────────────────
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      # Shablonlardagi ${DOMAIN} shu qiymat bilan almashtiriladi.
+      DOMAIN: ${DOMAIN:?DOMAIN .env da ko'rsatilmagan}
+      # MUHIM: envsubst FAQAT shu ro'yxatdagi o'zgaruvchilarni almashtiradi.
+      # Bo'lmasa u `$host`, `$remote_addr` kabi Nginx o'zgaruvchilarini ham
+      # bo'sh satrga aylantirib, konfiguratsiyani buzardi.
+      NGINX_ENVSUBST_FILTER: "^DOMAIN$$"
+    volumes:
+      - ./nginx/templates:/etc/nginx/templates:ro
+      - ./nginx/snippets:/etc/nginx/snippets:ro
+      # Ishga tushish skripti: standart konfiguratsiyani olib tashlaydi va
+      # sertifikat yangilanishi uchun `reload` siklini boshlaydi.
+      #
+      # DIQQAT: bu ish `command:` orqali BAJARILMAYDI. Rasmiy image
+      # shablonlarni (`${DOMAIN}`) faqat buyruq `nginx` bilan boshlangan
+      # holda almashtiradi — `command:` ni o'zgartirsak, konfiguratsiya
+      # umuman render bo'lmaydi.
+      - ./nginx/entrypoint.d/99-searcher-ai.sh:/docker-entrypoint.d/99-searcher-ai.sh:ro
+      - certbot_conf:/etc/letsencrypt:ro
+      - certbot_www:/var/www/certbot:ro
+
+  # ─── Let's Encrypt ─────────────────────────────────────────────────────────
+  certbot:
+    image: certbot/certbot:latest
+    restart: unless-stopped
+    volumes:
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    # Har 12 soatda yangilashga urinadi. Sertifikat muddati 90 kun, certbot
+    # faqat oxirgi 30 kun qolganda haqiqatan yangilaydi — qolgan urinishlar
+    # darhol va bepul tugaydi.
+    entrypoint: >
+      /bin/sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done"
+
+volumes:
+  postgres_data:
+  storage_data:
+  certbot_conf:
+  certbot_www:
