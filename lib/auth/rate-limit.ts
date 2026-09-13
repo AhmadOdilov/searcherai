@@ -2,6 +2,7 @@ import "server-only";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/db";
 import { ApiError } from "@/lib/api/errors";
+import { getEnv } from "@/lib/env";
 
 /**
  * Kirish urinishlarini cheklash — brute-force himoyasi.
@@ -49,13 +50,42 @@ const MAX_ATTEMPTS: Record<string, number> = {
   ip: 30,
 };
 
+/** Ro'yxatdan o'tish oynasi — kirishdan ancha uzun. */
+const REGISTER_WINDOW_MS = 60 * 60 * 1000;
+
+/**
+ * Bir IP'dan soatiga ruxsat etilgan ro'yxatdan o'tishlar.
+ *
+ * Standart 10, lekin `REGISTER_MAX_PER_IP` bilan sozlanadi — to'g'ri
+ * qiymat deploy sharoitiga bog'liq (lib/env.ts dagi izohga qarang).
+ *
+ * Hujum modeli: skript bilan yuzlab hisob ochish. Har bir hisob esa AI
+ * kvotasiga ega, ya'ni bu to'g'ridan-to'g'ri pul xarajati.
+ */
+function maxRegistrationsPerIp(): number {
+  return getEnv().REGISTER_MAX_PER_IP;
+}
+
+/**
+ * Ro'yxatdan o'tish urinishlari `kind` i.
+ *
+ * Kirish o'lchovlaridan ("email", "ip") ATAYLAB ajratilgan: aks holda
+ * ikkalasi bir hisoblagichni baham ko'rar va biri ikkinchisini
+ * "yeb qo'yardi".
+ */
+const REGISTER_KIND = "register";
+
 /**
  * Eski yozuvlar shundan keyin tozalanadi.
  *
- * Oynadan uzunroq: yaqin o'tmishdagi urinishlar diagnostika uchun bir
- * muddat qolsin, lekin jadval cheksiz o'smasin.
+ * DIQQAT: bu qiymat ENG UZUN oynadan (ro'yxatdan o'tish — 1 soat)
+ * kattaroq bo'lishi SHART. Teng yoki kichik bo'lsa, tozalash hali
+ * amal qilayotgan hisoblagichni o'chirib, cheklovni jim buzardi.
+ *
+ * Ikki baravar zaxira qoldirilgan — diagnostika uchun yaqin o'tmish
+ * ham qolsin.
  */
-const CLEANUP_AFTER_MS = 60 * 60 * 1000;
+const CLEANUP_AFTER_MS = 2 * 60 * 60 * 1000;
 
 /** So'rov yuborgan manzil. Topilmasa `null`. */
 async function clientIp(): Promise<string | null> {
@@ -146,8 +176,70 @@ export async function clearLoginAttempts(email: string): Promise<void> {
   const keys = await identifiers(email);
 
   await prisma.loginAttempt
-    .deleteMany({ where: { identifier: { in: keys.map((key) => key.identifier) } } })
+    .deleteMany({
+      where: {
+        identifier: { in: keys.map((key) => key.identifier) },
+        /*
+          FAQAT kirish o'lchovlari tozalanadi.
+
+          `kind` filtri bo'lmasa ayni IP'dagi RO'YXATDAN O'TISH
+          hisoblagichi ham o'chib ketardi — ya'ni hujumchi o'nta hisob
+          ochib, bittasiga muvaffaqiyatli kirib, hisoblagichni nolga
+          qaytarib, yana o'ntasini ocha olardi.
+        */
+        kind: { in: ["email", "ip"] },
+      },
+    })
     .catch(() => undefined);
+}
+
+/**
+ * Ro'yxatdan o'tish kvotasidan bitta urinish "yeydi".
+ *
+ * Chegaradan oshgan bo'lsa `ApiError` (429) tashlaydi.
+ *
+ * ── Nega tekshirish va yozish BIR funksiyada ─────────────────────────────
+ * `assertLoginAllowed` + `recordFailedLogin` juftligidan farqli o'laroq,
+ * bu yerda "muvaffaqiyatsiz urinish" tushunchasi yo'q: har qanday
+ * urinish (hisob ochilgan-ochilmagani) resurs sarflaydi va sanalishi
+ * kerak. Bitta chaqiruv yozishni unutish xatosini imkonsiz qiladi.
+ *
+ * ── Nega faqat IP bo'yicha ───────────────────────────────────────────────
+ * Email bo'yicha sanashning ma'nosi yo'q: hujumchi har safar yangi
+ * email yozadi. Yagona umumiy o'lcham — manzil.
+ */
+export async function consumeRegisterQuota(): Promise<void> {
+  const ip = await clientIp();
+
+  /*
+    IP aniqlanmasa cheklov ISHLAMAYDI (so'rov o'tadi).
+
+    Bu ataylab: mahalliy ishlab chiqishda va sinovlarda sarlavha
+    bo'lmasligi mumkin, productionda esa Nginx `X-Real-IP` ni doim
+    qo'yadi (nginx/snippets/proxy.conf). Cheklovni "IP yo'q bo'lsa
+    rad et" qilish ishlab chiqishni to'sib qo'yardi.
+  */
+  if (ip === null || ip === "") return;
+
+  const since = new Date(Date.now() - REGISTER_WINDOW_MS);
+
+  const used = await prisma.loginAttempt.count({
+    where: { identifier: ip, kind: REGISTER_KIND, createdAt: { gte: since } },
+  });
+
+  if (used >= maxRegistrationsPerIp()) {
+    throw new ApiError("too_many_requests", {
+      messageKey: "errors.domain.tooManyRegistrations",
+      detail: `register rate limit: ip=${ip} used=${used}`,
+    });
+  }
+
+  await prisma.loginAttempt
+    .create({ data: { identifier: ip, kind: REGISTER_KIND } })
+    .catch((error: unknown) => {
+      // Hisoblagich yozilmasa ham ro'yxatdan o'tish to'xtamasligi kerak.
+      console.error("[rate-limit] ro'yxat urinishini yozib bo'lmadi:", error);
+    });
 }
 
 /**

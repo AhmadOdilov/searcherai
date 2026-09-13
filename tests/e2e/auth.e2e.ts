@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { after, describe, it } from "node:test";
-import { TestClient, cleanupTestUsers, testEmail } from "./helpers/client";
+import { BASE_URL, TestClient, cleanupTestUsers, testEmail } from "./helpers/client";
+import { text } from "./helpers/messages";
 
 /**
  * Autentifikatsiya oqimi — uchidan-uchgacha, haqiqiy server va baza bilan.
@@ -409,5 +410,130 @@ describe("kirish urinishlari cheklovi", () => {
         `tozalashdan keyin ${attempt}-urinish 401 bo'lishi kerak`,
       );
     }
+  });
+});
+
+describe("ro'yxatdan o'tish cheklovi", () => {
+  /**
+   * Chegara `REGISTER_MAX_PER_IP` bilan sozlanadi va sinov muhitida
+   * ataylab ko'tarilgan (global-server.ts). Shuning uchun bu yerda
+   * hisoblagich HTTP so'rovlar bilan emas, to'g'ridan-to'g'ri baza
+   * yozuvlari bilan to'ldiriladi — aks holda sinov 300 ta hisob
+   * yaratishga majbur bo'lardi.
+   */
+  const LIMIT = Number(process.env.REGISTER_MAX_PER_IP ?? 10);
+
+  /** Sinov o'zidan keyin hisoblagichni tozalaydi. */
+  async function clearRegisterCounter(): Promise<void> {
+    const { prisma } = await import("../../lib/db");
+    await prisma.loginAttempt.deleteMany({ where: { kind: "register" } });
+  }
+
+  it("chegaradan oshganda 429 va TUSHUNARLI xabar qaytadi", async () => {
+    const { prisma } = await import("../../lib/db");
+    await clearRegisterCounter();
+
+    /*
+      Hisoblagichni to'ldiramiz.
+
+      `x-forwarded-for` AYNAN shu sarlavha bo'lishi kerak: `clientIp()`
+      avval uni o'qiydi va faqat topilmasa `x-real-ip` ga o'tadi. Next
+      dev serveri `x-forwarded-for` ni o'zi qo'shadi, ya'ni `x-real-ip`
+      hech qachon o'qilmasdi va sinov soxta IP o'rniga 127.0.0.1 ni
+      to'ldirardi.
+    */
+    const ip = "203.0.113.77";
+    await prisma.loginAttempt.createMany({
+      data: Array.from({ length: LIMIT }, () => ({ identifier: ip, kind: "register" })),
+    });
+
+    const response = await fetch(`${BASE_URL}/api/auth/register`, {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-forwarded-for": ip },
+      body: JSON.stringify({
+        email: testEmail("royxat-cheklov"),
+        password: PASSWORD,
+        fullName: "Sinov O'qituvchi",
+      }),
+    });
+
+    assert.equal(response.status, 429);
+
+    const json = (await response.json()) as {
+      error: { code: string; message: string };
+    };
+    assert.equal(json.error.code, "too_many_requests");
+    assert.equal(json.error.message, text("uz", "errors.domain.tooManyRegistrations"));
+    // Foydalanuvchiga texnik tafsilot (IP, hisoblagich) ko'rsatilmaydi.
+    assert.ok(!/rate limit|ip=|used=/i.test(json.error.message));
+
+    await clearRegisterCounter();
+  });
+
+  it("chegaradan PASTDA ro'yxatdan o'tish ishlaydi", async () => {
+    const { prisma } = await import("../../lib/db");
+    await clearRegisterCounter();
+
+    const ip = "203.0.113.78";
+    // Chegaradan bitta kam — oxirgi joy bo'sh qoladi.
+    await prisma.loginAttempt.createMany({
+      data: Array.from({ length: LIMIT - 1 }, () => ({
+        identifier: ip,
+        kind: "register",
+      })),
+    });
+
+    const response = await fetch(`${BASE_URL}/api/auth/register`, {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-forwarded-for": ip },
+      body: JSON.stringify({
+        email: testEmail("royxat-oxirgi-joy"),
+        password: PASSWORD,
+        fullName: "Sinov O'qituvchi",
+      }),
+    });
+
+    assert.equal(response.status, 201, "oxirgi bo'sh joy ishlatilishi kerak");
+
+    await clearRegisterCounter();
+  });
+
+  it("muvaffaqiyatli KIRISH ro'yxat hisoblagichini tozalamaydi", async () => {
+    /*
+      Nozik joy: `clearLoginAttempts` identifikator bo'yicha o'chiradi.
+      `kind` filtri bo'lmasa, ayni IP'dan muvaffaqiyatli kirish
+      ro'yxatdan o'tish hisoblagichini ham nolga qaytarardi — ya'ni
+      hujumchi o'nta hisob ochib, bittasiga kirib, yana o'ntasini
+      ocha olardi.
+    */
+    const { prisma } = await import("../../lib/db");
+    await clearRegisterCounter();
+
+    const ip = "203.0.113.79";
+    await prisma.loginAttempt.createMany({
+      data: Array.from({ length: LIMIT }, () => ({ identifier: ip, kind: "register" })),
+    });
+
+    // Shu IP'dan muvaffaqiyatli kirish.
+    const email = testEmail("royxat-kirish");
+    const client = new TestClient();
+    await client.request("/api/auth/register", {
+      method: "POST",
+      body: { email, password: PASSWORD, fullName: "Sinov O'qituvchi" },
+    });
+
+    await fetch(`${BASE_URL}/api/auth/login`, {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-forwarded-for": ip },
+      body: JSON.stringify({ email, password: PASSWORD }),
+    });
+
+    // Hisoblagich HALI ham to'la bo'lishi kerak.
+    const remaining = await prisma.loginAttempt.count({
+      where: { identifier: ip, kind: "register" },
+    });
+    assert.equal(remaining, LIMIT, "kirish ro'yxat hisoblagichini tozalab yubordi");
+
+    await clearRegisterCounter();
   });
 });

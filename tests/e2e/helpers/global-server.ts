@@ -55,6 +55,20 @@ export async function globalSetup(): Promise<void> {
   // ilovaga muhit o'zgaruvchisi orqali beriladi, ya'ni jarayon
   // ishga tushgandan keyin o'zgartirib bo'lmaydi.
   mockAi = await startMockAiServer();
+  /*
+    Ro'yxatdan o'tish cheklovi sinovlar uchun ko'tariladi.
+
+    Sinov to'plami ~130 ta hisob yaratadi va hammasi 127.0.0.1 dan
+    keladi — productiondagi chegara (10/soat) butun to'plamni birinchi
+    fayldayoq to'xtatardi.
+
+    300 tanlandi: kerakligidan ikki barobar ko'p (yangi sinovlar
+    qo'shilsa ham yetadi), lekin `auth.e2e.ts` dagi cheklov sinovi uni
+    to'g'ridan-to'g'ri baza yozuvlari bilan to'ldira oladigan darajada
+    kichik.
+  */
+  process.env.REGISTER_MAX_PER_IP = "300";
+
   process.env.AI_PROVIDER = "openai";
   process.env.AI_API_KEY = "mock-kalit";
   process.env.AI_BASE_URL = mockAi.baseUrl;

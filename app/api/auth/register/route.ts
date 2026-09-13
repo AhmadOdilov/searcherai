@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { apiErrors } from "@/lib/api/errors";
 import { ok, parseJsonBody, withErrorHandling } from "@/lib/api/with-error-handling";
 import { createSession, hashPassword } from "@/lib/auth/session";
+import { consumeRegisterQuota } from "@/lib/auth/rate-limit";
 import { registerSchema } from "@/lib/validations/auth";
 
 /**
@@ -13,6 +14,15 @@ import { registerSchema } from "@/lib/validations/auth";
  */
 export const POST = withErrorHandling(async (request) => {
   const input = await parseJsonBody(request, registerSchema);
+
+  /*
+    Kvota VALIDATSIYADAN KEYIN yeyiladi: formani noto'g'ri to'ldirish
+    (qisqa parol, xato email) cheklovni yeb qo'ymasligi kerak.
+
+    Parol hash'lashdan OLDIN esa shuning uchun: bcrypt ~250 ms oladi va
+    bu hisoblash resursi ham himoyalanishi kerak.
+  */
+  await consumeRegisterQuota();
 
   const passwordHash = await hashPassword(input.password);
 

@@ -49,6 +49,21 @@ const envSchema = z.object({
    */
   AUTH_SECRET: z.string().min(32, "AUTH_SECRET kamida 32 belgidan iborat bo'lishi kerak"),
 
+  /**
+   * Bir IP'dan soatiga ruxsat etilgan ro'yxatdan o'tishlar soni.
+   *
+   * ── Nega sozlanadigan ─────────────────────────────────────────────────
+   * To'g'ri qiymat DEPLOY sharoitiga bog'liq va u kod yozilayotganda
+   * ma'lum emas:
+   *
+   *  · Ochiq ro'yxat (har kim kiradi) → 10 yetarli va himoya beradi.
+   *  · Maktabda o'quv seminari: 30 o'qituvchi bitta wi-fi ostidan bir
+   *    soatda ro'yxatdan o'tadi → 10 juda kam, o'n birinchisi bloklanadi.
+   *
+   * Sinovlarda yuqori qo'yiladi (ular yuzlab hisob yaratadi).
+   */
+  REGISTER_MAX_PER_IP: z.coerce.number().int().positive().default(10),
+
   AI_PROVIDER: z.enum(AI_PROVIDERS).default("openai"),
   AI_API_KEY: z.string().default(""),
   AI_MODEL: z.string().default(""),
