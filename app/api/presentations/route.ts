@@ -1,5 +1,6 @@
 import { ok, parseJsonBody, withErrorHandling } from "@/lib/api/with-error-handling";
 import { requireUser } from "@/lib/auth/session";
+import { consumeAiQuota } from "@/lib/ai/rate-limit";
 import {
   createPresentation,
   listPresentations,
@@ -29,6 +30,10 @@ import {
 export const POST = withErrorHandling(async (request) => {
   const user = await requireUser();
   const input = await parseJsonBody(request, presentationInputSchema);
+
+  // Kvota tekshiruvi validatsiyadan KEYIN: noto'g'ri to'ldirilgan forma
+  // foydalanuvchining kvotasini yemasligi kerak.
+  await consumeAiQuota(user.id, "presentations");
 
   const { record, promptContext } = await createPresentation(user.id, input);
 

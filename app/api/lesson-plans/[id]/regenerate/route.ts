@@ -1,5 +1,6 @@
 import { ok, withErrorHandling } from "@/lib/api/with-error-handling";
 import { requireUser } from "@/lib/auth/session";
+import { consumeAiQuota } from "@/lib/ai/rate-limit";
 import {
   regenerateLessonPlan,
   runLessonPlanGeneration,
@@ -23,6 +24,13 @@ type RouteContext = { params: Promise<{ id: string }> };
 export const POST = withErrorHandling<RouteContext>(async (_request, context) => {
   const user = await requireUser();
   const { id } = await context.params;
+
+  /*
+    «Qayta urinish» tugmasi ham AI chaqiradi, ya'ni u ham PUL turadi.
+    Cheklovsiz qoldirilsa, tugmani ushlab turib kvotani chetlab o'tish
+    mumkin bo'lardi.
+  */
+  await consumeAiQuota(user.id, "lesson-plans:regenerate");
 
   const { record, input } = await regenerateLessonPlan(id, user.id);
 

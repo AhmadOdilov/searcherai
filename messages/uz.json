@@ -377,7 +377,8 @@
       "calendarPlanFileMissing": "Fayl topilmadi. «Qaytadan tayyorlash» tugmasini bosing.",
       "generationTimedOut": "Tayyorlash tugamay qoldi. «Qayta urinish» tugmasini bosing.",
       "generationInProgress": "Bu material hozir tayyorlanmoqda. Biroz kuting.",
-      "tooManyLoginAttempts": "Juda ko'p urinish bo'ldi. 5 daqiqadan so'ng qayta urinib ko'ring."
+      "tooManyLoginAttempts": "Juda ko'p urinish bo'ldi. 5 daqiqadan so'ng qayta urinib ko'ring.",
+      "tooManyAiRequests": "Juda tez-tez so'ramoqchisiz. Bir daqiqa kutib, qayta urinib ko'ring."
     },
     "validation": {
       "emailRequired": "Emailingizni yozing",

@@ -1,5 +1,6 @@
 import { ok, parseJsonBody, withErrorHandling } from "@/lib/api/with-error-handling";
 import { requireUser } from "@/lib/auth/session";
+import { consumeAiQuota } from "@/lib/ai/rate-limit";
 import { runSearch } from "@/lib/search/service";
 import { searchInputSchema } from "@/lib/validations/search";
 
@@ -14,9 +15,14 @@ import { searchInputSchema } from "@/lib/validations/search";
  */
 export const POST = withErrorHandling(async (request) => {
   // Kirish tekshiruvi: javob shaxsiy emas, lekin AI chaqiruvi pul turadi.
-  await requireUser();
+  const user = await requireUser();
 
   const input = await parseJsonBody(request, searchInputSchema);
+
+  // Kvota tekshiruvi validatsiyadan KEYIN: noto'g'ri so'rov
+  // foydalanuvchining kvotasini yemasligi kerak.
+  await consumeAiQuota(user.id, "search");
+
   const result = await runSearch(input);
 
   return ok({ answer: result.answer });

@@ -1,5 +1,6 @@
 import { ok, parseJsonBody, withErrorHandling } from "@/lib/api/with-error-handling";
 import { requireUser } from "@/lib/auth/session";
+import { consumeAiQuota } from "@/lib/ai/rate-limit";
 import {
   createLessonPlan,
   listLessonPlans,
@@ -26,6 +27,10 @@ export const POST = withErrorHandling(async (request) => {
   // userId AYNAN sessiyadan — so'rov tanasidan emas.
   const user = await requireUser();
   const input = await parseJsonBody(request, lessonPlanInputSchema);
+
+  // Kvota tekshiruvi validatsiyadan KEYIN: noto'g'ri to'ldirilgan forma
+  // foydalanuvchining kvotasini yemasligi kerak.
+  await consumeAiQuota(user.id, "lesson-plans");
 
   const plan = await createLessonPlan(user.id, input);
 

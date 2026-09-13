@@ -73,6 +73,7 @@ model User {
   lessonPlans    LessonPlan[]
   presentations  Presentation[]
   calendarPlans  CalendarPlan[]
+  aiRequests     AiRequest[]
 
   @@index([createdAt])
 }
@@ -116,6 +117,35 @@ model Session {
 /// ── Nega Redis emas ───────────────────────────────────────────────────────
 /// Yangi xizmat MVP uchun ortiqcha. Yozuvlar kam (faqat muvaffaqiyatsiz
 /// urinishlar) va ular eskirgach o'chiriladi.
+/// AI so'rovlari hisoblagichi — tezlik cheklovi uchun.
+///
+/// ── Nega alohida jadval, LoginAttempt emas ────────────────────────────────
+/// Ikkisi boshqa narsani sanaydi: LoginAttempt faqat MUVAFFAQIYATSIZ
+/// urinishlarni (va muvaffaqiyatda tozalanadi), bu esa BARCHA so'rovlarni.
+/// Bitta jadvalga qo'shish ikkala mantiqni chalkashtirar va ishlab
+/// turgan xavfsizlik kodiga tegishni talab qilardi.
+///
+/// ── Nega bu muhim ─────────────────────────────────────────────────────────
+/// Har bir AI so'rovi PUL turadi. Cheklovsiz holda kirgan istalgan
+/// foydalanuvchi siklda so'rov yuborib, bir kechada hisobni tugatishi
+/// mumkin edi.
+model AiRequest {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Qaysi modul so'ragan — diagnostika uchun ("lesson-plans", "search").
+  route String
+
+  createdAt DateTime @default(now())
+
+  /// Oyna ichidagi so'rovlarni sanash uchun.
+  @@index([userId, createdAt])
+  /// Eskirgan yozuvlarni tozalash uchun.
+  @@index([createdAt])
+}
+
 model LoginAttempt {
   id String @id @default(cuid())
 
