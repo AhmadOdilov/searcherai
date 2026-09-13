@@ -1,9 +1,17 @@
+import { AlertTriangle } from "lucide-react";
+import { ToneCard } from "@/components/ui/card";
+
 /**
  * Generatsiya yiqilganda ko'rsatiladigan panel.
  *
  * Uch modulda ham bir xil edi — shuning uchun umumiy komponentga
  * chiqarildi. Matnlar tashqaridan tayyor tarjima sifatida keladi, chunki
  * har bir modulning o'z sarlavhasi bor.
+ *
+ * ── Nima ko'rsatiladi ─────────────────────────────────────────────────────
+ * Sarlavha — nima bo'lgani, keyin NIMA QILISH kerakligi. Texnik matn
+ * (`AiError: 500 ...`) hech qachon bu yerga tushmaydi: `message` doim
+ * tarjima qilingan, inson tilidagi jumla.
  */
 export function ErrorPanel({
   title,
@@ -15,10 +23,15 @@ export function ErrorPanel({
   hint: string;
 }) {
   return (
-    <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
-      <p className="text-sm font-medium text-red-800">{title}</p>
-      <p className="mt-1 text-sm text-red-700">{message}</p>
-      <p className="mt-2 text-xs text-red-600">{hint}</p>
-    </div>
+    <ToneCard tone="danger" className="mt-6" role="alert">
+      <div className="flex gap-3">
+        <AlertTriangle aria-hidden className="mt-0.5 size-6 shrink-0 text-danger" />
+        <div className="min-w-0">
+          <p className="text-lg font-semibold text-danger-ink">{title}</p>
+          <p className="mt-2 text-base leading-relaxed text-danger-ink">{message}</p>
+          <p className="mt-3 text-base leading-relaxed text-neutral-600">{hint}</p>
+        </div>
+      </div>
+    </ToneCard>
   );
 }

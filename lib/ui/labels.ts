@@ -11,13 +11,6 @@ import { INTL_LOCALES, type UiLocale } from "@/lib/i18n/config";
  * Bu yerda faqat FORMATLASH qoldi — u tarjima emas, `Intl` ishi.
  */
 
-/** Holat nishonining rangi — bu tarjima emas, shuning uchun shu yerda. */
-export const STATUS_STYLES = {
-  PENDING: "bg-amber-50 text-amber-700 ring-amber-200",
-  READY: "bg-emerald-50 text-emerald-700 ring-emerald-200",
-  FAILED: "bg-red-50 text-red-700 ring-red-200",
-} as const;
-
 /**
  * Sanani o'qilishi qulay ko'rinishda — INTERFEYS tiliga qarab.
  *

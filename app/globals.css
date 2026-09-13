@@ -1,26 +1,278 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/**
+ * Searcher AI — dizayn tizimi ("Maktab" yo'nalishi).
+ *
+ * ── Yo'nalish haqida ──────────────────────────────────────────────────────
+ * Maqsadli foydalanuvchi — O'zbekiston maktabidagi o'qituvchi, ko'pincha
+ * telefonda, ko'pincha sekin internetda. Dizayn shunga qarab tanlandi:
+ *
+ *  · Asosiy rang — chuqur zumrad/ko'k-yashil (#0F766E). U maktab doskasi va
+ *    "tayyor/to'g'ri" tuyg'usi bilan bog'lanadi, korporativ ko'k kabi sovuq
+ *    emas va qizil kabi xavotirli emas.
+ *  · Neytral rang — ILIQ kulrang (slate emas). Slate ko'kish-kulrang,
+ *    ekranda "texnika" hissini beradi; iliq kulrang qog'ozga yaqin.
+ *  · Amber FAQAT ogohlantirish uchun. Bitta aksent rang bo'lsa, u ko'rinadi;
+ *    beshta bo'lsa — hech biri ko'rinmaydi.
+ *  · Asosiy o'lcham 16px. 14px matn telefonda qiyin o'qiladi, bundan
+ *    tashqari iOS Safari 16px'dan kichik maydonlarda sahifani zo'rlab
+ *    kattalashtiradi.
+ *
+ * ── Bu fayl nimani boshqaradi ─────────────────────────────────────────────
+ * Ranglar, shrift, radius va soya — HAMMASI shu yerdagi tokenlardan.
+ * Sahifalarda `bg-slate-900` kabi qo'lda yozilgan qiymat bo'lmasligi kerak:
+ * rangni o'zgartirish kerak bo'lsa, faqat shu fayl tahrirlanadi.
+ *
+ * Qorong'i rejim quyida, BITTA blokda: tokenlar ustiga qurilgani uchun
+ * hech bir komponentga `dark:` yozish kerak emas.
+ */
 
+/* ── Shriftlar ──────────────────────────────────────────────────────────────
+   `inline` kerak: qiymat boshqa CSS o'zgaruvchisiga (`--font-geist-sans`)
+   havola qiladi va u `app/layout.tsx` da `<html>` ga qo'yiladi. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+@theme {
+  /* ── Asosiy rang ──────────────────────────────────────────────────────── */
+  --color-primary: #0f766e;
+  --color-primary-hover: #115e59;
+  --color-primary-active: #134e4a;
+  /* Ochiq fon — tayyor natija paneli, tanlangan holat. */
+  --color-primary-soft: #f0fdfa;
+  --color-primary-border: #99f6e4;
+  /* Ochiq fon ustidagi matn — kontrast AA dan yuqori. */
+  --color-primary-ink: #115e59;
+
+  /* ── Neytral: ILIQ kulrang ────────────────────────────────────────────────
+     Tailwind'ning standart `neutral` shkalasi shu yerda almashtiriladi,
+     ya'ni `bg-neutral-50` avtomatik iliq tus oladi. */
+  --color-neutral-50: #faf9f7;
+  --color-neutral-100: #f3f1ed;
+  --color-neutral-200: #e7e3dc;
+  --color-neutral-300: #d6d0c6;
+  --color-neutral-400: #a8a093;
+  --color-neutral-500: #7c7467;
+  --color-neutral-600: #5c554a;
+  --color-neutral-700: #433e36;
+  --color-neutral-800: #2c2925;
+  --color-neutral-900: #1c1a17;
+
+  /* ── Aksent: FAQAT ogohlantirish ──────────────────────────────────────── */
+  --color-accent: #b45309;
+  --color-accent-soft: #fffbeb;
+  --color-accent-border: #fde68a;
+  --color-accent-ink: #92400e;
+
+  /* ── Muvaffaqiyat ─────────────────────────────────────────────────────── */
+  --color-success: #15803d;
+  --color-success-soft: #f0fdf4;
+  --color-success-border: #bbf7d0;
+  --color-success-ink: #166534;
+
+  /* ── Xato ─────────────────────────────────────────────────────────────── */
+  --color-danger: #b91c1c;
+  --color-danger-hover: #991b1b;
+  --color-danger-soft: #fef2f2;
+  --color-danger-border: #fecaca;
+  --color-danger-ink: #991b1b;
+
+  /* ── Rangli fon USTIDAGI matn ─────────────────────────────────────────────
+     Nega alohida token, `text-white` emas: qorong'i rejimda asosiy rang
+     yorug'lashadi (#5eead4) va oq matn unda deyarli o'qilmaydi. Bu token
+     bo'lsa — rang o'zgarganda matn rangi ham o'zi moslashadi. */
+  --color-on-primary: #ffffff;
+  --color-on-danger: #ffffff;
+
+  /* ── Sirt ranglari ────────────────────────────────────────────────────── */
+  --color-surface: #ffffff;
+  --color-canvas: #faf9f7;
+
+  /* ── Radius ───────────────────────────────────────────────────────────────
+     Uchta qiymat yetarli: maydon/tugma (`md`), karta (`lg`), nishon (`full`). */
+  --radius-md: 0.625rem; /* 10px */
+  --radius-lg: 0.875rem; /* 14px */
+  --radius-xl: 1.125rem; /* 18px */
+
+  /* ── Soya ─────────────────────────────────────────────────────────────────
+     Iliq (kulrang emas, qo'ng'ir asosli) — sovuq ko'k soya iliq fonda
+     kir dog'ga o'xshab ko'rinadi. */
+  --shadow-card: 0 1px 2px rgb(28 26 23 / 0.04), 0 1px 3px rgb(28 26 23 / 0.06);
+  --shadow-card-hover: 0 4px 8px rgb(28 26 23 / 0.06), 0 8px 20px rgb(28 26 23 / 0.08);
+}
+
+/* ── Qorong'i rejim ──────────────────────────────────────────────────────────
+   ── Nega bu shu qadar qisqa ─────────────────────────────────────────────────
+   Yuqoridagi `@theme` bloki `inline` EMAS, ya'ni Tailwind `bg-primary` ni
+   `background-color: var(--color-primary)` qilib yozadi — qiymatni ichiga
+   ko'chirmaydi. Demak o'zgaruvchini qayta e'lon qilish yetarli: butun
+   ilova avtomatik moslashadi, birorta komponentga `dark:` yozish kerak
+   emas.
+
+   Aynan shuning uchun ilgari qorong'i rejim OLIB TASHLANGAN edi: o'sha
+   paytda ranglar sahifalarga qo'lda yozilgan edi (`bg-slate-900`) va
+   ularning yarmi moslashmasdi. Tokenlar paydo bo'lgach, bu ish bir blokka
+   tushdi.
+
+   ── Tanlov mantig'i ─────────────────────────────────────────────────────────
+   · Fon sof qora emas, ILIQ qora (#171614) — sof qora ustida oq matn
+     "chaqnaydi" va uzoq o'qishda ko'zni charchatadi.
+   · Neytral shkala TESKARI aylantirildi: `neutral-50` endi eng qorong'i,
+     `neutral-900` eng yorug'. Shunda `text-neutral-900` (sarlavha) va
+     `bg-neutral-50` (yumshoq fon) ikkala rejimda ham to'g'ri ishlaydi.
+   · Rangli fonlar (`*-soft`) qorong'ida to'yingan emas, sokin bo'ladi —
+     yorqin yashil fon qorong'i ekranda qichqiradi.
+   · Soya kuchaytirildi: qorong'i fonda yumshoq soya umuman ko'rinmaydi.
+
+   Foydalanuvchi tizimida qorong'i rejim yoqilgan bo'lsa avtomatik ishlaydi;
+   ilovada alohida almashtirgich YO'Q (qo'shimcha sozlama — qo'shimcha
+   chalkashlik, o'qituvchiga esa u kerak emas). */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --color-primary: #2dd4bf;
+    --color-primary-hover: #5eead4;
+    --color-primary-active: #99f6e4;
+    --color-primary-soft: #10302e;
+    --color-primary-border: #1f5f59;
+    --color-primary-ink: #7fe6d8;
+
+    /* Yorug' zumrad ustida oq matn o'qilmaydi — shuning uchun qora siyoh. */
+    --color-on-primary: #04211f;
+    --color-on-danger: #2b0d0d;
+
+    /* Teskari iliq shkala. */
+    --color-neutral-50: #201e1b;
+    --color-neutral-100: #2a2724;
+    --color-neutral-200: #383430;
+    --color-neutral-300: #4a4540;
+    --color-neutral-400: #6f675e;
+    --color-neutral-500: #948b80;
+    --color-neutral-600: #b3aaa0;
+    --color-neutral-700: #d0c8bf;
+    --color-neutral-800: #e7e1da;
+    --color-neutral-900: #f5f1ec;
+
+    --color-accent: #fbbf24;
+    --color-accent-soft: #2e2513;
+    --color-accent-border: #5c4a1d;
+    --color-accent-ink: #fcd34d;
+
+    --color-success: #4ade80;
+    --color-success-soft: #10281a;
+    --color-success-border: #1e5236;
+    --color-success-ink: #86efac;
+
+    --color-danger: #f87171;
+    --color-danger-hover: #fca5a5;
+    --color-danger-soft: #2e1414;
+    --color-danger-border: #5f2626;
+    --color-danger-ink: #fca5a5;
+
+    --color-surface: #211f1c;
+    --color-canvas: #171614;
+
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 3px rgb(0 0 0 / 0.25);
+    --shadow-card-hover: 0 4px 8px rgb(0 0 0 / 0.35), 0 8px 20px rgb(0 0 0 / 0.3);
+  }
+
+  /* Brauzerning o'z elementlari (skrollbar, forma maydoni strelkasi)
+     ham qorong'i bo'lsin — aks holda oq dog'lar qolib ketadi. */
+  :root {
+    color-scheme: dark;
   }
 }
 
+/* ── Asos ─────────────────────────────────────────────────────────────────── */
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /*
+    Geist — `app/layout.tsx` da `next/font` orqali yuklanadi.
+    Zaxira shriftlar tizimniki: Geist yuklanmaguncha matn "ko'rinmas"
+    bo'lib qolmasligi uchun.
+  */
+  font-family:
+    var(--font-geist-sans),
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-neutral-900);
+  background-color: var(--color-canvas);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/*
+  Fokus halqasi — BUTUN ilovada bir xil.
+
+  `focus-visible` (`focus` emas): sichqoncha bilan bosilganda halqa
+  ko'rinmaydi, klaviatura bilan o'tilganda ko'rinadi. Klaviaturada
+  ishlaydigan foydalanuvchi qayerda turganini bilishi shart.
+*/
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+/*
+  Harakatni kamaytirish so'ralgan bo'lsa — animatsiyalar o'chadi.
+  Bu shunchaki xushmuomalalik emas: ba'zi odamlarda harakat bosh
+  aylanishiga sabab bo'ladi.
+*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Chop etish ("PDF qilib saqlash") ───────────────────────────────────────
+   Brauzerning chop etish oynasi uchalasida ham "PDF qilib saqlash"
+   tanlovini beradi, ya'ni alohida PDF kutubxonasi kerak emas. Lekin
+   ekran uchun yasalgan sahifa qog'ozga to'g'ridan-to'g'ri tushmaydi:
+   tugmalar, sarlavha va yordam havolasi qog'ozda ma'nosiz.
+
+   Yashiriladigan bo'laklar `print:hidden` bilan belgilangan (Tailwind).
+   Bu yerda esa qolgan umumiy tuzatishlar. */
+@media print {
+  body {
+    background: #fff;
+    font-size: 12pt;
+  }
+
+  /* Soya va rangli fon siyoh yeydi, qog'ozda esa kulrang dog' bo'lib
+     chiqadi. Chegara qoladi — u tuzilishni ko'rsatadi. */
+  * {
+    box-shadow: none !important;
+  }
+
+  /* Sarlavha va bo'lim qog'ozning oxirida yolg'iz qolmasin. */
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  /* Dars bosqichi yoki slayd o'rtasidan bo'linmasin. */
+  li,
+  section {
+    break-inside: avoid;
+  }
+
+  /* Havolaning manzili qog'ozda kerak emas — sahifani chalkashtiradi. */
+  a[href]::after {
+    content: none !important;
+  }
 }

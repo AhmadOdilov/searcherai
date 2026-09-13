@@ -1,8 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-/** "Ko'proq yuklash" tugmasi — uchala ro'yxatda bir xil. */
+/** "Ko'proq ko'rsatish" tugmasi — uchala ro'yxatda bir xil. */
 export function LoadMoreButton({
   hasMore,
   loading,
@@ -19,22 +21,22 @@ export function LoadMoreButton({
   if (!hasMore && error === null) return null;
 
   return (
-    <div className="mt-4 text-center">
+    <div className="mt-6 text-center">
       {error !== null && (
-        <p role="alert" className="mb-2 text-sm text-red-600">
+        <p role="alert" className="mb-3 text-base text-danger">
           {error}
         </p>
       )}
 
       {hasMore && (
-        <button
-          type="button"
+        <Button
+          variant="secondary"
           onClick={onClick}
-          disabled={loading}
-          className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
+          loading={loading}
+          icon={loading ? undefined : <ChevronDown aria-hidden className="size-5" />}
         >
           {loading ? t("loading") : t("loadMore")}
-        </button>
+        </Button>
       )}
     </div>
   );

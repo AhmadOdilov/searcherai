@@ -38,7 +38,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">
+      <body className="flex min-h-full flex-col bg-canvas text-neutral-900">
         {/*
           Klient komponentlari `useTranslations()` ni shu provayder orqali
           oladi. Tarjimalar `i18n/request.ts` dan avtomatik uzatiladi.
