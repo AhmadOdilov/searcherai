@@ -1,0 +1,33 @@
+import { ok, parseJsonBody, withErrorHandling } from "@/lib/api/with-error-handling";
+import { requireUser } from "@/lib/auth/session";
+import { runSearch } from "@/lib/search/service";
+import { searchInputSchema } from "@/lib/validations/search";
+
+/**
+ * `POST /api/search` — o'qituvchining savoliga javob.
+ *
+ * ── Nega bu yerda fon rejimi YO'Q ─────────────────────────────────────────
+ * Qolgan uch modul `202 Accepted` qaytarib, ishni `after()` da davom
+ * ettiradi (ular 20-90 soniya davom etadi). Qidiruv 5-10 soniyada
+ * tugaydi va hech narsa saqlamaydi — javobni darhol berish ancha sodda
+ * va foydalanuvchi uchun ham tushunarliroq.
+ */
+export const POST = withErrorHandling(async (request) => {
+  // Kirish tekshiruvi: javob shaxsiy emas, lekin AI chaqiruvi pul turadi.
+  await requireUser();
+
+  const input = await parseJsonBody(request, searchInputSchema);
+  const result = await runSearch(input);
+
+  return ok({ answer: result.answer });
+});
+
+/**
+ * AI javobi 90 soniyagacha davom etishi mumkin (`AI_TIMEOUT_MS`), qayta
+ * urinish bilan esa undan ham uzoq.
+ *
+ * DIQQAT: bu qiymat LITERAL bo'lishi shart — Next.js segment
+ * sozlamalarini build paytida statik o'qiydi va import qilingan
+ * konstantani hisoblay olmaydi.
+ */
+export const maxDuration = 300;

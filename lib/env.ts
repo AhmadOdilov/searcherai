@@ -69,6 +69,19 @@ const envSchema = z.object({
    */
   CALENDAR_PLAN_AI_MODEL: z.string().default(""),
 
+  /**
+   * AI qidiruv uchun ALOHIDA model (ixtiyoriy).
+   *
+   * Nega kerak: qidiruv — yagona modul bo'lib, u ERKIN MATN yozadi
+   * (qolganlari qisqa, tayyor shakldagi maydonlarni to'ldiradi). Erkin
+   * matnda modelning o'zbek tili sifati darhol ko'rinadi va modellar bu
+   * jihatdan keskin farq qiladi: haqiqiy o'lchovda bir model "kislorod"
+   * o'rniga "oksid gaz" deb yozdi, boshqasi esa tushunarli jumla tuzdi.
+   *
+   * Bo'sh qoldirilsa `AI_MODEL` ishlatiladi.
+   */
+  SEARCH_AI_MODEL: z.string().default(""),
+
   // ── Fayl saqlagichi ──────────────────────────────────────────────────
   /**
    * Qaysi saqlagich ishlatilsin:
@@ -107,6 +120,8 @@ export type AppEnv = z.infer<typeof envSchema> & {
   aiBaseUrl: string;
   /** Kalendar reja uchun model — belgilanmasa `aiModel`. */
   calendarPlanAiModel: string;
+  /** Qidiruv uchun model — belgilanmasa `aiModel`. */
+  searchAiModel: string;
   /** Kalit mavjudmi — AI funksiyalarini yoqish/o'chirish uchun. */
   aiConfigured: boolean;
 };
@@ -173,6 +188,7 @@ export function getEnv(): AppEnv {
     ...data,
     aiModel: data.AI_MODEL || defaults.model,
     calendarPlanAiModel: data.CALENDAR_PLAN_AI_MODEL || data.AI_MODEL || defaults.model,
+    searchAiModel: data.SEARCH_AI_MODEL || data.AI_MODEL || defaults.model,
     // Oxiridagi "/" ni olib tashlaymiz — URL yig'ishda ikkilanish bo'lmasin.
     aiBaseUrl: (data.AI_BASE_URL || defaults.baseUrl).replace(/\/+$/, ""),
     aiConfigured: data.AI_API_KEY.length > 0,

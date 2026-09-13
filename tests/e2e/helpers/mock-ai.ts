@@ -23,6 +23,19 @@ export const MARKER_BAD_SHAPE = "XATO-FORMAT";
 /** Mavzuda shu so'z bo'lsa — umuman JSON bo'lmagan javob. */
 export const MARKER_NOT_JSON = "XATO-JSON";
 
+/**
+ * Mavzuda shu so'z bo'lsa — javob ataylab kechiktiriladi.
+ *
+ * Nega kerak: soxta AI odatda ~10ms da javob beradi va yozuv deyarli
+ * darhol READY bo'ladi. PENDING holatiga bog'liq xatti-harakatni
+ * (masalan «bir vaqtda ikki generatsiya» tekshiruvini) sinash uchun
+ * yozuv bir muddat PENDING turishi kerak.
+ */
+export const MARKER_SLOW = "SEKIN-SINOV";
+
+/** `MARKER_SLOW` bo'lganda javob shuncha kechikadi. */
+const SLOW_DELAY_MS = 3000;
+
 export interface MockAiServer {
   baseUrl: string;
   requestCount: number;
@@ -125,6 +138,35 @@ function isPresentationRequest(systemPrompt: string): boolean {
 /** So'rov kalendar reja uchunmi. */
 function isCalendarPlanRequest(systemPrompt: string): boolean {
   return systemPrompt.includes('"weekNumber"');
+}
+
+/**
+ * So'rov AI qidiruv uchunmi.
+ *
+ * DIQQAT: boshqa ikkitasidan farqli o'laroq, bu yerda TO'LIQ matn
+ * (system + user) tekshiriladi. Qidiruvda javob shakli tizim promptida
+ * emas, foydalanuvchi promptida beriladi.
+ */
+function isSearchRequest(combined: string): boolean {
+  return combined.includes('"classroomIdeas"');
+}
+
+/** Soxta qidiruv javobi — `searchAnswerSchema` ga mos. */
+function buildSearchAnswer(userPrompt: string) {
+  const question = userPrompt.slice(0, 60).replace(/\s+/g, " ");
+
+  return {
+    answer: `Soxta AI javobi. So'rov shunday boshlangan edi: ${question}. Bu matn sinov uchun yetarlicha uzun bo'lishi kerak.`,
+    keyPoints: [
+      "Birinchi asosiy nuqta",
+      "Ikkinchi asosiy nuqta",
+      "Uchinchi asosiy nuqta",
+    ],
+    classroomIdeas: [
+      "Doskaga oddiy sxema chizib, o'quvchilardan to'ldirishni so'rang.",
+      "Juftlikda ishlash uchun uchta qisqa savol bering.",
+    ],
+  };
 }
 
 /**
@@ -292,8 +334,11 @@ export async function startMockAiServer(): Promise<MockAiServer> {
         return;
       }
 
+      const slow = combined.includes(MARKER_SLOW);
+
       const presentation = isPresentationRequest(system);
       const calendarPlan = isCalendarPlanRequest(system);
+      const search = isSearchRequest(combined);
 
       let content: string;
       if (combined.includes(MARKER_BAD_SHAPE)) {
@@ -302,9 +347,13 @@ export async function startMockAiServer(): Promise<MockAiServer> {
           content = JSON.stringify({ title: "x", slides: [] });
         } else if (calendarPlan) {
           content = JSON.stringify({ title: "x", weeks: [] });
+        } else if (search) {
+          content = JSON.stringify({ answer: "qisqa", keyPoints: [] });
         } else {
           content = JSON.stringify({ objective: "yo'q", outcomes: [] });
         }
+      } else if (search) {
+        content = JSON.stringify(buildSearchAnswer(user));
       } else if (presentation) {
         content = JSON.stringify(buildPresentation(extractTopic(user)));
       } else if (calendarPlan) {
@@ -313,14 +362,28 @@ export async function startMockAiServer(): Promise<MockAiServer> {
         content = JSON.stringify(buildLessonPlan(extractDuration(user)));
       }
 
-      res.writeHead(200, { "content-type": "application/json" });
-      res.end(
-        JSON.stringify({
-          model: "mock-lesson-model",
-          choices: [{ message: { role: "assistant", content }, finish_reason: "stop" }],
-          usage: { prompt_tokens: 120, completion_tokens: 450 },
-        }),
-      );
+      /*
+        SEKIN-SINOV markeri: javob ataylab kechiktiriladi. Bu PENDING
+        yozuvni "hali tayyor emas" holatida ushlab turish uchun kerak —
+        aks holda soxta AI ~10 ms da javob beradi va ikkinchi so'rov
+        kelguncha yozuv allaqachon READY bo'lib qoladi.
+      */
+      const send = () => {
+        res.writeHead(200, { "content-type": "application/json" });
+        res.end(
+          JSON.stringify({
+            model: "mock-lesson-model",
+            choices: [{ message: { role: "assistant", content }, finish_reason: "stop" }],
+            usage: { prompt_tokens: 120, completion_tokens: 450 },
+          }),
+        );
+      };
+
+      if (slow) {
+        setTimeout(send, SLOW_DELAY_MS).unref();
+      } else {
+        send();
+      }
     });
   });
 
