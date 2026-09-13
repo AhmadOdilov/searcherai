@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { stripTags } from "@/lib/validations/sanitize";
 import {
   gradeSchema,
   languageSchema,
@@ -18,8 +19,13 @@ import {
 export const periodSchema = z
   .string()
   .trim()
-  .min(2, "errors.validation.periodRequired")
-  .max(100, "errors.validation.periodTooLong");
+  .transform(stripTags)
+  .pipe(
+    z
+      .string()
+      .min(2, "errors.validation.periodRequired")
+      .max(100, "errors.validation.periodTooLong"),
+  );
 
 /**
  * Davr uzunligi, haftada.

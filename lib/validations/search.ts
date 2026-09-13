@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { gradeSchema, languageSchema, subjectSchema } from "@/lib/validations/common";
+import { stripTags } from "@/lib/validations/sanitize";
 
 /**
  * AI qidiruv — kirish va javob sxemalari.
@@ -26,8 +27,13 @@ export const searchInputSchema = z.object({
   question: z
     .string()
     .trim()
-    .min(5, "errors.validation.questionTooShort")
-    .max(500, "errors.validation.questionTooLong"),
+    .transform(stripTags)
+    .pipe(
+      z
+        .string()
+        .min(5, "errors.validation.questionTooShort")
+        .max(500, "errors.validation.questionTooLong"),
+    ),
 
   /*
     Fan va sinf IXTIYORIY, lekin berilsa javob sezilarli aniqroq bo'ladi:

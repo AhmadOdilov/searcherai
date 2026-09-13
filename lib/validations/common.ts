@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { stripTags } from "@/lib/validations/sanitize";
 
 /**
  * Barcha modullar uchun umumiy zod bo'laklari.
@@ -29,26 +30,48 @@ export const LANGUAGE_NAMES: Record<LanguageCode, string> = {
   EN: "ingliz",
 };
 
+/*
+  ── Nega `transform` tekshiruvdan OLDIN ────────────────────────────────────
+  Tozalash uzunlikni o'zgartiradi: `<b>x</b>` — 9 belgi, tozalangach 1 ta.
+  Tekshiruv oldin bo'lsa, "<b></b>" kabi bo'm-bo'sh qiymat uzunlik
+  tekshiruvidan o'tib ketardi va bazaga bo'sh mavzu tushardi.
+*/
+
 /** Fan nomi — "Matematika", "Ona tili va adabiyot". */
 export const subjectSchema = z
   .string()
   .trim()
-  .min(2, "errors.validation.subjectTooShort")
-  .max(100, "errors.validation.subjectTooLong");
+  .transform(stripTags)
+  .pipe(
+    z
+      .string()
+      .min(2, "errors.validation.subjectTooShort")
+      .max(100, "errors.validation.subjectTooLong"),
+  );
 
 /** Sinf/daraja — "7-sinf", "1-kurs". Raqam emas, chunki shakllar xilma-xil. */
 export const gradeSchema = z
   .string()
   .trim()
-  .min(1, "errors.validation.gradeRequired")
-  .max(50, "errors.validation.gradeTooLong");
+  .transform(stripTags)
+  .pipe(
+    z
+      .string()
+      .min(1, "errors.validation.gradeRequired")
+      .max(50, "errors.validation.gradeTooLong"),
+  );
 
 /** Dars mavzusi. */
 export const topicSchema = z
   .string()
   .trim()
-  .min(3, "errors.validation.topicTooShort")
-  .max(300, "errors.validation.topicTooLong");
+  .transform(stripTags)
+  .pipe(
+    z
+      .string()
+      .min(3, "errors.validation.topicTooShort")
+      .max(300, "errors.validation.topicTooLong"),
+  );
 
 /** Dars davomiyligi, daqiqada. */
 export const durationMinutesSchema = z.coerce
