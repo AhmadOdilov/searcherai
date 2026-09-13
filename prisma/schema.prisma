@@ -146,6 +146,55 @@ model AiRequest {
   @@index([createdAt])
 }
 
+/// Davlat o'quv dasturidagi mavzu (bob) — rasmiy manbadan.
+///
+/// ── Nega bu jadval bor ────────────────────────────────────────────────────
+/// AI umumiy bilimidan dars ishlanmasi tuzganda, mavzular nomi va
+/// soatlar O'zbekiston dasturiga har doim ham mos kelmaydi. Bu jadval
+/// generatsiyaga RASMIY ma'lumotni qo'shadi: mavzu nomi, unga
+/// ajratilgan soat va kutilayotgan natijalar.
+///
+/// ── Nega darslik MATNI emas ───────────────────────────────────────────────
+/// Darsliklar mualliflik huquqi bilan himoyalangan (qonunning 8-moddasi
+/// ularni himoyadan chiqarmaydi). O'quv dasturi esa davlat organi
+/// tomonidan ochiq e'lon qilingan va mazmunan faktik ro'yxat.
+///
+/// ── Nega vektor qidiruv yo'q ──────────────────────────────────────────────
+/// Jadval kichik (bir fan-sinf uchun 5-20 qator) va qidiruv aniq
+/// filtrlar (fan + sinf) bilan cheklanadi. Bunday hajmda oddiy matn
+/// qidiruv ham aniq, ham tezroq; embedding qo'shimcha xizmat, xarajat
+/// va sekinlik keltirardi.
+model CurriculumTopic {
+  id String @id @default(cuid())
+
+  /// "Matematika", "Ona tili" — foydalanuvchi formada yozadigan shakl.
+  subject String
+  /// "5-sinf" — `gradeSchema` bilan bir xil shakl.
+  grade   String
+
+  /// Bob/bo'lim nomi — "ODDIY KASRLAR".
+  topicName String
+  /// Bobga kiradigan mavzular ro'yxati (dasturdagi matn).
+  description String
+
+  /// Dasturda ajratilgan soat. Ba'zi bo'limlarda ko'rsatilmaydi.
+  expectedHours Int?
+
+  /// Kutilayotgan natijalar — o'quvchi nima qila olishi kerak.
+  ///
+  /// Massiv sifatida saqlanadi: promptga ro'yxat bo'lib tushadi va
+  /// bo'laklarni alohida ishlatish mumkin.
+  expectedOutcomes String[]
+
+  /// Hujjat havolasi — ma'lumot qayerdan kelgani yo'qolmasin.
+  source String @default("")
+
+  createdAt DateTime @default(now())
+
+  /// Qidiruv har doim fan + sinf bo'yicha filtrlanadi.
+  @@index([subject, grade])
+}
+
 model LoginAttempt {
   id String @id @default(cuid())
 

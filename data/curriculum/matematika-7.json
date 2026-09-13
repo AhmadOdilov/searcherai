@@ -1,0 +1,172 @@
+{
+  "subject": "Matematika",
+  "grade": "7-sinf",
+  "source": "https://uzbmb.uz/upload/file/pdf/qabul2025/dasturlar/5.Matematika/6-7-sinf-Matematika%20fanidan%20o%CA%BBquv%20dastur.pdf",
+  "topics": [
+    {
+      "topicName": "ALGEBRAIK IFODALAR ( 10 soat, А2+: 2 soat)",
+      "description": "3-4-mavzular: Algebraik tengliklar. Formulalar. Amaliy-tajriba va sinov O‘quvchilarda shakllangan fanga oid kompetensiyalar elementlari: Matematika mazmuniga oid umumiy kompetensiya: A2 o‘rganilgan matematik tushunchalarni va qoidalarni tushuntirib bera oladi, tegishli misollar keltira oladi; ifodalarning yig‘indisi, ko‘paytmasini o‘z ichiga olgan formulalar bo‘yicha aniq va taqribiy arifmetik hisob-kitoblarni va ayniy almashtirishlarni bajara oladi. A2+ bobga doir murakkabroq masalalar yecha oladi, sodda tasdiqlarni isbotlay oladi. Kognitiv kompetensiya (shaxsning mustaqil ijodiy fikrlashi): A2 o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni notanish vaziyatlarda qo‘llay oladi va yangi bilimlar hosil qila oladi; o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni sodda kundalik vaziyatlarda qo‘llay oladi. A2+ o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni murakkabroq vaziyatlarda qo‘llay oladi, to‘plamlarga oid masalalarni yecha oladi.",
+      "expectedHours": 2,
+      "expectedOutcomes": [
+        "7-SINF ALGEBRA (102 soat, haftasiga 3 soat, A2+:34 soat, haftasiga 1 soat) O‘quvchilarda shakllantiriladigan tayanch kompetensiyalar elementlari: Kommunikativ kompetensiya: A2 matematikaga oid terminlarning ma’nosini tushunib, to‘g‘ri o‘qiy olish",
+        "so‘z va gaplarni bog‘lagan holda o‘z fikrini aniq va ravshan ifodalay olish",
+        "fikrni mantiqiy izchillikda ifodalay olish",
+        "matematikaga oid audiomatnni tinglab, video tasvirlarni ko‘rib tushunish, tegishli munosabat bildira olish",
+        "ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar ko‘rinishida berilgan statistik ma’lumotlarga asoslanib turli obyekt va hodisalarni taqqoslay olish",
+        "axborotlarni statistik ma’lumotlarning ko‘rinishlarning bir turidan (ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar) boshqa ko‘rinishga o‘tkaza olish",
+        "matematikaga xos bo‘lgan abstrakt va aniq mulohaza yurita olish",
+        "isbotlangan va isbotlanmagan tasdiqlarni farqlay olish, o‘z fikrini dalillay olish"
+      ]
+    },
+    {
+      "topicName": "BIR NOMA’LUMLI BIRINCHI DARAJALI TENGLAMALAR",
+      "description": "11-12-mavzular: Bir noma’lumli birinchi darajali tenglamalarni yechish. (2 soat) O‘quvchilarda shakllangan fanga oid kompetensiyalar elementlari: Matematika mazmuniga oid umumiy kompetensiya: A2 o‘rganilgan matematik tushunchalarni va qoidalarni tushuntirib bera oladi, tegishli misollar keltira oladi; chiziqli tenglamaga olib kelinadigan 5 ( 2 x − 1) + 2 = 10 x − 3 shakldagi tenglamalarni aniq hamda 21, 67 + 3, 67 x = 5,83 x − 58,88 shakldagi tenglamalarni hisoblash vositalari yordamida yecha oladi. A2+ bobga doir murakkabroq masalalar yecha oladi, sodda tasdiqlarni isbotlay oladi, graflarga oid masalalarni yecha oladi. Kognitiv kompetensiya (shaxsning mustaqil ijodiy fikrlashi): A2 o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni notanish vaziyatlarda qo‘llay oladi va yangi bilimlar hosil qila oladi; o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni sodda kundalik vaziyatlarda qo‘llay oladi. A2+ o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni murakkabroq vaziyatlarda qo‘llay oladi.",
+      "expectedHours": 10,
+      "expectedOutcomes": [
+        "7-SINF ALGEBRA (102 soat, haftasiga 3 soat, A2+:34 soat, haftasiga 1 soat) O‘quvchilarda shakllantiriladigan tayanch kompetensiyalar elementlari: Kommunikativ kompetensiya: A2 matematikaga oid terminlarning ma’nosini tushunib, to‘g‘ri o‘qiy olish",
+        "so‘z va gaplarni bog‘lagan holda o‘z fikrini aniq va ravshan ifodalay olish",
+        "fikrni mantiqiy izchillikda ifodalay olish",
+        "matematikaga oid audiomatnni tinglab, video tasvirlarni ko‘rib tushunish, tegishli munosabat bildira olish",
+        "ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar ko‘rinishida berilgan statistik ma’lumotlarga asoslanib turli obyekt va hodisalarni taqqoslay olish",
+        "axborotlarni statistik ma’lumotlarning ko‘rinishlarning bir turidan (ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar) boshqa ko‘rinishga o‘tkaza olish",
+        "matematikaga xos bo‘lgan abstrakt va aniq mulohaza yurita olish",
+        "isbotlangan va isbotlanmagan tasdiqlarni farqlay olish, o‘z fikrini dalillay olish"
+      ]
+    },
+    {
+      "topicName": "BIRHADLAR VA KO‘PHADLAR (23 soat, А2+:10 soat)",
+      "description": "17-19-mavzular: Natural ko‘rsatkichli daraja. Natural ko‘rsatkichli darajaning 20-21-mavzular: Birhad va uning standart shakli. Sonning standart shakli. (2 soat) А2+:Quyonlar soni haqidagi masala. Dirixle prinsipi va uning umumlashgani (2 soat). O‘quvchilarda shakllangan fanga oid kompetensiyalar elementlari: Matematika mazmuniga oid umumiy kompetensiya: A2 o‘rganilgan matematik tushunchalarni va qoidalarni tushuntirib bera oladi, tegishli misollar keltira oladi; 214 : 84 , (− 1)n  (− 1)n  (− 1)n  (− 1)n shakldagi sonli ifodani soddalashtirib, qiymatini topa oladi; 612  x = 613 kabi munosabatda noma’lum hadni topa oladi; o‘nli kasrni a 10k (bu yerda 1  a  10 , k -natural son) standart shaklda yoza oladi, standart shakldagi sonlar ustida amallar bajara oladi; butun koeffitsientli va sodda kasr koeffitsientli ko‘phadlar va ular ustida qo‘shish, ayirish va ko‘paytirish amallarni bajara oladi; ko‘phadni birhadga bo‘la oladi. Kognitiv kompetensiya (shaxsning mustaqil ijodiy fikrlashi): A2 o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni notanish vaziyatlarda qo‘llay oladi va yangi bilimlar hosil qila oladi; o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni sodda kundalik vaziyatlarda qo‘llay oladi. A2+ o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni murakkabroq vaziyatlarda qo‘llay oladi.",
+      "expectedHours": 3,
+      "expectedOutcomes": [
+        "7-SINF ALGEBRA (102 soat, haftasiga 3 soat, A2+:34 soat, haftasiga 1 soat) O‘quvchilarda shakllantiriladigan tayanch kompetensiyalar elementlari: Kommunikativ kompetensiya: A2 matematikaga oid terminlarning ma’nosini tushunib, to‘g‘ri o‘qiy olish",
+        "so‘z va gaplarni bog‘lagan holda o‘z fikrini aniq va ravshan ifodalay olish",
+        "fikrni mantiqiy izchillikda ifodalay olish",
+        "matematikaga oid audiomatnni tinglab, video tasvirlarni ko‘rib tushunish, tegishli munosabat bildira olish",
+        "ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar ko‘rinishida berilgan statistik ma’lumotlarga asoslanib turli obyekt va hodisalarni taqqoslay olish",
+        "axborotlarni statistik ma’lumotlarning ko‘rinishlarning bir turidan (ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar) boshqa ko‘rinishga o‘tkaza olish",
+        "matematikaga xos bo‘lgan abstrakt va aniq mulohaza yurita olish",
+        "isbotlangan va isbotlanmagan tasdiqlarni farqlay olish, o‘z fikrini dalillay olish"
+      ]
+    },
+    {
+      "topicName": "KO‘PHADNI KO‘PAYTUVCHILARGA AJRATISH",
+      "description": "48-49-mavzular: Ko‘phadni ko‘paytuvchilarga ajratishning bir necha usullarini А2+: Qisqa ko’paytirish formulalarini bo’linishga oid masalalarga qo’llanilishi O‘quvchilarda shakllangan fanga oid kompetensiyalar elementlari: Matematika mazmuniga oid umumiy kompetensiya: A2 o‘rganilgan matematik tushunchalarni va qoidalarni tushuntirib bera oladi, tegishli misollar keltira oladi; ( a + b )( c + d ) ko‘rinishdagi ko‘paytmani topa oladi, qisqa ko‘paytirish formulalarini keltirib chiqara oladi; a 2 + 7a − ab − 7b , b 2 − 49 , 8a 2 − 8b 2 kabi ko‘phadlarni chiziqli ko‘paytuvchilarga ajrata oladi; chiziqli va kvadratik ifodalarning yig‘indisi, ko‘paytmasi, kvadratlarini o‘z ichiga olgan formulalar bo‘yicha aniq va taqribiy arifmetik hisob-kitoblarni va ayniy almashtirishlarni bajara oladi; ifodalarda qisqa ko‘paytirish formulalarini aniqlay oladi va ularni qo‘llay oladi. A2+ bobga doir murakkabroq masalalar yecha oladi, sodda tasdiqlarni isbotlay oladi. Kognitiv kompetensiya (shaxsning mustaqil ijodiy fikrlashi): A2 o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni notanish vaziyatlarda qo‘llay oladi va yangi bilimlar hosil qila oladi; o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni sodda kundalik vaziyatlarda qo‘llay oladi. A2+ o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni murakkabroq vaziyatlarda qo‘llay oladi.",
+      "expectedHours": 18,
+      "expectedOutcomes": [
+        "7-SINF ALGEBRA (102 soat, haftasiga 3 soat, A2+:34 soat, haftasiga 1 soat) O‘quvchilarda shakllantiriladigan tayanch kompetensiyalar elementlari: Kommunikativ kompetensiya: A2 matematikaga oid terminlarning ma’nosini tushunib, to‘g‘ri o‘qiy olish",
+        "so‘z va gaplarni bog‘lagan holda o‘z fikrini aniq va ravshan ifodalay olish",
+        "fikrni mantiqiy izchillikda ifodalay olish",
+        "matematikaga oid audiomatnni tinglab, video tasvirlarni ko‘rib tushunish, tegishli munosabat bildira olish",
+        "ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar ko‘rinishida berilgan statistik ma’lumotlarga asoslanib turli obyekt va hodisalarni taqqoslay olish",
+        "axborotlarni statistik ma’lumotlarning ko‘rinishlarning bir turidan (ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar) boshqa ko‘rinishga o‘tkaza olish",
+        "matematikaga xos bo‘lgan abstrakt va aniq mulohaza yurita olish",
+        "isbotlangan va isbotlanmagan tasdiqlarni farqlay olish, o‘z fikrini dalillay olish"
+      ]
+    },
+    {
+      "topicName": "ALGEBRAIK KASRLAR (25 soat, А2+: 3 soat)",
+      "description": "66-70-mavzular: Algebraik kasrlar ustida birgalikda bajariladigan amallar. O‘quvchilarda shakllangan fanga oid kompetensiyalar elementlari: Matematika mazmuniga oid umumiy kompetensiya: A2 o‘rganilgan matematik tushunchalarni va qoidalarni tushuntirib bera oladi, tegishli misollar keltira oladi; algebraik kasrlar yig‘indisi, ayirmasi, ko‘paytmasi, bo‘linmasi, darajalarini o‘z ichiga olgan formulalar bo‘yicha aniq va taqribiy arifmetik hisob-kitoblarni va ayniy almashtirishlarni bajara oladi. A2+ bobga doir murakkabroq masalalar yecha oladi, sodda tasdiqlarni isbotlay oladi. Kognitiv kompetensiya (shaxsning mustaqil ijodiy fikrlashi): A2 o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni notanish vaziyatlarda qo‘llay oladi va yangi bilimlar hosil qila oladi; o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni sodda kundalik vaziyatlarda qo‘llay oladi. A2+ o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni murakkabroq vaziyatlarda qo‘llay oladi.",
+      "expectedHours": 3,
+      "expectedOutcomes": [
+        "7-SINF ALGEBRA (102 soat, haftasiga 3 soat, A2+:34 soat, haftasiga 1 soat) O‘quvchilarda shakllantiriladigan tayanch kompetensiyalar elementlari: Kommunikativ kompetensiya: A2 matematikaga oid terminlarning ma’nosini tushunib, to‘g‘ri o‘qiy olish",
+        "so‘z va gaplarni bog‘lagan holda o‘z fikrini aniq va ravshan ifodalay olish",
+        "fikrni mantiqiy izchillikda ifodalay olish",
+        "matematikaga oid audiomatnni tinglab, video tasvirlarni ko‘rib tushunish, tegishli munosabat bildira olish",
+        "ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar ko‘rinishida berilgan statistik ma’lumotlarga asoslanib turli obyekt va hodisalarni taqqoslay olish",
+        "axborotlarni statistik ma’lumotlarning ko‘rinishlarning bir turidan (ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar) boshqa ko‘rinishga o‘tkaza olish",
+        "matematikaga xos bo‘lgan abstrakt va aniq mulohaza yurita olish",
+        "isbotlangan va isbotlanmagan tasdiqlarni farqlay olish, o‘z fikrini dalillay olish"
+      ]
+    },
+    {
+      "topicName": "KOMBINATORIKA ELEMENTLARI ( 6 soat, А2+: 3 soat)",
+      "description": "73-74-mavzular: O‘rin almashtirish. Guruhlash. Amaliy-tajriba va sinov А2+:Кvantorlar. Qarama-qarshi mulohazani tuzish qoidasi. Теskarisidan O‘quvchilarda shakllangan fanga oid kompetensiyalar elementlari: Matematika mazmuniga oid umumiy kompetensiya: A2 sodda kombinator qoidalar (jamlash, ko‘paytirish, kiritish-chiqarish), o‘rin almashtirishlar, o‘rinlashtirishlar va takrorsiz guruhlashlar mohiyatini tushuntirib bera oladi, tegishli misollar keltira oladi. A2+ bobga doir murakkabroq masalalar yecha oladi, sodda tasdiqlarni isbotlay oladi. Kognitiv kompetensiya (shaxsning mustaqil ijodiy fikrlashi): A2 o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni notanish vaziyatlarda qo‘llay oladi va yangi bilimlar hosil qila oladi; o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni sodda kundalik vaziyatlarda qo‘llay oladi. A2+ o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni murakkabroq vaziyatlarda qo‘llay oladi. Mavzularni o‘rganish uchun -74 soat (A2+: 104 soat) Nazorat ishlari uchun - 9 soat (A2+: 11 soat) Xatolar ustida ishlash uchun - 9 soat (A2+: 11 soat) Takrorlash uchun - 10 soat (A2+: 10 soat) Jami: 102 soat (A2+: 136 soat) 7-SINF GEOMETRIYA O‘quvchilarda shakllantiriladigan tayanch kompetensiyalar elementlari: Kommunikativ kompetensiya: A2 matematikaga oid atamalarning ma’nosini tushunib, to‘g‘ri o‘qiy olish; so‘z va gaplarni bog‘lagan holda o‘z fikrini aniq va ravshan ifodalay olish; fikrni mantiqiy izchillikda ifodalay olish; matematikaga oid audiomatnni tinglab, videotasvirlarni ko‘rib tushunish, tegishli munosabat bildira olish; matematik matn ma’nosini qayta so‘zlab bera olish, matematik qoidalarni yoddan ifodali ayta olish. A2+ mavzudan kelib chiqqan holda ona tilida hamda birorta xorijiy tilda tushuntira olish, matematik muammoni hamkorlikda yechganda jamoada samarali ishlay olish. Axborotlar bilan ishlash kompetensiyasi: A2 tavsiya etilgan mediamanbalardan axborotni izlab topa olish, zarur bo‘lsa, uni boshqa ko‘rinishlarga (matn, jadval, sxema va h.k.) o‘tkaza olish; ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar ko‘rinishida berilgan statistik ma’lumotlarga asoslanib turli obyekt va hodisalarni taqqoslay olish; axborotlarni statistik ma’lumotlarning ko‘rinishlarning bir turidan (ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar) boshqa ko‘rinishga o‘tkaza olish; berilgan sonli ma’lumotlarning o‘rta arifmetigini, modani va medianani topa olish. A2+ mustaqil ravishda mediamanbadan axborotni izlab topa olish; matematik muammoni yechish uchun zarurlarini tanlay olish. O‘zini o‘zi rivojlantirish kompetensiyasi: A2 o‘quv masalasini (maqsadini) topa olish va ifodalay olish; matematikaga xos bo‘lgan abstrakt va aniq mulohaza yurita olish; isbotlangan va isbotlanmagan tasdiqlarni farqlay olish, o‘z fikrini dalillay olish; o‘quv masalasini qismlarga ajrata olish; masala yechimiga yaqinlashish darajasini baholay olish va zarur hollarda o‘z faoliyatini to‘g‘irlay qila olish; o‘quv faoliyat natijasini tahlil qila olish; yo‘l qo‘yilgan xato va noaniqliklarni topa olish, ularni tuzata olish; olingan natijalarni boshqalar foydalanishi uchun oson ko‘rinishda taqdim eta olish; qabul qilingan mezonlarga asosan o‘z faoliyati samarasiga baho bera olish, ko‘zlagan maqsadga intila olish; xususiy misollar va kuzatishlar tahlili asosida obyektlar va jarayonlar umumiy hossalarini va qonuniyatlarini topa olish, gipotezalarni taklif eta olish va uni tekshirish zarurligini tushuna olish; mavjud bilim va ko‘nikmalarni yangi, nostandart vaziyatga qo‘llay olish; real dunyodagi, ijtimoiy hayotdagi vaziyatlarga nisbatan o‘zining ijobiy estetik- emotsional munosabatini shakllantira olish; o‘qishga va yangi bilimlarni egallashga qiziqa olish. A2+ o‘z-o‘zini ruhiy, intellektual rivojlantira olish, matematikani mustaqil o‘qib- o‘rgana olish, o‘z xatti-harakatini muqobil baholay olish. Ijtimoiy faol fuqarolik kompetensiyasi: A2 turli nuqtai nazarlarni qabul qila olish va solishtira olish; guruhda ishlash faoliyatini tashkil etish; boshqalar fikrini tinglab, tushuna olish va uni tanqid qila olish. atrofdagilar bilan o‘zaro muloqot chog‘ida odob-axloq qoidalariga rioya qila olish; tushunmovchiliklar ro‘y bergan paytlarda o‘zining tutishi to‘g‘risida to‘g‘ri qaror qabul qila olish; guruhda ishlash paytida turli maxsus rollarni ijro eta olish. A2+ umumiy muammoni yechish uchun guruh faoliyatini loyihalashtira olish. 4. Milliy va umummadaniy kompetensiya: A2 matematika umumbashariy madaniyatning bir qismi ekanligini tushunish; zamonaviy dunyoda matematikaning o‘rnini tushunish; real hodisalarni matematik tilda ifodalash usullaridan foydalana olish va bu usullar samarali ekanligini tushunish; matematikaning har bir shaxsni mustaqillik, tanqidiy mulohaza yuritish kabi hislatlarni hosil qilish nuqtai nazaridan katta ahamiyatga ega ekanligini tushunish; zaminimizda yashab o‘tgan buyuk allomalarimizning matematikaga qo‘shgan hissalarini tasvirlash; matematik faktlarni isbotlashga qo‘yilayotgan talablarni tushunish. A2+ milliy merosni qadrlash, tabiiy-moddiy resurslardan oqilona foydalanish va asrab-avaylashda matematikaning o‘rni beqiyos ekanligini tushuntish. Matematik savodxonlik, fan va texnika yangiliklaridan xabardor bo‘lish hamda foydalanish kompetensiyasi: A2 aniq hisob-kitoblarga asoslangan holda shaxsiy, oilaviy, kasbiy rejalarni tuza olish; kundalik faoliyatda turli diagramma, chizma va modellarni o‘qiy olish; o‘rganilayotgan formulalar bo‘yicha murakkab bo‘lmagan hisoblashlarda, tenglama va tengsizliklarni yechishda, yassi va fazoviy geometrik figuralarni tasvirlashda tayyor kompyuter dasturlardan foydalana olish. A2+ ijtimoiy-iqtisodiy munosabatlar, kundalik hayotda matematik bilim va ko‘nikmalarni qo‘llay olish; matematik masalalarni yechish kompyuter dasturlaridan foydalana olish.",
+      "expectedHours": 2,
+      "expectedOutcomes": [
+        "7-SINF ALGEBRA (102 soat, haftasiga 3 soat, A2+:34 soat, haftasiga 1 soat) O‘quvchilarda shakllantiriladigan tayanch kompetensiyalar elementlari: Kommunikativ kompetensiya: A2 matematikaga oid terminlarning ma’nosini tushunib, to‘g‘ri o‘qiy olish",
+        "so‘z va gaplarni bog‘lagan holda o‘z fikrini aniq va ravshan ifodalay olish",
+        "fikrni mantiqiy izchillikda ifodalay olish",
+        "matematikaga oid audiomatnni tinglab, video tasvirlarni ko‘rib tushunish, tegishli munosabat bildira olish",
+        "ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar ko‘rinishida berilgan statistik ma’lumotlarga asoslanib turli obyekt va hodisalarni taqqoslay olish",
+        "axborotlarni statistik ma’lumotlarning ko‘rinishlarning bir turidan (ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar) boshqa ko‘rinishga o‘tkaza olish",
+        "matematikaga xos bo‘lgan abstrakt va aniq mulohaza yurita olish",
+        "isbotlangan va isbotlanmagan tasdiqlarni farqlay olish, o‘z fikrini dalillay olish"
+      ]
+    },
+    {
+      "topicName": "GEOMETRIYANING BOSHLANG‘ICH TUSHUNCHALARI",
+      "description": "4-5-mavzular: Burchak. Burchaklarni taqqoslash va o‘lchash. Transportir. (2 soat) А2+:Кеsmalarni va burchaklarni o’lchashga doir murakkabroq masalalar (4 соат). O‘quvchilarda shakllangan fanga oid kompetensiyalar elementlari: Matematika mazmuniga oid umumiy kompetensiya: A2 o‘rganilgan geometrik faktlarni tushuntirib bera oladi, tegishli misollar keltira oladi; perpendikulyar to‘g‘ri chiziqlarni, burchaklarning asosiy turlarini (masalan, to‘g‘ri, o‘tkir, o‘tmas burchaklar) tassavur qila oladi, solishtira oladi va tasvirlay oladi; berilgan burchak kattaligini, kesma uzunligini va masofani o‘lchay oladi va chamalab baholay oladi, kesma va burchaklarning kattaligi bo‘yicha solishtira oladi va tartiblay oladi. A2+ bobga doir murakkabroq masalalar yecha oladi, sodda tasdiqlarni isbotlay oladi. Kognitiv kompetensiya (shaxsning mustaqil ijodiy fikrlashi): A2 o‘rganilgan geometrik tushunchalar, faktlar va metodlarini notanish vaziyatlarda qo‘llay oladi va yangi bilimlar hosil qila oladi; o‘rganilgan geometrik tushunchalar, faktlar va metodlarini sodda kundalik vaziyatlarda qo‘llay oladi. A2+ o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni murakkabroq vaziyatlarda qo‘llay oladi.",
+      "expectedHours": 16,
+      "expectedOutcomes": [
+        "7-SINF ALGEBRA (102 soat, haftasiga 3 soat, A2+:34 soat, haftasiga 1 soat) O‘quvchilarda shakllantiriladigan tayanch kompetensiyalar elementlari: Kommunikativ kompetensiya: A2 matematikaga oid terminlarning ma’nosini tushunib, to‘g‘ri o‘qiy olish",
+        "so‘z va gaplarni bog‘lagan holda o‘z fikrini aniq va ravshan ifodalay olish",
+        "fikrni mantiqiy izchillikda ifodalay olish",
+        "matematikaga oid audiomatnni tinglab, video tasvirlarni ko‘rib tushunish, tegishli munosabat bildira olish",
+        "ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar ko‘rinishida berilgan statistik ma’lumotlarga asoslanib turli obyekt va hodisalarni taqqoslay olish",
+        "axborotlarni statistik ma’lumotlarning ko‘rinishlarning bir turidan (ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar) boshqa ko‘rinishga o‘tkaza olish",
+        "matematikaga xos bo‘lgan abstrakt va aniq mulohaza yurita olish",
+        "isbotlangan va isbotlanmagan tasdiqlarni farqlay olish, o‘z fikrini dalillay olish"
+      ]
+    },
+    {
+      "topicName": "UCHBURCHAKLAR (12 soat, А2+:10 soat)",
+      "description": "13-14-mavzular: Uchburchaklar. Uchburchaklarning turlari va elementlari (2 soat) 19-21-mavzular: Uchburchaklar tengligining ikkinchi va uchinchi alomatlari. (3 soat) А2+: Uchburchak burchaklarining yig’indisiga doir murakkabroq masalalar O‘quvchilarda shakllangan fanga oid kompetensiyalar elementlari: Matematika mazmuniga oid umumiy kompetensiya: A2 o‘rganilgan geometrik faktlarni tushuntirib bera oladi, tegishli misollar keltira oladi; uchburchak va uning turlarini, siniq chiziq, to‘g‘ri to‘rtburchak va kvadrat, romb, parallelogramm, ko‘pburchaklar va uning elementlarini tasavvur qila oladi, taniy oladi va nomlay oladi; kesma va siniq chiziq uzunligini o‘lchay oladi va chamalab baholay oladi; siniq chiziqni va turli uchburchaklarni qog‘oz, sim, plastilin va h.k.lar yordamida modellashtira oladi; uchburchakni bir-biri bilan solishtira oladi; o‘zaro teng bo‘lgan uchburchaklar aniqlay oladi, ularning mos geometrik kattaliklar orasidagi munosabatlarni o‘rnata oladi. A2+ bobga doir murakkabroq masalalar yecha oladi, sodda tasdiqlarni isbotlay oladi. Kognitiv kompetensiya (shaxsning mustaqil ijodiy fikrlashi): A2 o‘rganilgan geometrik tushunchalar, faktlar va metodlarini notanish vaziyatlarda qo‘llay oladi va yangi bilimlar hosil qila oladi; o‘rganilgan geometrik tushunchalar, faktlar va metodlarini sodda kundalik vaziyatlarda qo‘llay oladi. A2+ o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni murakkabroq vaziyatlarda qo‘llay oladi.",
+      "expectedHours": null,
+      "expectedOutcomes": [
+        "7-SINF ALGEBRA (102 soat, haftasiga 3 soat, A2+:34 soat, haftasiga 1 soat) O‘quvchilarda shakllantiriladigan tayanch kompetensiyalar elementlari: Kommunikativ kompetensiya: A2 matematikaga oid terminlarning ma’nosini tushunib, to‘g‘ri o‘qiy olish",
+        "so‘z va gaplarni bog‘lagan holda o‘z fikrini aniq va ravshan ifodalay olish",
+        "fikrni mantiqiy izchillikda ifodalay olish",
+        "matematikaga oid audiomatnni tinglab, video tasvirlarni ko‘rib tushunish, tegishli munosabat bildira olish",
+        "ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar ko‘rinishida berilgan statistik ma’lumotlarga asoslanib turli obyekt va hodisalarni taqqoslay olish",
+        "axborotlarni statistik ma’lumotlarning ko‘rinishlarning bir turidan (ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar) boshqa ko‘rinishga o‘tkaza olish",
+        "matematikaga xos bo‘lgan abstrakt va aniq mulohaza yurita olish",
+        "isbotlangan va isbotlanmagan tasdiqlarni farqlay olish, o‘z fikrini dalillay olish"
+      ]
+    },
+    {
+      "topicName": "PARALLEL TO‘G‘RI CHIZIQLAR (10 soat, А2+4 soat)",
+      "description": "23-25-mavzular: Parallel to‘g‘ri chiziqlar. Ikki to‘g‘ri chiziqning parallellik 26-27-mavzular: Ikki parallel to‘g‘ri chiziq va kesuvchi hosil qilgan burchaklar. O‘quvchilarda shakllangan fanga oid kompetensiyalar elementlari: Matematika mazmuniga oid umumiy kompetensiya: A2 o‘rganilgan geometrik faktlarni tushuntirib bera oladi, tegishli misollar keltira oladi; parallel to‘g‘ri chiziqlarni, kesuvchini, hosil bo‘lgan burchaklarni tassavur qila oladi va tasvirlay oladi; parallel to‘g‘ri chiziqlarga oid geometrik masalalarni yecha oladi. A2+ bobga doir murakkabroq masalalar yecha oladi, sodda tasdiqlarni isbotlay oladi. Kognitiv kompetensiya (shaxsning mustaqil ijodiy fikrlashi): A2 o‘rganilgan geometrik tushunchalar, faktlar va metodlarini notanish vaziyatlarda qo‘llay oladi va yangi bilimlar hosil qila oladi; o‘rganilgan geometrik tushunchalar, faktlar va metodlarini sodda kundalik vaziyatlarda qo‘llay oladi. A2+ o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni murakkabroq vaziyatlarda qo‘llay oladi.",
+      "expectedHours": 4,
+      "expectedOutcomes": [
+        "7-SINF ALGEBRA (102 soat, haftasiga 3 soat, A2+:34 soat, haftasiga 1 soat) O‘quvchilarda shakllantiriladigan tayanch kompetensiyalar elementlari: Kommunikativ kompetensiya: A2 matematikaga oid terminlarning ma’nosini tushunib, to‘g‘ri o‘qiy olish",
+        "so‘z va gaplarni bog‘lagan holda o‘z fikrini aniq va ravshan ifodalay olish",
+        "fikrni mantiqiy izchillikda ifodalay olish",
+        "matematikaga oid audiomatnni tinglab, video tasvirlarni ko‘rib tushunish, tegishli munosabat bildira olish",
+        "ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar ko‘rinishida berilgan statistik ma’lumotlarga asoslanib turli obyekt va hodisalarni taqqoslay olish",
+        "axborotlarni statistik ma’lumotlarning ko‘rinishlarning bir turidan (ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar) boshqa ko‘rinishga o‘tkaza olish",
+        "matematikaga xos bo‘lgan abstrakt va aniq mulohaza yurita olish",
+        "isbotlangan va isbotlanmagan tasdiqlarni farqlay olish, o‘z fikrini dalillay olish"
+      ]
+    },
+    {
+      "topicName": "UCHBURCHAKNING TOMONLARI VA BURCHAKLARI",
+      "description": "30-32-mavzular: Uchburchak ichki burchaklarining yig‘indisi. Uchburchak 37-39-mavzular: Uchburchakning tomonlari va burchaklari orasidagi O‘quvchilarda shakllangan fanga oid kompetensiyalar elementlari: Matematika mazmuniga oid umumiy kompetensiya: A2 o‘rganilgan geometrik faktlarni tushuntirib bera oladi, tegishli misollar keltira oladi; uchburchak burchaklari yig‘indisi haqidagi teoremani va tashki burchak xossasini, bissektrisa xossalarini masala yechishda qo‘llay oladi; uchburchak elementlarini bir-biri bilan solishtira oladi va tegishli xulosalar keltira oladi; uchta kesmadan qachon uchburchak yasash mumkinligini aniqlay oladi; o‘zaro teng bo‘lgan to‘g‘ri burchakli uchburchaklarni aniqlay oladi, ularning mos elementlari orasidagi munosabatlarni o‘rnata oladi. A2+ bobga doir murakkabroq masalalar yecha oladi, sodda tasdiqlarni isbotlay oladi. Kognitiv kompetensiya (shaxsning mustaqil ijodiy fikrlashi): A2 o‘rganilgan geometrik tushunchalar, faktlar va metodlarini notanish vaziyatlarda qo‘llay oladi va yangi bilimlar hosil qila oladi; o‘rganilgan geometrik tushunchalar, faktlar va metodlarini sodda kundalik vaziyatlarda qo‘llay oladi. A2+ o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni murakkabroq vaziyatlarda qo‘llay oladi.",
+      "expectedHours": 14,
+      "expectedOutcomes": [
+        "7-SINF ALGEBRA (102 soat, haftasiga 3 soat, A2+:34 soat, haftasiga 1 soat) O‘quvchilarda shakllantiriladigan tayanch kompetensiyalar elementlari: Kommunikativ kompetensiya: A2 matematikaga oid terminlarning ma’nosini tushunib, to‘g‘ri o‘qiy olish",
+        "so‘z va gaplarni bog‘lagan holda o‘z fikrini aniq va ravshan ifodalay olish",
+        "fikrni mantiqiy izchillikda ifodalay olish",
+        "matematikaga oid audiomatnni tinglab, video tasvirlarni ko‘rib tushunish, tegishli munosabat bildira olish",
+        "ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar ko‘rinishida berilgan statistik ma’lumotlarga asoslanib turli obyekt va hodisalarni taqqoslay olish",
+        "axborotlarni statistik ma’lumotlarning ko‘rinishlarning bir turidan (ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar) boshqa ko‘rinishga o‘tkaza olish",
+        "matematikaga xos bo‘lgan abstrakt va aniq mulohaza yurita olish",
+        "isbotlangan va isbotlanmagan tasdiqlarni farqlay olish, o‘z fikrini dalillay olish"
+      ]
+    },
+    {
+      "topicName": "YASASHGA DOIR MASALALAR",
+      "description": "43-46-mavzular: Sirkul va chizg‘ich yordamida yasashga doir masalalar. (4 soat) O‘quvchilarda shakllangan fanga oid kompetensiyalar elementlari: Matematika mazmuniga oid umumiy kompetensiya: A2 o‘rganilgan geometrik faktlarni tushuntirib bera oladi, tegishli misollar keltira oladi; berilgan burchakka teng burchakni, burchak bissektrissasini, berilgan to‘g‘ri chiziqqa perpendikulyar to‘g‘ri chiziqni, kesmani teng ikkiga bo‘lish, uchburchakning berilgan uch tomoniga ko‘ra yasay oladi. A2+ bobga doir murakkabroq masalalar yecha oladi, sodda tasdiqlarni isbotlay oladi. Kognitiv kompetensiya (shaxsning mustaqil ijodiy fikrlashi): A2 geometrik yasash algoritmlarini notanish vaziyatlarda qo‘llay oladi va yangi bilimlar hosil qila oladi; o‘rganilgan geometrik tushunchalar, faktlar va metodlarini sodda kundalik vaziyatlarda qo‘llay oladi. A2+ o‘rganilgan matematik tushunchalar, faktlar va algoritmlarni murakkabroq vaziyatlarda qo‘llay oladi.",
+      "expectedHours": 7,
+      "expectedOutcomes": [
+        "7-SINF ALGEBRA (102 soat, haftasiga 3 soat, A2+:34 soat, haftasiga 1 soat) O‘quvchilarda shakllantiriladigan tayanch kompetensiyalar elementlari: Kommunikativ kompetensiya: A2 matematikaga oid terminlarning ma’nosini tushunib, to‘g‘ri o‘qiy olish",
+        "so‘z va gaplarni bog‘lagan holda o‘z fikrini aniq va ravshan ifodalay olish",
+        "fikrni mantiqiy izchillikda ifodalay olish",
+        "matematikaga oid audiomatnni tinglab, video tasvirlarni ko‘rib tushunish, tegishli munosabat bildira olish",
+        "ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar ko‘rinishida berilgan statistik ma’lumotlarga asoslanib turli obyekt va hodisalarni taqqoslay olish",
+        "axborotlarni statistik ma’lumotlarning ko‘rinishlarning bir turidan (ustunli, chiziqli va doiraviy diagrammalar, jadvallar, chizmalar) boshqa ko‘rinishga o‘tkaza olish",
+        "matematikaga xos bo‘lgan abstrakt va aniq mulohaza yurita olish",
+        "isbotlangan va isbotlanmagan tasdiqlarni farqlay olish, o‘z fikrini dalillay olish"
+      ]
+    }
+  ]
+}

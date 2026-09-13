@@ -4,7 +4,12 @@ import { generateJson } from "@/lib/ai/provider";
 import { AiError } from "@/lib/ai/types";
 import { apiErrors } from "@/lib/api/errors";
 import { markStaleAsFailed } from "@/lib/generation/stale";
-import { buildSystemPrompt, buildUserPrompt } from "@/lib/lesson-plans/prompt";
+import {
+  buildSystemPrompt,
+  buildUserPrompt,
+  formatCurriculumContext,
+} from "@/lib/lesson-plans/prompt";
+import { findCurriculumTopics } from "@/lib/curriculum/service";
 import {
   lessonPlanContentSchemaFor,
   type LessonPlanInput,
@@ -169,14 +174,39 @@ export async function regenerateLessonPlan(
   };
 }
 
+/**
+ * Rasmiy o'quv dasturidan kontekst topadi.
+ *
+ * ── Xato bo'lsa JIM o'tiladi ──────────────────────────────────────────────
+ * Bu qidiruv natijani YAXSHILAYDI, lekin u ishlashi SHART emas: fan-sinf
+ * hali qo'shilmagan bo'lishi mumkin yoki baza so'rovi yiqilishi mumkin.
+ * Ikkala holatda ham generatsiya odatdagidek davom etishi kerak —
+ * o'qituvchi "dastur topilmadi" degan xato ko'rmasligi lozim.
+ */
+async function curriculumContextFor(input: LessonPlanInput): Promise<string> {
+  try {
+    const topics = await findCurriculumTopics({
+      subject: input.subject,
+      grade: input.grade,
+      topic: input.topic,
+    });
+    return formatCurriculumContext(input.language, topics);
+  } catch (error) {
+    console.warn("[lesson-plan] o'quv dasturini qidirib bo'lmadi:", error);
+    return "";
+  }
+}
+
 /** AI chaqiruvi va natijani saqlash — ikki oqim uchun umumiy qism. */
 async function runGeneration(id: string, input: LessonPlanInput): Promise<void> {
   try {
+    const curriculumContext = await curriculumContextFor(input);
+
     const { data, meta } = await generateJson({
       // Vaqt yig'indisi tekshiruvi shu darsning davomiyligiga bog'liq.
       schema: lessonPlanContentSchemaFor(input.durationMinutes),
       systemPrompt: buildSystemPrompt(input.language),
-      prompt: buildUserPrompt(input),
+      prompt: buildUserPrompt({ ...input, curriculumContext }),
     });
 
     await prisma.lessonPlan.update({

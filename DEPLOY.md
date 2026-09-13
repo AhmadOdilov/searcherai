@@ -212,6 +212,42 @@ faylni yuklab olish. Ayniqsa **yuklab olishni telefonda** sinab ko'ring.
 
 ---
 
+## O'quv dasturi ma'lumotini yuklash
+
+Ilova dars ishlanmasi va kalendar reja tuzishda **rasmiy o'quv
+dasturidan** foydalanadi. Bu ma'lumot migratsiyalar bilan birga
+KELMAYDI — uni bir marta alohida yuklash kerak.
+
+Mahalliy mashinada SQL yasang:
+
+```bash
+npm run db:seed-curriculum -- --sql > dastur.sql
+```
+
+Serverga ko'chirib, bazaga quying:
+
+```bash
+scp dastur.sql root@<VPS-IP>:/opt/searcher-ai/
+cd /opt/searcher-ai
+docker compose -f docker-compose.prod.yml exec -T postgres \
+  psql -U searcher -d searcher_ai < dastur.sql
+```
+
+Tekshirish:
+
+```bash
+docker compose -f docker-compose.prod.yml exec postgres \
+  psql -U searcher -d searcher_ai -c 'SELECT subject, grade, count(*) FROM "CurriculumTopic" GROUP BY 1,2 ORDER BY 1,2;'
+```
+
+> **Yuklanmasa ham ilova ishlaydi** — dastur topilmaganda generatsiya
+> AI'ning umumiy bilimidan foydalanadi. Lekin kalendar reja sezilarli
+> darajada yomonroq chiqadi (mavzular tartibi dasturga mos kelmaydi).
+
+Qayta yuklash xavfsiz: SQL avval o'sha fan-sinf qatorlarini o'chiradi.
+
+---
+
 ## Keyingi yangilanishlar
 
 ```bash

@@ -6,7 +6,12 @@ import { apiErrors } from "@/lib/api/errors";
 import { markStaleAsFailed } from "@/lib/generation/stale";
 import { getEnv } from "@/lib/env";
 import { generateXlsx } from "@/lib/xlsx/generate";
-import { buildSystemPrompt, buildUserPrompt } from "@/lib/calendar-plans/prompt";
+import {
+  buildSystemPrompt,
+  buildUserPrompt,
+  formatCurriculumContext,
+} from "@/lib/calendar-plans/prompt";
+import { listCurriculumTopics } from "@/lib/curriculum/service";
 import { deleteFile, saveFile } from "@/lib/storage/files";
 import {
   calendarPlanContentSchemaFor,
@@ -174,13 +179,39 @@ export async function regenerateCalendarPlan(
   };
 }
 
+/**
+ * Rasmiy dasturning BUTUN ro'yxatini oladi.
+ *
+ * ── Nega `find` emas, `list` ──────────────────────────────────────────────
+ * Dars ishlanmasi bitta mavzu haqida — unga faqat mos bo'lim kerak.
+ * Kalendar reja esa butun chorak/yil uchun ketma-ketlik tuzadi, ya'ni
+ * unga dasturning HAMMA bo'limi kerak: qaysi biri qaysidan keyin
+ * kelishini faqat to'liq ro'yxatdan bilish mumkin.
+ *
+ * Xato bo'lsa jim o'tiladi — bu yaxshilash, majburiy qadam emas.
+ */
+async function curriculumContextFor(input: CalendarPlanInput): Promise<string> {
+  try {
+    const topics = await listCurriculumTopics({
+      subject: input.subject,
+      grade: input.grade,
+    });
+    return formatCurriculumContext(input.language, topics);
+  } catch (error) {
+    console.warn("[calendar-plan] o'quv dasturini o'qib bo'lmadi:", error);
+    return "";
+  }
+}
+
 /** AI chaqiruvi, .xlsx yasash va saqlash — ikki oqim uchun umumiy qism. */
 async function runGeneration(id: string, input: CalendarPlanInput): Promise<void> {
   try {
+    const curriculumContext = await curriculumContextFor(input);
+
     const { data, meta } = await generateJson({
       schema: calendarPlanContentSchemaFor(input),
       systemPrompt: buildSystemPrompt(input.language),
-      prompt: buildUserPrompt(input),
+      prompt: buildUserPrompt({ ...input, curriculumContext }),
       // Uzun javob uchun kengaytirilgan chegara — yuqoridagi izohga qara.
       maxTokens: estimateMaxTokens(input.weeks),
       /*

@@ -45,6 +45,19 @@ export const lessonPlanInputSchema = z.object({
    * promptni cheksiz shishirib yubormasligi uchun.
    */
   sourceMaterial: z.string().trim().max(4000).optional(),
+
+  /**
+   * Rasmiy o'quv dasturidan olingan kontekst.
+   *
+   * DIQQAT: bu maydon foydalanuvchidan KELMAYDI — uni servis qatlami
+   * bazadan topib qo'yadi. Sxemada turishining sababi: prompt quruvchi
+   * funksiya bitta `input` obyektini oladi va uni ikkiga bo'lish
+   * chaqiruvchilarni murakkablashtirardi.
+   *
+   * Forma orqali yuborilsa ham zarar yo'q — u shunchaki qayta
+   * yoziladi (`lib/lesson-plans/service.ts` ga qarang).
+   */
+  curriculumContext: z.string().trim().max(6000).optional(),
 });
 
 export type LessonPlanInput = z.infer<typeof lessonPlanInputSchema>;

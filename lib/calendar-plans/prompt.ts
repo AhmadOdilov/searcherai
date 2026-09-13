@@ -159,6 +159,53 @@ export function buildSystemPrompt(language: LanguageCode): string {
   return SYSTEM_PROMPTS[language];
 }
 
+/**
+ * Rasmiy dastur bloki — kalendar reja uchun.
+ *
+ * ── Nega bu yerda foyda ENG katta ────────────────────────────────────────
+ * Kalendar reja — aynan mavzular ketma-ketligi va soatlar taqsimoti.
+ * Ya'ni u o'quv dasturi bilan bir xil narsani tavsiflaydi. AI o'z
+ * bilimidan tuzsa, mavzular tartibi va nomlari O'zbekiston dasturidan
+ * farq qiladi va o'qituvchi rejani qo'lda qayta yozishga majbur
+ * bo'ladi. Dastur berilsa — u shunchaki uni haftalarga taqsimlaydi.
+ */
+const CURRICULUM_LABELS: Record<LanguageCode, string> = {
+  UZ: `RASMIY O'QUV DASTURI (O'zbekiston Respublikasi umumiy o'rta ta'lim dasturidan):
+
+Rejani AYNAN shu bo'limlar va ularning tartibida tuz. Bo'lim nomlarini o'zgartirma. Har bir bo'limga dasturda ajratilgan soatga MOS ravishda hafta ajrat; agar davr qisqa bo'lsa, oxirgi bo'limlarni qisqartir yoki tashlab ket, lekin tartibni buzma.`,
+  RU: `ОФИЦИАЛЬНАЯ УЧЕБНАЯ ПРОГРАММА (из программы общего среднего образования Республики Узбекистан):
+
+Составьте план ИМЕННО по этим разделам и в их порядке. Не меняйте названия разделов. Выделите недели ПРОПОРЦИОНАЛЬНО часам, указанным в программе; если период короче, сократите или опустите последние разделы, но не нарушайте порядок.`,
+  EN: `OFFICIAL CURRICULUM (from the general secondary education programme of the Republic of Uzbekistan):
+
+Build the plan from EXACTLY these sections, in this order. Do not rename sections. Allocate weeks in proportion to the hours given; if the period is shorter, shorten or drop the last sections, but keep the order.`,
+};
+
+/** Dastur bo'limlarini kalendar reja promptiga tushadigan matnga aylantiradi. */
+export function formatCurriculumContext(
+  language: LanguageCode,
+  topics: Array<{ topicName: string; expectedHours: number | null; description: string }>,
+): string {
+  if (topics.length === 0) return "";
+
+  const blocks = topics.map((topic, index) => {
+    const hours = topic.expectedHours === null ? "" : ` (${topic.expectedHours} soat)`;
+    /*
+      Tavsif QISQARTIRILADI: kalendar rejada 11 ta bo'limning to'liq
+      matni promptni 10 000 belgidan oshirib yuborardi va model asosiy
+      topshiriqni (haftalarga taqsimlash) yo'qotardi.
+    */
+    const summary =
+      topic.description.length > 300
+        ? `${topic.description.slice(0, 300)}…`
+        : topic.description;
+
+    return `${index + 1}. ${topic.topicName}${hours}${summary === "" ? "" : `\n   ${summary}`}`;
+  });
+
+  return `${CURRICULUM_LABELS[language]}\n\n${blocks.join("\n")}`;
+}
+
 export function buildUserPrompt(input: CalendarPlanInput): string {
   const labels = LABELS[input.language];
   const ranges = buildWeekRanges(input.startDate, input.weeks);
@@ -182,6 +229,12 @@ export function buildUserPrompt(input: CalendarPlanInput): string {
   }
 
   lines.push("", labels.reminder);
+
+  // Rasmiy dastur — eng OXIRIDA: model oxirgi ko'rsatmaga kuchliroq
+  // amal qiladi, bu esa reja tuzishdagi asosiy manba bo'lishi kerak.
+  if (input.curriculumContext !== undefined && input.curriculumContext !== "") {
+    lines.push("", input.curriculumContext);
+  }
 
   return lines.join("\n");
 }

@@ -75,6 +75,15 @@ export const calendarPlanInputSchema = z.object({
   weeks: weeksSchema.default(9),
   hoursPerWeek: hoursPerWeekSchema.default(2),
   language: languageSchema.default("UZ"),
+
+  /**
+   * Rasmiy o'quv dasturidan olingan kontekst.
+   *
+   * Foydalanuvchidan KELMAYDI — servis qatlami bazadan topib qo'yadi
+   * (`lib/calendar-plans/service.ts`). Sxemada turishining sababi:
+   * prompt quruvchi bitta `input` obyektini oladi.
+   */
+  curriculumContext: z.string().trim().max(8000).optional(),
 });
 
 export type CalendarPlanInput = z.infer<typeof calendarPlanInputSchema>;

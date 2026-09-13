@@ -239,15 +239,97 @@ Ishlanmani AYNAN shu material atrofida qur: undagi ta'rif, qoida va misollardan 
 Build the plan around THIS material: use its definitions, rules and examples. If you add anything not present in the material, mark it as supplementary.`,
 };
 
+/**
+ * Rasmiy o'quv dasturi bo'limining sarlavhasi — har bir tilda.
+ *
+ * ── Nega "rasmiy" so'zi muhim ────────────────────────────────────────────
+ * Modelga bu matn ODDIY kontekst emas, DAVLAT HUJJATI ekanini aytish
+ * kerak. Aks holda u o'z bilimini ustun qo'yib, dasturdagi mavzu
+ * nomlarini "yaxshilab" o'zgartirib yuboradi — o'qituvchi esa
+ * maktabga topshiradigan ishlanmada dastur bilan mos nom kutadi.
+ */
+const CURRICULUM_LABELS: Record<LanguageCode, string> = {
+  UZ: `RASMIY O'QUV DASTURI MA'LUMOTI (O'zbekiston Respublikasi umumiy o'rta ta'lim dasturidan):
+
+Ishlanmani shu ma'lumotga MOSLA: bo'lim nomlari va atamalarni dasturdagidek ishlat, kutilayotgan natijalarni hisobga ol. Dasturda ko'rsatilgan soat — butun BO'LIM uchun, bitta dars uchun emas.`,
+  RU: `ДАННЫЕ ОФИЦИАЛЬНОЙ УЧЕБНОЙ ПРОГРАММЫ (из программы общего среднего образования Республики Узбекистан):
+
+Приведите план в СООТВЕТСТВИЕ с этими данными: используйте названия разделов и термины как в программе, учитывайте ожидаемые результаты. Указанные часы относятся ко всему РАЗДЕЛУ, а не к одному уроку.`,
+  EN: `OFFICIAL CURRICULUM DATA (from the general secondary education programme of the Republic of Uzbekistan):
+
+Align the plan with this data: use the section names and terms as given, and take the expected outcomes into account. The hours shown are for the whole SECTION, not for a single lesson.`,
+};
+
+/** Topilgan dastur bo'limlarini promptga tushadigan matnga aylantiradi. */
+export function formatCurriculumContext(
+  language: LanguageCode,
+  topics: Array<{
+    topicName: string;
+    description: string;
+    expectedHours: number | null;
+    expectedOutcomes: string[];
+  }>,
+): string {
+  if (topics.length === 0) return "";
+
+  const blocks = topics.map((topic) => {
+    const lines = [`- ${topic.topicName}`];
+    if (topic.expectedHours !== null) lines.push(`  soat: ${topic.expectedHours}`);
+
+    /*
+      ── Tavsif QISQARTIRILADI ──────────────────────────────────────────
+      Haqiqiy o'lchovda ochildi: dastur bo'limining to'liq matni ~1400
+      belgi, uchtasi bilan prompt 4000 belgiga o'sdi va model javobi
+      SXEMADAN O'TMAY qoldi (`stages.4: expected object, received
+      string`) — ya'ni yaxshilash o'rniga generatsiyani yiqitdi.
+
+      500 belgi bo'lim mavzularini sanab o'tishga yetadi; qolgani
+      takrorlash va nazorat ishlari haqida bo'lib, dars ishlanmasiga
+      hech narsa qo'shmaydi.
+    */
+    if (topic.description !== "") {
+      const summary =
+        topic.description.length > 500
+          ? `${topic.description.slice(0, 500)}…`
+          : topic.description;
+      lines.push(`  mazmuni: ${summary}`);
+    }
+
+    if (topic.expectedOutcomes.length > 0) {
+      // Natijalar butun hujjat uchun umumiy va har bir bo'limda
+      // takrorlanadi — faqat birinchi uchtasi olinadi.
+      lines.push(
+        `  kutilayotgan natijalar: ${topic.expectedOutcomes.slice(0, 3).join("; ")}`,
+      );
+    }
+    return lines.join("\n");
+  });
+
+  return `${CURRICULUM_LABELS[language]}\n\n${blocks.join("\n\n")}`;
+}
+
 export function buildUserPrompt(input: LessonPlanInput): string {
   const lessonType = LESSON_TYPES[input.language][input.lessonType];
   const base = USER_PROMPT_BUILDERS[input.language](input, lessonType);
 
-  if (input.sourceMaterial === undefined || input.sourceMaterial === "") {
-    return base;
+  const parts = [base];
+
+  /*
+    Tartib MUHIM: rasmiy dastur avval, rasm matni keyin.
+
+    Modellar promptning oxiridagi ko'rsatmaga kuchliroq amal qiladi.
+    O'qituvchi rasm yuklagan bo'lsa — u AYNAN shu darsni tayyorlamoqchi,
+    ya'ni rasm mazmuni dasturning umumiy ro'yxatidan ustun turishi kerak.
+  */
+  if (input.curriculumContext !== undefined && input.curriculumContext !== "") {
+    parts.push(input.curriculumContext);
   }
 
-  return `${base}\n\n${SOURCE_LABELS[input.language]}\n\n${input.sourceMaterial}`;
+  if (input.sourceMaterial !== undefined && input.sourceMaterial !== "") {
+    parts.push(`${SOURCE_LABELS[input.language]}\n\n${input.sourceMaterial}`);
+  }
+
+  return parts.join("\n\n");
 }
 
 /** Dars turining foydalanuvchiga ko'rsatiladigan nomi. */

@@ -19,7 +19,9 @@
     "ai:smoke": "tsx --conditions=react-server --tsconfig tsconfig.json scripts/ai-smoke.ts",
     "test": "node --conditions=react-server --import tsx --test \"tests/**/*.test.ts\"",
     "test:e2e": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --env-file-if-exists=.env --conditions=react-server --import tsx --test-concurrency=1 --test-global-setup=tests/e2e/helpers/global-server.ts --test \"tests/e2e/**/*.e2e.ts\"",
-    "ai:stats": "tsx --conditions=react-server --tsconfig tsconfig.json --env-file-if-exists=.env scripts/ai-stats.ts"
+    "ai:stats": "tsx --conditions=react-server --tsconfig tsconfig.json --env-file-if-exists=.env scripts/ai-stats.ts",
+    "db:seed-curriculum": "tsx --conditions=react-server --env-file-if-exists=.env scripts/seed-curriculum.ts",
+    "curriculum:extract": "tsx scripts/extract-curriculum.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1131.0",
