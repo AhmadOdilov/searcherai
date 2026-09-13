@@ -7,9 +7,34 @@ import type { AiProviderName } from "@/lib/env";
  * shu tiplar bilan ishlaydi va qaysi provider ishlatilayotganini bilmaydi.
  */
 
+/**
+ * Modelga yuboriladigan rasm.
+ *
+ * ── Nega base64, URL emas ─────────────────────────────────────────────────
+ * URL varianti model serveridan bizning rasmga ulanishni talab qiladi,
+ * ya'ni rasm ommaga OCHIQ bo'lishi kerak. Bizda esa rasm o'qituvchining
+ * darsligi sahifasi — u hech qayerda turmasligi kerak. base64 bilan rasm
+ * faqat so'rov ichida yashaydi va hech qaerga saqlanmaydi.
+ */
+export interface AiImage {
+  /** "image/jpeg" yoki "image/png". */
+  mimeType: string;
+  /** Prefikssiz base64 (data URI emas) — uni transport o'zi yig'adi. */
+  base64: string;
+}
+
 export interface GenerateTextInput {
   /** Foydalanuvchi so'rovi / asosiy topshiriq. */
   prompt: string;
+
+  /**
+   * So'rovga qo'shiladigan rasmlar (ixtiyoriy).
+   *
+   * DIQQAT: modelning O'ZI rasmni qo'llab-quvvatlashi kerak. Oddiy matn
+   * modeli rasm kelgan so'rovga 400 qaytaradi — shuning uchun vision
+   * uchun alohida model sozlanadi (`VISION_AI_MODEL`).
+   */
+  images?: AiImage[];
   /** Modelning roli va qoidalari. */
   systemPrompt?: string;
   /**

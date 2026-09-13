@@ -51,11 +51,35 @@ function buildBody(
   if (input.systemPrompt) systemParts.push(input.systemPrompt);
   if (input.jsonMode) systemParts.push(JSON_MODE_INSTRUCTION);
 
-  const messages: Array<{ role: string; content: string }> = [];
+  const messages: Array<{ role: string; content: unknown }> = [];
   if (systemParts.length > 0) {
     messages.push({ role: "system", content: systemParts.join("\n\n") });
   }
-  messages.push({ role: "user", content: input.prompt });
+
+  /*
+    ── Rasm bo'lsa `content` MASSIV bo'ladi ────────────────────────────────
+    OpenAI-mos API'da matn-only so'rovda `content` oddiy satr, rasm bilan
+    esa bo'laklar massivi. Ikkalasini ham bir xil (massiv) qilib yuborish
+    mumkin edi, lekin ba'zi eski endpointlar faqat satrni qabul qiladi —
+    shuning uchun rasm YO'Q bo'lsa eski shakl saqlanadi.
+
+    Rasm `data:` URI ko'rinishida beriladi — Yandex AI Studio, OpenAI va
+    Gemini compat-endpointi uchalasi ham shu shaklni kutadi.
+  */
+  if (input.images !== undefined && input.images.length > 0) {
+    messages.push({
+      role: "user",
+      content: [
+        { type: "text", text: input.prompt },
+        ...input.images.map((image) => ({
+          type: "image_url",
+          image_url: { url: `data:${image.mimeType};base64,${image.base64}` },
+        })),
+      ],
+    });
+  } else {
+    messages.push({ role: "user", content: input.prompt });
+  }
 
   const body: Record<string, unknown> = {
     model: context.model,

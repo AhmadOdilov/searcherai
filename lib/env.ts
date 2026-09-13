@@ -97,6 +97,23 @@ const envSchema = z.object({
    */
   SEARCH_AI_MODEL: z.string().default(""),
 
+  /**
+   * Rasm tushunish (vision) uchun model.
+   *
+   * ── Nega ALOHIDA va nega standart qiymat YO'Q ─────────────────────────
+   * Boshqa modul-modellaridan farqli o'laroq bu `AI_MODEL` ga
+   * QAYTMAYDI. Sabab: oddiy matn modeli rasm kelgan so'rovni tushunmaydi
+   * va 400 qaytaradi. "Standart modelga qaytamiz" degan mantiq bu yerda
+   * foydalanuvchiga tushunarsiz xato ko'rsatardi.
+   *
+   * Bo'sh bo'lsa — vision funksiyasi butunlay o'chadi va interfeysda
+   * tushunarli xabar chiqadi (ilova qulab tushmaydi).
+   *
+   * Yandex AI Studio namunasi:
+   *   VISION_AI_MODEL="gpt://<folder-id>/qwen3.6-35b-a3b/latest"
+   */
+  VISION_AI_MODEL: z.string().default(""),
+
   // ── Fayl saqlagichi ──────────────────────────────────────────────────
   /**
    * Qaysi saqlagich ishlatilsin:
@@ -137,6 +154,10 @@ export type AppEnv = z.infer<typeof envSchema> & {
   calendarPlanAiModel: string;
   /** Qidiruv uchun model — belgilanmasa `aiModel`. */
   searchAiModel: string;
+  /** Rasm tahlili uchun model. Bo'sh bo'lsa vision o'chiq. */
+  visionAiModel: string;
+  /** Rasm tahlili yoqilganmi — kalit ham, model ham sozlanganmi. */
+  visionConfigured: boolean;
   /** Kalit mavjudmi — AI funksiyalarini yoqish/o'chirish uchun. */
   aiConfigured: boolean;
 };
@@ -204,6 +225,8 @@ export function getEnv(): AppEnv {
     aiModel: data.AI_MODEL || defaults.model,
     calendarPlanAiModel: data.CALENDAR_PLAN_AI_MODEL || data.AI_MODEL || defaults.model,
     searchAiModel: data.SEARCH_AI_MODEL || data.AI_MODEL || defaults.model,
+    visionAiModel: data.VISION_AI_MODEL,
+    visionConfigured: data.AI_API_KEY.length > 0 && data.VISION_AI_MODEL.length > 0,
     // Oxiridagi "/" ni olib tashlaymiz — URL yig'ishda ikkilanish bo'lmasin.
     aiBaseUrl: (data.AI_BASE_URL || defaults.baseUrl).replace(/\/+$/, ""),
     aiConfigured: data.AI_API_KEY.length > 0,

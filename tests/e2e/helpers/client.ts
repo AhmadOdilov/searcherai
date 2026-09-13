@@ -3,6 +3,8 @@
  * sinov foydalanuvchilarini tozalash.
  */
 
+import type { AiPromptRecord } from "./mock-ai.ts";
+
 export const BASE_URL = process.env.E2E_BASE_URL ?? "http://127.0.0.1:3100";
 
 /**
@@ -169,7 +171,7 @@ export async function cleanupTestUsers(): Promise<void> {
  * uchun ular HTTP orqali olinadi — `startMockAiServer` dagi `/__prompts`
  * endpointiga qara.
  */
-export async function readAiPrompts(): Promise<Array<{ system: string; user: string }>> {
+export async function readAiPrompts(): Promise<AiPromptRecord[]> {
   const baseUrl = process.env.AI_BASE_URL;
   if (baseUrl === undefined || baseUrl === "") {
     throw new Error("AI_BASE_URL sozlanmagan — globalSetup ishga tushmaganmi?");
@@ -177,7 +179,7 @@ export async function readAiPrompts(): Promise<Array<{ system: string; user: str
 
   const response = await fetch(`${baseUrl}/__prompts`);
   const body = (await response.json()) as {
-    prompts: Array<{ system: string; user: string }>;
+    prompts: AiPromptRecord[];
   };
   return body.prompts;
 }
@@ -190,9 +192,7 @@ export async function readAiPrompts(): Promise<Array<{ system: string; user: str
  * qaysi chaqiruv tekshirilayotganini ANIQ belgilaydi — sinov "nechta
  * so'rov bo'ldi" degan mo'rt taxminga tayanmaydi.
  */
-export async function findAiPrompt(
-  needle: string,
-): Promise<{ system: string; user: string }> {
+export async function findAiPrompt(needle: string): Promise<AiPromptRecord> {
   const prompts = await readAiPrompts();
   const match = prompts.filter((prompt) => prompt.user.includes(needle));
 

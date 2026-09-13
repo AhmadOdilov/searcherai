@@ -73,6 +73,10 @@ export async function globalSetup(): Promise<void> {
   process.env.AI_API_KEY = "mock-kalit";
   process.env.AI_BASE_URL = mockAi.baseUrl;
   process.env.AI_MODEL = "mock-lesson-model";
+  // Vision alohida model talab qiladi (AI_MODEL ga qaytmaydi) — soxta
+  // serverda model nomi ahamiyatsiz, lekin u BO'SH bo'lmasligi kerak,
+  // aks holda funksiya o'chiq deb hisoblanadi.
+  process.env.VISION_AI_MODEL = "mock-vision-model";
   // Sinovlar tez tugashi uchun qayta urinish yo'q — qayta urinish
   // mantig'i birlik sinovlarida (tests/ai-provider.test.ts) tekshirilgan.
   process.env.AI_MAX_RETRIES = "0";

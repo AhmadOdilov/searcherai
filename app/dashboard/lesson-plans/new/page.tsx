@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ApiClientError, apiRequest } from "@/lib/api-client";
@@ -11,6 +11,9 @@ import { Card, FormSection, PageHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FormError, Input, Select } from "@/components/ui/field";
 import { HelpLink } from "@/components/ui/help-link";
+import { ToneCard } from "@/components/ui/card";
+import { takeVisionHandoff, type VisionHandoff } from "@/lib/vision/handoff";
+import { ImageIcon } from "lucide-react";
 
 /**
  * `/dashboard/lesson-plans/new` — dars ishlanmasi yaratish formasi.
@@ -33,6 +36,33 @@ interface CreatedPlan {
   lessonPlan: { id: string };
 }
 
+/**
+ * Rasm tahlilini BIR MARTA o'qiydi.
+ *
+ * `useSyncExternalStore` bilan: `sessionStorage` serverda yo'q, ya'ni
+ * server HTML'i va brauzerdagi birinchi render mos kelmasligi mumkin.
+ * `useEffect` + `setState` esa ortiqcha render zanjirini keltirardi
+ * (`Onboarding` komponentida ham shu yondashuv).
+ */
+const emptyHandoff: VisionHandoff | null = null;
+let cachedHandoff: VisionHandoff | null | undefined;
+
+function subscribeHandoff(): () => void {
+  return () => undefined;
+}
+
+function readHandoff(): VisionHandoff | null {
+  // Natija keshlanadi: `useSyncExternalStore` `getSnapshot` ni bir necha
+  // marta chaqiradi, `takeVisionHandoff()` esa o'qigach O'CHIRADI —
+  // keshsiz ikkinchi chaqiruvda `null` qaytib, ma'lumot yo'qolardi.
+  if (cachedHandoff === undefined) cachedHandoff = takeVisionHandoff();
+  return cachedHandoff;
+}
+
+function readHandoffOnServer(): VisionHandoff | null {
+  return emptyHandoff;
+}
+
 export default function NewLessonPlanPage() {
   const router = useRouter();
   const t = useTranslations("lessonPlans");
@@ -41,6 +71,13 @@ export default function NewLessonPlanPage() {
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
+  /** Rasmdan kelgan ma'lumot — bo'lsa, forma oldindan to'ldiriladi. */
+  const handoff = useSyncExternalStore(
+    subscribeHandoff,
+    readHandoff,
+    readHandoffOnServer,
+  );
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitting(true);
@@ -48,7 +85,12 @@ export default function NewLessonPlanPage() {
     setFieldErrors({});
 
     const formData = new FormData(event.currentTarget);
-    const body = Object.fromEntries(formData.entries());
+    const body: Record<string, unknown> = Object.fromEntries(formData.entries());
+
+    // Rasmdan o'qilgan matn — formada ko'rinmaydi, lekin promptga ketadi.
+    if (handoff !== null) {
+      body.sourceMaterial = handoff.sourceMaterial;
+    }
 
     try {
       const created = await apiRequest<CreatedPlan>("/api/lesson-plans", {
@@ -78,6 +120,27 @@ export default function NewLessonPlanPage() {
         <PageHeader title={t("new.title")} description={t("new.subtitle")} />
       </div>
 
+      {/*
+        Rasmdan kelingan bo'lsa — buni AYTAMIZ. Aks holda o'qituvchi
+        maydonlar o'zidan to'lganini ko'rib, ilova nimadir "o'ylab
+        topgan" deb o'ylardi.
+      */}
+      {handoff !== null && (
+        <ToneCard tone="primary" className="mt-6" padding="sm">
+          <div className="flex gap-3">
+            <ImageIcon aria-hidden className="mt-0.5 size-6 shrink-0 text-primary" />
+            <div>
+              <p className="text-base font-semibold text-primary-ink">
+                {t("new.fromImageTitle")}
+              </p>
+              <p className="mt-1 text-base leading-relaxed text-primary-ink">
+                {t("new.fromImageHint")}
+              </p>
+            </div>
+          </div>
+        </ToneCard>
+      )}
+
       <Card className="mt-6">
         <form onSubmit={handleSubmit} noValidate className="space-y-8">
           {formError !== null && <FormError message={formError} />}
@@ -87,6 +150,7 @@ export default function NewLessonPlanPage() {
               label={t("fields.subject")}
               name="subject"
               required
+              defaultValue={handoff?.subject}
               placeholder={t("fields.subjectPlaceholder")}
               hint={t("fields.subjectHint")}
               help={t("fields.subjectHelp")}
@@ -97,6 +161,7 @@ export default function NewLessonPlanPage() {
               label={t("fields.grade")}
               name="grade"
               required
+              defaultValue={handoff?.grade}
               placeholder={t("fields.gradePlaceholder")}
               hint={t("fields.gradeHint")}
               help={t("fields.gradeHelp")}
@@ -107,6 +172,7 @@ export default function NewLessonPlanPage() {
               label={t("fields.topic")}
               name="topic"
               required
+              defaultValue={handoff?.topic}
               placeholder={t("fields.topicPlaceholder")}
               hint={t("fields.topicHint")}
               help={t("fields.topicHelp")}

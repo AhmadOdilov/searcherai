@@ -219,9 +219,35 @@ export function buildSystemPrompt(language: LanguageCode): string {
   return SYSTEM_PROMPTS[language];
 }
 
+/**
+ * Tashqi manba bo'limining sarlavhasi — har bir tilda.
+ *
+ * ── Nega bu bo'lim promptning OXIRIDA ────────────────────────────────────
+ * Modellar uzun promptning oxiridagi ko'rsatmaga kuchliroq amal qiladi.
+ * Manba matnini boshiga qo'ysak, undan keyingi umumiy ko'rsatmalar uni
+ * "bosib ketardi" va natija odatdagidan farq qilmasdi.
+ */
+const SOURCE_LABELS: Record<LanguageCode, string> = {
+  UZ: `MANBA MATERIALI (o'qituvchi yuklagan darslik sahifasi / chizmadan o'qilgan):
+
+Ishlanmani AYNAN shu material atrofida qur: undagi ta'rif, qoida va misollardan foydalan. Materialda yo'q narsani qo'shsang, uni "qo'shimcha" sifatida ajratib ko'rsat.`,
+  RU: `ИСХОДНЫЙ МАТЕРИАЛ (прочитан со страницы учебника или схемы, загруженной учителем):
+
+Постройте план ИМЕННО вокруг этого материала: используйте приведённые в нём определения, правила и примеры. Если добавляете то, чего в материале нет, обозначьте это как дополнение.`,
+  EN: `SOURCE MATERIAL (read from a textbook page or diagram uploaded by the teacher):
+
+Build the plan around THIS material: use its definitions, rules and examples. If you add anything not present in the material, mark it as supplementary.`,
+};
+
 export function buildUserPrompt(input: LessonPlanInput): string {
   const lessonType = LESSON_TYPES[input.language][input.lessonType];
-  return USER_PROMPT_BUILDERS[input.language](input, lessonType);
+  const base = USER_PROMPT_BUILDERS[input.language](input, lessonType);
+
+  if (input.sourceMaterial === undefined || input.sourceMaterial === "") {
+    return base;
+  }
+
+  return `${base}\n\n${SOURCE_LABELS[input.language]}\n\n${input.sourceMaterial}`;
 }
 
 /** Dars turining foydalanuvchiga ko'rsatiladigan nomi. */

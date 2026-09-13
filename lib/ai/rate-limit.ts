@@ -64,7 +64,8 @@ export type AiRoute =
   | "presentations:regenerate"
   | "calendar-plans"
   | "calendar-plans:regenerate"
-  | "search";
+  | "search"
+  | "vision";
 
 /**
  * Kvotadan bitta so'rov "yeydi".

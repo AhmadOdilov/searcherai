@@ -32,6 +32,19 @@ export const lessonPlanInputSchema = z.object({
   durationMinutes: durationMinutesSchema.default(45),
   lessonType: lessonTypeSchema.default("NEW_TOPIC"),
   language: languageSchema.default("UZ"),
+
+  /**
+   * Tashqi manba matni — hozircha rasmdan (darslik sahifasi) o'qilgani.
+   *
+   * Berilsa, AI ishlanmani AYNAN shu material atrofida quradi. Bo'sh
+   * bo'lsa oqim o'zgarishsiz ishlaydi — model umumiy bilimidan
+   * foydalanadi.
+   *
+   * `stripTags` qo'llanmaydi: matn AI tomonidan yaratilgan va
+   * foydalanuvchi uni qo'lda yozmaydi. Uzunlik chegarasi esa bor —
+   * promptni cheksiz shishirib yubormasligi uchun.
+   */
+  sourceMaterial: z.string().trim().max(4000).optional(),
 });
 
 export type LessonPlanInput = z.infer<typeof lessonPlanInputSchema>;

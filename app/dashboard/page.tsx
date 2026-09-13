@@ -3,6 +3,7 @@ import {
   BookOpen,
   CalendarDays,
   Languages,
+  Camera,
   Presentation,
   Search,
   type LucideIcon,
@@ -43,15 +44,14 @@ export default async function DashboardPage() {
 
       {/*
         ── Grid tartibi ────────────────────────────────────────────────────
-        Telefonda (390px) 2x2: to'rtta karta bir ekranga sig'adi va
-        o'qituvchi hammasini ko'radi — pastga aylantirish kerak emas.
-        Kartalar tor bo'lgani uchun bu yerda tavsif matni yashiriladi
-        (`hidden sm:block`), sarlavha va belgi esa qoladi.
+        Telefonda (390px) 2 ustun: kartalar tor bo'lgani uchun tavsif
+        matni yashiriladi (`hidden sm:block`), sarlavha va belgi qoladi.
 
-        `lg` dan boshlab 4x1: keng ekranda to'rtta karta bir qatorda,
-        bir qarashda o'qiladi.
+        `lg` dan boshlab 3 ustun. Nega 4 emas: modullar BESHTA bo'ldi,
+        4 ustunda oxirgi qator yolg'iz bitta karta bilan qolardi —
+        3 ustunda esa 3 + 2 bo'lib, ancha tekis ko'rinadi.
       */}
-      <ul className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+      <ul className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
         {READY_MODULES.map((module) => {
           const Icon = module.icon;
           return (
@@ -163,11 +163,12 @@ function ModuleBody({
  * kuniga dars ishlanmasi yasaydi, kalendar rejani esa chorakda bir marta.
  */
 const READY_MODULES: Array<{
-  key: "lessonPlans" | "presentations" | "calendarPlans" | "search";
+  key: "lessonPlans" | "presentations" | "calendarPlans" | "search" | "vision";
   icon: LucideIcon;
   href: string;
 }> = [
   { key: "lessonPlans", icon: BookOpen, href: "/dashboard/lesson-plans" },
+  { key: "vision", icon: Camera, href: "/dashboard/vision" },
   { key: "presentations", icon: Presentation, href: "/dashboard/presentations" },
   { key: "search", icon: Search, href: "/dashboard/search" },
   { key: "calendarPlans", icon: CalendarDays, href: "/dashboard/calendar-plans" },

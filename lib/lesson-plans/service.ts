@@ -42,6 +42,8 @@ const LIST_FIELDS = {
 const DETAIL_FIELDS = {
   ...LIST_FIELDS,
   content: true,
+  // Natija sahifasida "bu ishlanma rasm asosida" belgisini ko'rsatish uchun.
+  sourceMaterial: true,
   aiModel: true,
   aiDurationMs: true,
   aiAttempts: true,
@@ -74,6 +76,9 @@ export async function createLessonPlan(
       durationMinutes: input.durationMinutes,
       lessonType: input.lessonType,
       language: input.language,
+      // Rasmdan o'qilgan matn saqlanadi — "qayta urinish" ham shu
+      // manbadan foydalanishi uchun (rasmning o'zi saqlanmaydi).
+      sourceMaterial: input.sourceMaterial ?? null,
       status: "PENDING",
     },
     select: DETAIL_FIELDS,
@@ -119,6 +124,7 @@ export async function regenerateLessonPlan(
       durationMinutes: true,
       lessonType: true,
       language: true,
+      sourceMaterial: true,
     },
   });
 
@@ -153,6 +159,12 @@ export async function regenerateLessonPlan(
       durationMinutes: existing.durationMinutes,
       lessonType: existing.lessonType,
       language: existing.language,
+      /*
+        Manba matni QAYTA generatsiyada ham uzatiladi. Busiz "qayta
+        urinish" rasmni unutib, butunlay boshqa dars berardi — va
+        o'qituvchi nega natija o'zgarib ketganini tushunmasdi.
+      */
+      sourceMaterial: existing.sourceMaterial ?? undefined,
     },
   };
 }

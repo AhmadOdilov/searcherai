@@ -167,6 +167,15 @@ model LoginAttempt {
 }
 
 model LessonPlan {
+  /// Tashqi manba matni — masalan rasmdan (darslik sahifasi) o'qilgan mazmun.
+  ///
+  /// Nega saqlanadi: qayta generatsiya qilinganda ham o'sha manbadan
+  /// foydalanilishi kerak. Bu maydonsiz "qayta urinish" tugmasi rasmni
+  /// unutib, butunlay boshqa dars berardi.
+  ///
+  /// Rasmning O'ZI saqlanmaydi — faqat undan o'qilgan matn.
+  sourceMaterial String?
+
   id     String @id @default(cuid())
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

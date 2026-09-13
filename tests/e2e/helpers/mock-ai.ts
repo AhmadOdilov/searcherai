@@ -36,11 +36,19 @@ export const MARKER_SLOW = "SEKIN-SINOV";
 /** `MARKER_SLOW` bo'lganda javob shuncha kechikadi. */
 const SLOW_DELAY_MS = 3000;
 
+/** Yozib olinadigan prompt — rasm soni bilan birga. */
+export interface AiPromptRecord {
+  system: string;
+  user: string;
+  /** So'rovga biriktirilgan rasmlar soni. */
+  imageCount: number;
+}
+
 export interface MockAiServer {
   baseUrl: string;
   requestCount: number;
   /** Oxirgi so'rovdagi promptlar — tilni tekshirish uchun. */
-  lastPrompts: { system: string; user: string } | null;
+  lastPrompts: AiPromptRecord | null;
   /**
    * BARCHA so'rovlardagi promptlar.
    *
@@ -49,7 +57,7 @@ export interface MockAiServer {
    * alohida jarayonda emas, SINOV jarayonida ishlaydi — shuning uchun
    * sinov yuborilgan promptni to'g'ridan-to'g'ri o'qiy oladi.
    */
-  prompts: Array<{ system: string; user: string }>;
+  prompts: AiPromptRecord[];
   close(): Promise<void>;
 }
 
@@ -149,6 +157,69 @@ function isCalendarPlanRequest(systemPrompt: string): boolean {
  */
 function isSearchRequest(combined: string): boolean {
   return combined.includes('"classroomIdeas"');
+}
+
+/**
+ * Xabar mazmunidan MATNNI ajratib oladi.
+ *
+ * ── Nega kerak ────────────────────────────────────────────────────────────
+ * OpenAI-mos API'da `content` ikki shaklda bo'ladi: oddiy satr (faqat
+ * matn) yoki bo'laklar massivi (rasm bo'lsa). Soxta server dastlab
+ * faqat satrni kutardi va rasm kelganda `[object Object]` ni yozib
+ * qo'yardi — natijada promptni qidiradigan sinovlar ishlamay qoldi.
+ */
+function textOf(content: unknown): string {
+  if (typeof content === "string") return content;
+  if (!Array.isArray(content)) return "";
+
+  return content
+    .filter(
+      (part): part is { type: string; text: string } =>
+        typeof part === "object" &&
+        part !== null &&
+        (part as { type?: unknown }).type === "text" &&
+        typeof (part as { text?: unknown }).text === "string",
+    )
+    .map((part) => part.text)
+    .join("\n");
+}
+
+/** Xabarga nechta rasm biriktirilgan. */
+function imagesIn(content: unknown): number {
+  if (!Array.isArray(content)) return 0;
+  return content.filter(
+    (part) =>
+      typeof part === "object" &&
+      part !== null &&
+      (part as { type?: unknown }).type === "image_url",
+  ).length;
+}
+
+/**
+ * So'rov rasm tahlili uchunmi.
+ *
+ * Javob shakli foydalanuvchi promptida beriladi (qidiruv kabi),
+ * shuning uchun TO'LIQ matn tekshiriladi.
+ */
+function isVisionRequest(combined: string): boolean {
+  return combined.includes('"keyContent"');
+}
+
+/** Soxta rasm tahlili — `visionAnalysisSchema` ga mos. */
+function buildVisionAnalysis() {
+  return {
+    description:
+      "Soxta AI javobi: rasmda darslik sahifasi ko'rsatilgan, unda kasrlar mavzusi va bir nechta misol bor.",
+    subject: "Matematika",
+    grade: "7-sinf",
+    topic: "Kasrlarni qo'shish",
+    keyContent: [
+      "Kasrlarni qo'shish qoidasi",
+      "Umumiy maxrajga keltirish",
+      "Ikkita yechilgan misol",
+    ],
+    usable: true,
+  };
 }
 
 /** Soxta qidiruv javobi — `searchAnswerSchema` ga mos. */
@@ -259,7 +330,7 @@ export async function startMockAiServer(): Promise<MockAiServer> {
   const state = {
     requestCount: 0,
     lastPrompts: null as MockAiServer["lastPrompts"],
-    prompts: [] as Array<{ system: string; user: string }>,
+    prompts: [] as AiPromptRecord[],
   };
 
   const server: Server = createServer((req, res) => {
@@ -300,10 +371,16 @@ export async function startMockAiServer(): Promise<MockAiServer> {
       }
 
       const messages = body.messages ?? [];
-      const system = messages.find((m) => m.role === "system")?.content ?? "";
-      const user = messages.find((m) => m.role === "user")?.content ?? "";
-      state.lastPrompts = { system, user };
-      state.prompts.push({ system, user });
+      const systemMessage = messages.find((m) => m.role === "system");
+      const userMessage = messages.find((m) => m.role === "user");
+
+      const system = textOf(systemMessage?.content);
+      const user = textOf(userMessage?.content);
+      // Rasm haqiqatan yuborilganini sinovlar tekshira olishi uchun.
+      const imageCount = imagesIn(userMessage?.content);
+
+      state.lastPrompts = { system, user, imageCount };
+      state.prompts.push({ system, user, imageCount });
 
       const combined = `${system}\n${user}`;
 
@@ -339,6 +416,7 @@ export async function startMockAiServer(): Promise<MockAiServer> {
       const presentation = isPresentationRequest(system);
       const calendarPlan = isCalendarPlanRequest(system);
       const search = isSearchRequest(combined);
+      const vision = isVisionRequest(combined);
 
       let content: string;
       if (combined.includes(MARKER_BAD_SHAPE)) {
@@ -347,11 +425,15 @@ export async function startMockAiServer(): Promise<MockAiServer> {
           content = JSON.stringify({ title: "x", slides: [] });
         } else if (calendarPlan) {
           content = JSON.stringify({ title: "x", weeks: [] });
+        } else if (vision) {
+          content = JSON.stringify({ description: "qisqa", keyContent: [] });
         } else if (search) {
           content = JSON.stringify({ answer: "qisqa", keyPoints: [] });
         } else {
           content = JSON.stringify({ objective: "yo'q", outcomes: [] });
         }
+      } else if (vision) {
+        content = JSON.stringify(buildVisionAnalysis());
       } else if (search) {
         content = JSON.stringify(buildSearchAnswer(user));
       } else if (presentation) {

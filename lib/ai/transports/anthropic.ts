@@ -48,10 +48,31 @@ export const anthropicTransport: AiTransport = {
     if (input.systemPrompt) systemParts.push(input.systemPrompt);
     if (input.jsonMode) systemParts.push(JSON_MODE_INSTRUCTION);
 
+    /*
+      Anthropic rasmni OpenAI'dan BOSHQACHA kutadi: `image_url` emas,
+      `{ type: "image", source: { type: "base64", media_type, data } }`.
+      Aynan shu farq uchun transport qatlami bor — yuqoridagi kod
+      (lib/vision/service.ts) ikkalasini ham bilmaydi.
+    */
+    const userContent =
+      input.images !== undefined && input.images.length > 0
+        ? [
+            { type: "text", text: input.prompt },
+            ...input.images.map((image) => ({
+              type: "image",
+              source: {
+                type: "base64",
+                media_type: image.mimeType,
+                data: image.base64,
+              },
+            })),
+          ]
+        : input.prompt;
+
     const body: Record<string, unknown> = {
       model: context.model,
       max_tokens: context.maxTokens,
-      messages: [{ role: "user", content: input.prompt }],
+      messages: [{ role: "user", content: userContent }],
     };
     if (systemParts.length > 0) {
       body.system = systemParts.join("\n\n");

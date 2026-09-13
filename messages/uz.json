@@ -115,6 +115,10 @@
       "search": {
         "title": "Savol berish",
         "description": "Mavzu bo'yicha savolingizga javob va uni sinfda qanday tushuntirish bo'yicha maslahat."
+      },
+      "vision": {
+        "title": "Rasmdan material",
+        "description": "Darslik sahifasini suratga oling — tizim uni o'qib, dars ishlanmasi tayyorlaydi."
       }
     },
     "onboarding": {
@@ -138,7 +142,9 @@
       "submit": "Dars ishlanmasini tayyorlash",
       "sectionAbout": "Dars nima haqida?",
       "sectionHow": "Dars qanday o'tadi?",
-      "timeNotice": "Tayyorlash 10-20 soniya davom etadi."
+      "timeNotice": "Tayyorlash 10-20 soniya davom etadi.",
+      "fromImageTitle": "Rasm asosida to'ldirildi",
+      "fromImageHint": "Quyidagi maydonlar rasmdan olindi. Tekshirib, kerak bo'lsa o'zgartiring — rasmdagi matn ishlanmaga qo'shiladi."
     },
     "fields": {
       "subject": "Fan",
@@ -413,7 +419,11 @@
       "dateOutOfRange": "Sana noto'g'ri — yaqin yillardan birini tanlang",
       "invalidValue": "Qiymat to'g'ri emas",
       "questionTooShort": "Savolingizni to'liqroq yozing (kamida bir jumla)",
-      "questionTooLong": "Savol juda uzun — asosiysini qoldiring"
+      "questionTooLong": "Savol juda uzun — asosiysini qoldiring",
+      "imageRequired": "Rasm tanlanmagan",
+      "imageTooLarge": "Rasm juda katta — 5 MB dan kichik bo'lishi kerak",
+      "imageNotReadable": "Rasmni o'qib bo'lmadi. Boshqa rasm tanlab ko'ring",
+      "imageFormatNotSupported": "Faqat JPG va PNG rasmlar qabul qilinadi"
     }
   },
   "errorPage": {
@@ -455,6 +465,42 @@
       "first": "Fotosintezni 6-sinf o'quvchisiga qanday tushuntirsam bo'ladi?",
       "second": "Kasrlarni qo'shishda o'quvchilar qanday xatolarga yo'l qo'yadi?",
       "third": "Amir Temur davri haqida darsni qiziqarli boshlash uchun nima qilsam bo'ladi?"
+    }
+  },
+  "vision": {
+    "title": "Rasmdan material",
+    "pageHint": "Darslik sahifasi, chizma yoki jadval suratini yuklang — tizim undagi matnni o'qib, dars ishlanmasi uchun tayyorlab beradi.",
+    "dropTitle": "Rasmni shu yerga tashlang",
+    "dropHint": "Yoki pastdagi tugmalardan birini bosing. Telefonda darhol kamera ochiladi.",
+    "takePhoto": "Suratga olish",
+    "chooseFile": "Fayl tanlash",
+    "formatHint": "JPG yoki PNG, 5 MB gacha",
+    "removeImage": "Rasmni olib tashlash",
+    "previewAlt": "Yuklangan rasm",
+    "submit": "Rasmni o'qish",
+    "analyzing": "Rasm o'qilmoqda…",
+    "timeNotice": "Rasmni o'qish 15-30 soniya davom etadi.",
+    "resultTitle": "Rasmda nima bor",
+    "subject": "Fan",
+    "grade": "Sinf",
+    "topic": "Mavzu",
+    "keyContent": "Rasmdagi asosiy ma'lumot",
+    "useForLessonPlan": "Shu rasmdan dars ishlanmasi yaratish",
+    "useForLessonPlanHint": "Forma oldindan to'ldirilgan holda ochiladi — tekshirib, o'zgartirishingiz mumkin.",
+    "emptyTitle": "Nimani suratga olish mumkin",
+    "emptyDescription": "Masalan, quyidagilardan biri:",
+    "examples": {
+      "first": "Darslikning bir sahifasi",
+      "second": "Doskadagi yozuv yoki chizma",
+      "third": "Jadval yoki mashqlar to'plami"
+    },
+    "notUsableTitle": "Bu rasmdan foydalanib bo'lmadi",
+    "notUsableDefault": "Rasmdagi matnni o'qib bo'lmadi.",
+    "notUsableHint": "Yaxshiroq yorug'likda, sahifani to'liq va tik holda suratga olib ko'ring.",
+    "errors": {
+      "wrongFormat": "Faqat JPG va PNG rasmlar qabul qilinadi.",
+      "tooLarge": "Rasm juda katta — 5 MB dan kichik bo'lishi kerak.",
+      "notReadable": "Faylni o'qib bo'lmadi. Boshqa rasm tanlab ko'ring."
     }
   }
 }
