@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import {
+  BASE_URL,
   TestClient,
   cleanupTestUsers,
   testEmail,
   waitForGeneration,
 } from "./helpers/client";
-import { MARKER_BAD_SHAPE, MARKER_SERVER_ERROR } from "./helpers/mock-ai";
+import { MARKER_BAD_SHAPE, MARKER_SERVER_ERROR, MARKER_SLOW } from "./helpers/mock-ai";
 
 /**
  * Dars ishlanmasi moduli — uchidan-uchgacha.
@@ -308,6 +309,40 @@ describe("qayta generatsiya", () => {
   });
 });
 
+describe("bir vaqtda ikki generatsiya", () => {
+  it("PENDING yozuvni QAYTA generatsiya qilishga ruxsat bermaydi (409)", async () => {
+    // Foydalanuvchi «Qayta urinish» tugmasini ikki marta bossa, ilgari
+    // ikkita fon ishi ishga tushib, AI ikki marta chaqirilardi.
+    const client = await signedInClient("lp-poyga");
+
+    // `MARKER_SLOW` soxta AI javobini ataylab kechiktiradi, shunda yozuv
+    // PENDING holatida yetarlicha uzoq turadi. Aks holda soxta AI ~10ms
+    // da javob berib, sinov vaqtga bog'liq (flaky) bo'lib qolardi.
+    const created = await client.request<LessonPlanPayload>("/api/lesson-plans", {
+      method: "POST",
+      body: validInput({ topic: `Kasrlar ${MARKER_SLOW}` }),
+    });
+    const planId = created.data!.lessonPlan.id;
+
+    // Yozuv hali PENDING (fon ishi endi boshlandi) — darhol qayta
+    // generatsiyaga urinamiz.
+    const second = await client.request(`/api/lesson-plans/${planId}/regenerate`, {
+      method: "POST",
+    });
+
+    assert.equal(second.status, 409, "ikkinchi so'rov rad etilishi kerak");
+    assert.equal(second.error!.code, "conflict");
+
+    // Birinchi generatsiya buzilmasligi kerak.
+    const final = await waitForGeneration<LessonPlanPayload["lessonPlan"]>(
+      client,
+      `/api/lesson-plans/${planId}`,
+      "lessonPlan",
+    );
+    assert.equal(final.status, "READY");
+  });
+});
+
 describe("ro'yxat", () => {
   it("faqat O'Z yozuvlarini qaytaradi", async () => {
     const first = await signedInClient("lp-royxat-1");
@@ -467,5 +502,78 @@ describe("ko'p tillilik", () => {
       assert.equal(plan.language, language);
       assert.equal(plan.status, "READY");
     }
+  });
+});
+
+const DOCX_MIME =
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
+describe("Word eksporti", () => {
+  it("tayyor ishlanmani .docx qilib beradi", async () => {
+    const client = await signedInClient("lp-word");
+    const plan = await createAndWait(client, validInput({ topic: "Kasrlar" }));
+
+    const response = await client.fetchRaw(`/api/lesson-plans/${plan.id}/export`);
+
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get("content-type"), DOCX_MIME);
+
+    const disposition = response.headers.get("content-disposition")!;
+    assert.match(disposition, /^attachment;/);
+    assert.match(disposition, /\.docx/);
+    // O'zbekcha nom uchun ikkala shakl ham bo'lishi kerak.
+    assert.match(disposition, /filename="/);
+    assert.match(disposition, /filename\*=UTF-8''/);
+
+    // Shaxsiy hujjat keshlanmasligi kerak.
+    assert.match(response.headers.get("cache-control")!, /no-store/);
+
+    // Haqiqiy .docx — ZIP arxivi ("PK" bilan boshlanadi).
+    const buffer = Buffer.from(await response.arrayBuffer());
+    assert.equal(buffer.subarray(0, 2).toString("ascii"), "PK");
+    assert.ok(buffer.length > 2000, `hujjat juda kichik: ${buffer.length}`);
+    assert.equal(Number(response.headers.get("content-length")), buffer.length);
+  });
+
+  it("BOSHQA foydalanuvchi eksport qila OLMAYDI", async () => {
+    const owner = await signedInClient("lp-word-ega");
+    const stranger = await signedInClient("lp-word-begona");
+
+    const plan = await createAndWait(owner, validInput({ topic: "Maxfiy dars" }));
+
+    const byOwner = await owner.fetchRaw(`/api/lesson-plans/${plan.id}/export`);
+    assert.equal(byOwner.status, 200);
+
+    // 404, 403 emas: begona yozuv BORLIGINI ham bildirmaymiz.
+    const byStranger = await stranger.fetchRaw(`/api/lesson-plans/${plan.id}/export`);
+    assert.equal(byStranger.status, 404);
+  });
+
+  it("kirmagan foydalanuvchini rad etadi", async () => {
+    const client = await signedInClient("lp-word-anonim");
+    const plan = await createAndWait(client, validInput());
+
+    const response = await fetch(`${BASE_URL}/api/lesson-plans/${plan.id}/export`, {
+      redirect: "manual",
+    });
+    assert.equal(response.status, 401);
+  });
+
+  it("XATO bilan tugagan ishlanmani eksport qilmaydi", async () => {
+    const client = await signedInClient("lp-word-xato");
+
+    const created = await client.request<LessonPlanPayload>("/api/lesson-plans", {
+      method: "POST",
+      body: validInput({ topic: `Fotosintez ${MARKER_SERVER_ERROR}` }),
+    });
+    const failed = await waitForGeneration<LessonPlanPayload["lessonPlan"]>(
+      client,
+      `/api/lesson-plans/${created.data!.lessonPlan.id}`,
+      "lessonPlan",
+    );
+    assert.equal(failed.status, "FAILED");
+
+    const response = await client.fetchRaw(`/api/lesson-plans/${failed.id}/export`);
+    assert.equal(response.status, 400);
   });
 });

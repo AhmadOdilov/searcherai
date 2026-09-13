@@ -25,6 +25,20 @@ export const FILE_KINDS = {
     extension: ".xlsx",
     mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   },
+  /*
+    Word hujjati — dars ishlanmasi uchun.
+
+    DIQQAT: bu tur saqlagichga YOZILMAYDI. Hujjat har so'rovda bazadagi
+    mazmundan qayta yasaladi (bu ~50 ms) va to'g'ridan-to'g'ri brauzerga
+    uzatiladi. Sabab: dars ishlanmasi tahrirlanishi mumkin, saqlangan
+    fayl esa eskirib qolardi. Bu yerda u faqat MIME turi va fayl nomi
+    uchun turibdi.
+  */
+  docx: {
+    directory: "lesson-plans",
+    extension: ".docx",
+    mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  },
 } as const;
 
 export type FileKind = keyof typeof FILE_KINDS;
