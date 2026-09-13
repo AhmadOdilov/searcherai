@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { ApiError } from "@/lib/api/errors";
+import { assertSameOrigin } from "@/lib/api/csrf";
 import { AiError } from "@/lib/ai/types";
 import { EnvError } from "@/lib/env";
 import { translateFieldErrors, translateKey } from "@/lib/i18n/translate";
@@ -54,6 +55,17 @@ export function withErrorHandling<TContext>(
 ): Handler<TContext> {
   return async (request, context) => {
     try {
+      /*
+        CSRF tekshiruvi BARCHA route'larda, bitta joyda.
+
+        Nega har bir route'da alohida emas: yangi endpoint yozgan
+        dasturchi uni qo'shishni unutishi mumkin va himoya jim
+        yo'qolardi. `withErrorHandling` esa har bir route'da
+        allaqachon ishlatiladi — ya'ni yangi route avtomatik
+        himoyalanadi.
+      */
+      assertSameOrigin(request);
+
       return await handler(request, context);
     } catch (caught) {
       return await toErrorResponse(caught, request);

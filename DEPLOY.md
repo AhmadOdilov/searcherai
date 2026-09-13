@@ -319,6 +319,20 @@ dc ps app              # `running` va `healthy` bo'lishi kerak
 dc logs --tail 50 app  # odatda .env dagi xato shu yerda ko'rinadi
 ```
 
+**Hamma narsa ochiladi, lekin HECH NARSA saqlanmaydi (403 xatosi)**
+
+`APP_URL` domen bilan mos kelmayapti. Ilova `Origin` sarlavhasini
+`APP_URL` bilan solishtiradi (CSRF himoyasi) va mos kelmasa barcha
+POST/PUT/DELETE so'rovlarini rad etadi.
+
+```bash
+grep APP_URL .env          # https://<domen> bo'lishi kerak, oxirida "/" siz
+grep DOMAIN .env           # ikkalasi bir xil domenni ko'rsatsin
+dc logs app | grep csrf    # rad etilgan Origin logda ko'rinadi
+```
+
+Tuzatgach: `dc up -d app`
+
 **Kirish ishlamayapti (parol to'g'ri, lekin qaytarib yuboradi)**
 
 `APP_URL` `https://` bilan boshlanganini tekshiring — cookie'lar

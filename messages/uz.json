@@ -379,7 +379,8 @@
       "generationInProgress": "Bu material hozir tayyorlanmoqda. Biroz kuting.",
       "tooManyLoginAttempts": "Juda ko'p urinish bo'ldi. 5 daqiqadan so'ng qayta urinib ko'ring.",
       "tooManyAiRequests": "Juda tez-tez so'ramoqchisiz. Bir daqiqa kutib, qayta urinib ko'ring.",
-      "tooManyRegistrations": "Bu qurilmadan juda ko'p hisob ochildi. Bir soatdan so'ng qayta urinib ko'ring."
+      "tooManyRegistrations": "Bu qurilmadan juda ko'p hisob ochildi. Bir soatdan so'ng qayta urinib ko'ring.",
+      "crossOriginRejected": "So'rov boshqa saytdan yuborilgan va rad etildi. Sahifani yangilab, qaytadan urinib ko'ring."
     },
     "validation": {
       "emailRequired": "Emailingizni yozing",
