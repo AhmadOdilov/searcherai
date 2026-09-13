@@ -99,18 +99,38 @@ describe("o'quv dasturi ma'lumot fayllari", () => {
           Bir o'quv yili ~34 hafta. Haftasiga 1-6 soat — ya'ni yiliga
           34-204 soat. Bundan tashqarisi ajratishda xato bo'lganini
           bildiradi (masalan ikkita sinf matni aralashib ketgan).
+
+          Pastki chegara 20: 10-11-sinf Ona tili yiliga atigi 34 soat
+          va uning bir qismi raqamlanmagan ("Mustahkamlash", "Nazorat
+          ishlari") — ular mavzu sifatida ajratilmaydi. Bu xato emas.
         */
         const total = data.topics.reduce(
           (sum, topic) => sum + (topic.expectedHours ?? 0),
           0,
         );
-        assert.ok(total >= 30 && total <= 220, `yillik soat g'alati: ${total}`);
+        assert.ok(total >= 20 && total <= 220, `yillik soat g'alati: ${total}`);
       });
 
-      it("bo'lim nomlari TAKRORLANMAYDI", () => {
-        // Takror nom — ajratish ikki marta o'qiganini bildiradi.
-        const names = data.topics.map((topic) => topic.topicName.toLowerCase());
-        assert.equal(new Set(names).size, names.length, "takrorlangan bo'lim nomi bor");
+      it("bir xil bo'lim IKKI MARTA olinmagan", () => {
+        /*
+          ── Nega nom BO'YICHA emas ─────────────────────────────────────
+          Dastlab faqat nom solishtirilardi va sinov yolg'on ogohlantirdi:
+          Matematika 8-sinf hujjati ikki qismdan iborat (algebra va
+          geometriya) va HAR BIRIDA o'z "TAKRORLASH" bobi bor. Bu
+          manbadagi haqiqiy holat, xato emas.
+
+          Haqiqiy xato — bir bobning ikki marta o'qilishi. Uning belgisi
+          nom VA tavsifning bir xilligi.
+        */
+        const keys = data.topics.map(
+          (topic) =>
+            `${topic.topicName.toLowerCase()}|${topic.description.slice(0, 120)}`,
+        );
+        assert.equal(
+          new Set(keys).size,
+          keys.length,
+          "bir xil bo'lim ikki marta olingan",
+        );
       });
     });
   }

@@ -1,0 +1,157 @@
+{
+  "subject": "Matematika",
+  "grade": "10-sinf",
+  "source": "https://uzbmb.uz/upload/file/pdf/qabul2025/dasturlar/5.Matematika/10-sinf-Matematika%20fanidan%20o%CA%BBquv%20dastur.pdf",
+  "topics": [
+    {
+      "topicName": "ELEMENTAR FUNKSIYALAR",
+      "description": "Funksiya. Funksiyaning aniqlanish sohasi va qiymatlar toʻplami‚. Funksiyaning berilish usullari. Funksiya grafigi. Funksiyalar ustida arifmetik amallar. Murakkab funksiya. Teskari funksiya. Davriy funksiyalar. Funksiya xossalari. Juft va toq funksiyalar. Funksiyalarning oʻsishi va kamayishi. Funksiya ekstremum nuqtalari va ekstremumlari. Funksiya grafiklarini sodda almashtirishlar. Funksiya grafiklarini siljitish, siqish, choʻzish. Chiziqli va kvadratik modellashtirish. STEM topshiriq (loyiha ishi).",
+      "expectedHours": 17,
+      "expectedOutcomes": [
+        "Murakkab funksiya, teskari funksiya, davriy funksiyalarni M10.MA.2 farqlaydi va ularning xossalarini biladi",
+        "Sodda koʻrsatkichli, logarifmik tenglamalar, Koʻrsatkichli va M10.MA.10 logarifmik tenglamalar sistemasi va Koʻrsatkichli tengsizliklarni yecha oladi",
+        "M10.MA.16 Ba’zi trigonometrik tenglamalarni yechish usullarini biladi",
+        "M10.MA.21 Tajribalar asosida natijalar oladi. Hodisalar turlarini 33 farqlaydi. Tasodifiy hodisa ehtimolligi. Qarama qarshi hodisa va uning ehtimolligini taxlil qiladi",
+        "KOD GEOMETRIYA VA OʻLCHASHLAR M10.GOʻ.1 Planimetriyaning mantiqiy tuzilishini biladi",
+        "Prizma, parallelepiped, kub, piramida va ular haqida M10.GOʻ.2 boshlangʻich tushunchalarni biladi va ularning modellarini chizadi",
+        "Silindr, konus, shar va ular haqida boshlangʻich M10.GOʻ.3 tushunchalarni biladi va uning modellarini chizadi",
+        "Stereometriya aksiomalarini farqlaydi, fazoda toʻgʻri M10.GOʻ.4 chiziqlar va tekisliklarning vaziyatini ajratadi"
+      ]
+    },
+    {
+      "topicName": "RATSIONAL TENGLAMALAR VA TENGSIZLIKLAR. IRRATSIONAL TENGLAMALAR",
+      "description": "IRRATSIONAL TENGLAMALAR Sodda ratsional tenglamalar va ularning sistemalari. Sodda ratsional tenglamalar. Sodda ratsional tenglamalar sistemasi. Sodda ratsional tengsizliklar va ularning sistemalari. Sodda ratsional tengsizliklar. Sodda ratsional tengsizliklar sistemasi. Sodda irratsional tenglamalar va ularning sistemalari. Sodda irratsional tenglamalar. Sodda irratsional tenglamalar sistemasi.",
+      "expectedHours": 21,
+      "expectedOutcomes": [
+        "Murakkab funksiya, teskari funksiya, davriy funksiyalarni M10.MA.2 farqlaydi va ularning xossalarini biladi",
+        "Sodda koʻrsatkichli, logarifmik tenglamalar, Koʻrsatkichli va M10.MA.10 logarifmik tenglamalar sistemasi va Koʻrsatkichli tengsizliklarni yecha oladi",
+        "M10.MA.16 Ba’zi trigonometrik tenglamalarni yechish usullarini biladi",
+        "M10.MA.21 Tajribalar asosida natijalar oladi. Hodisalar turlarini 33 farqlaydi. Tasodifiy hodisa ehtimolligi. Qarama qarshi hodisa va uning ehtimolligini taxlil qiladi",
+        "KOD GEOMETRIYA VA OʻLCHASHLAR M10.GOʻ.1 Planimetriyaning mantiqiy tuzilishini biladi",
+        "Prizma, parallelepiped, kub, piramida va ular haqida M10.GOʻ.2 boshlangʻich tushunchalarni biladi va ularning modellarini chizadi",
+        "Silindr, konus, shar va ular haqida boshlangʻich M10.GOʻ.3 tushunchalarni biladi va uning modellarini chizadi",
+        "Stereometriya aksiomalarini farqlaydi, fazoda toʻgʻri M10.GOʻ.4 chiziqlar va tekisliklarning vaziyatini ajratadi"
+      ]
+    },
+    {
+      "topicName": "KOʻRSATKICHLI VA LOGARIFMIK FUNKSIYALAR",
+      "description": "Koʻrsatkichli funksiya. Koʻrsatkichli funksiya va uning xossalari, grafigi. Koʻrsatkichli ifodalarni soddalashtirish. Logarifmik funksiya. Logarifm haqida tushuncha. Logarifmik funksiya va uning xossalari, grafigi. Logarifmik ifodalarni ayniy almashtirish. Koʻrsatkichli va logarifmik ifodalarni soddalashtirish. Sodda koʻrsatkichli tenglamalar. Sodda koʻrsatkichli tenglamalar va ularni yechish. Sodda logarifmik tenglamalar. Sodda logarifmik tenglamalarni yechish. Sodda koʻrsatkichli va logarifmik tenglamalar sistemasi. Koʻrsatkichli va logarifmik tenglamalar sistemasi va ularni yechish. Sodda koʻrsatkichli tengsizliklar. Koʻrsatkichli tengsizliklar va ularning turlari. Sodda logarifmik tengsizliklar. Sodda logarifmik tengsizliklar va ularni yechish. Koʻrsatkichli modellashtirish. Murakkab foiz formulasi va uning tatbiqlari. Oʻsish hodisalari. Radioaktiv yemirilish.",
+      "expectedHours": 20,
+      "expectedOutcomes": [
+        "Murakkab funksiya, teskari funksiya, davriy funksiyalarni M10.MA.2 farqlaydi va ularning xossalarini biladi",
+        "Sodda koʻrsatkichli, logarifmik tenglamalar, Koʻrsatkichli va M10.MA.10 logarifmik tenglamalar sistemasi va Koʻrsatkichli tengsizliklarni yecha oladi",
+        "M10.MA.16 Ba’zi trigonometrik tenglamalarni yechish usullarini biladi",
+        "M10.MA.21 Tajribalar asosida natijalar oladi. Hodisalar turlarini 33 farqlaydi. Tasodifiy hodisa ehtimolligi. Qarama qarshi hodisa va uning ehtimolligini taxlil qiladi",
+        "KOD GEOMETRIYA VA OʻLCHASHLAR M10.GOʻ.1 Planimetriyaning mantiqiy tuzilishini biladi",
+        "Prizma, parallelepiped, kub, piramida va ular haqida M10.GOʻ.2 boshlangʻich tushunchalarni biladi va ularning modellarini chizadi",
+        "Silindr, konus, shar va ular haqida boshlangʻich M10.GOʻ.3 tushunchalarni biladi va uning modellarini chizadi",
+        "Stereometriya aksiomalarini farqlaydi, fazoda toʻgʻri M10.GOʻ.4 chiziqlar va tekisliklarning vaziyatini ajratadi"
+      ]
+    },
+    {
+      "topicName": "TRIGONOMETRIK FUNKSIYALAR",
+      "description": "Trigonometrik funksiyalar. y=sinx, y=cosx, y=tgx, y= ctgx funksiyalar va ularning xossalari, grafigi. Davriy jarayonlar. Teskari trigonometrik funksiyalar. arcsina, arccosa, arctga, arcctga ning qiymatlari. y=arcsinx, y=arccosx, y=arctgx, y= arcctgx funksiyalar va ularning xossalari, grafigi. STEM topshiriq (loyiha ishi).",
+      "expectedHours": 10,
+      "expectedOutcomes": [
+        "Murakkab funksiya, teskari funksiya, davriy funksiyalarni M10.MA.2 farqlaydi va ularning xossalarini biladi",
+        "Sodda koʻrsatkichli, logarifmik tenglamalar, Koʻrsatkichli va M10.MA.10 logarifmik tenglamalar sistemasi va Koʻrsatkichli tengsizliklarni yecha oladi",
+        "M10.MA.16 Ba’zi trigonometrik tenglamalarni yechish usullarini biladi",
+        "M10.MA.21 Tajribalar asosida natijalar oladi. Hodisalar turlarini 33 farqlaydi. Tasodifiy hodisa ehtimolligi. Qarama qarshi hodisa va uning ehtimolligini taxlil qiladi",
+        "KOD GEOMETRIYA VA OʻLCHASHLAR M10.GOʻ.1 Planimetriyaning mantiqiy tuzilishini biladi",
+        "Prizma, parallelepiped, kub, piramida va ular haqida M10.GOʻ.2 boshlangʻich tushunchalarni biladi va ularning modellarini chizadi",
+        "Silindr, konus, shar va ular haqida boshlangʻich M10.GOʻ.3 tushunchalarni biladi va uning modellarini chizadi",
+        "Stereometriya aksiomalarini farqlaydi, fazoda toʻgʻri M10.GOʻ.4 chiziqlar va tekisliklarning vaziyatini ajratadi"
+      ]
+    },
+    {
+      "topicName": "TRIGONOMETRIK TENGLAMALAR VA TENGSIZLIKLAR",
+      "description": "Eng sodda trigonometrik tenglamalar. sinx=a, cosx=a, tgx=a, ctgx=a koʻrinishdagi tenglamalar. Trigonometrik tenglamalarni yechish. Ba’zi trigonometrik tenglamalarni yechish usullari. Eng sodda trigonometrik tengsizliklar.",
+      "expectedHours": 12,
+      "expectedOutcomes": [
+        "Murakkab funksiya, teskari funksiya, davriy funksiyalarni M10.MA.2 farqlaydi va ularning xossalarini biladi",
+        "Sodda koʻrsatkichli, logarifmik tenglamalar, Koʻrsatkichli va M10.MA.10 logarifmik tenglamalar sistemasi va Koʻrsatkichli tengsizliklarni yecha oladi",
+        "M10.MA.16 Ba’zi trigonometrik tenglamalarni yechish usullarini biladi",
+        "M10.MA.21 Tajribalar asosida natijalar oladi. Hodisalar turlarini 33 farqlaydi. Tasodifiy hodisa ehtimolligi. Qarama qarshi hodisa va uning ehtimolligini taxlil qiladi",
+        "KOD GEOMETRIYA VA OʻLCHASHLAR M10.GOʻ.1 Planimetriyaning mantiqiy tuzilishini biladi",
+        "Prizma, parallelepiped, kub, piramida va ular haqida M10.GOʻ.2 boshlangʻich tushunchalarni biladi va ularning modellarini chizadi",
+        "Silindr, konus, shar va ular haqida boshlangʻich M10.GOʻ.3 tushunchalarni biladi va uning modellarini chizadi",
+        "Stereometriya aksiomalarini farqlaydi, fazoda toʻgʻri M10.GOʻ.4 chiziqlar va tekisliklarning vaziyatini ajratadi"
+      ]
+    },
+    {
+      "topicName": "EHTIMOLLIK NAZARIYASI",
+      "description": "Tasodifiy hodisalar. Tajriba va natija. Muqarrar hodisalar. Tasodifiy hodisalar. Birgalikda va birgalikda boʻlmagan hodisalar. Bogʻliq va bogʻliq boʻlmagan hodisalar. Tasodifiy hodisa ehtimolligi. Qarama qarshi hodisa va uning ehtimolligi. Ehtimollikni hisoblashda kombinatorika formulalaridan foydalanish. Teng ehtimolli hodisalar. Teng ehtimolli hodisalar va ularning ehtimolligini hisoblash. TAKRORLASH X SINF GEOMETRIYA",
+      "expectedHours": 8,
+      "expectedOutcomes": [
+        "Murakkab funksiya, teskari funksiya, davriy funksiyalarni M10.MA.2 farqlaydi va ularning xossalarini biladi",
+        "Sodda koʻrsatkichli, logarifmik tenglamalar, Koʻrsatkichli va M10.MA.10 logarifmik tenglamalar sistemasi va Koʻrsatkichli tengsizliklarni yecha oladi",
+        "M10.MA.16 Ba’zi trigonometrik tenglamalarni yechish usullarini biladi",
+        "M10.MA.21 Tajribalar asosida natijalar oladi. Hodisalar turlarini 33 farqlaydi. Tasodifiy hodisa ehtimolligi. Qarama qarshi hodisa va uning ehtimolligini taxlil qiladi",
+        "KOD GEOMETRIYA VA OʻLCHASHLAR M10.GOʻ.1 Planimetriyaning mantiqiy tuzilishini biladi",
+        "Prizma, parallelepiped, kub, piramida va ular haqida M10.GOʻ.2 boshlangʻich tushunchalarni biladi va ularning modellarini chizadi",
+        "Silindr, konus, shar va ular haqida boshlangʻich M10.GOʻ.3 tushunchalarni biladi va uning modellarini chizadi",
+        "Stereometriya aksiomalarini farqlaydi, fazoda toʻgʻri M10.GOʻ.4 chiziqlar va tekisliklarning vaziyatini ajratadi"
+      ]
+    },
+    {
+      "topicName": "PLANIMETRIYANI TIZIMLI TAKRORLASH",
+      "description": "Planimetriyaning mantiqiy tuzilishi. Geometrik masalalar va ularni yechish usullari. Bobni takrorlashga doir amaliy mashqlar",
+      "expectedHours": 6,
+      "expectedOutcomes": [
+        "Murakkab funksiya, teskari funksiya, davriy funksiyalarni M10.MA.2 farqlaydi va ularning xossalarini biladi",
+        "Sodda koʻrsatkichli, logarifmik tenglamalar, Koʻrsatkichli va M10.MA.10 logarifmik tenglamalar sistemasi va Koʻrsatkichli tengsizliklarni yecha oladi",
+        "M10.MA.16 Ba’zi trigonometrik tenglamalarni yechish usullarini biladi",
+        "M10.MA.21 Tajribalar asosida natijalar oladi. Hodisalar turlarini 33 farqlaydi. Tasodifiy hodisa ehtimolligi. Qarama qarshi hodisa va uning ehtimolligini taxlil qiladi",
+        "KOD GEOMETRIYA VA OʻLCHASHLAR M10.GOʻ.1 Planimetriyaning mantiqiy tuzilishini biladi",
+        "Prizma, parallelepiped, kub, piramida va ular haqida M10.GOʻ.2 boshlangʻich tushunchalarni biladi va ularning modellarini chizadi",
+        "Silindr, konus, shar va ular haqida boshlangʻich M10.GOʻ.3 tushunchalarni biladi va uning modellarini chizadi",
+        "Stereometriya aksiomalarini farqlaydi, fazoda toʻgʻri M10.GOʻ.4 chiziqlar va tekisliklarning vaziyatini ajratadi"
+      ]
+    },
+    {
+      "topicName": "STEREOMETRIYAGA KIRISH",
+      "description": "Stereometriyaning asosiy tushunchalari. Stereometriya aksiomalari. Stereometriya aksiomalaridan kelib chiquvchi natijalar. Fazoda toʻgʻri chiziqlar va tekisliklar. Fazoda kesishuvchi, ayqash va parallel toʻgʻri chiziqlar. Fazoda tekislikni kesuvchi va unga parallel toʻgʻri chiziqlar. Fazoda kesishuvchi va parallel tekisliklar. Fazoviy geometrik shakllar. Koʻpyoqlar. Fazoviy jismlar. Koʻpyoqlar va ularning elementlari. Prizma va piramidalar hamda ularning turlari. Muntazam piramida va uning xossalari. Muntazam piramida yon sirtini hisoblash formulasi. Koʻpyoqlarni tasvirlash va modelini yasash. Koʻpyoqlarni tekislikda tasvirlash. Koʻpyoqlar yoyilmasi va unga koʻra uning modelini yasash. Koʻpyoqlarning sodda kesimlarini yasash. Kesim tushunchasi. Koʻpyoqlarning sodda kesimlarini yasash usullari. Loyiha ishi boʻyicha mashgʻulot. Bobni takrorlashga doir amaliy mashqlar.",
+      "expectedHours": 16,
+      "expectedOutcomes": [
+        "Murakkab funksiya, teskari funksiya, davriy funksiyalarni M10.MA.2 farqlaydi va ularning xossalarini biladi",
+        "Sodda koʻrsatkichli, logarifmik tenglamalar, Koʻrsatkichli va M10.MA.10 logarifmik tenglamalar sistemasi va Koʻrsatkichli tengsizliklarni yecha oladi",
+        "M10.MA.16 Ba’zi trigonometrik tenglamalarni yechish usullarini biladi",
+        "M10.MA.21 Tajribalar asosida natijalar oladi. Hodisalar turlarini 33 farqlaydi. Tasodifiy hodisa ehtimolligi. Qarama qarshi hodisa va uning ehtimolligini taxlil qiladi",
+        "KOD GEOMETRIYA VA OʻLCHASHLAR M10.GOʻ.1 Planimetriyaning mantiqiy tuzilishini biladi",
+        "Prizma, parallelepiped, kub, piramida va ular haqida M10.GOʻ.2 boshlangʻich tushunchalarni biladi va ularning modellarini chizadi",
+        "Silindr, konus, shar va ular haqida boshlangʻich M10.GOʻ.3 tushunchalarni biladi va uning modellarini chizadi",
+        "Stereometriya aksiomalarini farqlaydi, fazoda toʻgʻri M10.GOʻ.4 chiziqlar va tekisliklarning vaziyatini ajratadi"
+      ]
+    },
+    {
+      "topicName": "FAZODA TOʻGʻRI CHIZIQLAR VA TEKISLIKLARNING PARALLELLIGI",
+      "description": "PARALLELLIGI Fazoda toʻgʻri chiziqlarning oʻzaro joylashuvi. Parallel toʻgʻri chiziqlar va ularning xossalari. Ayqash toʻgʻri chiziqlar. Toʻgʻri chiziqlarning ayqashlik alomati. Ayqash toʻgʻri chiziqlar orasidagi burchak. Fazoda toʻgʻri chiziqlar va tekisliklarning oʻzaro joylashuvi. Tekislik bilan parallel toʻgʻri chiziqlar va ularning xossalari. Tekislikka parallel toʻgʻri chiziqlar va ularning xossalari. Fazoda tekisliklarning oʻzaro joylashuvi. Parallel tekisliklar va ularning xossalari. Fazoviy shakllarning tekislikda tasvirlanishi. Fazoda parallel proyeksiyalash Bobni takrorlashga doir amaliy mashqlar",
+      "expectedHours": 18,
+      "expectedOutcomes": [
+        "Murakkab funksiya, teskari funksiya, davriy funksiyalarni M10.MA.2 farqlaydi va ularning xossalarini biladi",
+        "Sodda koʻrsatkichli, logarifmik tenglamalar, Koʻrsatkichli va M10.MA.10 logarifmik tenglamalar sistemasi va Koʻrsatkichli tengsizliklarni yecha oladi",
+        "M10.MA.16 Ba’zi trigonometrik tenglamalarni yechish usullarini biladi",
+        "M10.MA.21 Tajribalar asosida natijalar oladi. Hodisalar turlarini 33 farqlaydi. Tasodifiy hodisa ehtimolligi. Qarama qarshi hodisa va uning ehtimolligini taxlil qiladi",
+        "KOD GEOMETRIYA VA OʻLCHASHLAR M10.GOʻ.1 Planimetriyaning mantiqiy tuzilishini biladi",
+        "Prizma, parallelepiped, kub, piramida va ular haqida M10.GOʻ.2 boshlangʻich tushunchalarni biladi va ularning modellarini chizadi",
+        "Silindr, konus, shar va ular haqida boshlangʻich M10.GOʻ.3 tushunchalarni biladi va uning modellarini chizadi",
+        "Stereometriya aksiomalarini farqlaydi, fazoda toʻgʻri M10.GOʻ.4 chiziqlar va tekisliklarning vaziyatini ajratadi"
+      ]
+    },
+    {
+      "topicName": "FAZODA TOʻGʻRI CHIZIQ VA TEKISLIKNING PERPENDIKULYARLIGI",
+      "description": "PERPENDIKULYARLIGI Fazoda perpendikulyar toʻgʻri chiziqlar va tekisliklar. Fazodagi perpendikular toʻgʻri chiziqlarning xossalari. Toʻgʻri chiziqlarning perpendikularlik alomati. Umumlashgan Pifagor teoremasi. Fazoda perpendikulyar, ogʻma va masofa. Fazoda tekislikka tushirilgan perpendikular va ogʻma. Nuqtadan tekislikkacha boʻlgan masofa. Toʻgʻri chiziqdan unga parallel boʻlgan tekislikkacha boʻlgan masofa. Parallel tekisliklar orasidagi masofa. Ayqash toʻgʻri chiziqlar orasidagi masofa. Uch perpendikulyar haqidagi teorema. Uch perpendikularlar haqidagi teorema va unga teskari teorema Fazoda tekisliklarning perpendikularligi. Ikki yoqli burchak va uning elementlari. Ikki yoqli burchakning chiziqli burchagi. Tekisliklar orasidagi burchak. Fazoda perpendikular tekisliklar. Tekisliklarning perpendikularlik alomati va undan kelib chiqadigan natijalar. Fazoda ortogonal proyeksiya va undan texnikada foydalanish. Koʻpburchakning ortogonal proyeksiyasining yuzi. Ortogonal proyeksiyadan texnikada foydalanish Bobni takrorlashga doir amaliy mashqlar VI boʻlim. TAKRORLASH Takrorlashga doir masalalar Amaliy mashq va tatbiq Loyiha ishi boʻyicha mashgʻulot",
+      "expectedHours": 20,
+      "expectedOutcomes": [
+        "Murakkab funksiya, teskari funksiya, davriy funksiyalarni M10.MA.2 farqlaydi va ularning xossalarini biladi",
+        "Sodda koʻrsatkichli, logarifmik tenglamalar, Koʻrsatkichli va M10.MA.10 logarifmik tenglamalar sistemasi va Koʻrsatkichli tengsizliklarni yecha oladi",
+        "M10.MA.16 Ba’zi trigonometrik tenglamalarni yechish usullarini biladi",
+        "M10.MA.21 Tajribalar asosida natijalar oladi. Hodisalar turlarini 33 farqlaydi. Tasodifiy hodisa ehtimolligi. Qarama qarshi hodisa va uning ehtimolligini taxlil qiladi",
+        "KOD GEOMETRIYA VA OʻLCHASHLAR M10.GOʻ.1 Planimetriyaning mantiqiy tuzilishini biladi",
+        "Prizma, parallelepiped, kub, piramida va ular haqida M10.GOʻ.2 boshlangʻich tushunchalarni biladi va ularning modellarini chizadi",
+        "Silindr, konus, shar va ular haqida boshlangʻich M10.GOʻ.3 tushunchalarni biladi va uning modellarini chizadi",
+        "Stereometriya aksiomalarini farqlaydi, fazoda toʻgʻri M10.GOʻ.4 chiziqlar va tekisliklarning vaziyatini ajratadi"
+      ]
+    }
+  ]
+}

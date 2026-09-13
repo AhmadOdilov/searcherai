@@ -18,7 +18,7 @@
       ]
     },
     {
-      "topicName": "TENGLAMALAR VA TENGSIZLIKLAR",
+      "topicName": "TENGLAMALAR VA TENGSIZLIKLAR SISTEMALARI",
       "description": "SISTEMALARI Tenglamalar va tengsizliklar sistemalari. Ikkinchi darajali tenglama qatnashgan eng sodda sistemalarni yechish. Tenglamalar sistemasini yechishning turli usullari. Ikkinchi darajali bir noma’lumli tengsizliklar sistemalari. Sodda tengsizliklarni isbotlash. Amaliy-tadbiqiy masalalarni yechish. 2- Nazorat ishi. Nazorat ishi tahlili, xatolar ustida ishlash.",
       "expectedHours": 15,
       "expectedOutcomes": [
@@ -60,7 +60,7 @@
       ]
     },
     {
-      "topicName": "EHT.IMOLLAR NAZARIYASI VA MATEMATIK STATISTIKA",
+      "topicName": "EHT.IMOLLAR NAZARIYASI VA MATEMATIK STATISTIKA ELEMENTLARI",
       "description": "ELEMENTLARI Hodisalar. Hodisaning ehtimoligi. Tasodifiy hodisaning nisbiy chastotasi. Tasodifiy miqdorlar. Tasodifiy miqdorlarning sonli xarakteristikalari. Amaliy-tadbiqiy masalalarni yechish. 5- Nazorat ishi. Nazorat ishi tahlili, xatolar ustida ishlash.",
       "expectedHours": 10,
       "expectedOutcomes": [
@@ -116,7 +116,7 @@
       ]
     },
     {
-      "topicName": "UCHBURCHAK TOMONLARI VA BURCHAKLARI ORA-",
+      "topicName": "UCHBURCHAK TOMONLARI VA BURCHAKLARI ORASIDAGI MUNOSABATLAR",
       "description": "SIDAGI MUNOSABATLAR 0o dan 180o gacha bo‘lgan burchakning sinusi, kosinusi, tangensi va kotangensi. Masalalar yechish. Uchburchakning yuzini burchak sinusi,yordamida hisoblash. Ba’zi burchaklarning sinusi, kosinusi, tangensi va kotangensini hisoblash. Sinuslar va kosinuslar teoremalari va ularning tadbiqlari. Sinuslar teoremasi. Kosinuslar teoremasi. Sinuslar va kosinuslar teoremalarining ba’zi tadbiqlari. Ikki vektor orasidagi burchak va ularning skalyar ko‘paytmasi. Uchburchaklarni yechish. Masalalar yechish. Amaliy-tadbiqiy masalalarni yechish Bilimingizni sinab ko ‘ring. 3- Nazorat ishi. Nazorat ishi tahlili, xatolar ustida ishlash.",
       "expectedHours": 14,
       "expectedOutcomes": [
@@ -131,8 +131,8 @@
     },
     {
       "topicName": "AYLANA UZUNLIGI VA DOIRA YUZI",
-      "description": "( 13 soat) Aylanaga ichki va tashqi chizilgan ko‘pburchaklar. Muntazam ko‘pburchaklar. Muntazam ko‘pburchakka ichki va tashqi chizilgan aylanalar. Muntazam ko‘pburchakning tomoni bilan tashqi va ichki chizilgan aylanalar radiuslari orasidagi bog‘lanish. Bilimingizni sinab ko ‘ring. Aylana uzunligi. Aylana yoyi uzunligi. Burchakning radian o‘lchovi. Doira yuzi. Doira bo‘laklarining yuzi. Masalalar yechish. Bilimingizni sinab ko ‘ring. Amaliy-tadbiqiy masalalarni yechish Bilimingizni sinab ko ‘ring. 4- Nazorat ishi. Nazorat ishi tahlili, xatolar ustida ishlash.",
-      "expectedHours": null,
+      "description": "Aylanaga ichki va tashqi chizilgan ko‘pburchaklar. Muntazam ko‘pburchaklar. Muntazam ko‘pburchakka ichki va tashqi chizilgan aylanalar. Muntazam ko‘pburchakning tomoni bilan tashqi va ichki chizilgan aylanalar radiuslari orasidagi bog‘lanish. Bilimingizni sinab ko ‘ring. Aylana uzunligi. Aylana yoyi uzunligi. Burchakning radian o‘lchovi. Doira yuzi. Doira bo‘laklarining yuzi. Masalalar yechish. Bilimingizni sinab ko ‘ring. Amaliy-tadbiqiy masalalarni yechish Bilimingizni sinab ko ‘ring. 4- Nazorat ishi. Nazorat ishi tahlili, xatolar ustida ishlash.",
+      "expectedHours": 13,
       "expectedOutcomes": [
         "jadal taraqqiy etayotgan jamiyatda muvaffaqiyatli faoliyat yurita oladigan, aniq va ravshan, tanqidiy hamda mantiqiy fikrlay oladigan shaxsni shakllantirish",
         "inson kamoloti va jamiyat taraqqiyotida matematikaning ahamiyatini anglash, ijtimoiy-iqtisodiy munosabatlar, kundalik hayotda matematik bilim va ko‘nikmalarni muvaffaqiyatli qo‘llashga o‘rgatish",

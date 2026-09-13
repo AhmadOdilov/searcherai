@@ -1,0 +1,157 @@
+{
+  "subject": "Matematika",
+  "grade": "8-sinf",
+  "source": "https://uzbmb.uz/upload/file/pdf/qabul2025/dasturlar/5.Matematika/8-sinf-Matematika%20fanidan%20o%CA%BBquv%20dastur.pdf",
+  "topics": [
+    {
+      "topicName": "ALGEBRAIK KASRLAR VA ULAR USTIDA AMALLAR",
+      "description": "7-sinf kursini takrorlash. Algebraik kasrlar va ular ustida amallar. Algebraik ifodalar. Algebraik kasr. Kasrlarni qisqartirish. Kasrlarni umumiy maxrajga keltirish.. Algebraik kasrlarni qo‘shish va ayirish. Algebraik kasrlarni ko‘paytirish va bo‘lish. Kasr-ratsional ifodalarni ayniy almashtirish. y = k , k  0 Funksiya, uning x xossalari va grafigi. Natural ko‘rsatkichli darajaning arifmetik ildizi va uning xossalari. Ratsional ko‘rsatkichli darajа va uning xossalari. Ratsional ko‘rsatkichli daraja qatnashgan algebraik ifodalarni soddalashtirish. Amaliy-tadbiqiy masalalarni yechish. 1-Nazorat ishi. Nazorat ishi tahlili, xatolar ustida ishlash.",
+      "expectedHours": 35,
+      "expectedOutcomes": [
+        "jadal taraqqiy etayotgan jamiyatda muvaffaqiyatli faoliyat yurita oladigan, aniq va ravshan, tanqidiy hamda mantiqiy fikrlay oladigan shaxsni shakllantirish",
+        "inson kamoloti va jamiyat taraqqiyotida matematikaning ahamiyatini anglash, ijtimoiy-iqtisodiy munosabatlar, kundalik hayotda matematik bilim va ko‘nikmalarni muvaffaqiyatli qo‘llashga o‘rgatish",
+        "o‘quvchilarning individual xususiyatlarini rivojlantirgan holda, mustaqil ta’lim olish ko‘nikmalarini shakllantirish",
+        "darajaning xossalarini ifodalarning shaklini almashtirishda va hisoblashda qo‘llaydi",
+        "viyet teoremasi va undan foydalanishni biladi",
+        "kvadrat uchhadni chiziqli ko‘paytuvchilarga ajratadi. 5 matnli masalalarni algebraik usulda yechadi",
+        "Ma’lumotlarni yig‘ib, sodda jadvallar, diagrammalar tuzadi va ma’lumotlar oladi, tevarak atrofdagi narsalarning sonli ma’lumotlarini topadi, tahlil qiladi, qarama-qarshi qo‘yadi",
+        "kombinatorik masalalarni yechishga kombinator ko‘paytirish qoidasini qo‘llaydi"
+      ]
+    },
+    {
+      "topicName": "TENGSIZLIKLAR",
+      "description": "Tengsizliklar. Sonli tengsizliklar. Sonli tengsizliklarning asosiy xossalari. Tengsizliklarni qo‘shish va ko‘paytirish. Sonli tengsizliklarni darajaga ko‘tarish. Bir noma‘lumli tengsizliklar. Bir noma‘lumli tengsizliklar sistemalari. Sonli oraliqlar. Sonning moduli. Modul qatnashgan tenglama va tengsizliklar. Taqribiy hisoblashlar. Miqdorlarning taqribiy qiymalari. Yaqinlashish xatoligi. Xatolikni baholash. Sonlarni yaxlitlash. Nisbiy xatolik. Sonning moduli*. Loyiha ishi bo‘yicha mashg‘ulot. Amaliy-tadbiqiy masalalarni yechish. 2- Nazorat ishi. Nazorat ishi tahlili, xatolar ustida ishlash.",
+      "expectedHours": 21,
+      "expectedOutcomes": [
+        "jadal taraqqiy etayotgan jamiyatda muvaffaqiyatli faoliyat yurita oladigan, aniq va ravshan, tanqidiy hamda mantiqiy fikrlay oladigan shaxsni shakllantirish",
+        "inson kamoloti va jamiyat taraqqiyotida matematikaning ahamiyatini anglash, ijtimoiy-iqtisodiy munosabatlar, kundalik hayotda matematik bilim va ko‘nikmalarni muvaffaqiyatli qo‘llashga o‘rgatish",
+        "o‘quvchilarning individual xususiyatlarini rivojlantirgan holda, mustaqil ta’lim olish ko‘nikmalarini shakllantirish",
+        "darajaning xossalarini ifodalarning shaklini almashtirishda va hisoblashda qo‘llaydi",
+        "viyet teoremasi va undan foydalanishni biladi",
+        "kvadrat uchhadni chiziqli ko‘paytuvchilarga ajratadi. 5 matnli masalalarni algebraik usulda yechadi",
+        "Ma’lumotlarni yig‘ib, sodda jadvallar, diagrammalar tuzadi va ma’lumotlar oladi, tevarak atrofdagi narsalarning sonli ma’lumotlarini topadi, tahlil qiladi, qarama-qarshi qo‘yadi",
+        "kombinatorik masalalarni yechishga kombinator ko‘paytirish qoidasini qo‘llaydi"
+      ]
+    },
+    {
+      "topicName": "KVADRAT TENGLAMALAR",
+      "description": "Kvadrat tenglamalar. Kvadrat tenglama va uning ildizlari. Chala kvadrat tenglamalar va ularni yechish. Kvadrat tenglamalarning ildizlarini topish formulalari. Diskriminant. Viyet teoremasi. Kvadrat uchhad. Kvadrat uchhadni chiziqli ko‘paytuvchilarga ajratish. Bikvadrat tenglama. Kvadrat tenglamaga keltiriladigan tenglamalar. Kvadrat tenglamalar yordamida masalalar yechish. Amaliy-tadbiqiy masalalarni yechish. 3- Nazorat ishi. Nazorat ishi tahlili, xatolar ustida ishlash.",
+      "expectedHours": 24,
+      "expectedOutcomes": [
+        "jadal taraqqiy etayotgan jamiyatda muvaffaqiyatli faoliyat yurita oladigan, aniq va ravshan, tanqidiy hamda mantiqiy fikrlay oladigan shaxsni shakllantirish",
+        "inson kamoloti va jamiyat taraqqiyotida matematikaning ahamiyatini anglash, ijtimoiy-iqtisodiy munosabatlar, kundalik hayotda matematik bilim va ko‘nikmalarni muvaffaqiyatli qo‘llashga o‘rgatish",
+        "o‘quvchilarning individual xususiyatlarini rivojlantirgan holda, mustaqil ta’lim olish ko‘nikmalarini shakllantirish",
+        "darajaning xossalarini ifodalarning shaklini almashtirishda va hisoblashda qo‘llaydi",
+        "viyet teoremasi va undan foydalanishni biladi",
+        "kvadrat uchhadni chiziqli ko‘paytuvchilarga ajratadi. 5 matnli masalalarni algebraik usulda yechadi",
+        "Ma’lumotlarni yig‘ib, sodda jadvallar, diagrammalar tuzadi va ma’lumotlar oladi, tevarak atrofdagi narsalarning sonli ma’lumotlarini topadi, tahlil qiladi, qarama-qarshi qo‘yadi",
+        "kombinatorik masalalarni yechishga kombinator ko‘paytirish qoidasini qo‘llaydi"
+      ]
+    },
+    {
+      "topicName": "MA’LUMOTLAR TAHLILI",
+      "description": "Ma’lumotlar tahlili. Ma’lumotlarni tasvirlash. O‘rta qiymat. Moda. Mediana. Kombinatorika elementlari. Tanlash usuli bilan kombinatorik masalalarni yechish. Kombinatorikaning asosiy qoidasi va uni masalalarni yechishda qo’llash. Bir nechta sonlarning EKUBi va EKUK, EKUB va EKUK ko‘paytmasi haqida Loyiha ishi bo‘yicha mashg‘ulot. Amaliy-tadbiqiy masalalarni yechish. 4- Nazorat ishi. Nazorat ishi tahlili, xatolar ustida ishlash.",
+      "expectedHours": 14,
+      "expectedOutcomes": [
+        "jadal taraqqiy etayotgan jamiyatda muvaffaqiyatli faoliyat yurita oladigan, aniq va ravshan, tanqidiy hamda mantiqiy fikrlay oladigan shaxsni shakllantirish",
+        "inson kamoloti va jamiyat taraqqiyotida matematikaning ahamiyatini anglash, ijtimoiy-iqtisodiy munosabatlar, kundalik hayotda matematik bilim va ko‘nikmalarni muvaffaqiyatli qo‘llashga o‘rgatish",
+        "o‘quvchilarning individual xususiyatlarini rivojlantirgan holda, mustaqil ta’lim olish ko‘nikmalarini shakllantirish",
+        "darajaning xossalarini ifodalarning shaklini almashtirishda va hisoblashda qo‘llaydi",
+        "viyet teoremasi va undan foydalanishni biladi",
+        "kvadrat uchhadni chiziqli ko‘paytuvchilarga ajratadi. 5 matnli masalalarni algebraik usulda yechadi",
+        "Ma’lumotlarni yig‘ib, sodda jadvallar, diagrammalar tuzadi va ma’lumotlar oladi, tevarak atrofdagi narsalarning sonli ma’lumotlarini topadi, tahlil qiladi, qarama-qarshi qo‘yadi",
+        "kombinatorik masalalarni yechishga kombinator ko‘paytirish qoidasini qo‘llaydi"
+      ]
+    },
+    {
+      "topicName": "TAKRORLASH",
+      "description": "Algebra kursini takrorlashga doir mashqlar. Amaliy-tadbiqiy masalalarni yechish. Yakuniy nazorat ishi. Nazorat ishi tahlili, xatolar ustida ishlash. 8-SINF GEOMETRIYA O‘quvchilar o‘quv faoliyati natijalariga qo‘yiladigan talablar: o‘rganilgan geometrik tushunchalarni va faktlarni tushuntirib beradi, tegishli misollar keltiradi; trapesiya, romb, parallelogramm, ko‘pburchaklar (jumladan besh, olti, sakkiz va o‘nburchak) haqidagi tizimga solingan ma’lumotga ega bo‘lishini amaliy va o‘quv masalalar yechishda namoyish qiladi; asosiy trigonometrik ayniyat va uning natijalari, 30o, 45o, 60o li burchaklarning sinusi, kosinusi, tangensi va kotangensini hisoblashni biladi; o‘qqa nisbatan simmetriya, markaziy simmetriya xossalaridan foydalanib geometrik shakllarni sharhlaydi va shakllarni bir-biri bilan solishtiradi; o‘rganilgan geometrik tushunchalarni va faktlarni tushuntirib beradi, tegishli misollar keltiradi; Pifagor teoremasi, to‘g‘ri burchakli uchburchak ishtirok etgan geometrik shakllarga oid masalalar yechadi; uchburchak, to‘g‘ri to‘rtburchak, parallelogramm, trapesiya, romb yuzini aniq va taqribiy hisoblaydi; o‘rganilgan matematik tushunchalarni va qoidalarni tushuntirib beradi, tegishli misollar keltiradi; aylana bilan bog‘liq bo‘lgan markaziy va ichki burchaklar tushunchasini biladi; aylanaga urinma tushunchasini biladi, urinmaning xossalarini isbotlaydi; tekislikdagi geometrik shakllarning xossalariga doir masalalarni yechadi, sodda tasdiqlarni isbotlaydi; tekislikda nuqtaning, kesma o‘rtasining koordinatalarini, ikki nuqta orasidagi masofani topadi, aylana, to‘g‘ri chiziq tenglamasi tuzadi, geometrik masalalar yechishda koordinatalar usulini qo‘llaydi; tekislikdagi asosiy geometrik almashtirishlarni bajaradi: harakat, o‘qqa nisbatan simmetriya, markaziy simmetriya, parallel ko‘chirish va burish; vektor va koordinatalar usullaridan foydalanib, masalalarni yechadi, sodda tasdiqlarni isbotlaydi; o‘zlashtirilgan bilim va ko‘nikmalar asosida, berilgan kichik o‘quv-tadqiqot mavzusi bo‘yicha loyiha ishini bajara oladi.",
+      "expectedHours": 8,
+      "expectedOutcomes": [
+        "jadal taraqqiy etayotgan jamiyatda muvaffaqiyatli faoliyat yurita oladigan, aniq va ravshan, tanqidiy hamda mantiqiy fikrlay oladigan shaxsni shakllantirish",
+        "inson kamoloti va jamiyat taraqqiyotida matematikaning ahamiyatini anglash, ijtimoiy-iqtisodiy munosabatlar, kundalik hayotda matematik bilim va ko‘nikmalarni muvaffaqiyatli qo‘llashga o‘rgatish",
+        "o‘quvchilarning individual xususiyatlarini rivojlantirgan holda, mustaqil ta’lim olish ko‘nikmalarini shakllantirish",
+        "darajaning xossalarini ifodalarning shaklini almashtirishda va hisoblashda qo‘llaydi",
+        "viyet teoremasi va undan foydalanishni biladi",
+        "kvadrat uchhadni chiziqli ko‘paytuvchilarga ajratadi. 5 matnli masalalarni algebraik usulda yechadi",
+        "Ma’lumotlarni yig‘ib, sodda jadvallar, diagrammalar tuzadi va ma’lumotlar oladi, tevarak atrofdagi narsalarning sonli ma’lumotlarini topadi, tahlil qiladi, qarama-qarshi qo‘yadi",
+        "kombinatorik masalalarni yechishga kombinator ko‘paytirish qoidasini qo‘llaydi"
+      ]
+    },
+    {
+      "topicName": "TO‘RTBURCHAKLAR",
+      "description": "Asosiy to‘rtburchaklar va ularning xossalari. Ko‘pburchak ichki va tashqi burchaklarining xossasi. Parallelogramm va uning xossalari. Parallelogrammning alomatlari. To‘g‘ri to‘rtburchak va uning xossalari. Kvadrat va uning xossalari. Romb va uning xossalari. Trapetsiya va uning xossalari. Fales teoremasi va uning tatbiqlari. Fales teoremasi. Uchburchak o‘rta chizig‘ining xossasi. Trapetsiya o‘rta chizig‘ining xossasi. Loyiha ishi bo‘yicha mashg‘ulot. Amaliy-tadbiqiy masalalarni yechish. 1- Nazorat ishi. Nazorat ishi tahlili, xatolar ustida ishlash.",
+      "expectedHours": 14,
+      "expectedOutcomes": [
+        "jadal taraqqiy etayotgan jamiyatda muvaffaqiyatli faoliyat yurita oladigan, aniq va ravshan, tanqidiy hamda mantiqiy fikrlay oladigan shaxsni shakllantirish",
+        "inson kamoloti va jamiyat taraqqiyotida matematikaning ahamiyatini anglash, ijtimoiy-iqtisodiy munosabatlar, kundalik hayotda matematik bilim va ko‘nikmalarni muvaffaqiyatli qo‘llashga o‘rgatish",
+        "o‘quvchilarning individual xususiyatlarini rivojlantirgan holda, mustaqil ta’lim olish ko‘nikmalarini shakllantirish",
+        "darajaning xossalarini ifodalarning shaklini almashtirishda va hisoblashda qo‘llaydi",
+        "viyet teoremasi va undan foydalanishni biladi",
+        "kvadrat uchhadni chiziqli ko‘paytuvchilarga ajratadi. 5 matnli masalalarni algebraik usulda yechadi",
+        "Ma’lumotlarni yig‘ib, sodda jadvallar, diagrammalar tuzadi va ma’lumotlar oladi, tevarak atrofdagi narsalarning sonli ma’lumotlarini topadi, tahlil qiladi, qarama-qarshi qo‘yadi",
+        "kombinatorik masalalarni yechishga kombinator ko‘paytirish qoidasini qo‘llaydi"
+      ]
+    },
+    {
+      "topicName": "TO‘G‘RI BURCHAKLI UCHBURCHAKNING TOMONLARI VA BURCHAKLARI ORASIDAGI MUNOSABATLAR",
+      "description": "BURCHAKLARI ORASIDAGI MUNOSABATLAR O‘tkir burchak trigonometrik funksiyalari. O‘tkir burchakning sinusi, kosinusi, tangensi va kotangensi. Pifagor teoremasi va uning tatbiqlari. Pifagor teoremasi va uning turli isbotlari. Pifagor teoremasiga teskari teorema. Pifagor teoremasining ba’zi tadbiqlari. Trigonometrik ayniyatlar. Asosiy trigonometrik ayniyat va uning natijalari. To‘ldiruvchi burchakning trigonometrik funksiyalari uchun formulalar. 30o, 45o, 60o li burchaklarning sinusi, kosinusi, tangensi va kotangensini hisoblash. To‘g‘ri burchakli uchburchaklarni yechish. To‘g‘ri burchakli uchburchaklarni yasash. Trigonometrik funksiyalarning qiymatlari jadvali . To‘g‘ri burchakli uchburchaklarni yechish . To‘g‘ri burchakli uchburchaklarni yasash. Amaliy-tadbiqiy masalalarni yechish. 2- Nazorat ishi. Nazorat ishi tahlili, xatolar ustida ishlash.",
+      "expectedHours": 16,
+      "expectedOutcomes": [
+        "jadal taraqqiy etayotgan jamiyatda muvaffaqiyatli faoliyat yurita oladigan, aniq va ravshan, tanqidiy hamda mantiqiy fikrlay oladigan shaxsni shakllantirish",
+        "inson kamoloti va jamiyat taraqqiyotida matematikaning ahamiyatini anglash, ijtimoiy-iqtisodiy munosabatlar, kundalik hayotda matematik bilim va ko‘nikmalarni muvaffaqiyatli qo‘llashga o‘rgatish",
+        "o‘quvchilarning individual xususiyatlarini rivojlantirgan holda, mustaqil ta’lim olish ko‘nikmalarini shakllantirish",
+        "darajaning xossalarini ifodalarning shaklini almashtirishda va hisoblashda qo‘llaydi",
+        "viyet teoremasi va undan foydalanishni biladi",
+        "kvadrat uchhadni chiziqli ko‘paytuvchilarga ajratadi. 5 matnli masalalarni algebraik usulda yechadi",
+        "Ma’lumotlarni yig‘ib, sodda jadvallar, diagrammalar tuzadi va ma’lumotlar oladi, tevarak atrofdagi narsalarning sonli ma’lumotlarini topadi, tahlil qiladi, qarama-qarshi qo‘yadi",
+        "kombinatorik masalalarni yechishga kombinator ko‘paytirish qoidasini qo‘llaydi"
+      ]
+    },
+    {
+      "topicName": "KOORDINATALAR USULI VA VEKTORLAR",
+      "description": "Tekislikda koordinatalar sistemasi. Tekislikda nuqtaning koordinatalari. Kesma o‘rtasining koordinatalari. Ikki nuqta orasidagi masofa. Aylana tenglamasi. To‘g‘ri chiziq tenglamasi. Geometrik masalalar yechishning koordinatalar usuli. Tekislikda vektorlar. Vektor tushunchasi. Vektorning uzunligi va yo‘nalishi. Vektorlarni qo‘shish va ayirish. Vektorni songa ko‘paytirish. Vektorning koordinatalari. Koordinatalari bilan berilgan vektorlar ustida amallar. Vektorning fizik va geometrik talqinlari. Geometrik masalalarni yechishning vektorlar usuli. Amaliy-tadbiqiy masalalarni yechish. 3- Nazorat ishi. Nazorat ishi tahlili, xatolar ustida ishlash. IV BOB. YUZ Ko‘pburchakning yuzi. Yuz haqida tushuncha. To‘g‘ri to‘rtburchakning yuzi. Parallelogrammning yuzi. Uchburchak yuzi. Romb va trapetsiyaning yuzi. Ko‘pburchakning yuzi. Amaliy-tadbiqiy masalalarni yechish. 4- Nazorat ishi. Nazorat ishi tahlili, xatolar ustida ishlash.",
+      "expectedHours": 14,
+      "expectedOutcomes": [
+        "jadal taraqqiy etayotgan jamiyatda muvaffaqiyatli faoliyat yurita oladigan, aniq va ravshan, tanqidiy hamda mantiqiy fikrlay oladigan shaxsni shakllantirish",
+        "inson kamoloti va jamiyat taraqqiyotida matematikaning ahamiyatini anglash, ijtimoiy-iqtisodiy munosabatlar, kundalik hayotda matematik bilim va ko‘nikmalarni muvaffaqiyatli qo‘llashga o‘rgatish",
+        "o‘quvchilarning individual xususiyatlarini rivojlantirgan holda, mustaqil ta’lim olish ko‘nikmalarini shakllantirish",
+        "darajaning xossalarini ifodalarning shaklini almashtirishda va hisoblashda qo‘llaydi",
+        "viyet teoremasi va undan foydalanishni biladi",
+        "kvadrat uchhadni chiziqli ko‘paytuvchilarga ajratadi. 5 matnli masalalarni algebraik usulda yechadi",
+        "Ma’lumotlarni yig‘ib, sodda jadvallar, diagrammalar tuzadi va ma’lumotlar oladi, tevarak atrofdagi narsalarning sonli ma’lumotlarini topadi, tahlil qiladi, qarama-qarshi qo‘yadi",
+        "kombinatorik masalalarni yechishga kombinator ko‘paytirish qoidasini qo‘llaydi"
+      ]
+    },
+    {
+      "topicName": "AYLANA",
+      "description": "Aylanadagi burchaklar. To‘g‘ri chiziq va aylananing o‘zaro joylashuvi. Aylanaga urinma va uning xossalari. Ikki aylananing o‘zaro joylashuvi. Markaziy burchak va yoyning gradus o‘lchovi. Aylanaga ichki chizilgan burchak. Ayla- naning kesuvchilari hosil qilgan burchaklar. Aylana vatari va diametrining xossalari. Uchburchakning ajoyib nuqtalari. Uchburchakning tomonlari o‘rta perpendikulyarlari, bissektrisalari, balandliklari va medianalari kesishish nuqtalari. Amaliy-tadbiqiy masalalarni yechish. 5- Nazorat ishi. Nazorat ishi tahlili, xatolar ustida ishlash.",
+      "expectedHours": 6,
+      "expectedOutcomes": [
+        "jadal taraqqiy etayotgan jamiyatda muvaffaqiyatli faoliyat yurita oladigan, aniq va ravshan, tanqidiy hamda mantiqiy fikrlay oladigan shaxsni shakllantirish",
+        "inson kamoloti va jamiyat taraqqiyotida matematikaning ahamiyatini anglash, ijtimoiy-iqtisodiy munosabatlar, kundalik hayotda matematik bilim va ko‘nikmalarni muvaffaqiyatli qo‘llashga o‘rgatish",
+        "o‘quvchilarning individual xususiyatlarini rivojlantirgan holda, mustaqil ta’lim olish ko‘nikmalarini shakllantirish",
+        "darajaning xossalarini ifodalarning shaklini almashtirishda va hisoblashda qo‘llaydi",
+        "viyet teoremasi va undan foydalanishni biladi",
+        "kvadrat uchhadni chiziqli ko‘paytuvchilarga ajratadi. 5 matnli masalalarni algebraik usulda yechadi",
+        "Ma’lumotlarni yig‘ib, sodda jadvallar, diagrammalar tuzadi va ma’lumotlar oladi, tevarak atrofdagi narsalarning sonli ma’lumotlarini topadi, tahlil qiladi, qarama-qarshi qo‘yadi",
+        "kombinatorik masalalarni yechishga kombinator ko‘paytirish qoidasini qo‘llaydi"
+      ]
+    },
+    {
+      "topicName": "TAKRORLASH",
+      "description": "Masalalar yechish. Loyiha ishi bo‘yicha mashg‘ulot. Amaliy-tadbiqiy masalalarni yechish. Yakuniy nazorat ishi. Nazorat ishi tahlili, xatolar ustida ishlash. Algebra fanini o‘qitishni mavzuiy rejalashtirish Mashg‘ulotlarlarga № Boblar nomi ajratilgan soatlar taqsimoti Nazorat ishi 1 Nazorat ishi tahlili, xatolar ustida ishlash 1 2 Tengsizliklar. 21 Nazorat ishi 1 Nazorat ishi tahlili, xatolar ustida ishlash 1 3 Kvadrat tenglamalar 24 Nazorat ishi 1 Nazorat ishi tahlili, xatolar ustida ishlash 1 4 Ma’lumotlar tahlili. 14 Nazorat ishi 1 Nazorat ishi tahlili, xatolar ustida ishlash 1 5 Takrorlash 8 Nazorat ishi 1 Nazorat ishi tahlili, xatolar ustida ishlash 1 Jami 102 Algebra fanini Chuqurlashtirib o‘qitishni mavzuiy rejalashtirish Mashg‘ulotlarlarga № Boblar nomi ajratilgan soatlar taqsimoti 1 Algebraik kasrlar va ular ustida amallar 47 2 Nazorat ishi 1 3 Nazorat ishi tahlili, xatolar ustida ishlash 1 4 Tengsizliklar. Taqribiy hisoblashlar elementlari 29 5 Nazorat ishi 1 6 Nazorat ishi tahlili, xatolar ustida ishlash 1 7 Kvadrat tenglamalar 28 8 Nazorat ishi 1 9 Nazorat ishi tahlili, xatolar ustida ishlash 1 10 Ma’lumotlar tahlili. Kombinatorika elementlari 24 11 Nazorat ishi 1 12 Nazorat ishi tahlili, xatolar ustida ishlash 1 13 Takrorlash 8 14 Nazorat ishi 1 15 Nazorat ishi tahlili, xatolar ustida ishlash 1 Jami 136 Geometriya fanini o‘qitishni mavzuiy rejalashtirish Mashg‘ulotlarlarga № Boblar nomi ajratilgan soatlar taqsimoti 1 To‘rtburchaklar 14 Nazorat ishi 1 Nazorat ishi tahlili, xatolar ustida ishlash 1 To‘g‘ri burchakli uchburchakning tomonlari va burchaklari 2 16 orasidagi munosabatlar Nazorat ishi 1 Nazorat ishi tahlili, xatolar ustida ishlash 1 3 Koordinatalar usuli va vektorlar 14 Nazorat ishi 1 Nazorat ishi tahlili, xatolar ustida ishlash 1 4 Yuz 10 Nazorat ishi 1 Nazorat ishi tahlili, xatolar ustida ishlash 1 5 Aylana 6 Nazorat ishi 1 Nazorat ishi tahlili, xatolar ustida ishlash 1 6 Takrorlash 8 Nazorat ishi 1 Nazorat ishi tahlili, xatolar ustida ishlash 1 Jami 68 Geometriya fanini chuqurlashtirib o‘qitishni mavzuiy rejalashtirish Mashg‘ulotlarlarga № Boblar nomi ajratilgan soatlar taqsimoti 1 To‘rtburchaklar 20 2 Nazorat ishi 1 3 Nazorat ishi tahlili, xatolar ustida ishlash 1 To‘g‘ri burchakli uchburchakning tomonlari va burchaklari ora- 22 sidagi munosabatlar 5 Nazorat ishi 1 6 Nazorat ishi tahlili, xatolar ustida ishlash 1 7 Koordinatalar usuli va vektorlar 22 8 Nazorat ishi 1 9 Nazorat ishi tahlili, xatolar ustida ishlash 1 10 Yuz 18 11 Nazorat ishi 1 12 Nazorat ishi tahlili, xatolar ustida ishlash 1 13 Aylana 12 14 Nazorat ishi 1 15 Nazorat ishi tahlili, xatolar ustida ishlash 1 16 Takrorlash 8 17 Уakuniy nazorat ishi 1 18 Nazorat ishi tahlili, xatolar ustida ishlash 1 Jami 102 Umumiy o‘rta ta’limning Matematika fanidan o‘quv dasturlarini ishlab chiqish bo‘yicha ijodiy guruh a’zolari RO‘YXATI T/r F.I.SH Ish joyi va lavozimi 1 Omonov Abduqodir Toshkent Arxitektura va qurilish instituti qoshidagi Qaxxorovich akademik litsey o‘qituvchisi, fiz-mat.f.n., dotsent 2 Baxodir Haydarov Nizomiy nomidagi T.D.P.U.Huzuridagi malaka oshirish hududiy markazi. 3 Elmurodov Alimardon FA Qoshidagi Matematika instituti ilmiy tadqiqotchi 4 Davletov Davron Nizomiy nomidagi TDPU matematika va uni hqitish Egamberganovich metodikasi kafedrasi dotsenti 5 Ismoilov Shuxrat Toshkent Arxetektura va qurilish instituti.f-m f-n Noraliyevich dotsenti 6 Sanayeva Mastura Toshkent viloyati Sergeli tumani 300- maktab Sharapovna matematika fani o‘qituvchi. 7 Soibova Iroda Baxtiyarovna Yashnaobod tumani 307-IDUM matematika fani o‘qituvchisi 8 Abduraxmonova Jamila Toshkent shahar AFIDUM matematika fani Baxromovna o‘qituvchisi 9 Shaniyazova Mavjuda Toshkent shahar Sergeli tumani 300-sonli maktab Murzaevna matematika fani o‘qituvchisi 10 Pardayeva Mehriniso Respublika ta’lim markazi direktor o‘rinbosari Doniyarovna 11 Fozilova Guliza Yunusobod tumani 274 maktab matematika fani Abdugapparovna o‘qituvchisi",
+      "expectedHours": 8,
+      "expectedOutcomes": [
+        "jadal taraqqiy etayotgan jamiyatda muvaffaqiyatli faoliyat yurita oladigan, aniq va ravshan, tanqidiy hamda mantiqiy fikrlay oladigan shaxsni shakllantirish",
+        "inson kamoloti va jamiyat taraqqiyotida matematikaning ahamiyatini anglash, ijtimoiy-iqtisodiy munosabatlar, kundalik hayotda matematik bilim va ko‘nikmalarni muvaffaqiyatli qo‘llashga o‘rgatish",
+        "o‘quvchilarning individual xususiyatlarini rivojlantirgan holda, mustaqil ta’lim olish ko‘nikmalarini shakllantirish",
+        "darajaning xossalarini ifodalarning shaklini almashtirishda va hisoblashda qo‘llaydi",
+        "viyet teoremasi va undan foydalanishni biladi",
+        "kvadrat uchhadni chiziqli ko‘paytuvchilarga ajratadi. 5 matnli masalalarni algebraik usulda yechadi",
+        "Ma’lumotlarni yig‘ib, sodda jadvallar, diagrammalar tuzadi va ma’lumotlar oladi, tevarak atrofdagi narsalarning sonli ma’lumotlarini topadi, tahlil qiladi, qarama-qarshi qo‘yadi",
+        "kombinatorik masalalarni yechishga kombinator ko‘paytirish qoidasini qo‘llaydi"
+      ]
+    }
+  ]
+}
