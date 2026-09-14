@@ -29,6 +29,14 @@ export interface GenerateXlsxResult {
 /** Excel katakchasiga sig'adigan maksimal matn (32767 — Excel chegarasi). */
 const MAX_CELL_CHARS = 4000;
 
+/**
+ * Butun son formati.
+ *
+ * Soat va hafta raqami kasr bo'lmaydi: "2,0" yoki "2,00" ko'rinishi
+ * jadvalni hujjatga o'xshamaydigan qiladi.
+ */
+const INTEGER_FORMAT = "0";
+
 /** Excel ish varag'i nomidagi taqiqlangan belgilar. */
 const INVALID_SHEET_CHARS = /[[\]:*?/\\]/g;
 
@@ -126,7 +134,17 @@ export async function generateXlsx(
       row.getCell(1).value = week.weekNumber;
       row.getCell(2).value = clamp(week.dateRange, 100);
       row.getCell(3).value = clamp(topic.name, MAX_CELL_CHARS);
+      /*
+        Soat — MATN emas, son.
+
+        `numFmt` ni ataylab qo'yamiz: busiz Excel soatni "umumiy"
+        (General) formatda ko'rsatadi va o'qituvchi katakchani tahrirlab
+        "2 " deb yozsa, u matnga aylanadi — shunda `SUM` uni hisobga
+        olmaydi va jami jim noto'g'ri chiqadi.
+      */
       row.getCell(4).value = topic.hours;
+      row.getCell(4).numFmt = INTEGER_FORMAT;
+      row.getCell(1).numFmt = INTEGER_FORMAT;
       row.getCell(5).value =
         topic.note === undefined ? "" : clamp(topic.note, MAX_CELL_CHARS);
 
@@ -159,7 +177,28 @@ export async function generateXlsx(
   if (dataRowCount > 0) {
     const totalRow = sheet.getRow(rowIndex);
     totalRow.getCell(3).value = TOTAL_LABELS[language];
-    totalRow.getCell(4).value = totalHours;
+
+    /*
+      Jami — TAYYOR SON emas, `SUM` formulasi.
+
+      Kalendar reja hech qachon birinchi ko'rinishida qolmaydi:
+      o'qituvchi mavzuni ko'chiradi, soatni 2 dan 1 ga tushiradi, qator
+      qo'shadi. Tayyor son yozilganda jami o'sha eski qiymatda qotib
+      qolardi — va aynan shu raqam o'quv bo'limiga topshiriladigan
+      hujjatga tushadi. Formula esa tahrirdan keyin o'zi qayta hisoblaydi.
+
+      `result` ham beriladi: Excel faylni ochib formulani hisoblaguncha
+      katakchada shu qiymat turadi. Busiz ba'zi ko'ruvchilar (Google
+      Sheets'ning tez ko'rinishi, telefondagi ba'zi ilovalar) bo'sh
+      katakcha ko'rsatadi.
+    */
+    const firstDataRow = 3;
+    const lastDataRow = rowIndex - 1;
+    totalRow.getCell(4).value = {
+      formula: `SUM(D${firstDataRow}:D${lastDataRow})`,
+      result: totalHours,
+    };
+    totalRow.getCell(4).numFmt = INTEGER_FORMAT;
 
     for (let column = 1; column <= headers.length; column++) {
       const cell = totalRow.getCell(column);

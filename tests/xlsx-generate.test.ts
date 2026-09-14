@@ -153,7 +153,12 @@ describe("generateXlsx — asosiy holat", () => {
     );
   });
 
-  it("oxirida JAMI qatorini qo'shadi", async () => {
+  it("oxirida JAMI qatorini FORMULA bilan qo'shadi", async () => {
+    /*
+      Eng muhim tekshiruv: jami TAYYOR SON emas, `SUM` formulasi
+      bo'lishi kerak. O'qituvchi soatni tahrirlaganda jami o'zi qayta
+      hisoblansin — aks holda hujjatga eski raqam tushib ketadi.
+    */
     const result = await generateXlsx(
       content({
         weeks: [
@@ -166,7 +171,26 @@ describe("generateXlsx — asosiy holat", () => {
 
     // 3, 4 — ma'lumot; 5 — jami
     assert.equal(sheet.getCell(5, 3).value, "Jami");
-    assert.equal(sheet.getCell(5, 4).value, 5, "soatlar yig'indisi");
+
+    const total = sheet.getCell(5, 4).value as { formula?: string; result?: number };
+    assert.equal(
+      total.formula,
+      "SUM(D3:D4)",
+      "jami katakchasida SUM formulasi bo'lishi kerak",
+    );
+    // Fayl ochilguncha ko'rinadigan qiymat ham to'g'ri bo'lsin.
+    assert.equal(total.result, 5, "formula natijasi soatlar yig'indisi bo'lsin");
+  });
+
+  it("soat va hafta ustunlari BUTUN SON formatida", async () => {
+    // Busiz Excel "2" ni "2,00" qilib ko'rsatishi yoki tahrirdan keyin
+    // matnga aylantirib, `SUM` dan tushirib qoldirishi mumkin.
+    const result = await generateXlsx(content());
+    const sheet = await readBack(result.buffer);
+
+    assert.equal(sheet.getCell(3, 4).numFmt, "0", "soat butun son formatida emas");
+    assert.equal(sheet.getCell(3, 1).numFmt, "0", "hafta butun son formatida emas");
+    assert.equal(typeof sheet.getCell(3, 4).value, "number", "soat SON bo'lishi kerak");
   });
 
   it("bitta haftada bir nechta mavzu bo'lsa hafta katakchalarini birlashtiradi", async () => {
@@ -316,7 +340,9 @@ describe("generateXlsx — chegara holatlari", () => {
     assertValidXlsx(result.buffer, "108 qator");
     assert.equal(result.rowCount, 108);
     // Jami qatori: 2 (sarlavhalar) + 108 = 110, jami — 111
-    assert.equal(sheet.getCell(111, 4).value, 108, "jami soat 108 bo'lishi kerak");
+    const total = sheet.getCell(111, 4).value as { formula?: string; result?: number };
+    assert.equal(total.formula, "SUM(D3:D110)", "formula butun jadvalni qamrasin");
+    assert.equal(total.result, 108, "jami soat 108 bo'lishi kerak");
     // Qotirish uzun jadvalda ayniqsa muhim.
     assert.equal(sheet.views[0]?.state, "frozen");
   });
