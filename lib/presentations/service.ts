@@ -5,6 +5,7 @@ import { AiError } from "@/lib/ai/types";
 import { apiErrors } from "@/lib/api/errors";
 import { markStaleAsFailed } from "@/lib/generation/stale";
 import { generatePptx } from "@/lib/pptx/generate";
+import { DEFAULT_TEMPLATE } from "@/lib/pptx/theme";
 import {
   buildSystemPrompt,
   buildUserPrompt,
@@ -44,6 +45,7 @@ const LIST_FIELDS = {
 
 const DETAIL_FIELDS = {
   ...LIST_FIELDS,
+  template: true,
   content: true,
   filePath: true,
   aiModel: true,
@@ -168,6 +170,13 @@ export async function createPresentation(
       subject: source.subject,
       grade: source.grade,
       language: source.language,
+      /*
+        Shablon YOZUVDA saqlanadi, generatsiya paytida uzatilmaydi.
+        Sabab: «Qayta urinish» tugmasi ham shu yozuvdan ishlaydi —
+        o'qituvchi tanlagan ko'rinish qayta yasalganda ham saqlanishi
+        kerak.
+      */
+      template: input.template,
       status: "PENDING",
     },
     select: DETAIL_FIELDS,
@@ -274,9 +283,19 @@ async function runGeneration(
       prompt: buildUserPrompt(promptContext),
     });
 
+    // Shablon yozuvda turadi — qayta generatsiyada ham o'sha ko'rinish
+    // chiqsin. Yozuv topilmasa (poyga holati) standart shablon.
+    const record = await prisma.presentation.findUnique({
+      where: { id },
+      select: { template: true },
+    });
+
     // Fayl AI javobidan KEYIN yasaladi — shu tartib muhim: AI yiqilsa
     // keraksiz fayl qolib ketmaydi.
-    const { buffer, slideCount } = await generatePptx(data);
+    const { buffer, slideCount } = await generatePptx(
+      data,
+      record?.template ?? DEFAULT_TEMPLATE,
+    );
     const { filePath, fileSize } = await saveFile("pptx", id, buffer);
 
     await prisma.presentation.update({

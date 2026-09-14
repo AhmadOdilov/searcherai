@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DEFAULT_TEMPLATE, TEMPLATE_NAMES } from "@/lib/pptx/theme";
 import {
   gradeSchema,
   idSchema,
@@ -31,10 +32,27 @@ import {
  * tekshirishga to'g'ri kelardi. Diskriminator esa har bir rejim uchun
  * TALAB QILINADIGAN maydonlarni aniq belgilaydi.
  */
+/**
+ * Slayd shabloni.
+ *
+ * Ro'yxat `lib/pptx/theme.ts` dan olinadi — shablon qo'shilganda
+ * sxemani tahrirlash kerak emas va ikkisi bir-biridan ajralib
+ * qolmaydi.
+ *
+ * `catch` ATAYLAB: eski brauzer sahifasidan notanish nom kelsa, butun
+ * formani rad etgandan ko'ra standart shablon bilan yasab bergan
+ * yaxshiroq — shablon natijaning mazmuniga ta'sir qilmaydi.
+ */
+export const pptxTemplateSchema = z
+  .enum(TEMPLATE_NAMES)
+  .default(DEFAULT_TEMPLATE)
+  .catch(DEFAULT_TEMPLATE);
+
 export const presentationInputSchema = z.discriminatedUnion("mode", [
   z.object({
     mode: z.literal("from-lesson-plan"),
     lessonPlanId: idSchema,
+    template: pptxTemplateSchema,
   }),
   z.object({
     mode: z.literal("standalone"),
@@ -42,6 +60,7 @@ export const presentationInputSchema = z.discriminatedUnion("mode", [
     subject: subjectSchema.optional(),
     grade: gradeSchema.optional(),
     language: languageSchema.default("UZ"),
+    template: pptxTemplateSchema,
   }),
 ]);
 

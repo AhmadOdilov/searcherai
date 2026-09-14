@@ -291,6 +291,14 @@ model Presentation {
   title    String?
   language Language @default(UZ)
 
+  /// Slayd shabloni — "klassik", "zamonaviy" yoki "rangli".
+  ///
+  /// Enum EMAS, oddiy matn: shablon — DIZAYN tanlovi, ma'lumot shakli
+  /// emas. Yangi shablon qo'shish uchun bazaga migratsiya kerak
+  /// bo'lmasin. Notanish qiymat `lib/pptx/theme.ts` da standart
+  /// shablonga tushadi.
+  template String @default("klassik")
+
   status GenerationStatus @default(PENDING)
   /// Slaydlar strukturasi (sarlavha + bullet'lar). Shakli:
   /// lib/validations/presentation.ts

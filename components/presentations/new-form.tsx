@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { BookOpen, Sparkles } from "lucide-react";
 import { ApiClientError, apiRequest } from "@/lib/api-client";
 import { GENERATION_LANGUAGES } from "@/lib/ui/options";
+import { DEFAULT_TEMPLATE, TEMPLATE_NAMES, type PptxTemplate } from "@/lib/pptx/theme";
 import { Card, FormSection } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FormError, Input, Select } from "@/components/ui/field";
@@ -55,6 +56,8 @@ export function NewPresentationForm({
     preselectedLessonPlanId ?? lessonPlans[0]?.id ?? "",
   );
 
+  const [template, setTemplate] = useState<PptxTemplate>(DEFAULT_TEMPLATE);
+
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
@@ -71,9 +74,10 @@ export function NewPresentationForm({
     // `discriminatedUnion` shu shaklni kutadi.
     const body =
       mode === "from-lesson-plan"
-        ? { mode, lessonPlanId }
+        ? { mode, lessonPlanId, template }
         : {
             mode,
+            template,
             topic: formData.get("topic"),
             // Bo'sh maydonlar yuborilmaydi: sxemada ular ixtiyoriy, bo'sh
             // satr esa "juda qisqa" degan xatoga olib kelardi.
@@ -207,6 +211,31 @@ export function NewPresentationForm({
           </FormSection>
         )}
 
+        {/* ── Ko'rinish (shablon) ──────────────────────────────────────── */}
+        <FormSection step={3} title={t("new.templateQuestion")}>
+          <fieldset disabled={submitting}>
+            <legend className="sr-only">{t("new.templateQuestion")}</legend>
+            {/*
+              Telefonda ham UCH ustun: kartalar rasm bilan tanlanadi,
+              matnsiz ham tushunarli. Bir ustunga qo'yilsa ularni
+              solishtirish uchun ekranni aylantirish kerak bo'lardi.
+            */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-4">
+              {TEMPLATE_NAMES.map((name) => (
+                <TemplateOption
+                  key={name}
+                  value={name}
+                  current={template}
+                  onSelect={setTemplate}
+                  title={t(`new.templates.${name}.title`)}
+                  description={t(`new.templates.${name}.description`)}
+                />
+              ))}
+            </div>
+          </fieldset>
+          <p className="text-base text-neutral-600">{t("new.templateHint")}</p>
+        </FormSection>
+
         <div>
           <Button
             type="submit"
@@ -269,5 +298,94 @@ function ModeOption({
         {disabled && disabledHint !== undefined ? disabledHint : description}
       </span>
     </button>
+  );
+}
+
+/**
+ * Shablon tanlovi — kichik "slayd" ko'rinishi bilan.
+ *
+ * ── Nega rasm, matn emas ──────────────────────────────────────────────────
+ * "Klassik", "Zamonaviy", "Rangli" so'zlari hech narsani aytmaydi —
+ * o'qituvchi faylni yuklab olmaguncha farqni bilmasdi. Kichik namuna
+ * esa savolni bir qarashda hal qiladi.
+ *
+ * Namuna HAQIQIY slaydning soddalashtirilgan ko'rinishi: fon rangi,
+ * sarlavha chizig'i va ikki band. Ranglar `lib/pptx/theme.ts` dagi
+ * palitraga mos keladi.
+ */
+function TemplateOption({
+  value,
+  current,
+  onSelect,
+  title,
+  description,
+}: {
+  value: PptxTemplate;
+  current: PptxTemplate;
+  onSelect: (template: PptxTemplate) => void;
+  title: string;
+  description: string;
+}) {
+  const selected = current === value;
+
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(value)}
+      aria-pressed={selected}
+      // Tavsif kichik ekranda sig'maydi — skrinrider uchun `title` ga
+      // qo'shib beramiz, ko'z bilan o'qiydiganlar uchun esa pastda.
+      aria-label={`${title}. ${description}`}
+      className={cn(
+        "rounded-lg border p-2 text-left transition-all duration-150 active:scale-[0.99]",
+        selected
+          ? "border-primary bg-primary-soft ring-2 ring-primary"
+          : "border-neutral-300 bg-surface hover:border-primary-border hover:bg-neutral-50",
+      )}
+    >
+      <TemplatePreview template={value} />
+      <span className="mt-2 block text-base font-semibold text-neutral-900">{title}</span>
+      <span className="mt-1 hidden text-base leading-relaxed text-neutral-600 sm:block">
+        {description}
+      </span>
+    </button>
+  );
+}
+
+/** Kichik 16:9 "slayd" — shablonning ko'rinishi. */
+function TemplatePreview({ template }: { template: PptxTemplate }) {
+  const dark = template === "zamonaviy";
+
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        "flex aspect-video w-full gap-1 overflow-hidden rounded-md border border-neutral-200 p-2",
+        dark ? "bg-neutral-900" : "bg-surface",
+      )}
+    >
+      {/* "Rangli" shablonning chap tasmasi. */}
+      {template === "rangli" && <span className="w-1 shrink-0 rounded-sm bg-primary" />}
+
+      <span className="flex min-w-0 flex-1 flex-col justify-start gap-1">
+        {/* Sarlavha chizig'i */}
+        <span
+          className={cn("h-1.5 w-3/4 rounded-sm", dark ? "bg-neutral-100" : "bg-primary")}
+        />
+        {/* Bandlar */}
+        <span
+          className={cn(
+            "mt-1 h-1 w-full rounded-sm",
+            dark ? "bg-neutral-500" : "bg-neutral-300",
+          )}
+        />
+        <span
+          className={cn(
+            "h-1 w-5/6 rounded-sm",
+            dark ? "bg-neutral-500" : "bg-neutral-300",
+          )}
+        />
+      </span>
+    </span>
   );
 }

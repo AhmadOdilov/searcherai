@@ -146,6 +146,55 @@ describe("presentationInputSchema — mustaqil rejim", () => {
   });
 });
 
+describe("presentationInputSchema — shablon", () => {
+  it("shablon berilmasa STANDART shablon qo'yiladi", () => {
+    // Eski mijoz (yoki sinov) shablonsiz so'rov yuborishi mumkin —
+    // forma yiqilmasligi kerak.
+    const parsed = presentationInputSchema.parse({
+      mode: "standalone",
+      topic: "Fotosintez jarayoni",
+    });
+
+    assert.equal(parsed.template, "klassik");
+  });
+
+  it("tanlangan shablon saqlanadi", () => {
+    for (const template of ["klassik", "zamonaviy", "rangli"]) {
+      const parsed = presentationInputSchema.parse({
+        mode: "standalone",
+        topic: "Fotosintez jarayoni",
+        template,
+      });
+      assert.equal(parsed.template, template);
+    }
+  });
+
+  it("dars ishlanmasi rejimida ham shablon tanlanadi", () => {
+    const parsed = presentationInputSchema.parse({
+      mode: "from-lesson-plan",
+      lessonPlanId: "cmtwyd68o0002152e12qeo9zk",
+      template: "zamonaviy",
+    });
+
+    assert.equal(parsed.template, "zamonaviy");
+  });
+
+  it("NOTANISH shablon nomi butun so'rovni yiqitmaydi", () => {
+    /*
+      Shablon — dizayn tanlovi, ma'lumot emas. Notanish nom kelganda
+      (eski sahifa, qo'lda yuborilgan so'rov) formani rad etish o'rniga
+      standart shablonga tushamiz: natijaning MAZMUNI baribir bir xil.
+    */
+    const parsed = presentationInputSchema.parse({
+      mode: "standalone",
+      topic: "Fotosintez jarayoni",
+      template: "yo-q-shablon",
+    });
+
+    assert.equal(parsed.template, "klassik");
+  });
+});
+
 describe("presentationInputSchema — rejim tanlanmagan holatlar", () => {
   it("mode yo'q bo'lsa rad etadi", () => {
     const result = presentationInputSchema.safeParse({ topic: "Fotosintez" });

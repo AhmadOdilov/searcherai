@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
+import JSZip from "jszip";
 import {
   BASE_URL,
   TestClient,
@@ -407,6 +408,50 @@ describe("prezentatsiya — xato holatlari", () => {
 
     assert.equal(presentation.status, "FAILED");
     assert.ok(presentation.errorMessage !== null);
+  });
+});
+
+describe("slayd shabloni", () => {
+  it("tanlangan shablon YUKLAB OLINGAN faylga tushadi", async () => {
+    /*
+      Bu yerda butun zanjir tekshiriladi: forma → sxema → baza ustuni →
+      generatsiya → fayl. Oraliq bo'g'inlardan birortasi shablonni
+      tashlab ketsa (masalan `create` da ustun to'ldirilmasa),
+      foydalanuvchi tanlovi jim yo'qolardi va buni faqat faylni ochib
+      bilish mumkin bo'lardi.
+    */
+    const client = await signedInClient("pr-shablon");
+
+    const created = await createAndWait(client, {
+      mode: "standalone",
+      topic: "Fotosintez",
+      template: "zamonaviy",
+    });
+    assert.equal(created.status, "READY");
+
+    const response = await client.fetchRaw(`/api/presentations/${created.id}/download`);
+    assert.equal(response.status, 200);
+
+    const zip = await JSZip.loadAsync(Buffer.from(await response.arrayBuffer()));
+    const slide = await zip.file("ppt/slides/slide1.xml")!.async("string");
+
+    // "Zamonaviy" — to'q fon; "klassik" da bu yerda FFFFFF turardi.
+    assert.match(slide, /<a:srgbClr val="1C1A17"\/>/, "to'q shablon faylga tushmagan");
+  });
+
+  it("shablon berilmasa STANDART shablon bilan yasaydi", async () => {
+    const client = await signedInClient("pr-shablonsiz");
+
+    const created = await createAndWait(client, {
+      mode: "standalone",
+      topic: "Kasrlar",
+    });
+
+    const response = await client.fetchRaw(`/api/presentations/${created.id}/download`);
+    const zip = await JSZip.loadAsync(Buffer.from(await response.arrayBuffer()));
+    const slide = await zip.file("ppt/slides/slide1.xml")!.async("string");
+
+    assert.match(slide, /<a:srgbClr val="FFFFFF"\/>/, "standart shablon oq fonli");
   });
 });
 
