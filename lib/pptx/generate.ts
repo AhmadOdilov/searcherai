@@ -4,7 +4,16 @@ import {
   type PresentationContent,
   type Slide,
 } from "@/lib/validations/presentation";
-import { COLORS, FONT, MARGIN, SLIDE } from "@/lib/pptx/theme";
+import {
+  ACCENT_BAR_WIDTH,
+  DEFAULT_TEMPLATE,
+  FONT,
+  MARGIN,
+  SLIDE,
+  paletteOf,
+  type PptxPalette,
+  type PptxTemplate,
+} from "@/lib/pptx/theme";
 
 /**
  * .pptx generatsiya qatlami.
@@ -43,11 +52,17 @@ const MAX_BULLET_CHARS = 300;
  * generatsiya oqimining OXIRIDA turadi — bu yerda yiqilish foydalanuvchi
  * uchun butun ishning bekor ketishini bildiradi, holbuki bir oz kesilgan
  * matn bilan ham yaroqli fayl chiqadi.
+ *
+ * `template` — foydalanuvchi tanlagan ko'rinish. Notanish nom (masalan
+ * eski yozuvda saqlangan) standart shablonga tushadi; bu yerda ham
+ * yiqilmaslik muhimroq.
  */
 export async function generatePptx(
   content: PresentationContent,
+  template: PptxTemplate | string = DEFAULT_TEMPLATE,
 ): Promise<GeneratePptxResult> {
   const pptx = new PptxGenJS();
+  const palette = paletteOf(template);
 
   pptx.layout = "LAYOUT_16x9";
   pptx.title = content.title;
@@ -61,24 +76,24 @@ export async function generatePptx(
   slides.forEach((slide, index) => {
     switch (slide.type) {
       case "title":
-        addTitleSlide(pptx, slide, content.title);
+        addTitleSlide(pptx, palette, slide);
         break;
       case "summary":
-        addContentSlide(pptx, slide, index + 1, slides.length, true);
+        addContentSlide(pptx, palette, slide, index + 1, slides.length, true);
         break;
       default:
-        addContentSlide(pptx, slide, index + 1, slides.length, false);
+        addContentSlide(pptx, palette, slide, index + 1, slides.length, false);
     }
   });
 
   // Hech bo'lmasa bitta slayd bo'lishi kerak — bo'sh .pptx ni ba'zi
   // dasturlar buzuq fayl deb hisoblaydi.
   if (slides.length === 0) {
-    addTitleSlide(
-      pptx,
-      { type: "title", heading: content.title, bullets: [] },
-      content.title,
-    );
+    addTitleSlide(pptx, palette, {
+      type: "title",
+      heading: content.title,
+      bullets: [],
+    });
   }
 
   const output = await pptx.write({ outputType: "nodebuffer" });
@@ -89,10 +104,10 @@ export async function generatePptx(
   };
 }
 
-/** Sarlavha slaydi — to'q fon, markazda katta matn. */
-function addTitleSlide(pptx: PptxGenJS, slide: Slide, presentationTitle: string): void {
+/** Sarlavha slaydi — markazda katta matn. */
+function addTitleSlide(pptx: PptxGenJS, palette: PptxPalette, slide: Slide): void {
   const target = pptx.addSlide();
-  target.background = { color: COLORS.primary };
+  target.background = { color: palette.titleBackground };
 
   target.addText(clamp(slide.heading, 150), {
     x: MARGIN.x,
@@ -102,7 +117,7 @@ function addTitleSlide(pptx: PptxGenJS, slide: Slide, presentationTitle: string)
     fontFace: FONT.family,
     fontSize: FONT.titleSize,
     bold: true,
-    color: COLORS.onPrimary,
+    color: palette.titleText,
     align: "center",
     valign: "middle",
     // Uzun sarlavha chekkadan chiqib ketmasin.
@@ -119,7 +134,7 @@ function addTitleSlide(pptx: PptxGenJS, slide: Slide, presentationTitle: string)
       h: 0.8,
       fontFace: FONT.family,
       fontSize: FONT.subtitleSize,
-      color: COLORS.rule,
+      color: palette.titleSubtext,
       align: "center",
       valign: "top",
     });
@@ -128,22 +143,35 @@ function addTitleSlide(pptx: PptxGenJS, slide: Slide, presentationTitle: string)
   if (slide.speakerNotes !== undefined) {
     target.addNotes(slide.speakerNotes);
   }
-
-  // Sarlavha slaydida `presentationTitle` faqat metadata sifatida ishlatiladi
-  // (fayl xossalarida) — slaydda `heading` ko'rinadi.
-  void presentationTitle;
 }
 
 /** Mazmun va xulosa slaydi — yuqorida sarlavha, ostida bandlar. */
 function addContentSlide(
   pptx: PptxGenJS,
+  palette: PptxPalette,
   slide: Slide,
   position: number,
   total: number,
   isSummary: boolean,
 ): void {
   const target = pptx.addSlide();
-  target.background = { color: COLORS.background };
+  target.background = { color: palette.background };
+
+  /*
+    "Rangli" shablonning chap tasmasi — slaydning butun balandligi
+    bo'ylab. Matn maydonlari `MARGIN.x` (0.6″) dan boshlanadi, tasma esa
+    0.16″ — ular ustma-ust tushmaydi.
+  */
+  if (palette.accentBar !== null) {
+    target.addShape("rect", {
+      x: 0,
+      y: 0,
+      w: ACCENT_BAR_WIDTH,
+      h: SLIDE.height,
+      fill: { color: isSummary ? palette.summary : palette.accentBar },
+      line: { color: isSummary ? palette.summary : palette.accentBar, width: 0 },
+    });
+  }
 
   // Sarlavha
   target.addText(clamp(slide.heading, 120), {
@@ -154,7 +182,7 @@ function addContentSlide(
     fontFace: FONT.family,
     fontSize: FONT.headingSize,
     bold: true,
-    color: isSummary ? COLORS.primary : COLORS.heading,
+    color: isSummary ? palette.summary : palette.heading,
     valign: "middle",
     shrinkText: true,
   });
@@ -165,7 +193,7 @@ function addContentSlide(
     y: 1.32,
     w: SLIDE.width - MARGIN.x * 2,
     h: 0,
-    line: { color: isSummary ? COLORS.primary : COLORS.rule, width: 1.5 },
+    line: { color: isSummary ? palette.summary : palette.rule, width: 1.5 },
   });
 
   // Bandlar
@@ -190,10 +218,10 @@ function addContentSlide(
         w: SLIDE.width - MARGIN.x * 2,
         h: SLIDE.height - 1.6 - MARGIN.bottom - 0.3,
         fontFace: FONT.family,
-        fontSize: FONT.bulletSize,
-        color: COLORS.body,
+        fontSize: bulletFontSize(bullets),
+        color: palette.body,
         valign: "top",
-        // Ko'p band bo'lsa shrift avtomatik kichrayadi.
+        // Hisob-kitob xato qilsa ham matn chekkadan chiqmasin.
         shrinkText: true,
       },
     );
@@ -207,13 +235,43 @@ function addContentSlide(
     h: 0.3,
     fontFace: FONT.family,
     fontSize: FONT.footerSize,
-    color: COLORS.muted,
+    color: palette.muted,
     align: "right",
   });
 
   if (slide.speakerNotes !== undefined) {
     target.addNotes(slide.speakerNotes);
   }
+}
+
+/**
+ * Bandlar shriftini matn hajmiga qarab tanlaydi.
+ *
+ * ── Nega faqat `shrinkText` yetarli emas ──────────────────────────────────
+ * `shrinkText` PowerPoint'ning o'z xossasi: u matnni maydonga sig'dirish
+ * uchun shriftni kichraytiradi, LEKIN buni PowerPoint ochilganda qiladi.
+ * LibreOffice va Google Slides uni boshqacha hisoblaydi, telefondagi
+ * ko'ruvchilar esa umuman e'tiborsiz qoldiradi — natijada o'qituvchi
+ * darsga tayyorlagan slaydining pastki bandlari kesilib qolardi.
+ *
+ * Shuning uchun o'lcham FAYLGA YOZILADI: uchta pog'ona, matn hajmiga
+ * qarab. `shrinkText` esa zaxira bo'lib qoladi.
+ *
+ * Pog'onalar 10×5.625″ slayd va 0.6″ chekka uchun hisoblangan: matn
+ * maydoni ≈ 8.8 × 3.2″. 20pt Arial'da bir qator ≈ 95 belgi.
+ */
+export function bulletFontSize(bullets: string[]): number {
+  const characters = bullets.reduce((sum, bullet) => sum + bullet.length, 0);
+
+  // Har band kamida bitta qator egallaydi, uzunlari — bir nechta.
+  const lines = bullets.reduce(
+    (sum, bullet) => sum + Math.max(1, Math.ceil(bullet.length / 95)),
+    0,
+  );
+
+  if (lines <= 6 && characters <= 420) return FONT.bulletSize;
+  if (lines <= 9 && characters <= 760) return FONT.bulletSizeDense;
+  return FONT.bulletSizeTight;
 }
 
 /**

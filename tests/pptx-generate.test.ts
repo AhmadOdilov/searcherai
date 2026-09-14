@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { generatePptx } from "../lib/pptx/generate";
+import JSZip from "jszip";
+import { bulletFontSize, generatePptx } from "../lib/pptx/generate";
+import { FONT } from "../lib/pptx/theme";
 import type { PresentationContent, Slide } from "../lib/validations/presentation";
 
 /**
@@ -228,5 +230,187 @@ describe("generatePptx — chegara holatlari", () => {
       second.buffer.length,
       "mazmun boshqacha bo'lsa fayl ham boshqacha bo'lishi kerak",
     );
+  });
+});
+
+/**
+ * Slaydning XML'ini ochib beradi.
+ *
+ * .pptx — ZIP arxiv, har slayd `ppt/slides/slideN.xml` da. Rang va
+ * shrift o'lchami aynan shu yerda yozilgan, ya'ni ularni tekshirishning
+ * yagona yo'li — faylni ochish. `jszip` pptxgenjs bilan birga keladi
+ * (u ham .pptx ni shu kutubxona bilan yig'adi).
+ */
+async function slideXml(buffer: Buffer, index: number): Promise<string> {
+  const zip = await JSZip.loadAsync(buffer);
+  const file = zip.file(`ppt/slides/slide${index}.xml`);
+  assert.ok(file, `slide${index}.xml topilmadi`);
+  return file.async("string");
+}
+
+/** XML'dagi barcha ranglar (RGB) — tartibi bilan. */
+function colorsIn(xml: string): string[] {
+  return [...xml.matchAll(/srgbClr val="([0-9A-F]{6})"/g)].map((match) => match[1]);
+}
+
+/**
+ * XML'dagi matn bo'laklari — XML belgilari ochilgan holda.
+ *
+ * Apostrof `&apos;` ga aylanadi (XML qoidasi), shuning uchun matnni
+ * XML'dan to'g'ridan-to'g'ri qidirib bo'lmaydi.
+ */
+function textsIn(xml: string): string[] {
+  return [...xml.matchAll(/<a:t>([^<]*)<\/a:t>/g)].map((match) =>
+    match[1]
+      .replaceAll("&apos;", "'")
+      .replaceAll("&quot;", '"')
+      .replaceAll("&lt;", "<")
+      .replaceAll("&gt;", ">")
+      .replaceAll("&amp;", "&"),
+  );
+}
+
+/** XML'dagi barcha shrift o'lchamlari — pptx ularni yuzdan bir birlikda yozadi. */
+function fontSizesIn(xml: string): number[] {
+  return [...xml.matchAll(/sz="(\d+)"/g)].map((match) => Number(match[1]) / 100);
+}
+
+describe("generatePptx — shablonlar", () => {
+  it("«klassik» — oq fon, zumrad sarlavha", async () => {
+    const { buffer } = await generatePptx(content(), "klassik");
+
+    const title = await slideXml(buffer, 1);
+    const body = await slideXml(buffer, 2);
+
+    assert.match(title, /<a:srgbClr val="FFFFFF"\/>/, "sarlavha slaydi oq bo'lsin");
+    assert.ok(colorsIn(body).includes("0F766E"), "sarlavha zumrad rangda bo'lsin");
+  });
+
+  it("«zamonaviy» — to'q fon, och matn", async () => {
+    const { buffer } = await generatePptx(content(), "zamonaviy");
+
+    const title = await slideXml(buffer, 1);
+    const body = await slideXml(buffer, 2);
+
+    // Fon — birinchi rang (`<p:bg>` slaydning boshida turadi).
+    assert.equal(colorsIn(title)[0], "1C1A17", "sarlavha slaydi to'q bo'lsin");
+    assert.equal(colorsIn(body)[0], "1C1A17", "mazmun slaydi ham to'q bo'lsin");
+    assert.ok(colorsIn(body).includes("FFFFFF"), "sarlavha och rangda bo'lsin");
+  });
+
+  it("«rangli» — to'ldirilgan sarlavha slaydi va aksent tasma", async () => {
+    const { buffer } = await generatePptx(content(), "rangli");
+
+    const title = await slideXml(buffer, 1);
+    const body = await slideXml(buffer, 2);
+
+    assert.equal(colorsIn(title)[0], "0F766E", "sarlavha slaydi zumrad bo'lsin");
+    // Tasma — to'rtburchak shakl; u faqat shu shablonda bor.
+    assert.match(body, /prstGeom prst="rect"/, "aksent tasma yo'q");
+  });
+
+  it("shablonlar HAQIQATAN bir-biridan farq qiladi", async () => {
+    /*
+      Eng oddiy, lekin eng muhim tekshiruv: tanlov haqiqiy bo'lsin.
+      Shablon parametri e'tiborsiz qolsa, uchala fayl bir xil chiqardi
+      va foydalanuvchi buni faqat yuklab olib bilardi.
+    */
+    const [klassik, zamonaviy, rangli] = await Promise.all(
+      ["klassik", "zamonaviy", "rangli"].map(async (template) =>
+        slideXml((await generatePptx(content(), template)).buffer, 2),
+      ),
+    );
+
+    assert.notEqual(klassik, zamonaviy);
+    assert.notEqual(klassik, rangli);
+    assert.notEqual(zamonaviy, rangli);
+  });
+
+  it("NOTANISH shablon nomi bilan yiqilmaydi — standartga tushadi", async () => {
+    // Eski sahifadan yoki eski yozuvdan kelgan nom butun generatsiyani
+    // buzmasligi kerak.
+    const unknown = await generatePptx(content(), "yo-q-shablon");
+    const fallback = await generatePptx(content(), "klassik");
+
+    assertValidPptx(unknown.buffer, "notanish shablon");
+    assert.equal(await slideXml(unknown.buffer, 1), await slideXml(fallback.buffer, 1));
+  });
+
+  it("shablon berilmasa ham ishlaydi", async () => {
+    const result = await generatePptx(content());
+    assertValidPptx(result.buffer, "shablonsiz");
+  });
+});
+
+describe("generatePptx — matn slaydga sig'ishi", () => {
+  it("qisqa bandlar KATTA shriftda yoziladi", async () => {
+    const { buffer } = await generatePptx(
+      content({
+        slides: [slide({ heading: "Maqsad", bullets: ["Qisqa band", "Yana bitta"] })],
+      }),
+    );
+
+    const sizes = fontSizesIn(await slideXml(buffer, 1));
+    assert.ok(
+      sizes.includes(FONT.bulletSize),
+      `kutilgan ${FONT.bulletSize}pt, topilgan: ${sizes.join(", ")}`,
+    );
+  });
+
+  it("KO'P va UZUN bandlar uchun shrift kichrayadi", async () => {
+    /*
+      Nega `shrinkText` yetarli emas: u PowerPoint ochilganda hisoblanadi,
+      LibreOffice va telefondagi ko'ruvchilar esa uni e'tiborsiz
+      qoldiradi — o'sha yerda matn slayddan chiqib ketardi. Shuning
+      uchun o'lcham FAYLGA yoziladi.
+    */
+    const long =
+      "Bu band ataylab uzun yozilgan: u bitta qatorga sig'maydi va slaydda " +
+      "kamida ikki qator egallaydi, ya'ni sakkiztasi birga o'n oltita qator.";
+    const { buffer } = await generatePptx(
+      content({
+        slides: [slide({ heading: "Ko'p matn", bullets: Array(8).fill(long) })],
+      }),
+    );
+
+    const sizes = fontSizesIn(await slideXml(buffer, 1));
+    assert.ok(
+      sizes.includes(FONT.bulletSizeTight),
+      `kutilgan ${FONT.bulletSizeTight}pt, topilgan: ${sizes.join(", ")}`,
+    );
+    assert.ok(!sizes.includes(FONT.bulletSize), "katta shrift qolib ketgan");
+  });
+
+  it("bulletFontSize — matn ko'paygani sari o'lcham kamayadi", async () => {
+    const small = bulletFontSize(["Qisqa", "Band"]);
+    const medium = bulletFontSize(
+      Array(7).fill("O'rtacha uzunlikdagi band matni — bir qatorga sig'adi"),
+    );
+    const large = bulletFontSize(Array(8).fill("Juda uzun band matni ".repeat(5)));
+
+    assert.equal(small, FONT.bulletSize);
+    assert.ok(medium < small, "o'rtacha hajmda shrift kichraysin");
+    assert.ok(large < medium, "katta hajmda yanada kichraysin");
+    assert.equal(large, FONT.bulletSizeTight);
+  });
+
+  it("o'zbek va rus harflari faylda TO'LIQ saqlanadi", async () => {
+    /*
+      Ilgari faqat "yiqilmaydi" tekshirilardi. Lekin asosiy xavf
+      boshqacha: harf faylga tushadi, lekin kesilgan yoki buzilgan
+      holda. Shuning uchun matn XML'dan qidiriladi.
+    */
+    const uzbek = "Oʻsimliklar gʻoyasi: o'simlik va g'oya";
+    const russian = "Предложение с буквами ё, ъ и щ";
+
+    const { buffer } = await generatePptx(
+      content({
+        slides: [slide({ heading: uzbek, bullets: [russian, "Sonlar: 1, 2, 3"] })],
+      }),
+    );
+
+    const texts = textsIn(await slideXml(buffer, 1));
+    assert.ok(texts.includes(uzbek), `o'zbek sarlavhasi buzilgan: ${texts.join(" | ")}`);
+    assert.ok(texts.includes(russian), `ruscha band buzilgan: ${texts.join(" | ")}`);
   });
 });
