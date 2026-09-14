@@ -29,7 +29,11 @@ describe("bosh sahifa — kirmagan foydalanuvchi", () => {
     const { status, html } = await fetchLanding();
 
     assert.equal(status, 200, "kirmagan odamga sahifa ochilishi kerak");
-    assert.ok(htmlIncludes(html, text("uz", "landing.headline")), "sarlavha yo'q");
+    assert.ok(htmlIncludes(html, text("uz", "landing.headline.lead")), "sarlavha yo'q");
+    assert.ok(
+      htmlIncludes(html, text("uz", "landing.headline.accent")),
+      "sarlavhaning rangli qismi yo'q",
+    );
     assert.ok(htmlIncludes(html, text("uz", "landing.start")), "«Boshlash» tugmasi yo'q");
     assert.ok(htmlIncludes(html, text("uz", "landing.login")), "«Kirish» tugmasi yo'q");
 
@@ -47,6 +51,39 @@ describe("bosh sahifa — kirmagan foydalanuvchi", () => {
         `${key} funksiyasi sahifada yo'q`,
       );
     }
+  });
+
+  it("«kimlar uchun» bo'limi aniq holatlar bilan ko'rsatilgan", async () => {
+    /*
+      Bosh sahifaning eng muhim vazifasi — odam o'zini TANISHI.
+      Umumiy "hamma uchun" degan gap emas, aniq vaziyatlar.
+    */
+    const { html } = await fetchLanding();
+
+    assert.ok(
+      htmlIncludes(html, text("uz", "landing.audienceIntro")),
+      "kimlar uchun ekani aytilmagan",
+    );
+
+    for (const item of ["busy", "calendar", "slides", "openLesson"]) {
+      assert.ok(
+        htmlIncludes(html, text("uz", `landing.audience.${item}.title`)),
+        `${item} holati sahifada yo'q`,
+      );
+    }
+  });
+
+  it("«nima uchun aynan Searcher AI» afzalliklari va jamoa nomi bor", async () => {
+    const { html } = await fetchLanding();
+
+    for (const item of ["curriculum", "fast", "bilingual"]) {
+      assert.ok(
+        htmlIncludes(html, text("uz", `landing.why.${item}.title`)),
+        `${item} afzalligi sahifada yo'q`,
+      );
+    }
+
+    assert.ok(htmlIncludes(html, text("uz", "landing.team")), "jamoa nomi yo'q");
   });
 
   it("«qanday ishlaydi» uchta qadam bilan tushuntirilgan", async () => {

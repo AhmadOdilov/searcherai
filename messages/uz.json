@@ -56,10 +56,21 @@
     "ru": "Русский"
   },
   "landing": {
-    "headline": "O'qituvchilar uchun AI-yordamchi: dars ishlanmasi, prezentatsiya, reja — bir necha soniyada",
+    "headline": {
+      "lead": "O'qituvchilar uchun AI-yordamchi:",
+      "accent": "dars ishlanmasi, prezentatsiya, reja",
+      "tail": "— bir necha soniyada"
+    },
     "subheadline": "Fan, sinf va mavzuni yozasiz — tayyor faylni Word, PowerPoint yoki Excel'da yuklab olasiz. Kompyuterni yaxshi bilish shart emas.",
     "start": "Boshlash",
     "login": "Kirish",
+    "preview": {
+      "slideTitle": "Fotosintez jarayoni",
+      "slideBullet": "Yorug'lik energiyasi — organik moddaga",
+      "slideFooter": "3 / 8",
+      "docTitle": "Dars ishlanmasi",
+      "docMeta": "Biologiya · 7-sinf · 45 daqiqa"
+    },
     "featuresTitle": "Nima tayyorlab beradi",
     "features": {
       "lessonPlans": {
@@ -79,6 +90,41 @@
         "description": "Mavzu bo'yicha savolingizga javob va uni sinfda qanday tushuntirish bo'yicha maslahat."
       }
     },
+    "audienceTitle": "Kimlar uchun",
+    "audienceIntro": "O'zbekiston maktab o'qituvchilari uchun — matematika, ona tili, fizika va boshqa fanlardan dars beradigan har qanday o'qituvchi uchun.",
+    "audience": {
+      "busy": {
+        "title": "Yangi dars tayyorlashga vaqti yo'q o'qituvchi",
+        "description": "Kechqurun ertangi darsni boshdan tuzish o'rniga mavzuni yozasiz va tayyor ishlanmani olasiz."
+      },
+      "calendar": {
+        "title": "Kalendar-tematik rejani tezroq tuzmoqchi bo'lgan o'qituvchi",
+        "description": "Chorak yoki yarim yillik jadval Excel faylida, soatlari hisoblangan holda keladi."
+      },
+      "slides": {
+        "title": "Chiroyli prezentatsiya yaratmoqchi bo'lgan o'qituvchi",
+        "description": "Slaydlarni qo'lda terish shart emas — uchta tayyor ko'rinishdan birini tanlaysiz."
+      },
+      "openLesson": {
+        "title": "Ochiq darsga tayyorlanayotgan o'qituvchi",
+        "description": "Maqsad, bosqichlar va savollar bilan to'liq ishlanma — hujjat sifatida ko'rsatishga tayyor."
+      }
+    },
+    "whyTitle": "Nima uchun aynan Searcher AI",
+    "why": {
+      "curriculum": {
+        "title": "Rasmiy o'quv dasturiga mos",
+        "description": "Matematika va ona tili (5-11-sinf) bo'yicha rasmiy dastur bazaga kiritilgan: bo'limlar, soatlar va kutilayotgan natijalar shundan olinadi."
+      },
+      "fast": {
+        "title": "5 daqiqada tayyor",
+        "description": "Fan, sinf va mavzuni yozasiz — material yarim daqiqada tayyor bo'ladi va faylni darhol yuklab olasiz."
+      },
+      "bilingual": {
+        "title": "O'zbek va rus tilida",
+        "description": "Interfeys ham, material ham ikki tilda. Ilovani rus tilida ishlatib, darsni o'zbek tilida olsangiz ham bo'ladi."
+      }
+    },
     "howTitle": "Qanday ishlaydi",
     "steps": {
       "input": {
@@ -95,7 +141,8 @@
       }
     },
     "curriculum": "Materiallar rasmiy o'quv dasturi asosida tayyorlanadi.",
-    "trust": "Ro'yxatdan o'tish bepul — faqat ism, email va parol kerak."
+    "trust": "Ro'yxatdan o'tish bepul — faqat ism, email va parol kerak.",
+    "team": "Searcher AI'ni «Expelled Coders» jamoasi O'zbekiston o'qituvchilari uchun yaratmoqda."
   },
   "auth": {
     "login": {
