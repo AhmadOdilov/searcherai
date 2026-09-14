@@ -31,6 +31,7 @@ function LoginForm() {
       title={t("login.title")}
       description={t("login.description")}
       submitLabel={t("login.submit")}
+      submittingLabel={t("login.submitting")}
       endpoint="/api/auth/login"
       redirectTo={redirectTo}
       footer={

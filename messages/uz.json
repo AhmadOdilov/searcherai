@@ -55,16 +55,53 @@
     "uz": "O'zbekcha",
     "ru": "Русский"
   },
-  "home": {
-    "description": "Dars ishlanmasi, prezentatsiya va kalendar reja — bir necha daqiqada. Siz mavzuni yozasiz, qolganini men tayyorlab beraman.",
-    "openDashboard": "Ishni boshlash",
-    "register": "Yangi hisob yaratish",
-    "login": "Kirish"
+  "landing": {
+    "headline": "O'qituvchilar uchun AI-yordamchi: dars ishlanmasi, prezentatsiya, reja — bir necha soniyada",
+    "subheadline": "Fan, sinf va mavzuni yozasiz — tayyor faylni Word, PowerPoint yoki Excel'da yuklab olasiz. Kompyuterni yaxshi bilish shart emas.",
+    "start": "Boshlash",
+    "login": "Kirish",
+    "featuresTitle": "Nima tayyorlab beradi",
+    "features": {
+      "lessonPlans": {
+        "title": "Dars ishlanmasi",
+        "description": "To'liq dars rejasi: maqsad, bosqichlar, savollar va uyga vazifa. Word faylida."
+      },
+      "presentations": {
+        "title": "Prezentatsiya",
+        "description": "Dars uchun tayyor slaydlar — sarlavha, asosiy fikrlar va xulosa. PowerPoint faylida."
+      },
+      "calendarPlans": {
+        "title": "Kalendar-tematik reja",
+        "description": "Chorak yoki yarim yil uchun darslar jadvali. Excel faylida — sonlarni o'zingiz tahrirlaysiz."
+      },
+      "search": {
+        "title": "Savol berish",
+        "description": "Mavzu bo'yicha savolingizga javob va uni sinfda qanday tushuntirish bo'yicha maslahat."
+      }
+    },
+    "howTitle": "Qanday ishlaydi",
+    "steps": {
+      "input": {
+        "title": "Ma'lumot kiriting",
+        "description": "Fan, sinf va mavzuni yozasiz — bir daqiqadan kam vaqt oladi."
+      },
+      "generate": {
+        "title": "AI tayyorlaydi",
+        "description": "Tizim materialni yozadi. Odatda yarim daqiqacha kutasiz."
+      },
+      "download": {
+        "title": "Yuklab olasiz",
+        "description": "Tayyor faylni telefoningizga yoki kompyuteringizga saqlaysiz."
+      }
+    },
+    "curriculum": "Materiallar rasmiy o'quv dasturi asosida tayyorlanadi.",
+    "trust": "Ro'yxatdan o'tish bepul — faqat ism, email va parol kerak."
   },
   "auth": {
     "login": {
       "title": "Hisobingizga kiring",
       "submit": "Kirish",
+      "submitting": "Tekshirilmoqda…",
       "noAccount": "Hisobingiz yo'qmi?",
       "registerLink": "Ro'yxatdan o'tish",
       "description": "Email va parolingizni yozing."
@@ -72,6 +109,7 @@
     "register": {
       "title": "Yangi hisob yarating",
       "submit": "Ro'yxatdan o'tish",
+      "submitting": "Hisob yaratilmoqda…",
       "hasAccount": "Hisobingiz bormi?",
       "loginLink": "Kirish",
       "description": "Bir daqiqa vaqt oladi. Faqat ism, email va parol kerak."
@@ -237,7 +275,23 @@
       "timeNotice": "Tayyorlash 15-30 soniya davom etadi.",
       "sectionChoosePlan": "Qaysi darsdan?",
       "sectionTopic": "Mavzu va til",
-      "lessonPlanHelp": "Slaydlar shu darsning maqsadi va bosqichlari asosida tuziladi."
+      "lessonPlanHelp": "Slaydlar shu darsning maqsadi va bosqichlari asosida tuziladi.",
+      "templateQuestion": "Slaydlar qanday ko'rinishda bo'lsin?",
+      "templateHint": "Mazmuni bir xil — faqat rang va fon farq qiladi.",
+      "templates": {
+        "klassik": {
+          "title": "Klassik",
+          "description": "Oq fon, zumrad sarlavha. Eski proyektorda ham aniq ko'rinadi."
+        },
+        "zamonaviy": {
+          "title": "Zamonaviy",
+          "description": "To'q fon, och matn. Qorong'i xona uchun."
+        },
+        "rangli": {
+          "title": "Rangli",
+          "description": "Oq fon, har slaydda rangli tasma."
+        }
+      }
     },
     "progress": {
       "sent": "Boshladik…",

@@ -19,6 +19,7 @@ export default function RegisterPage() {
       title={t("register.title")}
       description={t("register.description")}
       submitLabel={t("register.submit")}
+      submittingLabel={t("register.submitting")}
       endpoint="/api/auth/register"
       redirectTo="/dashboard"
       footer={

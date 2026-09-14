@@ -27,7 +27,14 @@ import { LocaleSwitcher } from "@/components/ui/locale-switcher";
  */
 export default async function DashboardLayout({ children }: LayoutProps<"/dashboard">) {
   const user = await getCurrentUser();
-  if (!user) redirect("/login");
+  /*
+    `/login` EMAS, `/session-expired`: bu yerga cookie yaroqli, lekin
+    bazadagi sessiya yo'q holatda ham tushish mumkin. O'shanda `/login`
+    ga yuborsak, proxy tokenni ko'rib bizni yana `/dashboard` ga
+    qaytaradi — halqa. `/session-expired` esa cookie'ni o'chirib,
+    halqani uzadi.
+  */
+  if (!user) redirect("/session-expired");
 
   const t = await getTranslations("app");
 

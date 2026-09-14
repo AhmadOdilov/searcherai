@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { GraduationCap } from "lucide-react";
@@ -24,6 +25,13 @@ export interface AuthFormProps {
   /** Sarlavha ostidagi bir jumlalik tushuntirish. */
   description?: string;
   submitLabel: string;
+  /**
+   * Yuborish davomidagi yozuv — "Tekshirilmoqda…", "Hisob yaratilmoqda…".
+   *
+   * Umumiy "Yuborilmoqda…" dan ATAYLAB voz kechildi: kutish paytida
+   * odam nima bo'layotganini bilishi kerak, ayniqsa sekin internetda.
+   */
+  submittingLabel: string;
   /** Qaysi endpointga yuborish: /api/auth/login yoki /api/auth/register. */
   endpoint: string;
   /** Forma maydonlari — `fieldErrors` ni ko'rsatish uchun `errors` beriladi. */
@@ -38,6 +46,7 @@ export function AuthForm({
   title,
   description,
   submitLabel,
+  submittingLabel,
   endpoint,
   children,
   footer,
@@ -87,13 +96,25 @@ export function AuthForm({
 
       <div className="mx-auto w-full max-w-md flex-1 pt-6 pb-10">
         <div className="text-center">
-          <span
-            aria-hidden
-            className="mx-auto flex size-14 items-center justify-center rounded-xl bg-primary-soft text-primary"
+          {/*
+            Logotip — bosh sahifaga havola. Kirish sahifasiga tasodifan
+            tushgan odam uchun chiqish yo'li; busiz u faqat brauzerning
+            "orqaga" tugmasiga qolardi.
+          */}
+          <Link
+            href="/"
+            className="mx-auto inline-flex flex-col items-center rounded-md px-3 py-1"
           >
-            <GraduationCap className="size-8" />
-          </span>
-          <p className="mt-3 text-base font-semibold text-neutral-900">{tApp("name")}</p>
+            <span
+              aria-hidden
+              className="flex size-14 items-center justify-center rounded-xl bg-primary-soft text-primary"
+            >
+              <GraduationCap className="size-8" />
+            </span>
+            <span className="mt-3 text-base font-semibold text-neutral-900">
+              {tApp("name")}
+            </span>
+          </Link>
           <h1 className="mt-4 text-3xl font-semibold tracking-tight text-neutral-900">
             {title}
           </h1>
@@ -111,7 +132,7 @@ export function AuthForm({
             {children(fieldErrors)}
 
             <Button type="submit" size="lg" fullWidth loading={submitting}>
-              {submitting ? t("submitting") : submitLabel}
+              {submitting ? submittingLabel : submitLabel}
             </Button>
           </form>
         </Card>

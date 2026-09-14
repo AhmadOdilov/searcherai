@@ -234,6 +234,93 @@ describe("chiqish", () => {
     assert.equal(after.data!.user, null);
   });
 
+  it("sessiyasi YO'Q token bilan /dashboard HALQAGA tushmaydi", async () => {
+    /*
+      Cookie imzosi yaroqli, lekin bazadagi sessiya o'chirilgan —
+      boshqa qurilmadan chiqilgan yoki sessiya tozalangan holat.
+
+      Ilgari bu yerda cheksiz halqa bor edi: maket `/login` ga
+      yuborardi, proxy esa tokenni ko'rib `/dashboard` ga qaytarardi.
+      Foydalanuvchi bo'sh ekranni ko'rardi.
+    */
+    const email = testEmail("halqa");
+    const client = new TestClient();
+    await client.request("/api/auth/register", {
+      method: "POST",
+      body: { email, password: PASSWORD, fullName: "Halqa" },
+    });
+
+    // Tokenni chiqishdan OLDIN nusxalaymiz.
+    const cookies = (client as unknown as { cookies: Map<string, string> }).cookies;
+    const rawCookie = cookies.get(SESSION_COOKIE)!;
+    const stale = new TestClient();
+    (stale as unknown as { cookies: Map<string, string> }).cookies.set(
+      SESSION_COOKIE,
+      rawCookie,
+    );
+
+    await client.request("/api/auth/logout", { method: "POST" });
+
+    /*
+      1-qadam: /dashboard cookie'ni tozalaydigan manzilga yuboradi.
+
+      DIQQAT: bu yerda HTTP 307 kutilmaydi. Maketdagi `redirect()`
+      javob oqimi boshlangandan keyin ishlaydi, shuning uchun Next.js
+      uni sarlavhaga emas, javob TANASIGA yozadi va brauzer o'sha
+      manzilga o'zi o'tadi. Ya'ni tekshiruv tanadan qidiriladi.
+    */
+    const dashboard = await stale.fetchRaw("/dashboard");
+    const body = await dashboard.text();
+    assert.ok(
+      body.includes("/session-expired"),
+      "maket cookie'ni tozalaydigan manzilga yo'naltirmagan",
+    );
+
+    /*
+      2-qadam: u cookie'ni o'chiradi va /login ga yuboradi.
+
+      `visit()` emas, `fetchRaw()`: birinchisi javobdagi cookie'larni
+      saqlamaydi, ya'ni tozalanganini ko'rsata olmaydi.
+    */
+    const expired = await stale.fetchRaw("/session-expired");
+    assert.equal(expired.status, 307);
+    assert.ok(
+      expired.headers.get("location")?.endsWith("/login"),
+      expired.headers.get("location") ?? "yo'q",
+    );
+    assert.equal(
+      stale.hasCookie(SESSION_COOKIE),
+      false,
+      "eskirgan cookie o'chirilishi kerak",
+    );
+
+    // 3-qadam: endi kirish sahifasi HAQIQATAN ochiladi, halqa yo'q.
+    const login = await stale.visit("/login");
+    assert.equal(login.status, 200, "kirish sahifasi ochilishi kerak");
+  });
+
+  it("KIRGAN foydalanuvchini /session-expired tizimdan chiqarmaydi", async () => {
+    // Boshqa saytdagi <img src="/session-expired"> hujumi ishlamasin.
+    const client = new TestClient();
+    await client.request("/api/auth/register", {
+      method: "POST",
+      body: { email: testEmail("chiqarmaydi"), password: PASSWORD, fullName: "Faol" },
+    });
+
+    const visited = await client.fetchRaw("/session-expired");
+
+    assert.equal(visited.status, 307);
+    assert.ok(
+      visited.headers.get("location")?.endsWith("/dashboard"),
+      visited.headers.get("location") ?? "yo'q",
+    );
+    assert.equal(
+      client.hasCookie(SESSION_COOKIE),
+      true,
+      "faol sessiya cookie'si saqlanishi kerak",
+    );
+  });
+
   it("chiqqandan keyin ESKI cookie ham ishlamaydi", async () => {
     // Eng muhim tekshiruv: JWT imzosi hali yaroqli, lekin bazadagi sessiya
     // o'chirilgan — demak o'g'irlangan token ham foyda bermaydi.

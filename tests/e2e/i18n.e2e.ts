@@ -128,10 +128,10 @@ describe("i18n — kirmagan foydalanuvchi", () => {
 
   it("bosh sahifa ham ikki tilda", async () => {
     const uz = await fetchPage("/");
-    assert.ok(htmlIncludes(uz.html, text("uz", "home.register")));
+    assert.ok(htmlIncludes(uz.html, text("uz", "landing.featuresTitle")));
 
     const ru = await fetchPage("/", { cookie: "searcher_locale=ru" });
-    assert.ok(htmlIncludes(ru.html, text("ru", "home.register")));
+    assert.ok(htmlIncludes(ru.html, text("ru", "landing.featuresTitle")));
   });
 });
 

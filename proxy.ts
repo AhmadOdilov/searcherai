@@ -26,8 +26,18 @@ import { SESSION_COOKIE, verifySessionToken } from "@/lib/auth/jwt";
 /** Kirish talab qiladigan yo'llar. */
 const PROTECTED_PREFIXES = ["/dashboard"];
 
-/** Kirgan foydalanuvchiga keraksiz yo'llar — ular /dashboard'ga yuboriladi. */
-const AUTH_PAGES = ["/login", "/register"];
+/**
+ * Kirgan foydalanuvchiga keraksiz yo'llar — ular /dashboard'ga yuboriladi.
+ *
+ * `/` ham shu ro'yxatda: bosh sahifa — tanishtiruv sahifasi, ya'ni
+ * ilovani hali bilmagan odam uchun. Kirgan o'qituvchiga u har safar
+ * ortiqcha bir bosish qo'shadi.
+ *
+ * Tekshiruv aynan shu yerda (sahifa ichida `getCurrentUser()` emas),
+ * chunki shunda bosh sahifa bazaga umuman murojaat qilmaydi: token
+ * imzosini tekshirish bazasiz bajariladi.
+ */
+const AUTH_PAGES = ["/", "/login", "/register"];
 
 function isProtected(pathname: string): boolean {
   return PROTECTED_PREFIXES.some(
@@ -55,7 +65,7 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
     return response;
   }
 
-  // 2. Allaqachon kirgan foydalanuvchi /login yoki /register'ga kelsa →
+  // 2. Allaqachon kirgan foydalanuvchi /, /login yoki /register'ga kelsa →
   //    uni ishchi sahifaga qaytaramiz.
   if (AUTH_PAGES.includes(pathname) && hasValidToken) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
@@ -72,5 +82,5 @@ export const config = {
    * o'zini himoya qiladi va JSON qaytaradi — HTTP redirect emas. API
    * so'roviga 302 qaytarish klientni chalkashtiradi.
    */
-  matcher: ["/dashboard/:path*", "/login", "/register"],
+  matcher: ["/", "/dashboard/:path*", "/login", "/register"],
 };
