@@ -24,12 +24,12 @@ export const POST = withErrorHandling<RouteContext>(async (_request, context) =>
     Cheklovsiz qoldirilsa, tugmani ushlab turib kvotani chetlab o'tish
     mumkin bo'lardi.
   */
-  await consumeAiQuota(user.id, "calendar-plans:regenerate");
+  const reservation = await consumeAiQuota(user.id, "calendar-plans:regenerate");
 
   const { record, input } = await regenerateCalendarPlan(id, user.id);
 
   runInBackground(`calendar-plan:${record.id}:regenerate`, () =>
-    runCalendarPlanGeneration(record.id, input),
+    runCalendarPlanGeneration(record.id, input, reservation),
   );
 
   return ok({ calendarPlan: record }, 202);

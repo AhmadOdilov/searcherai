@@ -56,6 +56,16 @@ const MAX_REQUESTS = 3;
  */
 const CLEANUP_AFTER_MS = 24 * 60 * 60 * 1000;
 
+/**
+ * Band qilingan kvota — generatsiya yiqilsa uni qaytarish uchun.
+ *
+ * Obyekt sifatida (oddiy satr emas): chaqiruvchi uni tasodifan boshqa
+ * identifikator bilan almashtirib yubormasligi uchun.
+ */
+export interface QuotaReservation {
+  id: string;
+}
+
 /** Qaysi modul so'rayotgani — faqat diagnostika uchun yoziladi. */
 export type AiRoute =
   | "lesson-plans"
@@ -81,7 +91,10 @@ export type AiRoute =
  * AI so'rovi BOSHLANISHIDAN oldin chaqiriladi: xarajat so'rov
  * yuborilganda paydo bo'ladi, natija kelganda emas.
  */
-export async function consumeAiQuota(userId: string, route: AiRoute): Promise<void> {
+export async function consumeAiQuota(
+  userId: string,
+  route: AiRoute,
+): Promise<QuotaReservation> {
   const since = new Date(Date.now() - WINDOW_MS);
 
   const used = await prisma.aiRequest.count({
@@ -95,9 +108,52 @@ export async function consumeAiQuota(userId: string, route: AiRoute): Promise<vo
     });
   }
 
-  await prisma.aiRequest.create({ data: { userId, route } });
+  const reservation = await prisma.aiRequest.create({
+    data: { userId, route },
+    select: { id: true },
+  });
 
   await cleanupOldRequests();
+
+  return { id: reservation.id };
+}
+
+/**
+ * Bandlikni QAYTARADI — generatsiya muvaffaqiyatsiz tugaganda.
+ *
+ * ── Muammo ────────────────────────────────────────────────────────────────
+ * `consumeAiQuota()` so'rov BOSHLANISHIDAN oldin yozadi va bu to'g'ri:
+ * aks holda parallel so'rovlar chegarani chetlab o'tardi. Lekin AI
+ * yiqilganda, timeout bo'lganda yoki javob sxemadan o'tmaganda bandlik
+ * o'sha joyda qolib ketardi.
+ *
+ * Amaliy oqibat: provayder uzilgan paytda o'qituvchi uch marta urinadi,
+ * uchalasi ham yiqiladi va u BIR DAQIQAGA bloklanadi — o'z aybisiz.
+ * Ya'ni provayder nosozligi foydalanuvchi uchun ikki barobar og'irlashardi.
+ *
+ * ── Nega tekshiruv OXIRIGA ko'chirilmadi ──────────────────────────────────
+ * "Generatsiya tugagach hisobla" degan variant soddaroq ko'rinadi, lekin
+ * u parallel himoyani buzadi: bir vaqtda kelgan o'nta so'rov hammasi
+ * "hali hech narsa yozilmagan" holatni ko'rib, o'tib ketardi. Shuning
+ * uchun band qilish oldinda qoladi, faqat MUVAFFAQIYATSIZLIKDA qaytariladi.
+ *
+ * ── Idempotent ────────────────────────────────────────────────────────────
+ * `deleteMany` ishlatiladi, `delete` emas: yozuv allaqachon o'chirilgan
+ * bo'lsa (takroriy chaqiruv yoki eskirganlarni tozalash) funksiya jim
+ * o'tadi, xato tashlamaydi.
+ */
+export async function releaseAiQuota(
+  reservation: QuotaReservation | undefined,
+): Promise<void> {
+  if (reservation === undefined) return;
+
+  await prisma.aiRequest
+    .deleteMany({ where: { id: reservation.id } })
+    .catch((error: unknown) => {
+      // Qaytarish bajarilmagani generatsiya xatosini YASHIRMASLIGI kerak —
+      // chaqiruvchi baribir asl xatoni yuqoriga uzatadi.
+      console.error("[rate-limit] kvota qaytarilmadi:", error);
+    });
 }
 
 /**

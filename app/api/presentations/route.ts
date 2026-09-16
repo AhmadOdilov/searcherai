@@ -33,12 +33,12 @@ export const POST = withErrorHandling(async (request) => {
 
   // Kvota tekshiruvi validatsiyadan KEYIN: noto'g'ri to'ldirilgan forma
   // foydalanuvchining kvotasini yemasligi kerak.
-  await consumeAiQuota(user.id, "presentations");
+  const reservation = await consumeAiQuota(user.id, "presentations");
 
   const { record, promptContext } = await createPresentation(user.id, input);
 
   runInBackground(`presentation:${record.id}`, () =>
-    runPresentationGeneration(record.id, promptContext),
+    runPresentationGeneration(record.id, promptContext, reservation),
   );
 
   return ok({ presentation: record }, 202);

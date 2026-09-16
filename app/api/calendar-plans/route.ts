@@ -25,12 +25,12 @@ export const POST = withErrorHandling(async (request) => {
 
   // Kvota tekshiruvi validatsiyadan KEYIN: noto'g'ri to'ldirilgan forma
   // foydalanuvchining kvotasini yemasligi kerak.
-  await consumeAiQuota(user.id, "calendar-plans");
+  const reservation = await consumeAiQuota(user.id, "calendar-plans");
 
   const calendarPlan = await createCalendarPlan(user.id, input);
 
   runInBackground(`calendar-plan:${calendarPlan.id}`, () =>
-    runCalendarPlanGeneration(calendarPlan.id, input),
+    runCalendarPlanGeneration(calendarPlan.id, input, reservation),
   );
 
   return ok({ calendarPlan }, 202);

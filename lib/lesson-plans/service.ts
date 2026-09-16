@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { generateJson } from "@/lib/ai/provider";
 import { AiError } from "@/lib/ai/types";
 import { apiErrors } from "@/lib/api/errors";
+import { releaseAiQuota, type QuotaReservation } from "@/lib/ai/rate-limit";
 import { markStaleAsFailed } from "@/lib/generation/stale";
 import {
   buildSystemPrompt,
@@ -104,8 +105,22 @@ export async function createLessonPlan(
 export async function runLessonPlanGeneration(
   id: string,
   input: LessonPlanInput,
+  /*
+    Band qilingan AI kvotasi.
+
+    Generatsiya YIQILSA u qaytariladi — aks holda provayder uzilgan
+    paytda o'qituvchi o'z aybisiz bloklanardi. Ixtiyoriy: sinovlar bu
+    funksiyani kvotasiz ham chaqiradi.
+    Batafsil: lib/ai/rate-limit.ts → releaseAiQuota
+  */
+  reservation?: QuotaReservation,
 ): Promise<void> {
-  await runGeneration(id, input);
+  try {
+    await runGeneration(id, input);
+  } catch (caught) {
+    await releaseAiQuota(reservation);
+    throw caught;
+  }
 }
 
 /**

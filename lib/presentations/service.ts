@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { generateJson } from "@/lib/ai/provider";
 import { AiError } from "@/lib/ai/types";
 import { apiErrors } from "@/lib/api/errors";
+import { releaseAiQuota, type QuotaReservation } from "@/lib/ai/rate-limit";
 import { markStaleAsFailed } from "@/lib/generation/stale";
 import { generatePptx } from "@/lib/pptx/generate";
 import { DEFAULT_TEMPLATE } from "@/lib/pptx/theme";
@@ -192,8 +193,22 @@ export async function createPresentation(
 export async function runPresentationGeneration(
   id: string,
   promptContext: PresentationPromptContext,
+  /*
+    Band qilingan AI kvotasi.
+
+    Generatsiya YIQILSA u qaytariladi — aks holda provayder uzilgan
+    paytda o'qituvchi o'z aybisiz bloklanardi. Ixtiyoriy: sinovlar bu
+    funksiyani kvotasiz ham chaqiradi.
+    Batafsil: lib/ai/rate-limit.ts → releaseAiQuota
+  */
+  reservation?: QuotaReservation,
 ): Promise<void> {
-  await runGeneration(id, promptContext);
+  try {
+    await runGeneration(id, promptContext);
+  } catch (caught) {
+    await releaseAiQuota(reservation);
+    throw caught;
+  }
 }
 
 /** Mavjud yozuvni qayta generatsiya qiladi — parametrlar yozuvdan olinadi. */

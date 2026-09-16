@@ -30,12 +30,12 @@ export const POST = withErrorHandling(async (request) => {
 
   // Kvota tekshiruvi validatsiyadan KEYIN: noto'g'ri to'ldirilgan forma
   // foydalanuvchining kvotasini yemasligi kerak.
-  await consumeAiQuota(user.id, "lesson-plans");
+  const reservation = await consumeAiQuota(user.id, "lesson-plans");
 
   const plan = await createLessonPlan(user.id, input);
 
   runInBackground(`lesson-plan:${plan.id}`, () =>
-    runLessonPlanGeneration(plan.id, input),
+    runLessonPlanGeneration(plan.id, input, reservation),
   );
 
   // 202 Accepted — "qabul qilindi, lekin hali bajarilmadi".

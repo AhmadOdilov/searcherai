@@ -27,12 +27,12 @@ export const POST = withErrorHandling<RouteContext>(async (_request, context) =>
     Cheklovsiz qoldirilsa, tugmani ushlab turib kvotani chetlab o'tish
     mumkin bo'lardi.
   */
-  await consumeAiQuota(user.id, "presentations:regenerate");
+  const reservation = await consumeAiQuota(user.id, "presentations:regenerate");
 
   const { record, promptContext } = await regeneratePresentation(id, user.id);
 
   runInBackground(`presentation:${record.id}:regenerate`, () =>
-    runPresentationGeneration(record.id, promptContext),
+    runPresentationGeneration(record.id, promptContext, reservation),
   );
 
   return ok({ presentation: record }, 202);
