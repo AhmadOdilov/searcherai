@@ -2,12 +2,14 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { AlertTriangle, Camera, ImagePlus, ListChecks, Sparkles, X } from "lucide-react";
 import { ApiClientError, apiRequest } from "@/lib/api-client";
 import { Card, ToneCard } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FormError, Input } from "@/components/ui/field";
+import { FormError, Input, Select } from "@/components/ui/field";
+import { GENERATION_LANGUAGES } from "@/lib/ui/options";
+import { languageFromLocale, type UiLocale } from "@/lib/i18n/config";
 import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/ui/cn";
 import {
@@ -43,6 +45,12 @@ interface VisionResponse {
 export function ImageAnalyzer() {
   const t = useTranslations("vision");
   const tRoot = useTranslations();
+  /*
+    Interfeys tili — tanlov uchun standart qiymat. `languageFromLocale`
+    `UiLocale` ni Prisma `Language` enum qiymatiga o'giradi ("uz" → "UZ")
+    va shu bilan mavjud i18n qatlamidan chetga chiqilmaydi.
+  */
+  const defaultLanguage = languageFromLocale(useLocale() as UiLocale);
   const router = useRouter();
 
   const fileInput = useRef<HTMLInputElement>(null);
@@ -98,7 +106,11 @@ export function ImageAnalyzer() {
     setFieldErrors({});
 
     const formData = new FormData(event.currentTarget);
-    const body: Record<string, unknown> = { image: preview, language: "UZ" };
+    const body: Record<string, unknown> = {
+      image: preview,
+      // Formadan — ilgari bu yerda `"UZ"` qattiq yozilgan edi.
+      language: formData.get("language") ?? defaultLanguage,
+    };
     const subject = String(formData.get("subject") ?? "").trim();
     const grade = String(formData.get("grade") ?? "").trim();
     if (subject !== "") body.subject = subject;
@@ -285,6 +297,32 @@ export function ImageAnalyzer() {
               disabled={loading}
             />
           </div>
+
+          {/*
+            Tahlil tili — boshqa modullardagi AYNAN o'sha tanlov.
+
+            Ilgari bu yerda `"UZ"` qattiq yozilgan edi va rus tilida
+            ishlayotgan o'qituvchi rasm yuklasa, tahlilni baribir
+            o'zbekcha olardi. Bu yagona joy edi: qolgan uchala modul
+            tilni o'qituvchidan so'raydi.
+
+            Standart qiymat INTERFEYS tilidan olinadi — o'qituvchi
+            odatda o'zi ishlayotgan tilda material kutadi. Lekin u
+            o'zgartirishi mumkin: ilovani ruscha ishlatib, tahlilni
+            o'zbekcha olish mutlaqo normal holat.
+          */}
+          <Select
+            label={tRoot("common.contentLanguage")}
+            name="language"
+            defaultValue={defaultLanguage}
+            help={tRoot("common.contentLanguageHelp")}
+            errors={fieldErrors}
+            disabled={loading}
+            options={GENERATION_LANGUAGES.map((value) => ({
+              value,
+              label: tRoot(`languages.${value}`),
+            }))}
+          />
 
           <div>
             <Button
