@@ -1,17 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, Play } from "lucide-react";
 import { useEditorDraft } from "@/lib/hooks/use-editor-draft";
+import { useUnsavedGuard } from "@/lib/hooks/use-unsaved-guard";
 import { SaveBar } from "@/components/editor/save-bar";
 import { SlideForm } from "@/components/presentations/slide-form";
 import { SlideList } from "@/components/presentations/slide-list";
 import { SlidePreview } from "@/components/presentations/slide-preview";
 import { Button } from "@/components/ui/button";
 import { Card, ToneCard } from "@/components/ui/card";
+import { GuardedLink } from "@/components/ui/guarded-link";
 import {
   EDIT_MAX_SLIDES,
   type PresentationContent,
@@ -46,6 +47,7 @@ export function PresentationEditor({
   const t = useTranslations("presentations.editor");
   const tEditor = useTranslations("editor");
   const router = useRouter();
+  const { requestLeave } = useUnsavedGuard();
 
   const { draft, update, dirty, status, error, save, discard } =
     useEditorDraft<PresentationContent>({
@@ -56,7 +58,6 @@ export function PresentationEditor({
   const [activeIndex, setActiveIndex] = useState(0);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<number | null>(null);
-  const [leaveConfirm, setLeaveConfirm] = useState(false);
 
   const slides = draft.slides;
   // Ro'yxat qisqarganda tanlov chegaradan chiqib qolmasin.
@@ -117,13 +118,16 @@ export function PresentationEditor({
     setPendingDelete(null);
   }
 
-  /** Muharrirdan chiqish — saqlanmagan o'zgarish bo'lsa so'raydi. */
+  /*
+    Muharrirdan chiqish — saqlanmagan o'zgarish bo'lsa so'raydi.
+
+    Chiqish qo'riqchidan so'raladi — tasdiq oynasi endi maketda, bitta
+    joyda. Ilgari har muharrirda o'z nusxasi bor edi va u FAQAT shu
+    tugmani qoplardi: sarlavhadagi havolalar ogohlantirishsiz o'tib
+    ketardi. Batafsil: lib/hooks/use-unsaved-guard.tsx
+  */
   function handleLeave() {
-    if (dirty) {
-      setLeaveConfirm(true);
-      return;
-    }
-    router.push(detailHref);
+    requestLeave(() => router.push(detailHref));
   }
 
   return (
@@ -147,33 +151,6 @@ export function PresentationEditor({
           {t("preview")}
         </Button>
       </div>
-
-      {/* ── Chiqishni tasdiqlash ────────────────────────────────────── */}
-      {leaveConfirm && (
-        <ToneCard tone="accent" padding="sm" className="mt-4" role="alert">
-          <p className="text-base leading-relaxed text-accent-ink">
-            {tEditor("unsaved.body")}
-          </p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <Button
-              variant="secondary"
-              onClick={async () => {
-                const okSaved = await save();
-                if (okSaved) router.push(detailHref);
-              }}
-              loading={status === "saving"}
-            >
-              {tEditor("unsaved.saveAndLeave")}
-            </Button>
-            <Button variant="ghost" onClick={() => router.push(detailHref)}>
-              {tEditor("unsaved.leave")}
-            </Button>
-            <Button variant="ghost" onClick={() => setLeaveConfirm(false)}>
-              {tEditor("unsaved.stay")}
-            </Button>
-          </div>
-        </ToneCard>
-      )}
 
       {/* ── Prezentatsiya nomi ──────────────────────────────────────── */}
       <div className="mt-4">
@@ -287,9 +264,16 @@ export function PresentationEditor({
 
       <p className="mt-6 text-center text-sm text-neutral-500">
         {t("noAiHint")}{" "}
-        <Link href={detailHref} className="text-primary underline underline-offset-4">
+        {/*
+          Bu havola ham qo'riqchi orqali: u muharrirning ICHIDA va
+          saqlanmagan tahrirni yo'qotadigan yagona oddiy `<Link>` edi.
+        */}
+        <GuardedLink
+          href={detailHref}
+          className="text-primary underline underline-offset-4"
+        >
           {t("backToPresentation")}
-        </Link>
+        </GuardedLink>
       </p>
     </div>
   );

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, ChevronDown, ChevronUp, Plus, Trash2, X } from "lucide-react";
 import { useEditorDraft } from "@/lib/hooks/use-editor-draft";
+import { useUnsavedGuard } from "@/lib/hooks/use-unsaved-guard";
 import { SaveBar } from "@/components/editor/save-bar";
 import { Button } from "@/components/ui/button";
 import { Card, ToneCard } from "@/components/ui/card";
@@ -51,6 +52,7 @@ export function CalendarEditor({
   const t = useTranslations("calendarPlans.editor");
   const tEditor = useTranslations("editor");
   const router = useRouter();
+  const { requestLeave } = useUnsavedGuard();
 
   const { draft, update, dirty, status, error, save, discard } =
     useEditorDraft<CalendarPlanContent>({
@@ -59,7 +61,6 @@ export function CalendarEditor({
     });
 
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
-  const [leaveConfirm, setLeaveConfirm] = useState(false);
 
   function setWeeks(weeks: CalendarWeek[]) {
     update((current) => ({ ...current, weeks }));
@@ -116,12 +117,14 @@ export function CalendarEditor({
     setPendingDelete(null);
   }
 
+  /*
+    Chiqish qo'riqchidan so'raladi — tasdiq oynasi endi maketda, bitta
+    joyda. Ilgari har muharrirda o'z nusxasi bor edi va u FAQAT shu
+    tugmani qoplardi: sarlavhadagi havolalar ogohlantirishsiz o'tib
+    ketardi. Batafsil: lib/hooks/use-unsaved-guard.tsx
+  */
   function handleLeave() {
-    if (dirty) {
-      setLeaveConfirm(true);
-      return;
-    }
-    router.push(detailHref);
+    requestLeave(() => router.push(detailHref));
   }
 
   const hours = totalHours(draft);
@@ -138,31 +141,6 @@ export function CalendarEditor({
         <ArrowLeft aria-hidden className="size-5 shrink-0" />
         {t("backToPlan")}
       </button>
-
-      {leaveConfirm && (
-        <ToneCard tone="accent" padding="sm" className="mt-4" role="alert">
-          <p className="text-base leading-relaxed text-accent-ink">
-            {tEditor("unsaved.body")}
-          </p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <Button
-              variant="secondary"
-              loading={status === "saving"}
-              onClick={async () => {
-                if (await save()) router.push(detailHref);
-              }}
-            >
-              {tEditor("unsaved.saveAndLeave")}
-            </Button>
-            <Button variant="ghost" onClick={() => router.push(detailHref)}>
-              {tEditor("unsaved.leave")}
-            </Button>
-            <Button variant="ghost" onClick={() => setLeaveConfirm(false)}>
-              {tEditor("unsaved.stay")}
-            </Button>
-          </div>
-        </ToneCard>
-      )}
 
       <div className="mt-4">
         <label

@@ -1,10 +1,11 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { GraduationCap, Settings } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth/session";
 import { UserProvider } from "@/lib/hooks/use-user";
+import { UnsavedGuardProvider } from "@/lib/hooks/use-unsaved-guard";
 import { LogoutButton } from "@/components/logout-button";
+import { GuardedLink } from "@/components/ui/guarded-link";
 import { LocaleSwitcher } from "@/components/ui/locale-switcher";
 
 /**
@@ -24,6 +25,12 @@ import { LocaleSwitcher } from "@/components/ui/locale-switcher";
  *
  * `getCurrentUser` `cache()` bilan o'ralgan, shuning uchun maket ham,
  * sahifa ham chaqirsa — bazaga BITTA so'rov ketadi.
+ *
+ * ── Nega saqlanmagan o'zgarishlar qo'riqchisi AYNAN shu yerda ─────────────
+ * Muharrirdan chiqish yo'llarining ko'pi muharrirning O'ZIDA emas, shu
+ * sarlavhada: nom, sozlamalar havolasi, chiqish tugmasi. Muharrir
+ * komponenti ularga yeta olmaydi. Qo'riqchi esa maketda turgani uchun
+ * ikkala tomonni ham ko'radi.
  */
 export default async function DashboardLayout({ children }: LayoutProps<"/dashboard">) {
   const user = await getCurrentUser();
@@ -48,8 +55,9 @@ export default async function DashboardLayout({ children }: LayoutProps<"/dashbo
         language: user.language,
       }}
     >
-      <div className="min-h-screen bg-canvas">
-        {/*
+      <UnsavedGuardProvider>
+        <div className="min-h-screen bg-canvas">
+          {/*
           Asosiy mazmunga o'tish havolasi.
 
           Odatda ko'rinmaydi — faqat klaviatura bilan unga fokus
@@ -57,62 +65,67 @@ export default async function DashboardLayout({ children }: LayoutProps<"/dashbo
           ishlaydigan foydalanuvchi har sahifada sarlavhadagi
           havolalarni qayta-qayta bosib o'tmasligi uchun.
         */}
-        <a
-          href="#asosiy"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-on-primary"
-        >
-          {t("skipToContent")}
-        </a>
+          <a
+            href="#asosiy"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-on-primary"
+          >
+            {t("skipToContent")}
+          </a>
 
-        <header className="border-b border-neutral-200 bg-surface print:hidden">
-          <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
-            <Link
-              href="/dashboard"
-              className="flex min-w-0 items-center gap-3 rounded-md py-1"
-            >
-              <span
-                aria-hidden
-                className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary"
-              >
-                <GraduationCap className="size-6" />
-              </span>
-              <span className="min-w-0">
-                <span className="block text-base font-semibold text-neutral-900">
-                  {t("name")}
-                </span>
-                <span className="block truncate text-sm text-neutral-500">
-                  {user.fullName}
-                </span>
-              </span>
-            </Link>
-
-            <div className="flex shrink-0 items-center gap-2">
+          <header className="border-b border-neutral-200 bg-surface print:hidden">
+            <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
               {/*
+              Oddiy `<Link>` EMAS: muharrirda saqlanmagan tahrir bo'lsa,
+              bu havola uni jimgina yo'qotardi.
+            */}
+              <GuardedLink
+                href="/dashboard"
+                className="flex min-w-0 items-center gap-3 rounded-md py-1"
+              >
+                <span
+                  aria-hidden
+                  className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary"
+                >
+                  <GraduationCap className="size-6" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-base font-semibold text-neutral-900">
+                    {t("name")}
+                  </span>
+                  <span className="block truncate text-sm text-neutral-500">
+                    {user.fullName}
+                  </span>
+                </span>
+              </GuardedLink>
+
+              <div className="flex shrink-0 items-center gap-2">
+                {/*
                 Sozlamalar — belgili havola. Matn bilan yozsak, telefonda
                 sarlavha uch elementdan iborat bo'lib, foydalanuvchi ismi
                 siqilib ketardi.
               */}
-              <Link
-                href="/dashboard/settings"
-                aria-label={t("settings")}
-                title={t("settings")}
-                className="flex size-11 items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
-              >
-                <Settings aria-hidden className="size-5" />
-              </Link>
-              <LocaleSwitcher />
-              <LogoutButton />
+                <GuardedLink
+                  href="/dashboard/settings"
+                  aria-label={t("settings")}
+                  title={t("settings")}
+                  className="flex size-11 items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
+                >
+                  <Settings aria-hidden className="size-5" />
+                </GuardedLink>
+                <LocaleSwitcher />
+                <LogoutButton />
+              </div>
             </div>
-          </div>
-        </header>
+          </header>
 
-        {/*
+          {/*
           `<main>` — sahifaning asosiy sohasi. Skrinriderlar shu
           belgiga qarab "asosiy mazmun" ni topadi; ilgari bu yerda
           oddiy `<div>` turardi va landmark umuman yo'q edi.
         */}
-        <main id="asosiy">{children}</main>
-      </div>
+          <main id="asosiy">{children}</main>
+        </div>
+      </UnsavedGuardProvider>
     </UserProvider>
   );
 }

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ApiClientError, apiRequest } from "@/lib/api-client";
+import { useUnsavedGuard } from "@/lib/hooks/use-unsaved-guard";
 
 /**
  * Tahrirlash qoralamasi — uchala muharrir uchun UMUMIY asos.
@@ -134,7 +135,7 @@ export function useEditorDraft<T>({
     soxta xabarlarning oldini olish uchun).
 
     Ilova ICHIDAGI o'tishlar bu hodisani ishga tushirmaydi — ular
-    muharrirning o'z "orqaga" havolasida tekshiriladi.
+    pastdagi qo'riqchi orqali tekshiriladi.
   */
   /*
     `dirty` ni ref'da saqlaymiz: hodisa tinglovchisi BIR MARTA
@@ -156,6 +157,34 @@ export function useEditorDraft<T>({
     window.addEventListener("beforeunload", onBeforeUnload);
     return () => window.removeEventListener("beforeunload", onBeforeUnload);
   }, []);
+
+  /*
+    ── Saqlanmagan o'zgarishlar: ILOVA ICHIDAGI o'tishlar ─────────────────
+    `beforeunload` klient navigatsiyasida UMUMAN ishga tushmaydi —
+    brauzer uchun hujjat o'zgarmaydi. Ya'ni sarlavhadagi nom yoki
+    sozlamalar havolasi bosilganda qoralama jimgina yo'qolardi.
+
+    Qo'riqchi shu bo'shliqni yopadi: u maketda turadi va o'tish
+    yo'llarining hammasi (havolalar, chiqish tugmasi, muharrirning o'z
+    «orqaga» tugmasi) undan so'rab o'tadi.
+    Batafsil: lib/hooks/use-unsaved-guard.tsx
+  */
+  const { setDirty, setSave } = useUnsavedGuard();
+
+  useEffect(() => {
+    setDirty(dirty);
+    /*
+      Muharrir yopilganda belgi TOZALANADI. Aks holda foydalanuvchi
+      muharrirdan chiqqandan keyin ham butun ilova bo'ylab
+      ogohlantirish olaverardi.
+    */
+    return () => setDirty(false);
+  }, [dirty, setDirty]);
+
+  useEffect(() => {
+    setSave(save);
+    return () => setSave(null);
+  }, [save, setSave]);
 
   return { draft, update, dirty, status, error, fieldErrors, save, discard };
 }
