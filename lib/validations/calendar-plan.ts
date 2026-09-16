@@ -103,25 +103,29 @@ export type CalendarPlanListQuery = z.infer<typeof calendarPlanListQuerySchema>;
 /** Bitta hafta ichidagi bitta mavzu (jadvalda bitta qator). */
 export const calendarTopicSchema = z.object({
   name: z
-    .string()
+    .string({ error: "Mavzu nomi yozilmagan" })
     .trim()
     .min(3, "Mavzu nomi juda qisqa")
     .max(300, "Mavzu nomi juda uzun"),
   /** Shu mavzuga ajratilgan soat. */
   hours: z
-    .number()
+    .number({ error: "Soat yozilmagan" })
     .int("Soat butun son bo'lishi kerak")
     .min(1, "errors.validation.hoursTooFew")
     .max(20, "Bitta mavzuga 20 soatdan ko'p ajratilmaydi"),
   /** Izoh — metod, resurs yoki nazorat turi. Ixtiyoriy. */
-  note: z.string().trim().max(500, "Izoh juda uzun").optional(),
+  note: z
+    .string({ error: "Izoh matn bo'lishi kerak" })
+    .trim()
+    .max(500, "Izoh juda uzun")
+    .optional(),
 });
 
 export type CalendarTopic = z.infer<typeof calendarTopicSchema>;
 
 export const calendarWeekSchema = z.object({
   weekNumber: z
-    .number()
+    .number({ error: "Hafta raqami yozilmagan" })
     .int("Hafta raqami butun son bo'lishi kerak")
     .min(1, "Hafta raqami 1 dan boshlanadi")
     .max(MAX_WEEKS, `Hafta raqami ${MAX_WEEKS} dan oshmaydi`),
@@ -132,9 +136,9 @@ export const calendarWeekSchema = z.object({
    * boshlang'ich sanani beradi. Aniq sanalar kerak bo'lsa ular boshlanish
    * sanasidan hisoblanadi — `lib/calendar-plans/dates.ts` ga qara.
    */
-  dateRange: z.string().trim().min(1).max(100),
+  dateRange: z.string({ error: "Sana oralig'i yozilmagan" }).trim().min(1).max(100),
   topics: z
-    .array(calendarTopicSchema)
+    .array(calendarTopicSchema, { error: "Hafta mavzulari yozilmagan" })
     .min(1, "Har bir haftada kamida 1 mavzu bo'lishi kerak")
     .max(10, "Bitta haftaga 10 dan ko'p mavzu ko'p"),
 });
@@ -142,9 +146,13 @@ export const calendarWeekSchema = z.object({
 export type CalendarWeek = z.infer<typeof calendarWeekSchema>;
 
 export const calendarPlanContentSchema = z.object({
-  title: z.string().trim().min(5, "Sarlavha juda qisqa").max(200, "Sarlavha juda uzun"),
+  title: z
+    .string({ error: "Reja sarlavhasi yozilmagan" })
+    .trim()
+    .min(5, "Sarlavha juda qisqa")
+    .max(200, "Sarlavha juda uzun"),
   weeks: z
-    .array(calendarWeekSchema)
+    .array(calendarWeekSchema, { error: "Haftalar ro'yxati yozilmagan" })
     .min(1, "errors.validation.weeksTooFew")
     .max(52, "errors.validation.weeksTooMany"),
 });

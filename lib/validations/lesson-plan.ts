@@ -84,27 +84,27 @@ export type LessonPlanListQuery = z.infer<typeof lessonPlanListQuerySchema>;
  */
 export const lessonStageSchema = z.object({
   name: z
-    .string()
+    .string({ error: "Bosqich nomi yozilmagan" })
     .trim()
     .min(2, "Bosqich nomi juda qisqa")
     .max(120, "Bosqich nomi juda uzun"),
   durationMinutes: z
-    .number()
+    .number({ error: "Bosqich davomiyligi yozilmagan" })
     .int("Bosqich davomiyligi butun son bo'lishi kerak")
     .min(1, "Bosqich kamida 1 daqiqa bo'lishi kerak")
     .max(240, "Bosqich davomiyligi juda uzun"),
   description: z
-    .string()
+    .string({ error: "Bosqich tavsifi yozilmagan" })
     .trim()
     .min(10, "Bosqich tavsifi juda qisqa")
     .max(2000, "Bosqich tavsifi juda uzun"),
   teacherActivity: z
-    .string()
+    .string({ error: "O'qituvchi faoliyati yozilmagan" })
     .trim()
     .min(5, "O'qituvchi faoliyati ko'rsatilmagan")
     .max(2000, "O'qituvchi faoliyati juda uzun"),
   studentActivity: z
-    .string()
+    .string({ error: "O'quvchi faoliyati yozilmagan" })
     .trim()
     .min(5, "O'quvchi faoliyati ko'rsatilmagan")
     .max(2000, "O'quvchi faoliyati juda uzun"),
@@ -121,29 +121,39 @@ export type LessonStage = z.infer<typeof lessonStageSchema>;
  */
 export const lessonPlanContentSchema = z.object({
   /** O'quv maqsadi — dars nima uchun o'tkaziladi. */
-  objective: z.string().trim().min(10, "Maqsad juda qisqa").max(1000, "Maqsad juda uzun"),
+  objective: z
+    .string({ error: "Dars maqsadi yozilmagan" })
+    .trim()
+    .min(10, "Maqsad juda qisqa")
+    .max(1000, "Maqsad juda uzun"),
 
   /** Kutilayotgan natijalar — "o'quvchi ... qila oladi" ko'rinishida. */
   outcomes: z
-    .array(z.string().trim().min(3).max(500))
+    .array(z.string({ error: "Natija matn bo'lishi kerak" }).trim().min(3).max(500), {
+      error: "Kutilayotgan natijalar ro'yxati yozilmagan",
+    })
     .min(2, "Kamida 2 ta kutilayotgan natija bo'lishi kerak")
     .max(10, "Kutilayotgan natijalar juda ko'p"),
 
   /** Kerakli resurslar va materiallar. */
   resources: z
-    .array(z.string().trim().min(2).max(300))
+    .array(z.string({ error: "Resurs matn bo'lishi kerak" }).trim().min(2).max(300), {
+      error: "Resurslar ro'yxati yozilmagan",
+    })
     .min(1, "Kamida 1 ta resurs ko'rsatilishi kerak")
     .max(20, "Resurslar juda ko'p"),
 
   /** Dars bosqichlari — vaqt taqsimoti bilan. */
   stages: z
-    .array(lessonStageSchema)
+    .array(lessonStageSchema, { error: "Dars bosqichlari yozilmagan" })
     .min(3, "Dars kamida 3 bosqichdan iborat bo'lishi kerak")
     .max(12, "Bosqichlar juda ko'p"),
 
   /** Baholash mezonlari — ixtiyoriy (nazorat darsi bo'lmasa bo'lmasligi mumkin). */
   assessmentCriteria: z
-    .array(z.string().trim().min(3).max(500))
+    .array(z.string({ error: "Mezon matn bo'lishi kerak" }).trim().min(3).max(500), {
+      error: "Baholash mezonlari ro'yxati yozilmagan",
+    })
     .max(10, "Baholash mezonlari juda ko'p")
     .optional(),
 });
