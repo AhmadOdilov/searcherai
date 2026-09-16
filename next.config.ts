@@ -1,5 +1,6 @@
 import createNextIntlPlugin from "next-intl/plugin";
 import type { NextConfig } from "next";
+import { SECURITY_HEADERS } from "./lib/security/headers";
 
 /**
  * next-intl plagini `i18n/request.ts` faylini topib, tarjimalarni
@@ -29,6 +30,27 @@ const nextConfig: NextConfig = {
     `secure` bayrog'i to'g'ri ishlaydi.
   */
   poweredByHeader: false,
+
+  /*
+    ── Xavfsizlik sarlavhalari ──────────────────────────────────────────────
+    Ro'yxat va har birining sababi `lib/security/headers.ts` da.
+
+    `source: "/(.*)"` — BARCHA yo'llar: HTML sahifalar, API javoblari va
+    statik fayllar. Ataylab shunday: audit aynan shu yerda bo'shliq
+    topgan edi (Nginx'da sarlavhalar faqat ba'zi `location` larga
+    tushardi), shuning uchun endi istisno yo'q.
+
+    CSP bu ro'yxatda YO'Q — u har so'rovda yangi nonce talab qiladi va
+    `proxy.ts` da qo'yiladi.
+  */
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [...SECURITY_HEADERS],
+      },
+    ];
+  },
 };
 
 export default withNextIntl(nextConfig);

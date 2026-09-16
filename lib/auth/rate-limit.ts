@@ -1,6 +1,6 @@
 import "server-only";
-import { headers } from "next/headers";
 import { prisma } from "@/lib/db";
+import { clientIp } from "@/lib/auth/client-ip";
 import { ApiError } from "@/lib/api/errors";
 import { getEnv } from "@/lib/env";
 
@@ -23,9 +23,12 @@ import { getEnv } from "@/lib/env";
  *
  * ── Cheklovlar (ataylab) ──────────────────────────────────────────────────
  * Bu bazaga asoslangan oddiy hisoblagich, taqsimlangan tizim uchun
- * mo'ljallangan yechim emas. Proksi orqasida IP `x-forwarded-for` dan
- * olinadi — uni soxtalashtirish mumkin, shuning uchun email bo'yicha
- * cheklov asosiy himoya, IP esa qo'shimcha qatlam.
+ * mo'ljallangan yechim emas.
+ *
+ * Manzil `lib/auth/client-ip.ts` orqali olinadi: u mijoz boshqaradigan
+ * `X-Forwarded-For` ning birinchi elementiga EMAS, Nginx qo'yadigan
+ * `X-Real-IP` ga tayanadi. Shunga qaramay email bo'yicha cheklov asosiy
+ * himoya bo'lib qoladi — IP proksi sozlamasiga bog'liq, email esa yo'q.
  */
 
 /** Oyna uzunligi. */
@@ -86,19 +89,6 @@ const REGISTER_KIND = "register";
  * ham qolsin.
  */
 const CLEANUP_AFTER_MS = 2 * 60 * 60 * 1000;
-
-/** So'rov yuborgan manzil. Topilmasa `null`. */
-async function clientIp(): Promise<string | null> {
-  try {
-    const requestHeaders = await headers();
-    const forwarded = requestHeaders.get("x-forwarded-for");
-    if (forwarded) return forwarded.split(",")[0]?.trim() ?? null;
-    return requestHeaders.get("x-real-ip");
-  } catch {
-    // So'rov konteksti yo'q (masalan sinovda to'g'ridan-to'g'ri chaqiruv).
-    return null;
-  }
-}
 
 /** Tekshiriladigan o'lchovlar ro'yxati. */
 async function identifiers(

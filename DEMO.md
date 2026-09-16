@@ -23,7 +23,7 @@ Kutilgan javob:
     "status": "ok",
     "database": { "connected": true },
     "ai": { "configured": true },
-    "storage": { "driver": "local" }
+    "timestamp": "..."
   }
 }
 ```

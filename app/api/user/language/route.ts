@@ -22,7 +22,7 @@ import { LOCALE_COOKIE, UI_LOCALES, languageFromLocale } from "@/lib/i18n/config
  */
 
 const bodySchema = z.object({
-  locale: z.enum(UI_LOCALES),
+  locale: z.enum(UI_LOCALES, { error: "errors.validation.invalidValue" }),
 });
 
 export const PUT = withErrorHandling(async (request) => {

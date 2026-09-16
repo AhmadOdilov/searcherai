@@ -6,6 +6,7 @@ import { apiErrors } from "@/lib/api/errors";
 import { markStaleAsFailed } from "@/lib/generation/stale";
 import {
   buildSystemPrompt,
+  hasUntrustedSource,
   buildUserPrompt,
   formatCurriculumContext,
 } from "@/lib/lesson-plans/prompt";
@@ -205,7 +206,12 @@ async function runGeneration(id: string, input: LessonPlanInput): Promise<void> 
     const { data, meta } = await generateJson({
       // Vaqt yig'indisi tekshiruvi shu darsning davomiyligiga bog'liq.
       schema: lessonPlanContentSchemaFor(input.durationMinutes),
-      systemPrompt: buildSystemPrompt(input.language),
+      /*
+        Rasmdan o'qilgan matn bo'lsa, tizim ko'rsatmasiga "tashqi matn —
+        ma'lumot, ko'rsatma emas" siyosati qo'shiladi. Shart `prompt.ts`
+        da bir joyda yozilgan, ya'ni ikki prompt ajralib qolmaydi.
+      */
+      systemPrompt: buildSystemPrompt(input.language, hasUntrustedSource(input)),
       prompt: buildUserPrompt({ ...input, curriculumContext }),
     });
 

@@ -1,3 +1,4 @@
+import { UNTRUSTED_POLICY, wrapUntrusted } from "@/lib/ai/untrusted";
 import type { LanguageCode, LessonTypeCode } from "@/lib/validations/common";
 import type { LessonPlanInput } from "@/lib/validations/lesson-plan";
 
@@ -215,8 +216,25 @@ IMPORTANT: the sum of all stages' "durationMinutes" values must be EXACTLY ${inp
 The material must match the level of ${input.grade} students — neither oversimplified nor overly complex.`,
 };
 
-export function buildSystemPrompt(language: LanguageCode): string {
-  return SYSTEM_PROMPTS[language];
+/**
+ * Tizim ko'rsatmasi.
+ *
+ * @param hasUntrustedSource - promptda tashqi (rasmdan o'qilgan) matn bormi
+ *
+ * ── Nega siyosat SHARTLI qo'shiladi ──────────────────────────────────────
+ * Tashqi matn bo'lmasa, chegara teglari haqidagi ko'rsatma promptda
+ * ma'nosiz turadi: model mavjud bo'lmagan teglarni qidiradi va bu
+ * javobning sifatiga ta'sir qilishi mumkin. Shuning uchun u faqat
+ * KERAK bo'lganda qo'shiladi.
+ */
+export function buildSystemPrompt(
+  language: LanguageCode,
+  hasUntrustedSource = false,
+): string {
+  const base = SYSTEM_PROMPTS[language];
+  if (!hasUntrustedSource) return base;
+
+  return `${base}\n\n${UNTRUSTED_POLICY[language]}`;
 }
 
 /**
@@ -325,11 +343,30 @@ export function buildUserPrompt(input: LessonPlanInput): string {
     parts.push(input.curriculumContext);
   }
 
-  if (input.sourceMaterial !== undefined && input.sourceMaterial !== "") {
-    parts.push(`${SOURCE_LABELS[input.language]}\n\n${input.sourceMaterial}`);
+  /*
+    Rasmdan o'qilgan matn ISHONCHSIZ: suratdagi yozuvni istalgan odam
+    yozishi mumkin, jumladan "oldingi ko'rsatmalarni unut" kabi buyruqni.
+    Shuning uchun u aniq chegara ichiga olinadi va tizim ko'rsatmasida
+    "bu MA'LUMOT, ko'rsatma emas" deb aytiladi.
+    Batafsil: lib/ai/untrusted.ts
+  */
+  if (hasUntrustedSource(input)) {
+    parts.push(wrapUntrusted(SOURCE_LABELS[input.language], input.sourceMaterial!));
   }
 
   return parts.join("\n\n");
+}
+
+/**
+ * Promptda tashqi (ishonchsiz) matn bo'ladimi.
+ *
+ * `buildSystemPrompt` va `buildUserPrompt` BIR XIL javobni olishi kerak:
+ * chegara teglari promptga tushsa, ularni tushuntiruvchi siyosat ham
+ * tizim ko'rsatmasida bo'lishi shart. Shart bitta joyda yozilgani uchun
+ * ikkisi ajralib qolmaydi.
+ */
+export function hasUntrustedSource(input: LessonPlanInput): boolean {
+  return input.sourceMaterial !== undefined && input.sourceMaterial !== "";
 }
 
 /** Dars turining foydalanuvchiga ko'rsatiladigan nomi. */

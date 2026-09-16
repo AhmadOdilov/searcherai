@@ -48,21 +48,30 @@ export const pptxTemplateSchema = z
   .default(DEFAULT_TEMPLATE)
   .catch(DEFAULT_TEMPLATE);
 
-export const presentationInputSchema = z.discriminatedUnion("mode", [
-  z.object({
-    mode: z.literal("from-lesson-plan"),
-    lessonPlanId: idSchema,
-    template: pptxTemplateSchema,
-  }),
-  z.object({
-    mode: z.literal("standalone"),
-    topic: topicSchema,
-    subject: subjectSchema.optional(),
-    grade: gradeSchema.optional(),
-    language: languageSchema.default("UZ"),
-    template: pptxTemplateSchema,
-  }),
-]);
+export const presentationInputSchema = z.discriminatedUnion(
+  "mode",
+  [
+    z.object({
+      mode: z.literal("from-lesson-plan"),
+      lessonPlanId: idSchema,
+      template: pptxTemplateSchema,
+    }),
+    z.object({
+      mode: z.literal("standalone"),
+      topic: topicSchema,
+      subject: subjectSchema.optional(),
+      grade: gradeSchema.optional(),
+      language: languageSchema.default("UZ"),
+      template: pptxTemplateSchema,
+    }),
+  ],
+  /*
+    Diskriminator noto'g'ri bo'lsa — bu odatda eski brauzer sahifasi
+    yoki buzilgan so'rov. Foydalanuvchiga zod'ning inglizcha matni emas,
+    tarjima qilingan umumiy xabar ko'rsatiladi.
+  */
+  { error: "errors.validation.invalidValue" },
+);
 
 export type PresentationInput = z.infer<typeof presentationInputSchema>;
 

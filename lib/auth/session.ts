@@ -4,6 +4,7 @@ import { cookies, headers } from "next/headers";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { apiErrors } from "@/lib/api/errors";
+import { pickClientIp } from "@/lib/auth/client-ip";
 import {
   SESSION_COOKIE,
   sessionExpiry,
@@ -54,10 +55,9 @@ export async function createSession(userId: string): Promise<void> {
       userId,
       expiresAt,
       userAgent: requestHeaders.get("user-agent")?.slice(0, 255) ?? null,
-      ip:
-        requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-        requestHeaders.get("x-real-ip") ??
-        null,
+      // Manzil `lib/auth/client-ip.ts` qoidasi bo'yicha — mijoz
+      // soxtalashtira oladigan qiymat diagnostika yozuviga tushmasin.
+      ip: pickClientIp(requestHeaders),
     },
   });
 

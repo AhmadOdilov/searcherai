@@ -14,7 +14,7 @@ import { languageSchema } from "@/lib/validations/common";
  * yaratilib qoladi (bazada `@unique` katta-kichik harfni farqlaydi).
  */
 export const emailSchema = z
-  .string()
+  .string({ error: "errors.validation.emailRequired" })
   .trim()
   .toLowerCase()
   .min(1, "errors.validation.emailRequired")
@@ -30,12 +30,12 @@ export const emailSchema = z
  * JIM tashlab yuboradi, ya'ni uzunroq parol qisqasidan farq qilmay qoladi.
  */
 export const passwordSchema = z
-  .string()
+  .string({ error: "errors.validation.passwordRequired" })
   .min(8, "errors.validation.passwordTooShort")
   .max(72, "errors.validation.passwordTooLong");
 
 export const fullNameSchema = z
-  .string()
+  .string({ error: "errors.validation.fullNameRequired" })
   .trim()
   .min(2, "errors.validation.fullNameRequired")
   .max(120, "errors.validation.fullNameTooLong");
@@ -60,7 +60,9 @@ export type RegisterInput = z.infer<typeof registerSchema>;
  */
 export const loginSchema = z.object({
   email: emailSchema,
-  password: z.string().min(1, "errors.validation.passwordRequired"),
+  password: z
+    .string({ error: "errors.validation.passwordRequired" })
+    .min(1, "errors.validation.passwordRequired"),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;

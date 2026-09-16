@@ -648,10 +648,12 @@ papka esa drayver tomonidan qo'shiladi. Shu tufayli drayverni almashtirish
 bazani o'zgartirishni talab qilmaydi — lekin **eski fayllar ko'chirilmaydi**,
 ularni qo'lda ko'chirish kerak.
 
-Joriy drayverni tekshirish:
+Joriy drayverni tekshirish — bu **diagnostika** ma'lumoti, shuning uchun
+`/api/health` uni faqat `ADMIN` roliga qaytaradi (sabab:
+`app/api/health/route.ts`). Serverning o'zida esa:
 
 ```bash
-curl -s localhost:3000/api/health | grep -o '"driver":"[a-z0-9]*"'
+grep STORAGE_DRIVER .env
 ```
 
 ---
@@ -927,8 +929,11 @@ uchun ochiq bo'lishi kerak.
 curl -s https://<domen>/api/health | python3 -m json.tool
 ```
 
-`database.connected: true`, `ai.configured: true` va kutilgan
-`storage.driver` bo'lishi kerak.
+`database.connected: true` va `ai.configured: true` bo'lishi kerak.
+
+Provayder, model va saqlagich kabi infratuzilma tafsilotlari ochiq
+javobda **ataylab yo'q** — ular faqat `ADMIN` roli bilan kirilganda
+`diagnostics` maydonida qaytadi.
 
 ---
 

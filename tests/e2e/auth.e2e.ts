@@ -523,11 +523,16 @@ describe("ro'yxatdan o'tish cheklovi", () => {
     /*
       Hisoblagichni to'ldiramiz.
 
-      `x-forwarded-for` AYNAN shu sarlavha bo'lishi kerak: `clientIp()`
-      avval uni o'qiydi va faqat topilmasa `x-real-ip` ga o'tadi. Next
-      dev serveri `x-forwarded-for` ni o'zi qo'shadi, ya'ni `x-real-ip`
-      hech qachon o'qilmasdi va sinov soxta IP o'rniga 127.0.0.1 ni
-      to'ldirardi.
+      DIQQAT — bu yerda `x-forwarded-for` ishlatilishi sinovni ATAYLAB
+      "hujumchi holatiga" qo'yadi: mahalliy serverda proksi yo'q, ya'ni
+      `x-real-ip` hech kim qo'ymaydi va `pickClientIp()` zaxira sifatida
+      `x-forwarded-for` ning oxirgi elementini oladi. Shu sababli bu
+      sinov soxta IP bilan ishlaydi va hisoblagichni o'ziga tegishli
+      kalitga to'ldiradi.
+
+      Production'da esa Nginx `x-real-ip` ni qo'yadi va u USTUN turadi —
+      buni quyidagi "soxta manzil bilan chetlab o'tib bo'lmaydi" sinovi
+      tekshiradi.
     */
     const ip = "203.0.113.77";
     await prisma.loginAttempt.createMany({
@@ -581,6 +586,103 @@ describe("ro'yxatdan o'tish cheklovi", () => {
     });
 
     assert.equal(response.status, 201, "oxirgi bo'sh joy ishlatilishi kerak");
+
+    await clearRegisterCounter();
+  });
+
+  it("soxta X-Forwarded-For bilan cheklovni chetlab o'tib bo'lmaydi", async () => {
+    /*
+      ── Hujum ─────────────────────────────────────────────────────────────
+      Nginx `X-Forwarded-For` ni `$proxy_add_x_forwarded_for` bilan
+      qo'yadi va bu QO'SHIMCHA qiladi: mijoz yozgan qiymatning oxiriga
+      haqiqiy manzil ulanadi. Ilgari kod BIRINCHI elementni olardi, ya'ni
+      to'g'ridan-to'g'ri hujumchi yozgan qiymatni. Har so'rovda uni
+      o'zgartirib, ro'yxatdan o'tish kvotasini — AI xarajatining yagona
+      to'sig'ini — cheksiz aylanib o'tish mumkin edi.
+
+      ── Bu sinov nimani simulyatsiya qiladi ───────────────────────────────
+      Aynan Nginx yetkazadigan sarlavhalar to'plami:
+
+        X-Forwarded-For: <hujumchi yozgani>, <haqiqiy manzil>
+        X-Real-IP:       <haqiqiy manzil>
+
+      Hisoblagich HAQIQIY manzilga yozilishi kerak. Eski kodda u
+      hujumchining qiymatiga yozilardi va bu sinov yiqilardi.
+    */
+    const { prisma } = await import("../../lib/db");
+    await clearRegisterCounter();
+
+    const haqiqiyIp = "198.51.100.10";
+    const soxtaIp = "1.2.3.4";
+
+    const response = await fetch(`${BASE_URL}/api/auth/register`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-forwarded-for": `${soxtaIp}, ${haqiqiyIp}`,
+        "x-real-ip": haqiqiyIp,
+      },
+      body: JSON.stringify({
+        email: testEmail("royxat-soxta-ip"),
+        password: PASSWORD,
+        fullName: "Sinov O'qituvchi",
+      }),
+    });
+
+    assert.equal(response.status, 201);
+
+    const haqiqiyGa = await prisma.loginAttempt.count({
+      where: { identifier: haqiqiyIp, kind: "register" },
+    });
+    const soxtagaGa = await prisma.loginAttempt.count({
+      where: { identifier: soxtaIp, kind: "register" },
+    });
+
+    assert.equal(haqiqiyGa, 1, "hisoblagich HAQIQIY manzilga yozilishi kerak");
+    assert.equal(
+      soxtagaGa,
+      0,
+      "hisoblagich hujumchi yozgan manzilga yozildi — cheklovni chetlab o'tish mumkin",
+    );
+
+    await clearRegisterCounter();
+  });
+
+  it("soxta manzilni har safar o'zgartirib ham kvota tugaydi", async () => {
+    /*
+      Hujumning amaliy ko'rinishi: skript har so'rovda boshqa
+      `X-Forwarded-For` yozadi. Haqiqiy manzil esa bitta — demak
+      kvota baribir tugashi kerak.
+    */
+    const { prisma } = await import("../../lib/db");
+    await clearRegisterCounter();
+
+    const haqiqiyIp = "198.51.100.11";
+
+    // Kvotani to'ldiramiz — haqiqiy manzil bo'yicha.
+    await prisma.loginAttempt.createMany({
+      data: Array.from({ length: LIMIT }, () => ({
+        identifier: haqiqiyIp,
+        kind: "register",
+      })),
+    });
+
+    // Hujumchi boshqa manzil bo'lib ko'rinishga urinadi.
+    const response = await fetch(`${BASE_URL}/api/auth/register`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-forwarded-for": `9.9.9.9, ${haqiqiyIp}`,
+        "x-real-ip": haqiqiyIp,
+      },
+      body: JSON.stringify({
+        email: testEmail("royxat-soxta-aylanma"),
+        password: PASSWORD,
+        fullName: "Sinov O'qituvchi",
+      }),
+    });
+
+    assert.equal(response.status, 429, "soxta manzil bilan kvota chetlab o'tildi");
 
     await clearRegisterCounter();
   });

@@ -541,6 +541,105 @@ describe("yuklab olish", () => {
   });
 });
 
+describe("prezentatsiya — egalik tekshiruvi", () => {
+  /*
+    ── Nega bu blok alohida yozildi ────────────────────────────────────────
+    Auditda ma'lum bo'ldi: prezentatsiyada FAQAT yuklab olish uchun
+    egalik testi bor edi, `GET` va `DELETE` uchun yo'q. Kod to'g'ri
+    ishlaydi (servis `where: { id, userId }` bilan qidiradi), lekin
+    himoyasi sinovsiz qolgan edi — ya'ni uni tasodifan buzib qo'yish
+    mumkin va hech narsa sezmasdi.
+
+    Dars ishlanmasi va kalendar rejada bu testlar allaqachon bor;
+    bu yerda o'sha naqsh takrorlanadi.
+
+    ── Nega 404, 403 emas ──────────────────────────────────────────────────
+    403 ("ruxsat yo'q") yozuvning MAVJUDLIGINI tasdiqlaydi. Begona
+    foydalanuvchi id larni sinab ko'rib, qaysilari bandligini bilib
+    olardi. 404 esa "mavjud emas" va "sizniki emas" ni ajratmaydi.
+  */
+
+  it("BOSHQA foydalanuvchi yozuvini o'qib bo'lmaydi (404)", async () => {
+    const owner = await signedInClient("pr-ega");
+    const stranger = await signedInClient("pr-begona");
+
+    const created = await createAndWait(owner, {
+      mode: "standalone",
+      topic: "Maxfiy prezentatsiya mavzusi",
+    });
+
+    // Egasi o'qiy oladi.
+    const byOwner = await owner.request<PresentationPayload>(
+      `/api/presentations/${created.id}`,
+    );
+    assert.equal(byOwner.status, 200);
+
+    // Begona — yo'q.
+    const byStranger = await stranger.request(`/api/presentations/${created.id}`);
+    assert.equal(byStranger.status, 404, "403 emas, 404 bo'lishi kerak");
+    // Javobda yozuv mazmuni sizib chiqmasligi kerak.
+    assert.ok(!JSON.stringify(byStranger).includes("Maxfiy prezentatsiya mavzusi"));
+  });
+
+  it("BOSHQA foydalanuvchi yozuvini o'chirib bo'lmaydi", async () => {
+    const owner = await signedInClient("pr-ega-ochirish");
+    const stranger = await signedInClient("pr-begona-ochirish");
+
+    const created = await createAndWait(owner, {
+      mode: "standalone",
+      topic: "O'chirilmasin",
+    });
+
+    const attempt = await stranger.request(`/api/presentations/${created.id}`, {
+      method: "DELETE",
+    });
+    assert.equal(attempt.status, 404);
+
+    // Yozuv joyida qolishi kerak.
+    const stillThere = await owner.request(`/api/presentations/${created.id}`);
+    assert.equal(stillThere.status, 200, "yozuv o'chirilgan");
+  });
+
+  it("BOSHQA foydalanuvchi yozuvini qayta generatsiya qila olmaydi", async () => {
+    /*
+      Bu eng qimmat hujum: qayta generatsiya AI chaqiruvini boshlaydi,
+      ya'ni begona odam boshqa o'qituvchining kvotasini sarflay olardi.
+    */
+    const owner = await signedInClient("pr-ega-qayta");
+    const stranger = await signedInClient("pr-begona-qayta");
+
+    const created = await createAndWait(owner, {
+      mode: "standalone",
+      topic: "Qayta yasalmasin",
+    });
+
+    const attempt = await stranger.request(
+      `/api/presentations/${created.id}/regenerate`,
+      {
+        method: "POST",
+      },
+    );
+    assert.equal(attempt.status, 404);
+  });
+
+  it("BOSHQA foydalanuvchining yozuvi ro'yxatda ko'rinmaydi", async () => {
+    const owner = await signedInClient("pr-ega-royxat");
+    const stranger = await signedInClient("pr-begona-royxat");
+
+    await createAndWait(owner, {
+      mode: "standalone",
+      topic: "Faqat egasiga ko'rinadigan mavzu",
+    });
+
+    const list = await stranger.request<ListPayload>("/api/presentations");
+    assert.equal(list.status, 200);
+    assert.ok(
+      !list.data!.items.some((item) => item.topic === "Faqat egasiga ko'rinadigan mavzu"),
+      "begona foydalanuvchi ro'yxatida o'zga yozuv chiqdi",
+    );
+  });
+});
+
 describe("qayta generatsiya va o'chirish", () => {
   it("qayta generatsiya yangi yozuv YARATMAYDI", async () => {
     const client = await signedInClient("pr-qayta");

@@ -17,7 +17,7 @@ import {
 
 /** Davr nomi — "1-chorak", "2026-2027 o'quv yili". */
 export const periodSchema = z
-  .string()
+  .string({ error: "errors.validation.periodRequired" })
   .trim()
   .transform(stripTags)
   .pipe(
@@ -42,14 +42,14 @@ export const periodSchema = z
 export const MAX_WEEKS = 24;
 
 export const weeksSchema = z.coerce
-  .number()
+  .number({ error: "errors.validation.weeksNotInteger" })
   .int("errors.validation.weeksNotInteger")
   .min(1, "errors.validation.weeksTooFew")
   .max(MAX_WEEKS, "errors.validation.weeksTooMany");
 
 /** Haftalik dars soati. */
 export const hoursPerWeekSchema = z.coerce
-  .number()
+  .number({ error: "errors.validation.hoursNotInteger" })
   .int("errors.validation.hoursNotInteger")
   .min(1, "errors.validation.hoursTooFew")
   .max(20, "errors.validation.hoursTooMany");

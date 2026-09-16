@@ -61,7 +61,7 @@ export const visionInputSchema = z.object({
    * 100 MB lik satr dekodlanguncha xotirani egallardi.
    */
   image: z
-    .string()
+    .string({ error: "errors.validation.imageRequired" })
     .min(1, "errors.validation.imageRequired")
     .max(8 * 1024 * 1024, "errors.validation.imageTooLarge"),
 

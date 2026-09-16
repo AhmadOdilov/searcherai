@@ -63,9 +63,18 @@ server {
 
   resolver 127.0.0.11 valid=10s ipv6=off;
 
-  # Hozircha foydalanuvchi hech narsa yuklamaydi, lekin forma ma'lumotlari
-  # uchun qulay chegara. (Kelajakda rasm yuklash qo'shilsa oshiriladi.)
-  client_max_body_size 10m;
+  # ── Tana hajmi ────────────────────────────────────────────────────────────
+  # Rasm tahlili moduli suratni base64 ko'rinishida yuboradi va base64
+  # hajmni ~33% oshiradi: ilovadagi 5 MB chegara (MAX_IMAGE_BYTES) so'rovda
+  # ~6.9 MB bo'ladi, ustiga JSON qobig'i va boshqa maydonlar.
+  #
+  # Ilovaning o'z chegarasi BIRINCHI ishlashi kerak: u foydalanuvchiga
+  # tushunarli xabar beradi ("Rasm juda katta — 5 MB dan kichik bo'lishi
+  # kerak"), Nginx esa quruq 413 qaytaradi. Shuning uchun bu yerdagi
+  # chegara ataylab zaxira bilan kattaroq.
+  #
+  # Manbalar: lib/validations/vision.ts → MAX_IMAGE_BYTES, visionInputSchema.
+  client_max_body_size 15m;
 
   # Javob kutish vaqti — standart 60s. AI generatsiyasi undan uzoq davom
   # etadi, shuning uchun bu yerda umumiy chegara ko'tarilgan. Eng sekin
@@ -117,8 +126,15 @@ server {
   }
 
   # ── Qolgan hamma narsa ────────────────────────────────────────────────────
+  #
+  # DIQQAT: bu yerda ham `security-headers.conf` `include` QILINISHI SHART.
+  # Nginx'da `add_header` meros olinmaydi — yuqoridagi `location` bloklari
+  # o'z sarlavhalarini qo'ygani uchun, bu blok ularni avtomatik olmaydi.
+  # Auditgacha aynan shu satr yo'q edi va HAMMA HTML sahifa (login,
+  # dashboard, natijalar) HSTS'siz ketardi.
   location / {
     proxy_pass $searcher_app;
     include /etc/nginx/snippets/proxy.conf;
+    include /etc/nginx/snippets/security-headers.conf;
   }
 }

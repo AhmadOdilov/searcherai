@@ -25,7 +25,7 @@ import { stripTags } from "@/lib/validations/sanitize";
 /** Foydalanuvchi savoli. */
 export const searchInputSchema = z.object({
   question: z
-    .string()
+    .string({ error: "errors.validation.questionTooShort" })
     .trim()
     .transform(stripTags)
     .pipe(

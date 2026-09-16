@@ -194,17 +194,20 @@ Kutilgan javob:
 
 ```json
 {"ok":true,"data":{"status":"ok",
- "database":{"connected":true,"latencyMs":5},
- "ai":{"provider":"openai","model":"...","configured":true},
- "storage":{"driver":"local"}}}
+ "database":{"connected":true},
+ "ai":{"configured":true},
+ "timestamp":"..."}}
 ```
+
+> Javob ataylab qisqa: provayder, model va saqlagich nomi infratuzilma
+> tafsiloti va ochiq endpointda ko'rsatilmaydi. Ular faqat `ADMIN` roli
+> bilan kirilganda `diagnostics` maydonida qaytadi.
 
 | Maydon | Nima bo'lishi kerak | Bo'lmasa |
 |---|---|---|
 | `status` | `"ok"` | `"degraded"` → baza ulanmagan, `POSTGRES_PASSWORD` ni tekshiring |
 | `database.connected` | `true` | `docker compose -f docker-compose.prod.yml logs postgres` |
 | `ai.configured` | `true` | `AI_API_KEY` bo'sh — generatsiya ishlamaydi |
-| `storage.driver` | `"local"` | — |
 
 Keyin brauzerda oching va **to'liq yo'lni bir marta o'ting**:
 ro'yxatdan o'tish → dars ishlanmasi yaratish → prezentatsiya yaratish →
