@@ -141,6 +141,20 @@ export async function consumeAiQuota(
  * `deleteMany` ishlatiladi, `delete` emas: yozuv allaqachon o'chirilgan
  * bo'lsa (takroriy chaqiruv yoki eskirganlarni tozalash) funksiya jim
  * o'tadi, xato tashlamaydi.
+ *
+ * ── Nega FAQAT sarflanmagan bandlik qaytariladi ───────────────────────────
+ * Generatsiya AI'dan KEYIN ham yiqilishi mumkin: .pptx yasalmadi, fayl
+ * saqlanmadi, baza javob bermadi. Bunday holatda AI so'rovi ALLAQACHON
+ * bajarilgan va provayder uni hisobga qo'shgan.
+ *
+ * Ilgari yozuv baribir o'chirilardi va bu ikki xatoga olib kelardi:
+ *  · sarflangan tokenlar yozuvi yo'qolardi — pul ketgan, iz qolmagan;
+ *  · kvota qaytarilardi, ya'ni foydalanuvchi darhol qayta urinib,
+ *    xarajatni ikki barobar qila olardi.
+ *
+ * Shuning uchun shart qo'shildi: `model` maydoni bo'sh bo'lsa GINA
+ * o'chiriladi. U `recordAiUsage()` da to'ldiriladi, ya'ni bo'sh bo'lishi
+ * "AI javobi umuman kelmagan" degani — sarflanmagan bandlik.
  */
 export async function releaseAiQuota(
   reservation: QuotaReservation | undefined,
@@ -148,7 +162,7 @@ export async function releaseAiQuota(
   if (reservation === undefined) return;
 
   await prisma.aiRequest
-    .deleteMany({ where: { id: reservation.id } })
+    .deleteMany({ where: { id: reservation.id, model: null } })
     .catch((error: unknown) => {
       // Qaytarish bajarilmagani generatsiya xatosini YASHIRMASLIGI kerak —
       // chaqiruvchi baribir asl xatoni yuqoriga uzatadi.

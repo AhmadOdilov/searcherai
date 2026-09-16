@@ -628,6 +628,59 @@ describe("kvota qaytarilishi", () => {
     assert.equal(await prisma.aiRequest.count({ where: { userId } }), 0);
   });
 
+  it("AI JAVOB BERGANDAN keyingi xatoda o'lchov yozuvi SAQLANADI", async () => {
+    /*
+      Generatsiya AI'dan KEYIN ham yiqilishi mumkin: .pptx yasalmadi,
+      fayl saqlanmadi, baza javob bermadi. O'sha paytda AI so'rovi
+      allaqachon bajarilgan va provayder uni hisobga qo'shgan.
+
+      Ilgari `releaseAiQuota()` yozuvni baribir o'chirardi: sarflangan
+      tokenlar izsiz yo'qolardi va kvota ham qaytarilardi — ya'ni
+      foydalanuvchi darhol qayta urinib xarajatni ikkilantirardi.
+
+      Bu yerda o'sha holat TO'G'RIDAN-TO'G'RI quriladi: bandlik olinadi,
+      o'lchov yoziladi (AI javob berdi), keyin qaytarish chaqiriladi.
+    */
+    const { userId } = await signedInClient("kvota-sarflangan");
+    const { consumeAiQuota, recordAiUsage, releaseAiQuota } =
+      await import("../../lib/ai/rate-limit");
+
+    const reservation = await consumeAiQuota(userId, "presentations");
+    await recordAiUsage(reservation, {
+      model: "mock-model",
+      inputTokens: 120,
+      outputTokens: 340,
+    });
+
+    await releaseAiQuota(reservation);
+
+    const { prisma } = await import("../../lib/db");
+    const row = await prisma.aiRequest.findUnique({
+      where: { id: reservation.id },
+      select: { model: true, inputTokens: true, outputTokens: true },
+    });
+
+    assert.ok(row !== null, "sarflangan so'rov yozuvi o'chirilmasligi kerak");
+    assert.equal(row.model, "mock-model");
+    assert.equal(row.inputTokens, 120);
+    assert.equal(row.outputTokens, 340);
+
+    // Kvota ham qaytarilmaydi: xarajat haqiqiy bo'lgan.
+    assert.equal(await quotaUsed(userId), 1);
+  });
+
+  it("AI UMUMAN javob bermagan bo'lsa bandlik QAYTARILADI", async () => {
+    // Teskari holat: o'lchov yozilmagan, ya'ni hech narsa sarflanmagan.
+    const { userId } = await signedInClient("kvota-sarflanmagan");
+    const { consumeAiQuota, releaseAiQuota } = await import("../../lib/ai/rate-limit");
+
+    const reservation = await consumeAiQuota(userId, "presentations");
+    assert.equal(await quotaUsed(userId), 1);
+
+    await releaseAiQuota(reservation);
+    assert.equal(await quotaUsed(userId), 0);
+  });
+
   it("qaytarish IDEMPOTENT — ikki marta chaqirilsa xato bermaydi", async () => {
     const { userId } = await signedInClient("kvota-idempotent");
     const { consumeAiQuota, releaseAiQuota } = await import("../../lib/ai/rate-limit");
