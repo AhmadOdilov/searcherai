@@ -3,7 +3,11 @@ import { prisma } from "@/lib/db";
 import { generateJson } from "@/lib/ai/provider";
 import { AiError } from "@/lib/ai/types";
 import { apiErrors } from "@/lib/api/errors";
-import { releaseAiQuota, type QuotaReservation } from "@/lib/ai/rate-limit";
+import {
+  recordAiUsage,
+  releaseAiQuota,
+  type QuotaReservation,
+} from "@/lib/ai/rate-limit";
 import { markStaleAsFailed } from "@/lib/generation/stale";
 import { setStage } from "@/lib/generation/stages";
 import { generatePptx } from "@/lib/pptx/generate";
@@ -208,7 +212,7 @@ export async function runPresentationGeneration(
   reservation?: QuotaReservation,
 ): Promise<void> {
   try {
-    await runGeneration(id, promptContext);
+    await runGeneration(id, promptContext, reservation);
   } catch (caught) {
     await releaseAiQuota(reservation);
     throw caught;
@@ -297,6 +301,7 @@ export async function regeneratePresentation(
 async function runGeneration(
   id: string,
   promptContext: PresentationPromptContext,
+  reservation?: QuotaReservation,
 ): Promise<void> {
   try {
     await setStage("presentation", id, "GENERATING");
@@ -313,6 +318,13 @@ async function runGeneration(
     const record = await prisma.presentation.findUnique({
       where: { id },
       select: { template: true },
+    });
+
+    // AI o'lchovi kvota yozuviga — xarajat emas, faqat tokenlar.
+    await recordAiUsage(reservation, {
+      model: meta.model,
+      inputTokens: meta.usage.inputTokens,
+      outputTokens: meta.usage.outputTokens,
     });
 
     // Fayl AI javobidan KEYIN yasaladi — shu tartib muhim: AI yiqilsa

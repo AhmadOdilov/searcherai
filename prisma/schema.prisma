@@ -138,6 +138,26 @@ model AiRequest {
   /// Qaysi modul so'ragan — diagnostika uchun ("lesson-plans", "search").
   route String
 
+  /// Qaysi model ishlatilgan — xarajatni model bo'yicha ajratish uchun.
+  ///
+  /// Nullable: kvota yozuvi so'rov BOSHLANISHIDAN oldin yaratiladi, model
+  /// esa javob kelganda ma'lum bo'ladi. Muvaffaqiyatsiz so'rovlarda bu
+  /// maydon bo'sh qoladi (yozuvning o'zi ham qaytariladi).
+  model String?
+
+  /// Provayder qaytargan token soni.
+  ///
+  /// ── Nega XARAJAT ustuni YO'Q ───────────────────────────────────────────
+  /// Narx provayderga, modelga, tarifga va vaqtga bog'liq. Uni bazaga
+  /// yozish — bir necha oydan keyin yolg'onga aylanadigan raqam saqlash
+  /// demakdir. Tokenlar esa O'ZGARMAYDIGAN o'lchov: xarajat kerak
+  /// bo'lganda joriy narx bilan hisoblanadi.
+  ///
+  /// Nullable: ba'zi provayderlar `usage` bermaydi va o'sha holatda
+  /// uydirma nol yozilmaydi.
+  inputTokens  Int?
+  outputTokens Int?
+
   createdAt DateTime @default(now())
 
   /// Oyna ichidagi so'rovlarni sanash uchun.

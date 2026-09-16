@@ -3,7 +3,11 @@ import { prisma } from "@/lib/db";
 import { generateJson } from "@/lib/ai/provider";
 import { AiError } from "@/lib/ai/types";
 import { apiErrors } from "@/lib/api/errors";
-import { releaseAiQuota, type QuotaReservation } from "@/lib/ai/rate-limit";
+import {
+  recordAiUsage,
+  releaseAiQuota,
+  type QuotaReservation,
+} from "@/lib/ai/rate-limit";
 import { markStaleAsFailed } from "@/lib/generation/stale";
 import { setStage } from "@/lib/generation/stages";
 import {
@@ -120,7 +124,7 @@ export async function runLessonPlanGeneration(
   reservation?: QuotaReservation,
 ): Promise<void> {
   try {
-    await runGeneration(id, input);
+    await runGeneration(id, input, reservation);
   } catch (caught) {
     await releaseAiQuota(reservation);
     throw caught;
@@ -219,7 +223,11 @@ async function curriculumContextFor(input: LessonPlanInput): Promise<string> {
 }
 
 /** AI chaqiruvi va natijani saqlash — ikki oqim uchun umumiy qism. */
-async function runGeneration(id: string, input: LessonPlanInput): Promise<void> {
+async function runGeneration(
+  id: string,
+  input: LessonPlanInput,
+  reservation?: QuotaReservation,
+): Promise<void> {
   try {
     await setStage("lessonPlan", id, "GENERATING");
     const curriculumContext = await curriculumContextFor(input);
@@ -234,6 +242,13 @@ async function runGeneration(id: string, input: LessonPlanInput): Promise<void> 
       */
       systemPrompt: buildSystemPrompt(input.language, hasUntrustedSource(input)),
       prompt: buildUserPrompt({ ...input, curriculumContext }),
+    });
+
+    // AI o'lchovi kvota yozuviga — xarajat emas, faqat tokenlar.
+    await recordAiUsage(reservation, {
+      model: meta.model,
+      inputTokens: meta.usage.inputTokens,
+      outputTokens: meta.usage.outputTokens,
     });
 
     await setStage("lessonPlan", id, "SAVING");

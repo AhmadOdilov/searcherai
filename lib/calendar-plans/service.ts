@@ -3,7 +3,11 @@ import { prisma } from "@/lib/db";
 import { generateJson } from "@/lib/ai/provider";
 import { AiError } from "@/lib/ai/types";
 import { apiErrors } from "@/lib/api/errors";
-import { releaseAiQuota, type QuotaReservation } from "@/lib/ai/rate-limit";
+import {
+  recordAiUsage,
+  releaseAiQuota,
+  type QuotaReservation,
+} from "@/lib/ai/rate-limit";
 import { markStaleAsFailed } from "@/lib/generation/stale";
 import { setStage } from "@/lib/generation/stages";
 import { getEnv } from "@/lib/env";
@@ -126,7 +130,7 @@ export async function runCalendarPlanGeneration(
   reservation?: QuotaReservation,
 ): Promise<void> {
   try {
-    await runGeneration(id, input);
+    await runGeneration(id, input, reservation);
   } catch (caught) {
     await releaseAiQuota(reservation);
     throw caught;
@@ -226,7 +230,11 @@ async function curriculumContextFor(input: CalendarPlanInput): Promise<string> {
 }
 
 /** AI chaqiruvi, .xlsx yasash va saqlash — ikki oqim uchun umumiy qism. */
-async function runGeneration(id: string, input: CalendarPlanInput): Promise<void> {
+async function runGeneration(
+  id: string,
+  input: CalendarPlanInput,
+  reservation?: QuotaReservation,
+): Promise<void> {
   try {
     await setStage("calendarPlan", id, "GENERATING");
     const curriculumContext = await curriculumContextFor(input);
@@ -248,8 +256,16 @@ async function runGeneration(id: string, input: CalendarPlanInput): Promise<void
       model: getEnv().calendarPlanAiModel,
     });
 
+    // AI o'lchovi kvota yozuviga — xarajat emas, faqat tokenlar.
+    await recordAiUsage(reservation, {
+      model: meta.model,
+      inputTokens: meta.usage.inputTokens,
+      outputTokens: meta.usage.outputTokens,
+    });
+
     // Fayl AI javobidan KEYIN yasaladi — AI yiqilsa keraksiz fayl
     // qolib ketmaydi.
+
     await setStage("calendarPlan", id, "BUILDING_FILE");
     const { buffer, rowCount } = await generateXlsx(data, input.language);
     await setStage("calendarPlan", id, "SAVING");

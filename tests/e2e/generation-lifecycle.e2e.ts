@@ -550,6 +550,84 @@ describe("kvota qaytarilishi", () => {
     assert.equal(fourth.status, 429, "chegara buzildi — kvota ishlamayapti");
   });
 
+  it("MUVAFFAQIYATLI generatsiya token o'lchovini SAQLAYDI", async () => {
+    /*
+      O'lchov provayder transportidan allaqachon kelardi
+      (`GenerateTextResult.usage`), lekin hech qayerga yozilmasdi.
+      Endi u kvota yozuviga tushadi — kunlik kvota va model bo'yicha
+      taqqoslash uchun asos.
+
+      Xarajat ($) ATAYLAB hisoblanmaydi: narx vaqt o'tib o'zgaradi,
+      tokenlar esa o'zgarmaydi.
+    */
+    const { client, userId } = await signedInClient("token-olchov");
+
+    const created = await client.request<{ lessonPlan: { id: string } }>(
+      "/api/lesson-plans",
+      {
+        method: "POST",
+        body: {
+          subject: "Matematika",
+          grade: "7-sinf",
+          topic: "Token o'lchovi",
+          durationMinutes: 45,
+        },
+      },
+    );
+    assert.equal(created.status, 202);
+
+    await waitForGeneration(
+      client,
+      `/api/lesson-plans/${created.data!.lessonPlan.id}`,
+      "lessonPlan",
+    );
+
+    const { prisma } = await import("../../lib/db");
+    const row = await prisma.aiRequest.findFirstOrThrow({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      select: { model: true, inputTokens: true, outputTokens: true },
+    });
+
+    assert.ok(row.model !== null, "model yozilmadi");
+    assert.ok(
+      row.inputTokens !== null && row.inputTokens > 0,
+      `kirish tokenlari yozilmadi: ${row.inputTokens}`,
+    );
+    assert.ok(
+      row.outputTokens !== null && row.outputTokens > 0,
+      `chiqish tokenlari yozilmadi: ${row.outputTokens}`,
+    );
+  });
+
+  it("MUVAFFAQIYATSIZ generatsiyada o'lchov yozuvi ham QOLMAYDI", async () => {
+    // Kvota qaytarilgach, o'lchov yozuvi ham o'chadi — yetim qolmaydi.
+    const { client, userId } = await signedInClient("token-xato");
+
+    const created = await client.request<{ lessonPlan: { id: string } }>(
+      "/api/lesson-plans",
+      {
+        method: "POST",
+        body: {
+          subject: "Matematika",
+          grade: "7-sinf",
+          topic: `${MARKER_SERVER_ERROR} token`,
+          durationMinutes: 45,
+        },
+      },
+    );
+    assert.equal(created.status, 202);
+
+    await waitForGeneration(
+      client,
+      `/api/lesson-plans/${created.data!.lessonPlan.id}`,
+      "lessonPlan",
+    );
+
+    const { prisma } = await import("../../lib/db");
+    assert.equal(await prisma.aiRequest.count({ where: { userId } }), 0);
+  });
+
   it("qaytarish IDEMPOTENT — ikki marta chaqirilsa xato bermaydi", async () => {
     const { userId } = await signedInClient("kvota-idempotent");
     const { consumeAiQuota, releaseAiQuota } = await import("../../lib/ai/rate-limit");

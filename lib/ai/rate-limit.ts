@@ -157,6 +157,56 @@ export async function releaseAiQuota(
 }
 
 /**
+ * Band qilingan yozuvga AI o'lchovlarini yozadi — generatsiya TUGAGACH.
+ *
+ * ── Nega alohida qadam ────────────────────────────────────────────────────
+ * Kvota yozuvi so'rov BOSHLANISHIDAN oldin yaratiladi (parallel himoya
+ * uchun), model va tokenlar esa javob kelganda ma'lum bo'ladi. Ularni
+ * bir chaqiruvga birlashtirib bo'lmaydi.
+ *
+ * ── Nega bu ma'lumot kerak ────────────────────────────────────────────────
+ * Bugungi kvota faqat daqiqalik va u so'rovlarni SANAYDI. Bitta hisob
+ * kuniga 4 320 generatsiya qila oladi va ularning haqiqiy og'irligi
+ * noma'lum: qisqa savol ham, 24 haftalik reja ham bitta so'rov.
+ *
+ * Tokenlar saqlangach kunlik/oylik kvota va model bo'yicha taqqoslash
+ * mumkin bo'ladi. Tokenlarning O'ZI hech narsani cheklamaydi — bu
+ * o'lchov, siyosat emas.
+ *
+ * ── Nega XARAJAT hisoblanmaydi ────────────────────────────────────────────
+ * Narx provayderga, modelga, tarifga va vaqtga bog'liq. Bazaga yozilgan
+ * "$0.0031" bir necha oydan keyin yolg'onga aylanadi. Tokenlar esa
+ * o'zgarmaydi — xarajat kerak bo'lganda joriy narx bilan hisoblanadi.
+ *
+ * Xato YUTILADI: o'lchov yozilmagani generatsiyaga aloqasi yo'q.
+ */
+export async function recordAiUsage(
+  reservation: QuotaReservation | undefined,
+  usage: { model: string; inputTokens: number; outputTokens: number },
+): Promise<void> {
+  if (reservation === undefined) return;
+
+  await prisma.aiRequest
+    .updateMany({
+      where: { id: reservation.id },
+      data: {
+        model: usage.model,
+        /*
+          Nol qiymat `null` bo'lib yoziladi: ba'zi provayderlar `usage`
+          bermaydi va transport 0 qaytaradi. "0 token ishlatildi" degan
+          yozuv "ma'lumot yo'q" dan boshqa narsani anglatadi — ularni
+          aralashtirmaymiz.
+        */
+        inputTokens: usage.inputTokens > 0 ? usage.inputTokens : null,
+        outputTokens: usage.outputTokens > 0 ? usage.outputTokens : null,
+      },
+    })
+    .catch((error: unknown) => {
+      console.warn("[rate-limit] AI o'lchovi yozilmadi:", error);
+    });
+}
+
+/**
  * Eskirgan yozuvlarni o'chiradi.
  *
  * Alohida cron kerak emas: tozalash yozish yo'lida bajariladi.
