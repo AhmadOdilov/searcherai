@@ -40,15 +40,22 @@ export function GuardedLink({
   children: ReactNode;
 }) {
   const router = useRouter();
-  const { requestLeave } = useUnsavedGuard();
+  const { deferIfDirty } = useUnsavedGuard();
 
   return (
     <Link
       {...rest}
       href={href}
       onNavigate={(event) => {
-        // Qo'riqchi o'tishni kechiktirgan bo'lsa — Next'ni to'xtatamiz.
-        if (!requestLeave(() => router.push(href))) {
+        /*
+          Kechiktirilgan bo'lsa Next'ning o'z o'tishini to'xtatamiz va
+          uni keyin qo'riqchi bajaradi.
+
+          Toza holatda esa HECH NARSA qilmaymiz: o'tishni Next'ning
+          o'zi davom ettiradi. `router.push` ni bu yerda ham chaqirsak,
+          bitta bosishga ikkita o'tish to'g'ri kelardi.
+        */
+        if (deferIfDirty(() => router.push(href))) {
           event.preventDefault();
         }
       }}

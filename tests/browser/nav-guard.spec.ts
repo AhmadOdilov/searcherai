@@ -133,6 +133,26 @@ test.describe("saqlanmagan o'zgarish — ogohlantirish CHIQADI", () => {
   });
 });
 
+test("toza qoralamada o'tish BITTA tarix yozuvi qo'shadi", async ({ page }) => {
+  /*
+    Qo'riqchi havolaga `onNavigate` orqali ulanadi. Toza holatda u
+    o'tishga ARALASHMASLIGI kerak: `router.push` ni o'zi ham chaqirsa,
+    bitta bosishga ikkita o'tish to'g'ri kelardi va "orqaga" tugmasi
+    ikki marta bosishni talab qilardi.
+  */
+  await openEditor(page);
+  const before = await page.evaluate(() => history.length);
+
+  await page
+    .getByRole("banner")
+    .getByRole("link", { name: /searcher/i })
+    .click();
+  await expect(page).toHaveURL(/\/dashboard$/);
+
+  const after = await page.evaluate(() => history.length);
+  expect(after - before, `tarixga ${after - before} ta yozuv qo'shildi`).toBe(1);
+});
+
 test.describe("tasdiq oynasining tugmalari", () => {
   test("«shu yerda qolish» — sahifa o'zgarmaydi va qoralama saqlanadi", async ({
     page,

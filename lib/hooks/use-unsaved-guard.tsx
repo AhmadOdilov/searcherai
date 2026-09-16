@@ -73,13 +73,23 @@ export interface UnsavedGuardApi {
    */
   setSave: (save: (() => Promise<boolean>) | null) => void;
   /**
-   * O'tishni so'raydi.
+   * Saqlanmagan o'zgarish bo'lsa `run()` ni KECHIKTIRADI va `true`
+   * qaytadi; u faqat foydalanuvchi rozi bo'lganda bajariladi.
    *
-   * Saqlanmagan o'zgarish bo'lmasa `run()` DARHOL bajariladi va `true`
-   * qaytadi. Aks holda tasdiq oynasi ochiladi, `run()` esa faqat
-   * foydalanuvchi rozi bo'lganda bajariladi va `false` qaytadi.
+   * Toza bo'lsa hech narsa qilmaydi va `false` qaytadi — chaqiruvchi
+   * o'tishni O'Z yo'li bilan davom ettiradi.
+   *
+   * Aynan shu shakl `<Link onNavigate>` uchun kerak: u yerda o'tishni
+   * Next.js'ning o'zi bajaradi va biz uni TAKRORLAMASLIGIMIZ kerak.
    */
-  requestLeave: (run: () => void) => boolean;
+  deferIfDirty: (run: () => void) => boolean;
+  /**
+   * O'tishni so'raydi: toza bo'lsa `run()` DARHOL bajariladi.
+   *
+   * Programmatik o'tishlar uchun (`router.push`, chiqish tugmasi) —
+   * u yerda bajaruvchi boshqa hech kim yo'q.
+   */
+  requestLeave: (run: () => void) => void;
 }
 
 /**
@@ -92,10 +102,8 @@ export interface UnsavedGuardApi {
 const UnsavedGuardContext = createContext<UnsavedGuardApi>({
   setDirty: () => {},
   setSave: () => {},
-  requestLeave: (run) => {
-    run();
-    return true;
-  },
+  deferIfDirty: () => false,
+  requestLeave: (run) => run(),
 });
 
 export function useUnsavedGuard(): UnsavedGuardApi {
@@ -124,14 +132,18 @@ export function UnsavedGuardProvider({ children }: { children: ReactNode }) {
     saveRef.current = save;
   }, []);
 
-  const requestLeave = useCallback((run: () => void) => {
-    if (!dirtyRef.current) {
-      run();
-      return true;
-    }
+  const deferIfDirty = useCallback((run: () => void) => {
+    if (!dirtyRef.current) return false;
     setPending({ run });
-    return false;
+    return true;
   }, []);
+
+  const requestLeave = useCallback(
+    (run: () => void) => {
+      if (!deferIfDirty(run)) run();
+    },
+    [deferIfDirty],
+  );
 
   const leave = useCallback(() => {
     const target = pending;
@@ -167,8 +179,8 @@ export function UnsavedGuardProvider({ children }: { children: ReactNode }) {
   }, [leave]);
 
   const api = useMemo<UnsavedGuardApi>(
-    () => ({ setDirty, setSave, requestLeave }),
-    [setDirty, setSave, requestLeave],
+    () => ({ setDirty, setSave, deferIfDirty, requestLeave }),
+    [setDirty, setSave, deferIfDirty, requestLeave],
   );
 
   return (
