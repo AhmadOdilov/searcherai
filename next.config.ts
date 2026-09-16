@@ -32,6 +32,31 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
 
   /*
+    ── `storage/` standalone natijasiga TUSHMASLIGI kerak ───────────────────
+    `lib/storage/local.ts` saqlagich ildizini `path.join(process.cwd(),
+    "storage")` bilan hisoblaydi. Izlarni yig'uvchi (file tracing) shu
+    naqshni STATIK ko'radi va butun papkani bog'liqlik deb belgilaydi —
+    natijada `next build` o'qituvchilar yaratgan .pptx/.xlsx fayllarni
+    `.next/standalone/storage/` ga NUSXALAYDI.
+
+    Ikki oqibati bor:
+     · deploy paketiga begona foydalanuvchilarning hujjatlari tushadi;
+     · standalone server o'z ish papkasiga yozadi, ya'ni keyingi build
+       eski nusxani ustiga qo'yib, haqiqiy fayllarni yo'qotishi mumkin.
+
+    Docker yo'lida bu ko'rinmaydi: `.dockerignore` `storage` ni build
+    kontekstidan chiqaradi, ya'ni builder bosqichida papka umuman yo'q.
+    Lekin bu tasodifiy himoya — Docker'siz build qilingan zahoti muammo
+    qaytadi. Shuning uchun chiqarib tashlash AYNAN shu yerda.
+
+    Fayllar runtime'da o'qiladi (yo'l bazadan keladi), ya'ni ularni
+    izga qo'shishning hech qanday foydasi yo'q.
+  */
+  outputFileTracingExcludes: {
+    "/*": ["storage/**/*"],
+  },
+
+  /*
     ── Xavfsizlik sarlavhalari ──────────────────────────────────────────────
     Ro'yxat va har birining sababi `lib/security/headers.ts` da.
 

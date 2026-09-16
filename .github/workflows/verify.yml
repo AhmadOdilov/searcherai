@@ -96,7 +96,26 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
 
+      # Build o'qituvchilar fayllarini deploy paketiga ko'chirmasligini
+      # tekshiramiz. Belgi fayl OLDINDAN qo'yiladi: CI'da `storage/`
+      # bo'sh bo'ladi va tekshiruv busiz hech narsa isbotlamasdi.
+      #
+      # Sabab: `lib/storage/local.ts` saqlagich ildizini
+      # `path.join(process.cwd(), "storage")` bilan hisoblaydi va izlarni
+      # yig'uvchi shu naqshga qarab butun papkani qo'shib yuborardi.
+      # Chiqarib tashlash `next.config.ts` da.
+      - run: mkdir -p storage/presentations && echo belgi > storage/presentations/belgi.pptx
+
       - run: npm run build
+
+      - name: storage standalone paketiga tushmaganini tekshirish
+        run: |
+          if [ -e .next/standalone/storage ]; then
+            echo "XATO: storage/ standalone paketiga ko'chirilgan:"
+            find .next/standalone/storage -type f
+            exit 1
+          fi
+          echo "storage/ paketga tushmadi — to'g'ri"
 
       # Nosozlik sababini ko'rish uchun — muvaffaqiyatda saqlanmaydi.
       - if: failure()
