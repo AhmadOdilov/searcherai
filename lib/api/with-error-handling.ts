@@ -5,6 +5,33 @@ import { assertSameOrigin } from "@/lib/api/csrf";
 import { AiError } from "@/lib/ai/types";
 import { EnvError } from "@/lib/env";
 import { translateFieldErrors, translateKey } from "@/lib/i18n/translate";
+import { createLogger, describeError } from "@/lib/observability/log";
+
+const log = createLogger("api");
+
+/** So'rovni bog'laydigan identifikator sarlavhasi. */
+export const REQUEST_ID_HEADER = "x-request-id";
+
+/**
+ * So'rov identifikatori.
+ *
+ * ── Nega proxy'da emas, SHU YERDA ─────────────────────────────────────────
+ * `proxy.ts` ning matcher'i `/api` ni ataylab chetlab o'tadi (API o'zini
+ * `requireUser()` bilan himoya qiladi va JSON qaytaradi). Ya'ni API
+ * so'rovlari proxy'dan UMUMAN o'tmaydi va u yerda yaratilgan
+ * identifikator ularga yetib bormasdi.
+ *
+ * Tashqi qiymat (masalan Nginx yoki CDN qo'ygan) bo'lsa — u ustun
+ * turadi: shunda bitta so'rov qatlamlar bo'ylab bir xil nom bilan
+ * kuzatiladi. Uzunligi cheklanadi: sarlavha mijoz boshqaradigan qiymat.
+ */
+function requestIdOf(request: Request): string {
+  const incoming = request.headers.get(REQUEST_ID_HEADER);
+  if (incoming !== null && incoming.trim() !== "") {
+    return incoming.trim().slice(0, 64);
+  }
+  return crypto.randomUUID();
+}
 
 /**
  * API route'lar uchun umumiy xatolik qayta ishlovchisi.
@@ -68,7 +95,7 @@ export function withErrorHandling<TContext>(
 
       return await handler(request, context);
     } catch (caught) {
-      return await toErrorResponse(caught, request);
+      return await toErrorResponse(caught, request, requestIdOf(request));
     }
   };
 }
@@ -78,12 +105,13 @@ async function jsonError(
   code: string,
   messageKey: string,
   fieldErrorKeys?: Record<string, string[]>,
+  requestId?: string,
 ): Promise<NextResponse<ApiFailure>> {
   const message = await translateKey(messageKey);
   const fieldErrors =
     fieldErrorKeys === undefined ? undefined : await translateFieldErrors(fieldErrorKeys);
 
-  return NextResponse.json<ApiFailure>(
+  const response = NextResponse.json<ApiFailure>(
     {
       ok: false,
       error: {
@@ -95,51 +123,99 @@ async function jsonError(
     },
     { status },
   );
+
+  /*
+    Identifikator javob sarlavhasida ham qaytadi.
+
+    Nega: o'qituvchi "xato chiqdi" deb yozganda, uning brauzeridagi
+    javobda shu qiymat turadi va uni loglardan ANIQ topish mumkin
+    bo'ladi. Aks holda vaqt bo'yicha taxmin qilishga to'g'ri kelardi.
+  */
+  if (requestId !== undefined) response.headers.set(REQUEST_ID_HEADER, requestId);
+
+  return response;
 }
 
 async function toErrorResponse(
   caught: unknown,
   request: Request,
+  requestId: string,
 ): Promise<NextResponse<ApiFailure>> {
-  // Log — SERVER tomonida, to'liq tafsilot bilan.
-  const route = `${request.method} ${new URL(request.url).pathname}`;
+  /*
+    Log SERVER tomonida va endi KONTEKST bilan: `requestId` javob
+    sarlavhasida ham qaytadi, ya'ni foydalanuvchi aytgan xatoni
+    loglardan aniq topish mumkin.
+
+    Xato MATNI (`caught.message`) chiqariladi — u ichki tafsilot
+    (`detail`) bo'lib, foydalanuvchiga hech qachon yuborilmaydi.
+  */
+  const url = new URL(request.url);
+  const base = { requestId, route: url.pathname, method: request.method };
 
   if (caught instanceof ApiError) {
     // Kutilgan holat — foydalanuvchi xatosi. `warn` darajasida.
-    console.warn(`[api] ${route} → ${caught.code}: ${caught.message}`);
+    log.warn(caught.message, {
+      ...base,
+      code: caught.code,
+      status: caught.httpStatus,
+    });
     return jsonError(
       caught.httpStatus,
       caught.code,
       caught.messageKey,
       caught.fieldErrors,
+      requestId,
     );
   }
 
   if (caught instanceof AiError) {
-    console.error(`[api] ${route} → ai:${caught.kind}: ${caught.message}`);
-    return jsonError(caught.httpStatus, `ai_${caught.kind}`, caught.messageKey);
+    log.error(caught.message, {
+      ...base,
+      code: `ai_${caught.kind}`,
+      status: caught.httpStatus,
+    });
+    return jsonError(
+      caught.httpStatus,
+      `ai_${caught.kind}`,
+      caught.messageKey,
+      undefined,
+      requestId,
+    );
   }
 
   if (caught instanceof z.ZodError) {
     // Handler ichida `.parse()` ishlatilgan va biz ushlamagan holat.
-    console.warn(`[api] ${route} → validation: ${z.prettifyError(caught)}`);
+    log.warn(z.prettifyError(caught), { ...base, code: "validation_error", status: 400 });
     return jsonError(
       400,
       "validation_error",
       "errors.api.validation_error",
       z.flattenError(caught).fieldErrors as Record<string, string[]>,
+      requestId,
     );
   }
 
   if (caught instanceof EnvError) {
     // Sozlama xatosi — foydalanuvchi ayblanmaydi, lekin tafsilot ham berilmaydi.
-    console.error(`[api] ${route} → env: ${caught.message}`);
-    return jsonError(503, "not_configured", "errors.api.not_configured");
+    log.error(caught.message, { ...base, code: "not_configured", status: 503 });
+    return jsonError(
+      503,
+      "not_configured",
+      "errors.api.not_configured",
+      undefined,
+      requestId,
+    );
   }
 
-  // Kutilmagan xatolik — to'liq loglaymiz, foydalanuvchiga umumiy xabar.
-  console.error(`[api] ${route} → kutilmagan xatolik:`, caught);
-  return jsonError(500, "internal_error", "errors.api.internal_error");
+  // Kutilmagan xatolik — loglaymiz, foydalanuvchiga umumiy xabar.
+  log.error(describeError(caught), { ...base, code: "internal_error", status: 500 });
+  return jsonError(
+    500,
+    "internal_error",
+    "errors.api.internal_error",
+    undefined,
+    requestId,
+  );
 }
 
 /**

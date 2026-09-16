@@ -1,5 +1,8 @@
 import "server-only";
 import { after } from "next/server";
+import { createLogger, describeError } from "@/lib/observability/log";
+
+const log = createLogger("fon");
 
 /**
  * Generatsiyani FON rejimida bajarish.
@@ -51,10 +54,13 @@ export function runInBackground(label: string, work: () => Promise<unknown>): vo
     const startedAt = Date.now();
     try {
       await work();
-      console.log(`[fon] ${label} tugadi (${Date.now() - startedAt} ms)`);
+      log.info("tugadi", { generationId: label, durationMs: Date.now() - startedAt });
     } catch (error) {
       // Bu yerga faqat ishlov beruvchi o'zi ushlamagan xatolik yetadi.
-      console.error(`[fon] ${label} yiqildi (${Date.now() - startedAt} ms):`, error);
+      log.error(describeError(error), {
+        generationId: label,
+        durationMs: Date.now() - startedAt,
+      });
     }
   });
 }
