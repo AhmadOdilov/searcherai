@@ -3,7 +3,9 @@
     "name": "Searcher AI",
     "tagline": "O'qituvchilar uchun AI-yordamchi",
     "metaTitle": "Searcher AI — o'qituvchilar uchun AI-yordamchi",
-    "metaDescription": "Dars ishlanmasi, prezentatsiya, Excel reja va tarjima — sun'iy intellekt yordamida."
+    "metaDescription": "Dars ishlanmasi, prezentatsiya, Excel reja va tarjima — sun'iy intellekt yordamida.",
+    "settings": "Sozlamalar",
+    "skipToContent": "Asosiy mazmunga o'tish"
   },
   "common": {
     "back": "Ro'yxatga qaytish",
@@ -240,6 +242,45 @@
       "step2": "Fan, sinf va mavzuni yozing. Masalan: Matematika, 7-sinf, «Kasrlar bilan amallar».",
       "step3": "Pastdagi katta tugmani bosing va bir daqiqacha kuting.",
       "step4": "Tayyor bo'lgach natijani o'qing yoki faylni telefoningizga hamda kompyuteringizga yuklab oling."
+    }
+  },
+  "settings": {
+    "title": "Sozlamalar",
+    "pageHint": "Hisobingiz ma'lumotlari va xavfsizligi.",
+    "nav": "Sozlamalar",
+    "account": {
+      "title": "Hisob",
+      "fullName": "Ism va familiya",
+      "email": "Email",
+      "emailHint": "Email o'zgartirilmaydi — u kirish uchun ishlatiladi.",
+      "phone": "Telefon",
+      "phoneHint": "Ixtiyoriy. Biz siz bilan bog'lanishimiz kerak bo'lsa.",
+      "save": "Saqlash",
+      "saved": "Saqlandi"
+    },
+    "security": {
+      "title": "Xavfsizlik",
+      "changePassword": "Parolni o'zgartirish",
+      "currentPassword": "Joriy parol",
+      "newPassword": "Yangi parol",
+      "newPasswordHint": "Kamida 8 belgi.",
+      "changeAction": "Parolni o'zgartirish",
+      "changed": "Parol o'zgartirildi",
+      "changedHint": "Boshqa barcha qurilmalardan chiqarildi.",
+      "sessionsTitle": "Boshqa qurilmalar",
+      "sessionsHint": "Maktabdagi umumiy kompyuterda hisobingiz ochiq qolgan bo'lsa, shu tugma uni yopadi.",
+      "revokeAction": "Barcha qurilmalardan chiqish",
+      "revoked": "Boshqa qurilmalardan chiqildi",
+      "resetHint": "Parolni unutdingizmi? Hozircha uni o'zingiz tiklay olmaysiz — bizga Telegram orqali yozing."
+    },
+    "danger": {
+      "title": "Hisobni o'chirish",
+      "warning": "Hisob o'chirilsa, barcha dars ishlanmalari, prezentatsiyalar, rejalar va fayllar butunlay yo'qoladi. Buni qaytarib bo'lmaydi.",
+      "confirmLabel": "Tasdiqlash uchun parolingizni yozing",
+      "action": "Hisobni butunlay o'chirish",
+      "confirmQuestion": "Rostdan ham hisobingizni o'chirasizmi?",
+      "confirmYes": "Ha, hisobni o'chirish",
+      "cancel": "Bekor qilish"
     }
   },
   "lessonPlans": {
@@ -651,7 +692,8 @@
       "imageRequired": "Rasm tanlanmagan",
       "imageTooLarge": "Rasm juda katta — 5 MB dan kichik bo'lishi kerak",
       "imageNotReadable": "Rasmni o'qib bo'lmadi. Boshqa rasm tanlab ko'ring",
-      "imageFormatNotSupported": "Faqat JPG va PNG rasmlar qabul qilinadi"
+      "imageFormatNotSupported": "Faqat JPG va PNG rasmlar qabul qilinadi",
+      "phoneInvalid": "Telefon raqami noto'g'ri — faqat raqam, bo'shliq va + belgisi"
     }
   },
   "errorPage": {

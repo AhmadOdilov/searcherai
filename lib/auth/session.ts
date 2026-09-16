@@ -180,3 +180,26 @@ export async function pruneExpiredSessions(): Promise<number> {
   });
   return count;
 }
+
+/**
+ * Hisobni BUTUNLAY o'chiradi — fayllar bilan birga.
+ *
+ * ── Tartib ────────────────────────────────────────────────────────────────
+ *  1. Saqlagichdagi fayllar (`deleteAllUserFiles`) — chunki yo'llar
+ *     yozuvlarda saqlanadi va yozuv o'chgach ularni topib bo'lmaydi.
+ *  2. Foydalanuvchi yozuvi — cascade qolgan hamma narsani (sessiyalar,
+ *     dars ishlanmalari, prezentatsiyalar, rejalar, AI so'rovlari)
+ *     o'chiradi.
+ *  3. Cookie — brauzerda eskirgan sessiya qolmasin.
+ *
+ * Teskari tartibda fayllar abadiy yetim qolardi.
+ */
+export async function deleteAccount(userId: string): Promise<void> {
+  const { deleteAllUserFiles } = await import("@/lib/storage/cleanup");
+
+  await deleteAllUserFiles(userId);
+  await prisma.user.delete({ where: { id: userId } });
+
+  const jar = await cookies();
+  jar.delete(SESSION_COOKIE);
+}
