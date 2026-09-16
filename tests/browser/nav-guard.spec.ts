@@ -262,3 +262,81 @@ test("brauzer darajasidagi ogohlantirish (`beforeunload`) saqlanib qoladi", asyn
     true,
   );
 });
+
+/*
+  ── Tasdiq oynasining o'zi ham tekshiriladi ───────────────────────────────
+  U YANGI interfeys bo'lagi va u boshqa qoidalarga bo'ysunmaydi degan
+  sabab yo'q: telefonda toshmasligi, tugmalari barmoq bilan tegiladigan
+  bo'lishi va klaviatura bilan boshqarilishi kerak.
+
+  Muharrir joylashuvi `layout.spec.ts` da o'lchanadi, lekin u oynani
+  UMUMAN ochmaydi — ya'ni bu yerdagi tekshiruvni qoplamaydi.
+*/
+const VIEWPORTS = [
+  { width: 375, height: 812, label: "375 · telefon (kichik)" },
+  { width: 390, height: 844, label: "390 · telefon" },
+  { width: 430, height: 932, label: "430 · telefon (katta)" },
+  { width: 768, height: 1024, label: "768 · planshet" },
+  { width: 1024, height: 768, label: "1024 · kichik noutbuk" },
+  { width: 1440, height: 900, label: "1440 · desktop" },
+] as const;
+
+test.describe("tasdiq oynasi — joylashuv va tegish nishonlari", () => {
+  for (const viewport of VIEWPORTS) {
+    test(`${viewport.label}: toshish yo'q, tugmalar 44px`, async ({ page }) => {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await makeDirty(page);
+      await page
+        .getByRole("banner")
+        .getByRole("link", { name: /searcher/i })
+        .click();
+
+      await expect(dialog(page)).toBeVisible();
+
+      const overflow = await page.evaluate(() => {
+        const doc = document.documentElement;
+        return doc.scrollWidth - doc.clientWidth;
+      });
+      expect(overflow, `gorizontal toshish: ${overflow}px`).toBe(0);
+
+      const small = await dialog(page).evaluate((root) => {
+        const tooSmall: string[] = [];
+        for (const el of root.querySelectorAll("button")) {
+          const rect = el.getBoundingClientRect();
+          if (rect.height < 40) {
+            tooSmall.push(
+              `"${(el.textContent ?? "").trim()}" ${Math.round(rect.height)}px`,
+            );
+          }
+        }
+        return tooSmall;
+      });
+      expect(small, `kichik tugmalar: ${small.join(", ")}`).toEqual([]);
+    });
+  }
+
+  test("ochilganda FOKUS oynaga ko'chadi va ESC uni yopadi", async ({ page }) => {
+    await makeDirty(page);
+    await page
+      .getByRole("banner")
+      .getByRole("link", { name: /searcher/i })
+      .click();
+
+    await expect(dialog(page)).toBeVisible();
+
+    /*
+      Fokus ortidagi sahifada qolsa, klaviatura bilan ishlaydigan
+      foydalanuvchi oynani umuman topa olmasdi.
+    */
+    const focusInsideDialog = await page.evaluate(() => {
+      const panel = document.querySelector('[role="dialog"]');
+      return panel !== null && panel.contains(document.activeElement);
+    });
+    expect(focusInsideDialog, "fokus oyna ichida bo'lishi kerak").toBe(true);
+
+    // ESC — eng xavfsiz tanlov: hech narsa yo'qolmaydi.
+    await page.keyboard.press("Escape");
+    await expect(dialog(page)).toBeHidden();
+    await expect(page).toHaveURL(/\/edit$/);
+  });
+});
