@@ -1,0 +1,107 @@
+# Searcher AI — to'liq tekshiruv quvuri.
+#
+# ── Nega bitta ish (job), bir nechta emas ────────────────────────────────────
+# Uchala test paketi ham BITTA PostgreSQL nusxasiga muhtoj, brauzer
+# testlari esa qo'shimcha ravishda ishga tushirilgan ilovani talab qiladi.
+# Ularni alohida ishlarga bo'lsak, har biri o'z bazasini ko'tarib,
+# migratsiyalarni qayta qo'llardi — natija tezroq emas, faqat murakkabroq
+# bo'lardi.
+#
+# ── Sirlar YO'Q ─────────────────────────────────────────────────────────────
+# Bu quvurda hech qanday production hisob ma'lumoti ishlatilmaydi:
+#  · baza — vaqtinchalik konteyner;
+#  · AI — soxta server (`tests/e2e/helpers/mock-ai.ts`), haqiqiy provayder
+#    umuman chaqirilmaydi;
+#  · `AUTH_SECRET` — shu ish uchun yaratilgan qiymat.
+# Shu sababdan quvur fork'dagi PR'larda ham xavfsiz ishlaydi.
+
+name: verify
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+# Bir xil tarmoqqa yangi push kelsa, eskisini to'xtatamiz — navbat
+# to'lib ketmasin.
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        # Loyiha PostgreSQL 18 da ishlaydi (docker-compose.yml).
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: searcher
+          POSTGRES_PASSWORD: searcher_ci_password
+          POSTGRES_DB: searcher_ai
+        ports:
+          - 5432:5432
+        # Migratsiya baza TAYYOR bo'lishini kutishi kerak.
+        options: >-
+          --health-cmd "pg_isready -U searcher -d searcher_ai"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    env:
+      DATABASE_URL: postgresql://searcher:searcher_ci_password@localhost:5432/searcher_ai?schema=public
+      # 32 belgidan uzun — `lib/auth/jwt.ts` shuni talab qiladi.
+      AUTH_SECRET: ci-uchun-yaratilgan-kalit-kamida-32-belgi
+      APP_URL: http://localhost:3000
+      # Sinovlar yuzlab hisob ochadi va hammasi bitta IP dan keladi.
+      REGISTER_MAX_PER_IP: "1000"
+      NEXT_TELEMETRY_DISABLED: "1"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Next.js 16 kamida 20.9 ni talab qiladi; Dockerfile 22 dan
+          # foydalanadi — bir xil bo'lgani ma'qul.
+          node-version: 22
+          cache: npm
+
+      # `npm ci` — lockfile aynan bajariladi, `npm install` kabi uni
+      # o'zgartirmaydi.
+      - run: npm ci
+
+      # Prisma klienti git'ga tushmaydi (`.gitignore`), shuning uchun
+      # har ishda qaytadan yasaladi.
+      - run: npx prisma generate
+
+      - run: npx prisma migrate deploy
+
+      # ── Statik tekshiruvlar: eng tez yiqiladiganlari oldinda ──────────
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run format:check
+
+      # ── Testlar ───────────────────────────────────────────────────────
+      - run: npm test
+
+      - run: npm run test:e2e
+
+      # Brauzer testlari uchun faqat Chromium — ular CSS joylashuvini
+      # tekshiradi, u esa brauzerlar orasida farq qilmaydi darajada
+      # standart. `--with-deps` CI konteyneriga kerakli tizim
+      # kutubxonalarini o'rnatadi.
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+
+      - run: npm run build
+
+      # Nosozlik sababini ko'rish uchun — muvaffaqiyatda saqlanmaydi.
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
