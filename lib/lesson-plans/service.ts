@@ -5,6 +5,7 @@ import { AiError } from "@/lib/ai/types";
 import { apiErrors } from "@/lib/api/errors";
 import { releaseAiQuota, type QuotaReservation } from "@/lib/ai/rate-limit";
 import { markStaleAsFailed } from "@/lib/generation/stale";
+import { setStage } from "@/lib/generation/stages";
 import {
   buildSystemPrompt,
   hasUntrustedSource,
@@ -42,6 +43,7 @@ const LIST_FIELDS = {
   lessonType: true,
   language: true,
   status: true,
+  stage: true,
   errorMessage: true,
   createdAt: true,
 } as const;
@@ -88,6 +90,8 @@ export async function createLessonPlan(
       // manbadan foydalanishi uchun (rasmning o'zi saqlanmaydi).
       sourceMaterial: input.sourceMaterial ?? null,
       status: "PENDING",
+      // Fon ishi hali boshlanmadi — bosqich shu paytdan ko'rinadi.
+      stage: "QUEUED",
     },
     select: DETAIL_FIELDS,
   });
@@ -217,6 +221,7 @@ async function curriculumContextFor(input: LessonPlanInput): Promise<string> {
 /** AI chaqiruvi va natijani saqlash — ikki oqim uchun umumiy qism. */
 async function runGeneration(id: string, input: LessonPlanInput): Promise<void> {
   try {
+    await setStage("lessonPlan", id, "GENERATING");
     const curriculumContext = await curriculumContextFor(input);
 
     const { data, meta } = await generateJson({
@@ -230,6 +235,8 @@ async function runGeneration(id: string, input: LessonPlanInput): Promise<void> 
       systemPrompt: buildSystemPrompt(input.language, hasUntrustedSource(input)),
       prompt: buildUserPrompt({ ...input, curriculumContext }),
     });
+
+    await setStage("lessonPlan", id, "SAVING");
 
     await prisma.lessonPlan.update({
       where: { id },

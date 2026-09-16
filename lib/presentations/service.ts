@@ -5,6 +5,7 @@ import { AiError } from "@/lib/ai/types";
 import { apiErrors } from "@/lib/api/errors";
 import { releaseAiQuota, type QuotaReservation } from "@/lib/ai/rate-limit";
 import { markStaleAsFailed } from "@/lib/generation/stale";
+import { setStage } from "@/lib/generation/stages";
 import { generatePptx } from "@/lib/pptx/generate";
 import { DEFAULT_TEMPLATE } from "@/lib/pptx/theme";
 import {
@@ -39,6 +40,7 @@ const LIST_FIELDS = {
   title: true,
   language: true,
   status: true,
+  stage: true,
   errorMessage: true,
   slideCount: true,
   fileSize: true,
@@ -180,6 +182,8 @@ export async function createPresentation(
       */
       template: input.template,
       status: "PENDING",
+      // Fon ishi hali boshlanmadi — bosqich shu paytdan ko'rinadi.
+      stage: "QUEUED",
     },
     select: DETAIL_FIELDS,
   });
@@ -277,6 +281,8 @@ export async function regeneratePresentation(
     data: {
       status: "PENDING",
       errorMessage: null,
+      // Qayta urinishda bosqich ham boshidan.
+      stage: "QUEUED",
       filePath: null,
       fileSize: null,
       slideCount: null,
@@ -293,6 +299,7 @@ async function runGeneration(
   promptContext: PresentationPromptContext,
 ): Promise<void> {
   try {
+    await setStage("presentation", id, "GENERATING");
     const { data, meta } = await generateJson({
       // Generatsiya sxemasi — asos + slaydlar soni chegarasi (6-10).
       // Tahrirlashda chegara kengroq: lib/validations/presentation.ts
@@ -310,10 +317,12 @@ async function runGeneration(
 
     // Fayl AI javobidan KEYIN yasaladi — shu tartib muhim: AI yiqilsa
     // keraksiz fayl qolib ketmaydi.
+    await setStage("presentation", id, "BUILDING_FILE");
     const { buffer, slideCount } = await generatePptx(
       data,
       record?.template ?? DEFAULT_TEMPLATE,
     );
+    await setStage("presentation", id, "SAVING");
     const { filePath, fileSize } = await saveFile("pptx", id, buffer);
 
     await prisma.presentation.update({

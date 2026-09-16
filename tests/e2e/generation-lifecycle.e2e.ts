@@ -228,6 +228,150 @@ describe("osilib qolgan generatsiyalarni tiklash", () => {
 });
 
 // ════════════════════════════════════════════════════════════════════════════
+// P2-05 — haqiqiy generatsiya bosqichlari
+// ════════════════════════════════════════════════════════════════════════════
+
+describe("generatsiya bosqichlari", () => {
+  it("yangi yozuv QUEUED bosqichi bilan yaratiladi", async () => {
+    /*
+      Bosqich yozuv yaratilgan lahzadan boshlab mavjud — fon ishi hali
+      boshlanmagan bo'lsa ham. Shu tufayli UI birinchi soniyadayoq
+      HAQIQIY holatni ko'rsatadi, taxminni emas.
+    */
+    const { client } = await signedInClient("bosqich-queued");
+
+    const created = await client.request<{
+      lessonPlan: { id: string; status: string; stage: string | null };
+    }>("/api/lesson-plans", {
+      method: "POST",
+      body: {
+        subject: "Matematika",
+        grade: "7-sinf",
+        topic: "Bosqich sinovi",
+        durationMinutes: 45,
+      },
+    });
+
+    assert.equal(created.status, 202);
+    assert.equal(created.data!.lessonPlan.status, "PENDING");
+    assert.equal(created.data!.lessonPlan.stage, "QUEUED");
+  });
+
+  it("MUVAFFAQIYATLI generatsiya SAVING bosqichigacha boradi", async () => {
+    const { client } = await signedInClient("bosqich-tugadi");
+
+    const created = await client.request<{ lessonPlan: { id: string } }>(
+      "/api/lesson-plans",
+      {
+        method: "POST",
+        body: {
+          subject: "Matematika",
+          grade: "7-sinf",
+          topic: "Bosqich oxirigacha",
+          durationMinutes: 45,
+        },
+      },
+    );
+    assert.equal(created.status, 202);
+
+    const finished = await waitForGeneration<{ status: string; stage: string | null }>(
+      client,
+      `/api/lesson-plans/${created.data!.lessonPlan.id}`,
+      "lessonPlan",
+    );
+
+    assert.equal(finished.status, "READY");
+    // Oxirgi yozilgan bosqich — fayl yo'q moduli uchun SAVING.
+    assert.equal(finished.stage, "SAVING");
+  });
+
+  it("FAYL yasaydigan modul BUILDING_FILE bosqichidan o'tadi", async () => {
+    const { client } = await signedInClient("bosqich-fayl");
+
+    const created = await client.request<{ presentation: { id: string } }>(
+      "/api/presentations",
+      { method: "POST", body: { mode: "standalone", topic: "Fayl bosqichi" } },
+    );
+    assert.equal(created.status, 202);
+
+    const finished = await waitForGeneration<{ status: string; stage: string | null }>(
+      client,
+      `/api/presentations/${created.data!.presentation.id}`,
+      "presentation",
+    );
+
+    assert.equal(finished.status, "READY");
+    assert.equal(finished.stage, "SAVING", "fayl yasalgach SAVING bo'lishi kerak");
+  });
+
+  it("bosqich POLLING javobida qaytadi", async () => {
+    // UI bosqichni aynan shu yo'l bilan oladi — boshqa transport yo'q.
+    const { client } = await signedInClient("bosqich-polling");
+
+    const created = await client.request<{ presentation: { id: string } }>(
+      "/api/presentations",
+      { method: "POST", body: { mode: "standalone", topic: "Polling bosqichi" } },
+    );
+
+    const read = await client.request<{
+      presentation: { stage: string | null };
+    }>(`/api/presentations/${created.data!.presentation.id}`);
+
+    assert.equal(read.status, 200);
+    assert.ok(
+      read.data!.presentation.stage !== undefined,
+      "polling javobida `stage` maydoni yo'q",
+    );
+  });
+
+  it("ESKI yozuv (stage = null) o'qilaveradi", async () => {
+    /*
+      Migratsiya orqaga mos: ustun nullable qo'shildi. Eski yozuvlarda
+      `stage` yo'q va ular hech qanday xatosiz ochilishi kerak — UI
+      bunday holatda zaxira matnga tushadi.
+    */
+    const { client, userId } = await signedInClient("bosqich-eski");
+    const id = await seedRecord("presentation", userId, {
+      status: "READY",
+      ageMs: 1000,
+    });
+
+    const { prisma } = await import("../../lib/db");
+    await prisma.presentation.update({ where: { id }, data: { stage: null } });
+
+    const read = await client.request<{ presentation: { stage: string | null } }>(
+      `/api/presentations/${id}`,
+    );
+
+    assert.equal(read.status, 200, "eski yozuv o'qilmadi");
+    assert.equal(read.data!.presentation.stage, null);
+  });
+
+  it("QAYTA generatsiyada bosqich boshidan boshlanadi", async () => {
+    const { client } = await signedInClient("bosqich-qayta");
+
+    const created = await client.request<{ presentation: { id: string } }>(
+      "/api/presentations",
+      { method: "POST", body: { mode: "standalone", topic: "Qayta bosqich" } },
+    );
+    await waitForGeneration(
+      client,
+      `/api/presentations/${created.data!.presentation.id}`,
+      "presentation",
+    );
+
+    const again = await client.request<{
+      presentation: { status: string; stage: string | null };
+    }>(`/api/presentations/${created.data!.presentation.id}/regenerate`, {
+      method: "POST",
+    });
+
+    assert.equal(again.status, 202);
+    assert.equal(again.data!.presentation.stage, "QUEUED");
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════════
 // P1-02 — kvota qaytarilishi
 // ════════════════════════════════════════════════════════════════════════════
 

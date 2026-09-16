@@ -38,7 +38,14 @@
     "downloadPowerPoint": "Скачать в PowerPoint",
     "downloadExcel": "Скачать в Excel",
     "saveAsPdf": "Сохранить как PDF",
-    "backToDashboard": "Вернуться на рабочую страницу"
+    "backToDashboard": "Вернуться на рабочую страницу",
+    "stages": {
+      "QUEUED": "В очереди — подготовка начинается…",
+      "GENERATING": "Искусственный интеллект пишет материал…",
+      "BUILDING_FILE": "Готовится файл…",
+      "SAVING": "Результат сохраняется…",
+      "unknown": "Готовится…"
+    }
   },
   "editor": {
     "save": "Сохранить изменения",

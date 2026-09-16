@@ -32,6 +32,13 @@ interface PollableRecord {
   id: string;
   status: GenerationStatus;
   errorMessage: string | null;
+  /**
+   * Serverdagi HAQIQIY bosqich.
+   *
+   * Eski yozuvlarda bu maydon yo'q (`null`) — u holda UI zaxira
+   * matnga tushadi va hech narsa buzilmaydi.
+   */
+  stage?: string | null;
 }
 
 export interface UseGenerationPollingOptions {
@@ -50,6 +57,8 @@ export interface UseGenerationPollingOptions {
 export interface UseGenerationPollingResult {
   /** Joriy holat. `null` — hali hech narsa kuzatilmayapti. */
   status: GenerationStatus | null;
+  /** Serverdan kelgan bosqich. `null` — eski yozuv yoki hali kelmagan. */
+  stage: string | null;
   /** Kuzatish davom etyaptimi. */
   polling: boolean;
   /** Boshlangandan beri o'tgan soniyalar — UI'da ko'rsatish uchun. */
@@ -76,6 +85,7 @@ export function useGenerationPolling(
   } = options;
 
   const [status, setStatus] = useState<GenerationStatus | null>(null);
+  const [stage, setStage] = useState<string | null>(null);
   const [polling, setPolling] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -147,6 +157,8 @@ export function useGenerationPolling(
           if (record.status === "READY" || record.status === "FAILED") {
             stop();
             setStatus(record.status);
+            // Bosqich SERVERDAN keladi — bu yerda hech narsa taxmin qilinmaydi.
+            setStage(record.stage ?? null);
             if (record.status === "FAILED") {
               setError(record.errorMessage ?? "errors.unknown");
             }
@@ -179,5 +191,5 @@ export function useGenerationPolling(
   // Komponent yopilganda tozalash — aks holda so'rovlar davom etadi.
   useEffect(() => stop, [stop]);
 
-  return { status, polling, elapsedSeconds, error, start, stop };
+  return { status, stage, polling, elapsedSeconds, error, start, stop };
 }

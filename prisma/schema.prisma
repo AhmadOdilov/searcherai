@@ -240,6 +240,13 @@ model LessonPlan {
   language        Language   @default(UZ)
 
   status GenerationStatus @default(PENDING)
+  /// Generatsiyaning joriy bosqichi — foydalanuvchiga HAQIQIY progress
+  /// ko'rsatish uchun. Qiymatlar: lib/generation/stages.ts
+  ///
+  /// Nullable va matn: eski yozuvlarda bu maydon yo'q (ular `null`
+  /// bo'ladi va UI zaxira matnga tushadi), yangi bosqich qo'shish esa
+  /// migratsiya talab qilmaydi.
+  stage        String?
   /// Struktura qilingan dars ishlanmasi. Shakli: lib/validations/lesson-plan.ts
   /// (maqsad, kutilayotgan natijalar, bosqichlar, metodlar, uy vazifasi).
   content Json?
@@ -300,6 +307,13 @@ model Presentation {
   template String @default("klassik")
 
   status GenerationStatus @default(PENDING)
+  /// Generatsiyaning joriy bosqichi — foydalanuvchiga HAQIQIY progress
+  /// ko'rsatish uchun. Qiymatlar: lib/generation/stages.ts
+  ///
+  /// Nullable va matn: eski yozuvlarda bu maydon yo'q (ular `null`
+  /// bo'ladi va UI zaxira matnga tushadi), yangi bosqich qo'shish esa
+  /// migratsiya talab qilmaydi.
+  stage        String?
   /// Slaydlar strukturasi (sarlavha + bullet'lar). Shakli:
   /// lib/validations/presentation.ts
   content Json?
@@ -357,6 +371,13 @@ model CalendarPlan {
   title String?
 
   status GenerationStatus @default(PENDING)
+  /// Generatsiyaning joriy bosqichi — foydalanuvchiga HAQIQIY progress
+  /// ko'rsatish uchun. Qiymatlar: lib/generation/stages.ts
+  ///
+  /// Nullable va matn: eski yozuvlarda bu maydon yo'q (ular `null`
+  /// bo'ladi va UI zaxira matnga tushadi), yangi bosqich qo'shish esa
+  /// migratsiya talab qilmaydi.
+  stage        String?
   /// Jadval qatorlari. Shakli: lib/validations/calendar-plan.ts
   content Json?
 

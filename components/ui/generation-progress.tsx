@@ -21,13 +21,19 @@ import { ToneCard } from "@/components/ui/card";
  *     tayyorlash serverda davom etadi.
  *  3. Forma sodda qoladi: yuboradi va o'tadi.
  *
- * ── Kutish matni haqida ───────────────────────────────────────────────────
- * Kutish — ilovaning eng xavfli lahzasi: aynan shu yerda odam "osilib
- * qoldi" deb o'ylab sahifani yopadi. Shuning uchun:
- *  · matn har necha soniyada o'zgaradi (jarayon TIRIK ekani ko'rinadi),
- *  · progress chizig'i taxminiy vaqtga nisbatan to'ladi,
- *  · "tez orada tayyor bo'ladi" degan tinchlantiruvchi jumla turadi,
- *  · sahifani yopsa ham ish yo'qolmasligi AYTILADI.
+ * ── Kutish matni HAQIQIY holatdan keladi ──────────────────────────────────
+ * Ilgari bosqich matni SEKUNDOMERDAN hisoblanardi: o'tgan vaqtni odatdagi
+ * davomiylikka bo'lib, "hozir shu bosqichda bo'lsa kerak" degan taxmin
+ * ko'rsatilardi. Bu yolg'on edi — AI sekinlashsa matn oldinga ketardi,
+ * tez tugasa orqada qolardi.
+ *
+ * Endi bosqich SERVERDAN keladi (`lib/generation/stages.ts`). Eski
+ * yozuvlarda `stage` yo'q — u holda modulning o'z matni zaxira sifatida
+ * ishlatiladi, ya'ni hech narsa buzilmaydi.
+ *
+ * Progress chizig'i vaqtga asoslangan bo'lib qoladi va bu ATAYLAB: u
+ * "qancha qoldi" degan taxminni ko'rsatadi, bosqichni emas. Aynan shu
+ * sababdan u 95% da to'xtaydi — to'liq to'lish faqat natija kelganda.
  *
  * Tugagach `router.refresh()` chaqiriladi — Server Component qayta
  * o'qiladi va tayyor natija ko'rinadi.
@@ -53,18 +59,31 @@ export function GenerationProgress({
   const router = useRouter();
   const t = useTranslations(namespace);
   const tRoot = useTranslations();
+  const tStages = useTranslations("common.stages");
 
-  const { status, elapsedSeconds, start } = useGenerationPolling({
+  const { status, stage, elapsedSeconds, start } = useGenerationPolling({
     resource,
     payloadKey,
   });
 
-  // Har bir bosqich uchun taxminiy vaqt — matn "tirik" ko'rinsin.
+  /*
+    Zaxira matn — faqat server bosqich bermagan holat uchun.
+
+    Bu eski yozuvlarda (`stage = null`) va yangi yozuvning eng birinchi
+    lahzasida (polling hali javob olmagan) ishlaydi. Sekundomerga
+    asoslangani uchun u TAXMIN, shuning uchun faqat zaxira.
+  */
   const stepSeconds = Math.max(3, Math.floor(typicalSeconds / progressKeys.length));
   const stepIndex = Math.min(
     Math.floor(elapsedSeconds / stepSeconds),
     progressKeys.length - 1,
   );
+
+  /** Serverdagi bosqich tarjimada bormi. */
+  const knownStage =
+    stage !== null && tStages.has(stage)
+      ? (stage as Parameters<typeof tStages>[0])
+      : null;
 
   /*
     Chiziq 95% da to'xtaydi: "100%" ko'rsatib, keyin yana kutish —
@@ -102,7 +121,11 @@ export function GenerationProgress({
           {tRoot("common.aiWorking")}
         </p>
         <p className="mt-2 text-base leading-relaxed text-accent-ink">
-          {t(progressKeys[stepIndex])}
+          {/*
+            Serverdagi bosqich USTUN turadi. U bo'lmasa (eski yozuv yoki
+            polling hali javob olmagan) modulning o'z matni ishlaydi.
+          */}
+          {knownStage !== null ? tStages(knownStage) : t(progressKeys[stepIndex])}
         </p>
 
         {/* Progress chizig'i — qancha qolganini ko'z bilan baholash uchun. */}

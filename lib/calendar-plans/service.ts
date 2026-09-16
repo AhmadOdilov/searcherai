@@ -5,6 +5,7 @@ import { AiError } from "@/lib/ai/types";
 import { apiErrors } from "@/lib/api/errors";
 import { releaseAiQuota, type QuotaReservation } from "@/lib/ai/rate-limit";
 import { markStaleAsFailed } from "@/lib/generation/stale";
+import { setStage } from "@/lib/generation/stages";
 import { getEnv } from "@/lib/env";
 import { generateXlsx } from "@/lib/xlsx/generate";
 import {
@@ -40,6 +41,7 @@ const LIST_FIELDS = {
   language: true,
   title: true,
   status: true,
+  stage: true,
   errorMessage: true,
   rowCount: true,
   fileSize: true,
@@ -100,6 +102,8 @@ export async function createCalendarPlan(
       hoursPerWeek: input.hoursPerWeek,
       language: input.language,
       status: "PENDING",
+      // Fon ishi hali boshlanmadi — bosqich shu paytdan ko'rinadi.
+      stage: "QUEUED",
     },
     select: DETAIL_FIELDS,
   });
@@ -174,6 +178,8 @@ export async function regenerateCalendarPlan(
     data: {
       status: "PENDING",
       errorMessage: null,
+      // Qayta urinishda bosqich ham boshidan.
+      stage: "QUEUED",
       filePath: null,
       fileSize: null,
       rowCount: null,
@@ -222,6 +228,7 @@ async function curriculumContextFor(input: CalendarPlanInput): Promise<string> {
 /** AI chaqiruvi, .xlsx yasash va saqlash — ikki oqim uchun umumiy qism. */
 async function runGeneration(id: string, input: CalendarPlanInput): Promise<void> {
   try {
+    await setStage("calendarPlan", id, "GENERATING");
     const curriculumContext = await curriculumContextFor(input);
 
     const { data, meta } = await generateJson({
@@ -243,7 +250,9 @@ async function runGeneration(id: string, input: CalendarPlanInput): Promise<void
 
     // Fayl AI javobidan KEYIN yasaladi — AI yiqilsa keraksiz fayl
     // qolib ketmaydi.
+    await setStage("calendarPlan", id, "BUILDING_FILE");
     const { buffer, rowCount } = await generateXlsx(data, input.language);
+    await setStage("calendarPlan", id, "SAVING");
     const { filePath, fileSize } = await saveFile("xlsx", id, buffer);
 
     await prisma.calendarPlan.update({

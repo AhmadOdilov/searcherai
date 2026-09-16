@@ -38,7 +38,14 @@
     "downloadPowerPoint": "PowerPoint'da yuklab olish",
     "downloadExcel": "Excel'da yuklab olish",
     "saveAsPdf": "PDF qilib saqlash",
-    "backToDashboard": "Ish sahifasiga qaytish"
+    "backToDashboard": "Ish sahifasiga qaytish",
+    "stages": {
+      "QUEUED": "Navbatda — tayyorlash boshlanmoqda…",
+      "GENERATING": "Sun'iy intellekt material yozmoqda…",
+      "BUILDING_FILE": "Fayl yasalmoqda…",
+      "SAVING": "Natija saqlanmoqda…",
+      "unknown": "Tayyorlanmoqda…"
+    }
   },
   "editor": {
     "save": "O'zgarishlarni saqlash",
