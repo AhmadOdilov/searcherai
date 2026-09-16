@@ -27,17 +27,26 @@ interface SearchPayload {
 }
 
 async function signedInClient(suffix: string): Promise<TestClient> {
+  const { client } = await signedInClientWithEmail(suffix);
+  return client;
+}
+
+/** Kvota yozuvlarini tekshirish uchun email ham kerak bo'ladi. */
+async function signedInClientWithEmail(
+  suffix: string,
+): Promise<{ client: TestClient; email: string }> {
   const client = new TestClient();
+  const email = testEmail(suffix);
   const result = await client.request("/api/auth/register", {
     method: "POST",
     body: {
-      email: testEmail(suffix),
+      email,
       password: PASSWORD,
       fullName: "Sinov O'qituvchi",
     },
   });
   assert.equal(result.status, 201);
-  return client;
+  return { client, email };
 }
 
 before(async () => {
@@ -148,5 +157,37 @@ describe("qidiruv — xatolar", () => {
 
     assert.equal(result.ok, false);
     assert.ok(!/zod|schema|parse/i.test(result.error!.message));
+  });
+
+  it("TOKEN o'lchovi kvota yozuviga YOZILADI", async () => {
+    /*
+      Generatsiya modullari o'lchovni allaqachon yozardi, qidiruv va
+      rasm tahlili esa yozmasdi: `AiRequest` dagi "search" qatorlari
+      bo'sh model va bo'sh token bilan turardi. Ya'ni eng ko'p
+      chaqiriladigan ikki yo'lning narxi noma'lum edi.
+    */
+    const { client, email } = await signedInClientWithEmail("qidiruv-token");
+
+    const result = await client.request("/api/search", {
+      method: "POST",
+      body: { question: "Fotosintez nima va u qanday kechadi?" },
+    });
+    assert.equal(result.status, 200);
+
+    const { prisma } = await import("../../lib/db");
+    const row = await prisma.aiRequest.findFirstOrThrow({
+      where: { user: { email }, route: "search" },
+      select: { model: true, inputTokens: true, outputTokens: true },
+    });
+
+    assert.ok(row.model !== null, "model yozilmadi");
+    assert.ok(
+      row.inputTokens !== null && row.inputTokens > 0,
+      `kirish tokenlari yozilmadi: ${row.inputTokens}`,
+    );
+    assert.ok(
+      row.outputTokens !== null && row.outputTokens > 0,
+      `chiqish tokenlari yozilmadi: ${row.outputTokens}`,
+    );
   });
 });

@@ -1,6 +1,6 @@
 import { ok, parseJsonBody, withErrorHandling } from "@/lib/api/with-error-handling";
 import { requireUser } from "@/lib/auth/session";
-import { consumeAiQuota } from "@/lib/ai/rate-limit";
+import { consumeAiQuota, recordAiUsage } from "@/lib/ai/rate-limit";
 import { runSearch } from "@/lib/search/service";
 import { searchInputSchema } from "@/lib/validations/search";
 
@@ -21,9 +21,27 @@ export const POST = withErrorHandling(async (request) => {
 
   // Kvota tekshiruvi validatsiyadan KEYIN: noto'g'ri so'rov
   // foydalanuvchining kvotasini yemasligi kerak.
-  await consumeAiQuota(user.id, "search");
+  const reservation = await consumeAiQuota(user.id, "search");
 
   const result = await runSearch(input);
+
+  /*
+    Tokenlar kvota yozuviga.
+
+    Ilgari bu yerda YO'Q edi: generatsiya modullari o'lchovni yozardi,
+    qidiruv va rasm tahlili esa yozmasdi. Natijada `AiRequest`
+    jadvalidagi qidiruv qatorlari bo'sh model va bo'sh token bilan
+    turardi — ya'ni "qancha sarfladik?" degan savolga javob berib
+    bo'lmasdi.
+
+    Xatoda yozilmaydi va bu to'g'ri: `runSearch` yiqilsa javob ham
+    kelmagan.
+  */
+  await recordAiUsage(reservation, {
+    model: result.model,
+    inputTokens: result.usage.inputTokens,
+    outputTokens: result.usage.outputTokens,
+  });
 
   return ok({ answer: result.answer });
 });

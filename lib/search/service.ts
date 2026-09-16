@@ -1,5 +1,6 @@
 import "server-only";
 import { generateJson } from "@/lib/ai/provider";
+import type { AiUsage } from "@/lib/ai/types";
 import { getEnv } from "@/lib/env";
 import { buildSearchSystemPrompt, buildSearchUserPrompt } from "@/lib/search/prompt";
 import {
@@ -32,6 +33,13 @@ export interface SearchResult {
   /** Qancha davom etgani — diagnostika uchun, foydalanuvchiga ko'rsatilmaydi. */
   durationMs: number;
   model: string;
+  /**
+   * Sarflangan tokenlar — route ularni kvota yozuviga yozadi.
+   *
+   * Servis o'zi yozmaydi: bandlik route'da olinadi va uni shu yerga
+   * uzatish qatlamlarni bir-biriga bog'lab qo'yardi.
+   */
+  usage: AiUsage;
 }
 
 export async function runSearch(input: SearchInput): Promise<SearchResult> {
@@ -53,5 +61,6 @@ export async function runSearch(input: SearchInput): Promise<SearchResult> {
     answer: data,
     durationMs: meta.totalDurationMs,
     model: meta.model,
+    usage: meta.usage,
   };
 }

@@ -1,6 +1,6 @@
 import { ok, parseJsonBody, withErrorHandling } from "@/lib/api/with-error-handling";
 import { requireUser } from "@/lib/auth/session";
-import { consumeAiQuota } from "@/lib/ai/rate-limit";
+import { consumeAiQuota, recordAiUsage } from "@/lib/ai/rate-limit";
 import { analyzeImage } from "@/lib/vision/service";
 import { visionInputSchema } from "@/lib/validations/vision";
 
@@ -26,9 +26,23 @@ export const POST = withErrorHandling(async (request) => {
     OLDIN: rasm tahlili eng qimmat chaqiruvlardan biri (rasm ko'p
     token yeydi), shuning uchun u albatta hisoblanishi kerak.
   */
-  await consumeAiQuota(user.id, "vision");
+  const reservation = await consumeAiQuota(user.id, "vision");
 
   const result = await analyzeImage(input);
+
+  /*
+    Tokenlar kvota yozuviga.
+
+    Bu modulda o'lchov eng muhim: rasm so'rovi eng qimmatlaridan va
+    bitta surat minglab token yeydi. Ilgari esa u umuman yozilmasdi —
+    `AiRequest` dagi "vision" qatorlari bo'sh model va bo'sh token
+    bilan turardi.
+  */
+  await recordAiUsage(reservation, {
+    model: result.model,
+    inputTokens: result.usage.inputTokens,
+    outputTokens: result.usage.outputTokens,
+  });
 
   return ok({ analysis: result.analysis });
 });

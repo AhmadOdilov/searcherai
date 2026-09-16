@@ -1,6 +1,6 @@
 import "server-only";
 import { generateJson } from "@/lib/ai/provider";
-import { AiError } from "@/lib/ai/types";
+import { AiError, type AiUsage } from "@/lib/ai/types";
 import { getEnv } from "@/lib/env";
 import { buildVisionSystemPrompt, buildVisionUserPrompt } from "@/lib/vision/prompt";
 import {
@@ -32,6 +32,15 @@ import { apiErrors } from "@/lib/api/errors";
 export interface VisionResult {
   analysis: VisionAnalysis;
   durationMs: number;
+  /** Javobni qaytargan model — kvota yozuvi uchun. */
+  model: string;
+  /**
+   * Sarflangan tokenlar — route ularni kvota yozuviga yozadi.
+   *
+   * Rasm so'rovlari eng qimmatlaridan: bitta surat minglab token
+   * yeydi. Aynan shuning uchun bu yerda o'lchov bo'lishi kerak.
+   */
+  usage: AiUsage;
 }
 
 /**
@@ -133,5 +142,10 @@ export async function analyzeImage(input: VisionInput): Promise<VisionResult> {
     model: env.visionAiModel,
   });
 
-  return { analysis: data, durationMs: meta.totalDurationMs };
+  return {
+    analysis: data,
+    durationMs: meta.totalDurationMs,
+    model: meta.model,
+    usage: meta.usage,
+  };
 }

@@ -30,17 +30,26 @@ interface VisionPayload {
 }
 
 async function signedInClient(suffix: string): Promise<TestClient> {
+  const { client } = await signedInClientWithEmail(suffix);
+  return client;
+}
+
+/** Kvota yozuvlarini tekshirish uchun email ham kerak bo'ladi. */
+async function signedInClientWithEmail(
+  suffix: string,
+): Promise<{ client: TestClient; email: string }> {
   const client = new TestClient();
+  const email = testEmail(suffix);
   const result = await client.request("/api/auth/register", {
     method: "POST",
     body: {
-      email: testEmail(suffix),
+      email,
       password: PASSWORD,
       fullName: "Sinov O'qituvchi",
     },
   });
   assert.equal(result.status, 201);
-  return client;
+  return { client, email };
 }
 
 /** Haqiqiy PNG imzosi bilan boshlanadigan kichik rasm. */
@@ -271,6 +280,38 @@ describe("rasm tahlili — dars ishlanmasiga ulanish", () => {
     assert.ok(
       !prompt.user.includes("MANBA MATERIALI"),
       "manba bo'limi bo'sh bo'lsa ham qo'shilgan",
+    );
+  });
+
+  it("TOKEN o'lchovi kvota yozuviga YOZILADI", async () => {
+    /*
+      Rasm so'rovi eng qimmat chaqiruvlardan: bitta surat minglab
+      token yeydi. Shunga qaramay o'lchov umuman yozilmasdi —
+      `AiRequest` dagi "vision" qatorlari bo'sh model va bo'sh token
+      bilan turardi.
+    */
+    const { client, email } = await signedInClientWithEmail("rasm-token");
+
+    const result = await client.request("/api/vision-analyze", {
+      method: "POST",
+      body: { image: pngDataUri(), language: "UZ" },
+    });
+    assert.equal(result.status, 200);
+
+    const { prisma } = await import("../../lib/db");
+    const row = await prisma.aiRequest.findFirstOrThrow({
+      where: { user: { email }, route: "vision" },
+      select: { model: true, inputTokens: true, outputTokens: true },
+    });
+
+    assert.ok(row.model !== null, "model yozilmadi");
+    assert.ok(
+      row.inputTokens !== null && row.inputTokens > 0,
+      `kirish tokenlari yozilmadi: ${row.inputTokens}`,
+    );
+    assert.ok(
+      row.outputTokens !== null && row.outputTokens > 0,
+      `chiqish tokenlari yozilmadi: ${row.outputTokens}`,
     );
   });
 });
