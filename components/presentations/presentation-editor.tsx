@@ -206,7 +206,23 @@ export function PresentationEditor({
 
       {/* ── Asosiy tartib ───────────────────────────────────────────── */}
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]">
-        <div>
+        {/*
+          `min-w-0` MAJBURIY, bezak emas.
+
+          Slaydlar ro'yxatidagi sarlavha `truncate` bilan qisqartiriladi va
+          bu `white-space: nowrap` degani — ya'ni elementning eng kichik
+          kengligi BUTUN matn kengligiga teng bo'lib qoladi. Grid elementi
+          esa standart `min-width: auto` bilan o'sha eng kichik kenglikdan
+          past tushmaydi.
+
+          Natijada uzun sarlavhali slayd (sxemada 120 belgigacha ruxsat)
+          butun ustunni ~830px ga cho'zib yuborardi va telefonda sahifa
+          yon tomonga surilardi. 375px da o'lchangan toshish: 474px.
+
+          `min-w-0` elementga qisqarishga ruxsat beradi, shunda `truncate`
+          o'z ishini qiladi.
+        */}
+        <div className="min-w-0">
           <SlideList
             slides={slides}
             activeIndex={activeSafe}
@@ -240,7 +256,8 @@ export function PresentationEditor({
           )}
         </div>
 
-        <Card>
+        {/* Shu sababdan o'ng ustun ham qisqara olishi kerak. */}
+        <Card className="min-w-0">
           {active === undefined ? (
             <p className="text-base text-neutral-500">{t("noSlides")}</p>
           ) : (
