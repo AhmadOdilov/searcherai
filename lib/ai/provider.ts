@@ -204,12 +204,32 @@ export interface GenerateJsonMeta extends GenerateTextResult {
   totalDurationMs: number;
 }
 
+/**
+ * `usage` — BARCHA urinishlarning yig'indisi.
+ *
+ * ── Nega oxirgi urinishniki yetarli emas ──────────────────────────────────
+ * Sxemadan o'tmagan javob ham TO'LIQ javob: model uni yozib bo'lgan va
+ * provayder uni hisobga qo'shgan. Ya'ni ikkinchi urinish narxni ikki
+ * barobar oshiradi — `aiAttempts` ustuni aynan shuning uchun bor.
+ *
+ * Ilgari esa bazaga faqat OXIRGI urinishning tokenlari yozilardi:
+ * yozuvda "2 urinish" turar, tokenlar esa bittasiniki edi. Ya'ni
+ * o'lchov o'zining ichida qarama-qarshi bo'lardi.
+ *
+ * ── Qamrab olinmagani ─────────────────────────────────────────────────────
+ * Transport darajasidagi qayta urinishlar (`AI_MAX_RETRIES` — 429/5xx)
+ * bu yerga yetib kelmaydi: ular xato tashlaydi va javob tanasi
+ * bo'lmaydi. Bunday javoblar odatda hisobga ham qo'shilmaydi.
+ */
+
 export async function generateJson<TSchema extends z.ZodType>(
   input: Omit<GenerateTextInput, "jsonMode"> & { schema: TSchema },
 ): Promise<{ data: z.infer<TSchema>; meta: GenerateJsonMeta }> {
   const { schema, ...rest } = input;
   let lastIssue = "";
   let spentMs = 0;
+  let spentInputTokens = 0;
+  let spentOutputTokens = 0;
 
   for (let attempt = 0; attempt < 2; attempt++) {
     const meta = await generateText({
@@ -223,6 +243,8 @@ export async function generateJson<TSchema extends z.ZodType>(
     });
 
     spentMs += meta.durationMs;
+    spentInputTokens += meta.usage.inputTokens;
+    spentOutputTokens += meta.usage.outputTokens;
 
     // DIQQAT: `extractJsonText` ham shu try ichida — model JSON o'rniga
     // oddiy matn qaytarsa, aynan shu holat qayta urinishga arziydi.
@@ -250,6 +272,10 @@ export async function generateJson<TSchema extends z.ZodType>(
         data: validated.data as z.infer<TSchema>,
         meta: {
           ...meta,
+          usage: {
+            inputTokens: spentInputTokens,
+            outputTokens: spentOutputTokens,
+          },
           schemaAttempts: attempt + 1,
           totalDurationMs: spentMs,
         },

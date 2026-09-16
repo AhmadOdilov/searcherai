@@ -405,6 +405,57 @@ describe("AI qatlami — generateJson", () => {
     );
   });
 
+  it("QAYTA URINISHDA tokenlar YIG'INDI bo'lib qaytadi", async () => {
+    const { generateJson } = await import("../lib/ai/provider");
+
+    /*
+      Nega bu muhim: sxemadan o'tmagan javob ham to'liq javob — model
+      uni yozib bo'lgan va provayder hisobga qo'shgan. Ilgari bazaga
+      faqat OXIRGI urinishning tokenlari yozilardi, natijada yozuvda
+      "2 urinish" turar, tokenlar esa bittasiniki bo'lardi.
+
+      Soxta server har javobda 11/22 token qaytaradi, ya'ni ikki
+      urinishdan keyin 22/44 kutiladi.
+    */
+    await withMock(
+      {
+        status: 200,
+        body: (_b, attempt) =>
+          attempt === 0
+            ? openAiResponse(JSON.stringify({ title: "Dars", steps: ["bitta"] }))
+            : openAiResponse(JSON.stringify({ title: "Dars", steps: ["a", "b"] })),
+      },
+      {},
+      async (mock) => {
+        const { meta } = await generateJson({ schema, prompt: "reja tuz" });
+
+        assert.equal(mock.requests.length, 2, "ikki marta so'ralishi kerak");
+        assert.equal(meta.schemaAttempts, 2);
+        assert.equal(meta.usage.inputTokens, 22, "kirish tokenlari ikkala urinishdan");
+        assert.equal(meta.usage.outputTokens, 44, "chiqish tokenlari ikkala urinishdan");
+      },
+    );
+  });
+
+  it("BIR urinishda tokenlar o'sha javobnikiga teng qoladi", async () => {
+    const { generateJson } = await import("../lib/ai/provider");
+
+    await withMock(
+      {
+        status: 200,
+        body: openAiResponse(JSON.stringify({ title: "Dars", steps: ["a", "b"] })),
+      },
+      {},
+      async () => {
+        const { meta } = await generateJson({ schema, prompt: "reja tuz" });
+
+        assert.equal(meta.schemaAttempts, 1);
+        assert.equal(meta.usage.inputTokens, 11);
+        assert.equal(meta.usage.outputTokens, 22);
+      },
+    );
+  });
+
   it("ikki urinishdan keyin ham o'tmasa bad_response qaytaradi", async () => {
     const { generateJson } = await import("../lib/ai/provider");
     const { AiError } = await import("../lib/ai/types");
