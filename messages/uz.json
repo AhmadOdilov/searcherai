@@ -40,6 +40,26 @@
     "saveAsPdf": "PDF qilib saqlash",
     "backToDashboard": "Ish sahifasiga qaytish"
   },
+  "editor": {
+    "save": "O'zgarishlarni saqlash",
+    "discard": "Bekor qilish",
+    "cancel": "Yopish",
+    "status": {
+      "saving": "Saqlanmoqda…",
+      "saved": "Saqlandi",
+      "failed": "Saqlanmadi",
+      "unsaved": "Saqlanmagan o'zgarishlar bor"
+    },
+    "unsaved": {
+      "body": "Saqlanmagan o'zgarishlaringiz bor. Chiqib ketsangiz ular yo'qoladi.",
+      "saveAndLeave": "Saqlab chiqish",
+      "leave": "Saqlamasdan chiqish",
+      "stay": "Shu yerda qolish"
+    },
+    "errors": {
+      "network": "Internetga ulanib bo'lmadi. Ulanishni tekshirib, «Saqlash» tugmasini qayta bosing."
+    }
+  },
   "status": {
     "PENDING": "Tayyorlanmoqda",
     "READY": "Tayyor",
@@ -365,7 +385,45 @@
       "brokenContent": "Slaydlar tayyor bo'ldi, lekin ularni ko'rsatib bo'lmadi. «Qaytadan tayyorlash» tugmasini bosing.",
       "openWith": "Bu fayl Microsoft PowerPoint yoki Google Slides'da ochiladi. Telefonda ochish uchun PowerPoint ilovasini o'rnating."
     },
-    "pageHint": "Bu yerda siz tayyorlagan slaydlar saqlanadi. Yangisini yaratish uchun tugmani bosing."
+    "pageHint": "Bu yerda siz tayyorlagan slaydlar saqlanadi. Yangisini yaratish uchun tugmani bosing.",
+    "editor": {
+      "title": "Slaydlarni tahrirlash",
+      "editSlides": "Slaydlarni tahrirlash",
+      "editHint": "Matnni o'zgartirasiz, slayd qo'shasiz yoki tartibini almashtirasiz — yangi fayl darhol tayyor bo'ladi.",
+      "backToPresentation": "Prezentatsiyaga qaytish",
+      "presentationTitle": "Prezentatsiya nomi",
+      "slides": "Slaydlar",
+      "addSlide": "Slayd qo'shish",
+      "untitledSlide": "Sarlavhasiz slayd",
+      "hidden": "yashirilgan",
+      "hide": "Yashirish",
+      "show": "Ko'rsatish",
+      "moveUp": "Yuqoriga ko'chirish",
+      "moveDown": "Pastga ko'chirish",
+      "duplicate": "Nusxa olish",
+      "deleteSlide": "Slaydni o'chirish",
+      "confirmDeleteSlide": "{number}-slayd o'chirilsinmi?",
+      "confirmDeleteYes": "Ha, o'chirish",
+      "noSlides": "Slayd tanlanmagan.",
+      "slideOf": "{current} / {total}",
+      "slideType": "Slayd turi",
+      "heading": "Slayd sarlavhasi",
+      "bullets": "Bandlar",
+      "noBullets": "Bu slaydda band yo'q. Sarlavha slaydida bu normal.",
+      "addBullet": "Band qo'shish",
+      "bulletNumber": "{number}-band",
+      "deleteBullet": "Bandni o'chirish",
+      "moveBulletUp": "Bandni yuqoriga",
+      "moveBulletDown": "Bandni pastga",
+      "speakerNotes": "So'zlovchi izohi",
+      "speakerNotesHint": "Faqat siz ko'rasiz — slaydda chiqmaydi.",
+      "preview": "Ko'rish",
+      "closePreview": "Ko'rishni yopish",
+      "previewEmpty": "Ko'rsatiladigan slayd yo'q — hammasi yashirilgan.",
+      "next": "Keyingi slayd",
+      "previous": "Oldingi slayd",
+      "noAiHint": "Tahrirlash sun'iy intellektni qayta chaqirmaydi — saqlashingiz bilan fayl yangilanadi."
+    }
   },
   "calendarPlans": {
     "title": "Kalendar rejalar",
@@ -487,7 +545,8 @@
       "tooManyLoginAttempts": "Juda ko'p urinish bo'ldi. 5 daqiqadan so'ng qayta urinib ko'ring.",
       "tooManyAiRequests": "Juda tez-tez so'ramoqchisiz. Bir daqiqa kutib, qayta urinib ko'ring.",
       "tooManyRegistrations": "Bu qurilmadan juda ko'p hisob ochildi. Bir soatdan so'ng qayta urinib ko'ring.",
-      "crossOriginRejected": "So'rov boshqa saytdan yuborilgan va rad etildi. Sahifani yangilab, qaytadan urinib ko'ring."
+      "crossOriginRejected": "So'rov boshqa saytdan yuborilgan va rad etildi. Sahifani yangilab, qaytadan urinib ko'ring.",
+      "presentationNotEditable": "Bu prezentatsiyani tahrirlab bo'lmaydi. Avval uni qaytadan tayyorlang."
     },
     "validation": {
       "emailRequired": "Emailingizni yozing",

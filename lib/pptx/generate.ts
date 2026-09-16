@@ -1,6 +1,6 @@
 import PptxGenJS from "pptxgenjs";
 import {
-  MAX_SLIDES,
+  EDIT_MAX_SLIDES,
   type PresentationContent,
   type Slide,
 } from "@/lib/validations/presentation";
@@ -69,9 +69,24 @@ export async function generatePptx(
   pptx.author = "Searcher AI";
   pptx.company = "Searcher AI";
 
-  // Juda ko'p slayd berilsa kesamiz — fayl ishlatib bo'lmaydigan
-  // holga kelmasligi uchun.
-  const slides = content.slides.slice(0, MAX_SLIDES);
+  /*
+    ── Yashirilgan slaydlar faylga TUSHMAYDI ──────────────────────────────
+    O'qituvchi slaydni "hozircha kerak emas" deb belgilashi mumkin.
+    Yozuvda u saqlanadi (fikridan qaytsa — bir bosishda tiklaydi), lekin
+    .pptx ga chiqmaydi.
+
+    ── Nega chegara EDIT_MAX_SLIDES ───────────────────────────────────────
+    Ilgari bu yerda `MAX_SLIDES` (10) turardi va u AI javobi uchun
+    yetarli edi. Tahrirlash qo'shilgach chegara kengaydi: 14 slaydli
+    ochiq dars tayyorlagan o'qituvchining oxirgi to'rtta slaydi JIM
+    yo'qolib qolardi.
+
+    Chegara baribir qoladi — bu qatlam sxemadan MUSTAQIL ishlashi va
+    o'z himoyasiga ega bo'lishi kerak.
+  */
+  const slides = content.slides
+    .filter((slide) => slide.hidden !== true)
+    .slice(0, EDIT_MAX_SLIDES);
 
   slides.forEach((slide, index) => {
     switch (slide.type) {

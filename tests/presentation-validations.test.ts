@@ -1,8 +1,12 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  EDIT_MAX_SLIDES,
+  EDIT_MIN_SLIDES,
   MAX_SLIDES,
   MIN_SLIDES,
+  generatedPresentationContentSchema,
+  presentationEditSchema,
   parsePresentationContent,
   presentationContentSchema,
   presentationInputSchema,
@@ -228,20 +232,48 @@ describe("presentationContentSchema", () => {
     assert.equal(result.success, true);
   });
 
-  it(`${MIN_SLIDES} dan kam slaydni rad etadi`, () => {
+  /*
+    ── Slaydlar soni chegarasi bu yerdan KO'CHIRILDI ───────────────────────
+    `presentationContentSchema` endi SAQLANGAN shaklni tasvirlaydi va
+    o'qituvchining tahriri ham shundan o'tadi. Unga 6-10 chegarasini
+    qo'ysak, o'qituvchi 4 slaydli qisqa mavzu yoki 14 slaydli ochiq dars
+    tayyorlay olmasdi.
+
+    AI javobiga qo'yiladigan qat'iy chegara `generatedPresentationContentSchema`
+    ga o'tdi va quyida AYNAN shu sxemada tekshiriladi — ya'ni qamrov
+    kamaymadi, ikkiga bo'lindi.
+  */
+
+  it("tahrirda BITTA slayd ham qabul qilinadi", () => {
     const result = presentationContentSchema.safeParse({
       title: "Fotosintez",
-      slides: slides(MIN_SLIDES - 1),
+      slides: slides(EDIT_MIN_SLIDES),
     });
-
-    assert.equal(result.success, false);
-    assert.ok(result.error!.issues.some((i) => i.path[0] === "slides"));
+    assert.equal(result.success, true, "o'qituvchi qisqa prezentatsiya yasay olmadi");
   });
 
-  it(`${MAX_SLIDES} dan ko'p slaydni rad etadi`, () => {
+  it("tahrirda MIN_SLIDES dan kam ham qabul qilinadi", () => {
     const result = presentationContentSchema.safeParse({
       title: "Fotosintez",
-      slides: slides(MAX_SLIDES + 1),
+      slides: slides(MIN_SLIDES - 2),
+    });
+    assert.equal(result.success, true);
+  });
+
+  it("BO'SH slaydlar massivini rad etadi", () => {
+    // Slaydsiz prezentatsiya — yaroqsiz .pptx.
+    const result = presentationContentSchema.safeParse({
+      title: "Fotosintez",
+      slides: [],
+    });
+    assert.equal(result.success, false);
+  });
+
+  it(`tahrirda ham ${EDIT_MAX_SLIDES} tadan ko'p slaydni rad etadi`, () => {
+    // Texnik himoya: juda katta JSON fayl yasashni sekinlashtiradi.
+    const result = presentationContentSchema.safeParse({
+      title: "Fotosintez",
+      slides: slides(EDIT_MAX_SLIDES + 1),
     });
     assert.equal(result.success, false);
   });
@@ -310,6 +342,95 @@ describe("presentationContentSchema", () => {
   it("sarlavhasiz rad etadi", () => {
     const result = presentationContentSchema.safeParse({
       slides: slides(MIN_SLIDES),
+    });
+    assert.equal(result.success, false);
+  });
+});
+
+describe("generatedPresentationContentSchema — AI javobi", () => {
+  /*
+    Bu sxema faqat AI chaqiruvida ishlatiladi. Uning vazifasi —
+    modelni 6-10 slayd yozishga majburlash: xato xabari modelga qayta
+    so'rov bilan yuboriladi.
+  */
+
+  it("to'g'ri slaydlar sonini qabul qiladi", () => {
+    const result = generatedPresentationContentSchema.safeParse({
+      title: "Fotosintez",
+      slides: slides(MIN_SLIDES),
+    });
+    assert.equal(result.success, true);
+  });
+
+  it(`${MIN_SLIDES} dan kam slaydni rad etadi`, () => {
+    const result = generatedPresentationContentSchema.safeParse({
+      title: "Fotosintez",
+      slides: slides(MIN_SLIDES - 1),
+    });
+
+    assert.equal(result.success, false);
+    assert.ok(result.error!.issues.some((i) => i.path[0] === "slides"));
+  });
+
+  it(`${MAX_SLIDES} dan ko'p slaydni rad etadi`, () => {
+    const result = generatedPresentationContentSchema.safeParse({
+      title: "Fotosintez",
+      slides: slides(MAX_SLIDES + 1),
+    });
+    assert.equal(result.success, false);
+  });
+
+  it("xato xabari modelga NIMA qilish kerakligini aytadi", () => {
+    const result = generatedPresentationContentSchema.safeParse({
+      title: "Fotosintez",
+      slides: slides(MIN_SLIDES - 1),
+    });
+
+    const issue = result.error!.issues.find((i) => i.path[0] === "slides");
+    assert.ok(issue);
+    assert.match(issue.message, new RegExp(String(MIN_SLIDES)));
+    assert.match(issue.message, new RegExp(String(MAX_SLIDES)));
+  });
+});
+
+describe("presentationEditSchema — tahrir so'rovi", () => {
+  const valid = { title: "Fotosintez", slides: slides(3) };
+
+  it("to'g'ri tanani qabul qiladi", () => {
+    const result = presentationEditSchema.safeParse({ content: valid });
+    assert.equal(result.success, true);
+  });
+
+  it("NOTANISH maydonni rad etadi", () => {
+    /*
+      Zod odatda notanish maydonni jim tashlab yuboradi. Tahrirda bu
+      xavfli: klient `conten` deb xato yozsa, so'rov muvaffaqiyatli
+      qaytardi va hech narsa o'zgarmasdi.
+    */
+    const result = presentationEditSchema.safeParse({
+      content: valid,
+      status: "READY",
+    });
+    assert.equal(result.success, false, "notanish maydon o'tkazib yuborildi");
+  });
+
+  it("`content` siz rad etadi", () => {
+    assert.equal(presentationEditSchema.safeParse({}).success, false);
+  });
+
+  it("buzuq slaydni rad etadi", () => {
+    const result = presentationEditSchema.safeParse({
+      content: { title: "Fotosintez", slides: [{ type: "video", heading: "x" }] },
+    });
+    assert.equal(result.success, false);
+  });
+
+  it("JUDA UZUN bandni rad etadi", () => {
+    const bad = slides(2);
+    bad[0].bullets = ["x".repeat(300)];
+
+    const result = presentationEditSchema.safeParse({
+      content: { title: "Fotosintez", slides: bad },
     });
     assert.equal(result.success, false);
   });

@@ -14,7 +14,8 @@ import {
 import { deleteFile, saveFile } from "@/lib/storage/files";
 import { parseLessonPlanContent } from "@/lib/validations/lesson-plan";
 import {
-  presentationContentSchema,
+  generatedPresentationContentSchema,
+  type PresentationContent,
   type PresentationInput,
   type PresentationListQuery,
 } from "@/lib/validations/presentation";
@@ -278,7 +279,9 @@ async function runGeneration(
 ): Promise<void> {
   try {
     const { data, meta } = await generateJson({
-      schema: presentationContentSchema,
+      // Generatsiya sxemasi — asos + slaydlar soni chegarasi (6-10).
+      // Tahrirlashda chegara kengroq: lib/validations/presentation.ts
+      schema: generatedPresentationContentSchema,
       systemPrompt: buildSystemPrompt(promptContext.language),
       prompt: buildUserPrompt(promptContext),
     });
@@ -334,6 +337,84 @@ async function runGeneration(
 
     throw caught;
   }
+}
+
+/**
+ * O'qituvchi tahririni saqlaydi va .pptx faylni QAYTA YASAYDI.
+ *
+ * ── Nega bu funksiya mahsulot uchun hal qiluvchi ──────────────────────────
+ * Shu paytgacha AI natijasini o'zgartirishning yagona yo'li «qaytadan
+ * tayyorlash» edi: u eski natijani butunlay tashlab, yangi AI so'rovi
+ * yuborardi. Ya'ni bitta bandni tuzatish uchun o'qituvchi butun ishni
+ * yo'qotardi va tizim yana pul sarflardi.
+ *
+ * Bu yerda AI UMUMAN chaqirilmaydi. Oqim:
+ *   tekshirilgan JSON → .pptx → saqlagich → baza
+ *
+ * ── Nega fayl DARHOL yasaladi (fon rejimi yo'q) ──────────────────────────
+ * Generatsiyada fon rejimi kerak edi, chunki AI javobi 20-90 soniya
+ * kutdiradi. Bu yerda esa AI yo'q: `generatePptx` odatda 100 ms dan kam
+ * vaqt oladi. Fon ishi qo'shsak, foydalanuvchi «saqlandi» degan javobni
+ * olib, fayl esa hali eski bo'lib qolardi — bu jim nomuvofiqlik.
+ *
+ * ── Nega eski fayl o'chirilmaydi ─────────────────────────────────────────
+ * Fayl nomi yozuv id sidan olinadi (`fileNameFor`), ya'ni yangi fayl
+ * eskisining USTIGA yoziladi. Avval o'chirib keyin yozsak, orada xato
+ * chiqsa foydalanuvchi faylsiz qolardi.
+ */
+export async function updatePresentationContent(
+  id: string,
+  userId: string,
+  content: PresentationContent,
+): Promise<PresentationDetail> {
+  const existing = await prisma.presentation.findFirst({
+    // Egalik sharti — begona yozuvni tahrirlab bo'lmaydi.
+    where: { id, userId },
+    select: { id: true, status: true, template: true },
+  });
+
+  if (!existing) throw notFound();
+
+  /*
+    Faqat TAYYOR yozuvni tahrirlash mumkin.
+
+    · PENDING — fon ishi hali yozayapti; tahrir saqlansa, generatsiya
+      tugagach uni bosib ketardi (yo'qolgan ish).
+    · FAILED  — tahrirlanadigan mazmun yo'q.
+  */
+  if (existing.status !== "READY") {
+    throw apiErrors.conflict(
+      existing.status === "PENDING"
+        ? "errors.domain.generationInProgress"
+        : "errors.domain.presentationNotEditable",
+    );
+  }
+
+  const { buffer, slideCount } = await generatePptx(
+    content,
+    existing.template || DEFAULT_TEMPLATE,
+  );
+  const { filePath, fileSize } = await saveFile("pptx", id, buffer);
+
+  return prisma.presentation.update({
+    where: { id },
+    data: {
+      content,
+      // Sarlavha yozuvda alohida ustunda ham turadi (ro'yxatda ko'rinadi)
+      // — tahrirda u ham yangilanishi kerak, aks holda ro'yxat va
+      // hujjat bir-biriga mos kelmay qoladi.
+      title: content.title,
+      slideCount,
+      filePath,
+      fileSize,
+      /*
+        `aiDurationMs` va `aiAttempts` TEGILMAYDI: ular AI generatsiyasining
+        o'lchovi va `npm run ai:stats` ularni hisoblaydi. Tahrir AI
+        chaqirmagani uchun bu raqamlarga aloqasi yo'q.
+      */
+    },
+    select: DETAIL_FIELDS,
+  });
 }
 
 /** Foydalanuvchining prezentatsiyalari — eng yangisi birinchi. */

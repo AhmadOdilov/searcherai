@@ -74,10 +74,45 @@ async function translateDirectly(
   return interpolate(text, values);
 }
 
+/**
+ * Berilgan satr tarjima KALITImi yoki tayyor MATNmi.
+ *
+ * ── Nega bu farq muhim ────────────────────────────────────────────────────
+ * Kirish sxemalari (`lib/validations/common.ts`) xato o'rniga kalit
+ * qaytaradi: `"errors.validation.subjectTooShort"`. Kontent sxemalari
+ * (`presentationContentSchema`, `lessonPlanContentSchema`) esa TABIIY
+ * MATN qaytaradi — ular birinchi navbatda MODELGA yuboriladi va model
+ * kalitni tushunmaydi.
+ *
+ * Tahrirlash qo'shilgunicha kontent sxemalari foydalanuvchiga hech
+ * qachon yetib bormasdi. Endi `PATCH` aynan o'sha sxemadan o'tadi va
+ * uning xabarlari `fieldErrors` bo'lib qaytadi. Ularni kalit deb
+ * qidirsak, next-intl `MISSING_MESSAGE` xatosini tashlaydi va
+ * foydalanuvchi xato o'rniga xatoni ko'radi.
+ *
+ * Kalit shakli: nuqta bilan ajratilgan, bo'shliqsiz, harf bilan
+ * boshlanadigan bo'laklar — `errors.validation.subjectTooShort`.
+ * Tabiiy matnda bo'shliq bor, ya'ni ikkisi ishonchli ajraladi.
+ */
+function looksLikeKey(value: string): boolean {
+  return /^[A-Za-z][\w-]*(\.[A-Za-z][\w-]*)+$/.test(value);
+}
+
 export async function translateKey(
   key: string,
   values?: Record<string, string | number>,
 ): Promise<string> {
+  /*
+    Tayyor matn — o'zgarishsiz qaytadi.
+
+    DIQQAT: bunday matn faqat O'ZBEK tilida bo'ladi (kontent sxemalari
+    modelga o'zbekcha yozilgan). Rus tilidagi foydalanuvchi uchun bu
+    kamchilik, lekin xato o'rniga `MISSING_MESSAGE` ko'rsatishdan
+    yaxshiroq. Muharrir UI'si bunday xatolarning ko'pini oldindan
+    to'sadi (`maxLength`, radio tugmalar, massiv tuzilmasi).
+  */
+  if (!looksLikeKey(key)) return interpolate(key, values);
+
   try {
     const t = await getTranslations();
     return t(key, values);

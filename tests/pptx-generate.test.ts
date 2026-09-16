@@ -3,7 +3,11 @@ import { describe, it } from "node:test";
 import JSZip from "jszip";
 import { bulletFontSize, generatePptx } from "../lib/pptx/generate";
 import { FONT } from "../lib/pptx/theme";
-import type { PresentationContent, Slide } from "../lib/validations/presentation";
+import {
+  EDIT_MAX_SLIDES,
+  type PresentationContent,
+  type Slide,
+} from "../lib/validations/presentation";
 
 /**
  * .pptx generatsiya qatlami sinovlari.
@@ -182,9 +186,12 @@ describe("generatePptx — chegara holatlari", () => {
     assertValidPptx(result.buffer, "emoji va yangi qator");
   });
 
-  it("20 slayd berilsa MAX_SLIDES gacha kesadi, xato bermaydi", async () => {
-    // Sxema 10 slaydga cheklaydi, LEKIN bu qatlam sxemadan mustaqil
-    // ishlashi kerak — o'z himoyasi bo'lishi shart.
+  it("TAHRIRLANGAN 20 slayd to'liq chiqadi", async () => {
+    /*
+      Ilgari bu yerda chegara 10 edi (AI javobi uchun). Tahrirlash
+      qo'shilgach u noto'g'ri bo'lib qoldi: 14 slaydli ochiq dars
+      tayyorlagan o'qituvchining oxirgi to'rtta slaydi JIM yo'qolardi.
+    */
     const manySlides: Slide[] = Array.from({ length: 20 }, (_, index) =>
       slide({ heading: `Slayd ${index + 1}` }),
     );
@@ -192,7 +199,49 @@ describe("generatePptx — chegara holatlari", () => {
     const result = await generatePptx(content({ slides: manySlides }));
 
     assertValidPptx(result.buffer, "20 slayd");
-    assert.equal(result.slideCount, 10, "MAX_SLIDES (10) gacha kesilishi kerak");
+    assert.equal(result.slideCount, 20, "tahrirlangan slaydlar to'liq chiqishi kerak");
+  });
+
+  it(`${EDIT_MAX_SLIDES} dan ko'p slayd berilsa kesadi, xato bermaydi`, async () => {
+    // Bu qatlam sxemadan MUSTAQIL ishlashi va o'z himoyasiga ega
+    // bo'lishi kerak — juda katta fayl yasalmasin.
+    const tooMany: Slide[] = Array.from({ length: EDIT_MAX_SLIDES + 5 }, (_, index) =>
+      slide({ heading: `Slayd ${index + 1}` }),
+    );
+
+    const result = await generatePptx(content({ slides: tooMany }));
+
+    assertValidPptx(result.buffer, "chegaradan ko'p slayd");
+    assert.equal(result.slideCount, EDIT_MAX_SLIDES);
+  });
+
+  it("YASHIRILGAN slayd faylga tushmaydi", async () => {
+    const mixed: Slide[] = [
+      slide({ heading: "Ko'rinadi 1" }),
+      { ...slide({ heading: "Yashirilgan" }), hidden: true },
+      slide({ heading: "Ko'rinadi 2" }),
+    ];
+
+    const result = await generatePptx(content({ slides: mixed }));
+
+    assertValidPptx(result.buffer, "yashirilgan slayd");
+    assert.equal(result.slideCount, 2, "yashirilgan slayd faylga tushib qoldi");
+  });
+
+  it("HAMMA slayd yashirilgan bo'lsa ham yaroqli fayl chiqadi", async () => {
+    /*
+      Bo'sh .pptx ni ba'zi dasturlar buzuq fayl deb hisoblaydi.
+      Generator bunday holatda sarlavha slaydini o'zi qo'shadi.
+    */
+    const allHidden: Slide[] = [
+      { ...slide({ heading: "Bir" }), hidden: true },
+      { ...slide({ heading: "Ikki" }), hidden: true },
+    ];
+
+    const result = await generatePptx(content({ title: "Zaxira", slides: allHidden }));
+
+    assertValidPptx(result.buffer, "hammasi yashirilgan");
+    assert.equal(result.slideCount, 1, "zaxira sarlavha slaydi qo'shilishi kerak");
   });
 
   it("bitta slaydda 8 dan ko'p band berilsa kesadi", async () => {
