@@ -9,6 +9,7 @@ import {
   testEmail,
   waitForGeneration,
 } from "./helpers/client";
+import { text } from "./helpers/messages";
 
 /**
  * Prezentatsiyani TAHRIRLASH — uchidan-uchgacha.
@@ -240,6 +241,94 @@ describe("prezentatsiyani tahrirlash — asosiy oqim", () => {
     assert.ok(
       patched.data!.presentation.fileSize! > created.fileSize!,
       "fayl qayta yasalmagan — hajm o'zgarmadi",
+    );
+  });
+});
+
+describe("muharrir sahifasi", () => {
+  /*
+    API sinovlari oqimning yarmini tekshiradi. Bu blok qolgan yarmini:
+    muharrir SAHIFASI haqiqatan render bo'ladimi, egalik server tomonida
+    to'sadimi va tayyor bo'lmagan yozuv qayerga yuboriladimi.
+  */
+
+  it("egasiga ochiladi va slaydlar matni sahifada bo'ladi", async () => {
+    const client = await signedInClient("pr-sahifa-ega");
+    const created = await createReady(client, "Sahifa ochilsin");
+
+    const response = await client.fetchRaw(`/dashboard/presentations/${created.id}/edit`);
+    assert.equal(response.status, 200);
+
+    const html = await response.text();
+    // Birinchi slaydning sarlavhasi muharrirda ko'rinishi kerak.
+    const heading = created.content!.slides[0].heading;
+    assert.ok(
+      html.includes(heading) || html.includes(heading.replaceAll("'", "&#x27;")),
+      "slayd sarlavhasi muharrir sahifasida topilmadi",
+    );
+  });
+
+  it("BOSHQA foydalanuvchiga MAZMUN berilmaydi", async () => {
+    /*
+      ── Nega bu yerda HOLAT KODI tekshirilmaydi ────────────────────────
+      Dashboard sohasida `loading.tsx` bor, ya'ni Next javobni OQIM bilan
+      yuboradi: sarlavha va "Yuklanmoqda" darhol ketadi (HTTP 200), sahifa
+      mazmuni esa keyin qo'shiladi. `notFound()` shu bosqichda chaqirilsa,
+      holat kodi allaqachon yuborilgan bo'ladi va uni o'zgartirib bo'lmaydi.
+
+      Bu Phase 2 dan OLDIN ham shunday edi — barcha tafsilot sahifalarida.
+      API esa to'g'ri 404 qaytaradi (yuqoridagi sinovlarga qarang).
+
+      Xavfsizlik nuqtai nazaridan muhimi holat kodi emas, MAZMUN: begona
+      foydalanuvchi yozuvning birorta bo'lagini ham olmasligi kerak.
+      Aynan shu tekshiriladi.
+    */
+    const owner = await signedInClient("pr-sahifa-ega2");
+    const stranger = await signedInClient("pr-sahifa-begona");
+
+    const marker = "BEGONAGA-KORINMASIN-7741";
+    const created = await createReady(owner, marker);
+
+    const response = await stranger.fetchRaw(
+      `/dashboard/presentations/${created.id}/edit`,
+    );
+    const html = await response.text();
+
+    assert.ok(
+      !html.includes(marker) && !html.includes(created.content!.slides[0].heading),
+      "begona foydalanuvchiga yozuv mazmuni ko'rsatildi",
+    );
+    assert.ok(
+      html.includes(text("uz", "notFoundPage.title")) ||
+        html.includes(text("uz", "notFoundPage.title").replaceAll("'", "&#x27;")),
+      "«topilmadi» ekrani ko'rsatilmadi",
+    );
+  });
+
+  it("kirmagan foydalanuvchi /login ga yo'naltiriladi", async () => {
+    const owner = await signedInClient("pr-sahifa-kirmagan");
+    const created = await createReady(owner, "Kirish talab qilinadi");
+
+    const anonymous = new TestClient();
+    const visited = await anonymous.visit(`/dashboard/presentations/${created.id}/edit`);
+
+    assert.equal(visited.status, 307);
+    assert.ok(visited.location?.includes("/login"));
+  });
+
+  it("tafsilot sahifasida TAHRIRLASH havolasi bor", async () => {
+    // Muharrir mavjud bo'lib, unga yo'l ko'rinmasligi — eng oson
+    // sodir bo'ladigan nosozlik.
+    const client = await signedInClient("pr-sahifa-havola");
+    const created = await createReady(client, "Havola bo'lsin");
+
+    const response = await client.fetchRaw(`/dashboard/presentations/${created.id}`);
+    const html = await response.text();
+
+    assert.match(
+      html,
+      new RegExp(`href="/dashboard/presentations/${created.id}/edit"`),
+      "tafsilot sahifasida tahrirlash havolasi yo'q",
     );
   });
 });

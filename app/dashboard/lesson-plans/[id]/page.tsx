@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
-import { FileText, Presentation } from "lucide-react";
+import { FileText, Pencil, Presentation } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getLessonPlan } from "@/lib/lesson-plans/service";
 import { PlanActions } from "@/components/lesson-plans/plan-actions";
@@ -96,10 +96,25 @@ export default async function LessonPlanDetailPage({
       {/* Prezentatsiya faqat TAYYOR ishlanmadan yaratiladi — mazmuni
           bo'lmasa slaydlar tuzib bo'lmaydi. */}
       {plan.status === "READY" && content !== null && (
-        <div className="mt-6 print:hidden">
+        <div className="mt-6 flex flex-wrap gap-3 print:hidden">
+          {/*
+            Tahrirlash BIRINCHI turadi: o'qituvchi natijani o'zgartirmoqchi
+            bo'lganda ko'radigan birinchi yo'l shu bo'lishi kerak.
+            «Qaytadan tayyorlash» esa butun ishlanmani tashlab, yana AI
+            so'rovi sarflaydi (u pastdagi amallar qatorida).
+          */}
+          <LinkButton
+            href={`/dashboard/lesson-plans/${plan.id}/edit`}
+            size="lg"
+            icon={<Pencil aria-hidden className="size-5" />}
+          >
+            {t("editor.editPlan")}
+          </LinkButton>
+
           <LinkButton
             href={`/dashboard/presentations/new?lessonPlanId=${plan.id}`}
             size="lg"
+            variant="secondary"
             icon={<Presentation aria-hidden className="size-5" />}
           >
             {t("detail.createPresentation")}

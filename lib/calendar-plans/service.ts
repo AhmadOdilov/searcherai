@@ -16,6 +16,7 @@ import { deleteFile, saveFile } from "@/lib/storage/files";
 import {
   calendarPlanContentSchemaFor,
   totalRowCount,
+  type CalendarPlanContent,
   type CalendarPlanInput,
   type CalendarPlanListQuery,
 } from "@/lib/validations/calendar-plan";
@@ -266,6 +267,57 @@ async function runGeneration(id: string, input: CalendarPlanInput): Promise<void
 
     throw caught;
   }
+}
+
+/**
+ * O'qituvchi tahririni saqlaydi va .xlsx faylni QAYTA YASAYDI.
+ *
+ * Prezentatsiyadagi bilan bir xil mulohaza: AI UMUMAN chaqirilmaydi.
+ * Oqim: tekshirilgan JSON → .xlsx → saqlagich → baza.
+ *
+ * ── Soat va qatorlar SERVERDA qayta hisoblanadi ──────────────────────────
+ * Klient yuborgan qatorlar soni yoki soat yig'indisiga ishonilmaydi —
+ * ular so'rov tanasida umuman kelmaydi. Qatorlar soni mazmundan
+ * (`totalRowCount`), «Jami» qatoridagi soat esa Excel'ning O'Z SUM
+ * formulasidan chiqadi (`lib/xlsx/generate.ts`). Ya'ni o'qituvchi
+ * faylda raqamni tuzatsa ham, yig'indi mos qolaveradi.
+ */
+export async function updateCalendarPlanContent(
+  id: string,
+  userId: string,
+  content: CalendarPlanContent,
+): Promise<CalendarPlanDetail> {
+  const existing = await prisma.calendarPlan.findFirst({
+    where: { id, userId },
+    select: { id: true, status: true, language: true },
+  });
+
+  if (!existing) throw notFound();
+
+  if (existing.status !== "READY") {
+    throw apiErrors.conflict(
+      existing.status === "PENDING"
+        ? "errors.domain.generationInProgress"
+        : "errors.domain.calendarPlanNotEditable",
+    );
+  }
+
+  const { buffer, rowCount } = await generateXlsx(content, existing.language);
+  const { filePath, fileSize } = await saveFile("xlsx", id, buffer);
+
+  return prisma.calendarPlan.update({
+    where: { id },
+    data: {
+      content,
+      title: content.title,
+      // Generator qaytargan son 0 bo'lsa mazmundan hisoblaymiz —
+      // generatsiya yo'lidagi bilan bir xil qoida.
+      rowCount: rowCount > 0 ? rowCount : totalRowCount(content),
+      filePath,
+      fileSize,
+    },
+    select: DETAIL_FIELDS,
+  });
 }
 
 /** Foydalanuvchining rejalari — eng yangisi birinchi. */

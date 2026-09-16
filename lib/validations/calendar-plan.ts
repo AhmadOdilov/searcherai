@@ -216,6 +216,30 @@ export function calendarPlanContentSchemaFor(input: {
   });
 }
 
+/**
+ * `PATCH /api/calendar-plans/[id]` so'rovining tanasi.
+ *
+ * ── Nega `calendarPlanContentSchemaFor` ISHLATILMAYDI ────────────────────
+ * O'sha sxema hafta soni va umumiy soatni SO'RALGAN davrga solishtiradi
+ * ("9 hafta so'radingiz, 6 hafta keldi — qayta yoz"). U MODELNI
+ * intizomga soladi.
+ *
+ * O'qituvchiga esa bu chegara to'g'ri kelmaydi: chorak qisqarishi,
+ * bayram tushib qolishi yoki ikki mavzuni birlashtirishi mumkin. Uning
+ * tahririni "davrga to'g'ri kelmadi" deb rad etish — o'z rejasini
+ * tuzishga to'sqinlik qilish.
+ *
+ * Asosiy chegaralar (hafta raqami, soat 1-20, mavzu nomi uzunligi)
+ * baribir kuchda qoladi — ular yaroqsiz .xlsx yasalishining oldini oladi.
+ */
+export const calendarPlanEditSchema = z
+  .object({
+    content: calendarPlanContentSchema,
+  })
+  .strict();
+
+export type CalendarPlanEditInput = z.infer<typeof calendarPlanEditSchema>;
+
 /** Bazadagi `content` (Json) ustunini xavfsiz o'qiydi. */
 export function parseCalendarPlanContent(value: unknown): CalendarPlanContent | null {
   const parsed = calendarPlanContentSchema.safeParse(value);

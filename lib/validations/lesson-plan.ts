@@ -193,6 +193,28 @@ export function lessonPlanContentSchemaFor(durationMinutes: number) {
 }
 
 /**
+ * `PATCH /api/lesson-plans/[id]` so'rovining tanasi.
+ *
+ * ── Nega `lessonPlanContentSchemaFor` ISHLATILMAYDI ──────────────────────
+ * O'sha sxema bosqichlar davomiyligining yig'indisini dars vaqtiga
+ * solishtiradi va MODELNI intizomga soladi. O'qituvchiga esa bu chegara
+ * to'g'ri kelmaydi: u qo'ng'iroqqacha qolgan vaqtni boshqacha
+ * taqsimlashi yoki bosqichni qisqartirishi mumkin. Tahrirni "yig'indi
+ * mos kelmadi" deb rad etish — o'z darsini rejalashtirishga to'sqinlik.
+ *
+ * Asosiy chegaralar (bosqichlar soni, matn uzunligi) kuchda qoladi.
+ * Yig'indi esa tafsilot sahifasida KO'RSATILADI — o'qituvchi o'zi ko'rib
+ * qaror qiladi.
+ */
+export const lessonPlanEditSchema = z
+  .object({
+    content: lessonPlanContentSchema,
+  })
+  .strict();
+
+export type LessonPlanEditInput = z.infer<typeof lessonPlanEditSchema>;
+
+/**
  * Bazadagi `content` (Json) ustunini xavfsiz o'qiydi.
  *
  * Shakl mos kelmasa `null` qaytaradi — sahifa "natija buzilgan" holatini

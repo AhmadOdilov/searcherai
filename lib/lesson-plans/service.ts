@@ -13,6 +13,7 @@ import {
 import { findCurriculumTopics } from "@/lib/curriculum/service";
 import {
   lessonPlanContentSchemaFor,
+  type LessonPlanContent,
   type LessonPlanInput,
   type LessonPlanListQuery,
 } from "@/lib/validations/lesson-plan";
@@ -251,6 +252,45 @@ async function runGeneration(id: string, input: LessonPlanInput): Promise<void> 
 
     throw caught;
   }
+}
+
+/**
+ * O'qituvchi tahririni saqlaydi.
+ *
+ * ── Nega bu yerda FAYL qayta yasalmaydi ──────────────────────────────────
+ * Prezentatsiya va kalendar rejaning fayli saqlagichda turadi va tahrirda
+ * qayta yozilishi kerak. Dars ishlanmasining .docx fayli esa HAR
+ * SO'ROVDA yasaladi (`app/api/lesson-plans/[id]/export/route.ts`) —
+ * manba bazadagi `content` ustuni. Ya'ni mazmunni yangilash yetarli:
+ * keyingi yuklab olish allaqachon yangi hujjatni beradi.
+ *
+ * AI bu yerda ham chaqirilmaydi.
+ */
+export async function updateLessonPlanContent(
+  id: string,
+  userId: string,
+  content: LessonPlanContent,
+): Promise<LessonPlanDetail> {
+  const existing = await prisma.lessonPlan.findFirst({
+    where: { id, userId },
+    select: { id: true, status: true },
+  });
+
+  if (!existing) throw notFound();
+
+  if (existing.status !== "READY") {
+    throw apiErrors.conflict(
+      existing.status === "PENDING"
+        ? "errors.domain.generationInProgress"
+        : "errors.domain.lessonPlanNotEditable",
+    );
+  }
+
+  return prisma.lessonPlan.update({
+    where: { id },
+    data: { content },
+    select: DETAIL_FIELDS,
+  });
 }
 
 /** Foydalanuvchining dars ishlanmalari — eng yangisi birinchi. */

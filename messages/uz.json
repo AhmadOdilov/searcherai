@@ -310,6 +310,39 @@
       "NEW_TOPIC": "Yangi mavzu — birinchi marta tushuntiriladigan dars",
       "REINFORCEMENT": "Mustahkamlash — o'tilganini mashq qilish darsi",
       "ASSESSMENT": "Nazorat — bilimni tekshirish va baholash darsi"
+    },
+    "editor": {
+      "title": "Ishlanmani tahrirlash",
+      "editPlan": "Ishlanmani tahrirlash",
+      "editHint": "Maqsad, bosqichlar va vazifalarni o'zingizga moslaysiz — Word fayli yangi mazmun bilan yuklanadi.",
+      "backToPlan": "Ishlanmaga qaytish",
+      "objective": "Dars maqsadi",
+      "outcomes": "Kutilayotgan natijalar",
+      "addOutcome": "Natija qo'shish",
+      "outcomeNumber": "{number}-natija",
+      "deleteOutcome": "Natijani o'chirish",
+      "resources": "Kerakli resurslar",
+      "addResource": "Resurs qo'shish",
+      "resourceNumber": "{number}-resurs",
+      "deleteResource": "Resursni o'chirish",
+      "stages": "Dars bosqichlari",
+      "addStage": "Bosqich qo'shish",
+      "deleteStage": "Bosqichni o'chirish",
+      "confirmDeleteStage": "«{name}» bosqichi o'chirilsinmi?",
+      "confirmDeleteYes": "Ha, o'chirish",
+      "stageName": "Bosqich nomi",
+      "stageMinutes": "Daqiqa",
+      "stageDescription": "Bosqich tavsifi",
+      "teacherActivity": "O'qituvchi nima qiladi",
+      "studentActivity": "O'quvchilar nima qiladi",
+      "minutesTotal": "Jami {total} daqiqa · dars {expected} daqiqa",
+      "assessmentCriteria": "Baholash mezonlari",
+      "addCriterion": "Mezon qo'shish",
+      "criterionNumber": "{number}-mezon",
+      "deleteCriterion": "Mezonni o'chirish",
+      "moveUp": "Yuqoriga ko'chirish",
+      "moveDown": "Pastga ko'chirish",
+      "noAiHint": "Tahrirlash sun'iy intellektni qayta chaqirmaydi — saqlashingiz bilan Word fayli yangilanadi."
     }
   },
   "presentations": {
@@ -496,7 +529,33 @@
       "doNotClosePage": "Bu 60-90 soniya davom etishi mumkin — sahifani yopmang.",
       "openWith": "Bu fayl Microsoft Excel yoki Google Sheets'da ochiladi. Telefonda ochish uchun Excel ilovasini o'rnating."
     },
-    "pageHint": "Bu yerda siz tayyorlagan kalendar rejalar saqlanadi. Yangisini yaratish uchun tugmani bosing."
+    "pageHint": "Bu yerda siz tayyorlagan kalendar rejalar saqlanadi. Yangisini yaratish uchun tugmani bosing.",
+    "editor": {
+      "title": "Rejani tahrirlash",
+      "editPlan": "Rejani tahrirlash",
+      "editHint": "Mavzu nomini tuzatasiz, soatni o'zgartirasiz yoki qator qo'shasiz — yangi Excel fayli darhol tayyor.",
+      "backToPlan": "Rejaga qaytish",
+      "planTitle": "Reja nomi",
+      "weeksCount": "Haftalar",
+      "rowsCount": "Qatorlar",
+      "hoursTotal": "Jami soat",
+      "hoursExpected": "Kutilgan: {expected}",
+      "weekNumber": "Hafta",
+      "dateRange": "Sanalar",
+      "addWeek": "Hafta qo'shish",
+      "deleteWeek": "Haftani o'chirish",
+      "confirmDeleteWeek": "{number}-hafta o'chirilsinmi? Undagi mavzular ham o'chadi.",
+      "topicName": "Mavzu",
+      "hours": "Soat",
+      "note": "Izoh",
+      "addTopic": "Mavzu qo'shish",
+      "deleteTopic": "Mavzuni o'chirish",
+      "confirmDeleteTopic": "Bu mavzu o'chirilsinmi?",
+      "confirmDeleteYes": "Ha, o'chirish",
+      "moveUp": "Yuqoriga ko'chirish",
+      "moveDown": "Pastga ko'chirish",
+      "noAiHint": "Tahrirlash sun'iy intellektni qayta chaqirmaydi — saqlashingiz bilan Excel fayli yangilanadi."
+    }
   },
   "errors": {
     "unknown": "Nimadir noto'g'ri ketdi. Iltimos, qayta urinib ko'ring.",
@@ -546,7 +605,9 @@
       "tooManyAiRequests": "Juda tez-tez so'ramoqchisiz. Bir daqiqa kutib, qayta urinib ko'ring.",
       "tooManyRegistrations": "Bu qurilmadan juda ko'p hisob ochildi. Bir soatdan so'ng qayta urinib ko'ring.",
       "crossOriginRejected": "So'rov boshqa saytdan yuborilgan va rad etildi. Sahifani yangilab, qaytadan urinib ko'ring.",
-      "presentationNotEditable": "Bu prezentatsiyani tahrirlab bo'lmaydi. Avval uni qaytadan tayyorlang."
+      "presentationNotEditable": "Bu prezentatsiyani tahrirlab bo'lmaydi. Avval uni qaytadan tayyorlang.",
+      "calendarPlanNotEditable": "Bu rejani tahrirlab bo'lmaydi. Avval uni qaytadan tayyorlang.",
+      "lessonPlanNotEditable": "Bu ishlanmani tahrirlab bo'lmaydi. Avval uni qaytadan tayyorlang."
     },
     "validation": {
       "emailRequired": "Emailingizni yozing",

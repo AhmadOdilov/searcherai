@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
-import { Table2 } from "lucide-react";
+import { Pencil, Table2 } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getCalendarPlan } from "@/lib/calendar-plans/service";
 import { CalendarPlanActions } from "@/components/calendar-plans/plan-actions";
@@ -12,6 +12,7 @@ import { DetailHeader } from "@/components/ui/detail-header";
 import { DownloadPanel } from "@/components/ui/download-panel";
 import { PrintButton } from "@/components/ui/print-button";
 import { Card } from "@/components/ui/card";
+import { LinkButton } from "@/components/ui/button";
 import { HelpLink } from "@/components/ui/help-link";
 import { PROGRESS_KEYS, TYPICAL_SECONDS } from "@/lib/calendar-plans/labels";
 import { translateStoredError } from "@/lib/i18n/stored-error";
@@ -85,6 +86,24 @@ export default async function CalendarPlanDetailPage({
             },
           ]}
         />
+      )}
+
+      {/*
+        Tahrirlash — ASOSIY amal. «Qaytadan tayyorlash» dan yuqorida:
+        u butun rejani tashlab, yangi AI so'rovi sarflaydi, tahrir esa
+        mavjud ishni saqlaydi.
+      */}
+      {plan.status === "READY" && content !== null && (
+        <div className="mt-4 print:hidden">
+          <LinkButton
+            href={`/dashboard/calendar-plans/${plan.id}/edit`}
+            size="lg"
+            icon={<Pencil aria-hidden className="size-5" />}
+          >
+            {t("editor.editPlan")}
+          </LinkButton>
+          <p className="mt-2 text-base text-neutral-500">{t("editor.editHint")}</p>
+        </div>
       )}
 
       <div className="mt-4 print:hidden">

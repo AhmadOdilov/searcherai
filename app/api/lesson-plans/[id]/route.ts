@@ -1,7 +1,12 @@
-import { ok, withErrorHandling } from "@/lib/api/with-error-handling";
+import { ok, parseJsonBody, withErrorHandling } from "@/lib/api/with-error-handling";
 import { apiErrors } from "@/lib/api/errors";
 import { requireUser } from "@/lib/auth/session";
-import { deleteLessonPlan, getLessonPlan } from "@/lib/lesson-plans/service";
+import {
+  deleteLessonPlan,
+  getLessonPlan,
+  updateLessonPlanContent,
+} from "@/lib/lesson-plans/service";
+import { lessonPlanEditSchema } from "@/lib/validations/lesson-plan";
 
 /**
  * Bitta dars ishlanmasi bilan ishlash.
@@ -24,6 +29,22 @@ export const GET = withErrorHandling<RouteContext>(async (_request, context) => 
   }
 
   return ok({ lessonPlan: plan });
+});
+
+/**
+ * `PATCH /api/lesson-plans/[id]` — o'qituvchi tahririni saqlaydi.
+ *
+ * AI CHAQIRILMAYDI. Fayl ham qayta yasalmaydi: .docx har so'rovda
+ * bazadagi mazmundan yasaladi, ya'ni mazmunni yangilash yetarli.
+ */
+export const PATCH = withErrorHandling<RouteContext>(async (request, context) => {
+  const user = await requireUser();
+  const { id } = await context.params;
+
+  const body = await parseJsonBody(request, lessonPlanEditSchema);
+  const lessonPlan = await updateLessonPlanContent(id, user.id, body.content);
+
+  return ok({ lessonPlan });
 });
 
 /** `DELETE /api/lesson-plans/[id]` — o'chirish. Faqat egasi. */
