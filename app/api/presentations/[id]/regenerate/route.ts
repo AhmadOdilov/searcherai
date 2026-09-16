@@ -1,6 +1,6 @@
 import { ok, withErrorHandling } from "@/lib/api/with-error-handling";
 import { requireUser } from "@/lib/auth/session";
-import { consumeAiQuota } from "@/lib/ai/rate-limit";
+import { consumeAiQuota, releaseAiQuota } from "@/lib/ai/rate-limit";
 import {
   regeneratePresentation,
   runPresentationGeneration,
@@ -29,7 +29,21 @@ export const POST = withErrorHandling<RouteContext>(async (_request, context) =>
   */
   const reservation = await consumeAiQuota(user.id, "presentations:regenerate");
 
-  const { record, promptContext } = await regeneratePresentation(id, user.id);
+  /*
+    Yozuv band qilinmasa — bandlikni QAYTARAMIZ.
+
+    Bu yerga tushish oson: 409 (allaqachon ishlayapti) yoki 404
+    (yozuv yo'q). Ikkala holatda ham AI umuman chaqirilmaydi, lekin
+    bandlik undan OLDIN olingan. Qaytarilmasa, tugmani ikki marta
+    bosgan o'qituvchi hech narsa olmasdan kvotasini yo'qotardi — u
+    esa daqiqada atigi uchta.
+  */
+  const { record, promptContext } = await regeneratePresentation(id, user.id).catch(
+    async (caught: unknown) => {
+      await releaseAiQuota(reservation);
+      throw caught;
+    },
+  );
 
   runInBackground(`presentation:${record.id}:regenerate`, () =>
     runPresentationGeneration(record.id, promptContext, reservation),

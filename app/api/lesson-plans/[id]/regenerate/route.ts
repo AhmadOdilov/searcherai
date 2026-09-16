@@ -1,6 +1,6 @@
 import { ok, withErrorHandling } from "@/lib/api/with-error-handling";
 import { requireUser } from "@/lib/auth/session";
-import { consumeAiQuota } from "@/lib/ai/rate-limit";
+import { consumeAiQuota, releaseAiQuota } from "@/lib/ai/rate-limit";
 import {
   regenerateLessonPlan,
   runLessonPlanGeneration,
@@ -32,7 +32,21 @@ export const POST = withErrorHandling<RouteContext>(async (_request, context) =>
   */
   const reservation = await consumeAiQuota(user.id, "lesson-plans:regenerate");
 
-  const { record, input } = await regenerateLessonPlan(id, user.id);
+  /*
+    Yozuv band qilinmasa — bandlikni QAYTARAMIZ.
+
+    Bu yerga tushish oson: 409 (allaqachon ishlayapti) yoki 404
+    (yozuv yo'q). Ikkala holatda ham AI umuman chaqirilmaydi, lekin
+    bandlik undan OLDIN olingan. Qaytarilmasa, tugmani ikki marta
+    bosgan o'qituvchi hech narsa olmasdan kvotasini yo'qotardi — u
+    esa daqiqada atigi uchta.
+  */
+  const { record, input } = await regenerateLessonPlan(id, user.id).catch(
+    async (caught: unknown) => {
+      await releaseAiQuota(reservation);
+      throw caught;
+    },
+  );
 
   runInBackground(`lesson-plan:${record.id}:regenerate`, () =>
     runLessonPlanGeneration(record.id, input, reservation),

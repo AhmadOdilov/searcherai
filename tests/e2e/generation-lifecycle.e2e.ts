@@ -441,6 +441,69 @@ describe("bir vaqtda kelgan qayta generatsiya", () => {
   });
 });
 
+describe("rad etilgan qayta generatsiya", () => {
+  it("409 olgan so'rov kvotani YEMAYDI", async () => {
+    /*
+      409 olgan so'rov AI'ni umuman chaqirmaydi, lekin bandlik undan
+      OLDIN olinadi (route'da, `regenerate...` chaqiruvidan avval).
+      Qaytarilmasa, tugmani ikki marta bosgan o'qituvchi hech narsa
+      olmasdan kvotasini yo'qotardi — u esa daqiqada atigi uchta.
+    */
+    const { client, userId } = await signedInClient("rad-kvota");
+
+    const created = await client.request<{ lessonPlan: { id: string } }>(
+      "/api/lesson-plans",
+      {
+        method: "POST",
+        body: {
+          subject: "Matematika",
+          grade: "7-sinf",
+          topic: "Rad etilgan kvota",
+          durationMinutes: 45,
+        },
+      },
+    );
+    assert.equal(created.status, 202);
+
+    const planId = created.data!.lessonPlan.id;
+    await waitForGeneration(client, `/api/lesson-plans/${planId}`, "lessonPlan");
+
+    const { prisma } = await import("../../lib/db");
+    const before = await prisma.aiRequest.count({ where: { userId } });
+
+    const [first, second] = await Promise.all([
+      client.request(`/api/lesson-plans/${planId}/regenerate`, { method: "POST" }),
+      client.request(`/api/lesson-plans/${planId}/regenerate`, { method: "POST" }),
+    ]);
+    assert.deepEqual(
+      [first.status, second.status].sort((a, b) => a - b),
+      [202, 409],
+    );
+
+    await waitForGeneration(client, `/api/lesson-plans/${planId}`, "lessonPlan");
+
+    // Faqat O'TGAN so'rovning yozuvi qolishi kerak.
+    const after = await prisma.aiRequest.count({ where: { userId } });
+    assert.equal(after - before, 1, "rad etilgan so'rovning bandligi qaytarilmadi");
+  });
+
+  it("MAVJUD BO'LMAGAN yozuvda ham kvota qaytariladi", async () => {
+    // 404 ham AI chaqirmaydi — bandlik qolib ketmasligi kerak.
+    const { client, userId } = await signedInClient("rad-kvota-404");
+
+    const { prisma } = await import("../../lib/db");
+    const before = await prisma.aiRequest.count({ where: { userId } });
+
+    const result = await client.request("/api/lesson-plans/yoq-bunday-id/regenerate", {
+      method: "POST",
+    });
+    assert.equal(result.status, 404);
+
+    const after = await prisma.aiRequest.count({ where: { userId } });
+    assert.equal(after, before, "404 holatida bandlik qaytarilmadi");
+  });
+});
+
 describe("kvota qaytarilishi", () => {
   it("MUVAFFAQIYATLI generatsiya kvotani SARFLAYDI", async () => {
     const { client, userId } = await signedInClient("kvota-muvaffaqiyat");
