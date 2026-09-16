@@ -4,6 +4,7 @@ import {
   TestClient,
   cleanupTestUsers,
   clearAiPrompts,
+  readAiPrompts,
   testEmail,
   waitForGeneration,
 } from "./helpers/client";
@@ -382,6 +383,63 @@ async function quotaUsed(userId: string): Promise<number> {
     where: { userId, createdAt: { gte: new Date(Date.now() - 60_000) } },
   });
 }
+
+describe("bir vaqtda kelgan qayta generatsiya", () => {
+  it("IKKI parallel so'rovdan faqat BITTASI AI chaqiradi", async () => {
+    /*
+      Poyga holati: tekshiruv («PENDING bo'lsa 409») o'qish yo'lida
+      edi, holatni yozish esa alohida so'rovda. Ikki so'rov o'sha
+      READY holatni ko'rib ulgursa, IKKALASI ham o'tib ketardi:
+      ikkita fon ishi bir qatorga yozar va AI IKKI MARTA chaqirilardi.
+
+      Aynan shu — tekshiruv oldini olmoqchi bo'lgan holat, ya'ni
+      himoyaning o'zi teshik edi.
+
+      Tekshiruv AI CHAQIRUVLARI bo'yicha, javob kodlari bo'yicha emas:
+      zarar aynan ikkinchi chaqiruvda — u pul turadi.
+    */
+    const { client } = await signedInClient("poyga-regen");
+    const topic = `Poyga sinovi ${Date.now()}`;
+
+    const created = await client.request<{ lessonPlan: { id: string } }>(
+      "/api/lesson-plans",
+      {
+        method: "POST",
+        body: { subject: "Matematika", grade: "7-sinf", topic, durationMinutes: 45 },
+      },
+    );
+    assert.equal(created.status, 202);
+
+    const planId = created.data!.lessonPlan.id;
+    await waitForGeneration(client, `/api/lesson-plans/${planId}`, "lessonPlan");
+
+    // Birinchi generatsiyaning promptini hisobdan chiqaramiz.
+    await clearAiPrompts();
+
+    // AYNAN bir vaqtda — kutmasdan.
+    const [first, second] = await Promise.all([
+      client.request(`/api/lesson-plans/${planId}/regenerate`, { method: "POST" }),
+      client.request(`/api/lesson-plans/${planId}/regenerate`, { method: "POST" }),
+    ]);
+
+    const statuses = [first.status, second.status].sort((a, b) => a - b);
+    assert.deepEqual(
+      statuses,
+      [202, 409],
+      `bittasi o'tishi, ikkinchisi 409 olishi kerak edi: ${statuses.join(", ")}`,
+    );
+
+    await waitForGeneration(client, `/api/lesson-plans/${planId}`, "lessonPlan");
+
+    const prompts = await readAiPrompts();
+    const forThisTopic = prompts.filter((prompt) => prompt.user.includes(topic));
+    assert.equal(
+      forThisTopic.length,
+      1,
+      `AI ${forThisTopic.length} marta chaqirildi — bir marta bo'lishi kerak`,
+    );
+  });
+});
 
 describe("kvota qaytarilishi", () => {
   it("MUVAFFAQIYATLI generatsiya kvotani SARFLAYDI", async () => {

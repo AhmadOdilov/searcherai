@@ -172,11 +172,32 @@ export async function regenerateLessonPlan(
     throw apiErrors.conflict("errors.domain.generationInProgress");
   }
 
-  const reset = await prisma.lessonPlan.update({
-    where: { id },
+  /*
+    Holatni ATOMAR band qilamiz.
+
+    Yuqoridagi tekshiruv foydalanuvchiga tez va tushunarli javob beradi,
+    lekin u O'ZI yetarli emas: o'qish bilan yozish orasida boshqa so'rov
+    ham o'sha READY holatni ko'rib ulgurardi. Ikkalasi ham o'tib ketar,
+    ikkita fon ishi bir qatorga yozar va AI IKKI MARTA chaqirilardi —
+    aynan bu tekshiruv oldini olmoqchi bo'lgan holat.
+
+    `updateMany` shartni yozish paytida QAYTA tekshiradi: Postgres
+    qatorni qulflaydi va ikkinchi so'rov allaqachon PENDING bo'lgan
+    holatni ko'rib, hech qanday qatorni o'zgartirmaydi.
+  */
+  const claimed = await prisma.lessonPlan.updateMany({
+    where: { id, userId, status: { not: "PENDING" } },
     // Eski xato xabarini tozalaymiz — aks holda muvaffaqiyatli natija
     // yonida eski xato ko'rinib turadi.
     data: { status: "PENDING", errorMessage: null },
+  });
+
+  if (claimed.count === 0) {
+    throw apiErrors.conflict("errors.domain.generationInProgress");
+  }
+
+  const reset = await prisma.lessonPlan.findFirstOrThrow({
+    where: { id, userId },
     select: DETAIL_FIELDS,
   });
 

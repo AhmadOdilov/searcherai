@@ -275,13 +275,21 @@ export async function regeneratePresentation(
     }
   }
 
-  // Eski faylni o'chiramiz — yangisi uning o'rniga yoziladi.
-  if (existing.filePath !== null) {
-    await deleteFile("pptx", existing.filePath);
-  }
+  /*
+    Holatni ATOMAR band qilamiz.
 
-  const reset = await prisma.presentation.update({
-    where: { id },
+    Yuqoridagi tekshiruv foydalanuvchiga tez va tushunarli javob beradi,
+    lekin u O'ZI yetarli emas: o'qish bilan yozish orasida boshqa so'rov
+    ham o'sha READY holatni ko'rib ulgurardi. Ikkalasi ham o'tib ketar,
+    ikkita fon ishi bir qatorga yozar va AI IKKI MARTA chaqirilardi —
+    aynan bu tekshiruv oldini olmoqchi bo'lgan holat.
+
+    `updateMany` shartni yozish paytida QAYTA tekshiradi: Postgres
+    qatorni qulflaydi va ikkinchi so'rov allaqachon PENDING bo'lgan
+    holatni ko'rib, hech qanday qatorni o'zgartirmaydi.
+  */
+  const claimed = await prisma.presentation.updateMany({
+    where: { id, userId, status: { not: "PENDING" } },
     data: {
       status: "PENDING",
       errorMessage: null,
@@ -291,6 +299,23 @@ export async function regeneratePresentation(
       fileSize: null,
       slideCount: null,
     },
+  });
+
+  if (claimed.count === 0) {
+    throw apiErrors.conflict("errors.domain.generationInProgress");
+  }
+
+  /*
+    Eski faylni band qilingandan KEYIN o'chiramiz — yangisi uning
+    o'rniga yoziladi. Tartib muhim: faqat poygada YUTGAN so'rov
+    faylga tegadi.
+  */
+  if (existing.filePath !== null) {
+    await deleteFile("pptx", existing.filePath);
+  }
+
+  const reset = await prisma.presentation.findFirstOrThrow({
+    where: { id, userId },
     select: DETAIL_FIELDS,
   });
 
