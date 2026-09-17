@@ -43,7 +43,13 @@ export const POST = withErrorHandling(async (request) => {
     outputTokens: result.usage.outputTokens,
   });
 
-  return ok({ answer: result.answer });
+  return ok({
+    answer: result.answer,
+    understanding: result.understanding,
+    curriculumMatches: result.curriculumMatches,
+    grounding: result.grounding,
+    suggestedActions: result.suggestedActions,
+  });
 });
 
 /**

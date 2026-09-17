@@ -159,10 +159,8 @@ export function normalizeQuery(query: string): NormalizedQuery {
   // 2. Sinf ifodalarini birlashtirish (kirillcha "8-синф" ham "8-sinf" ga aylanadi)
   step1 = normalizeGrades(step1);
 
-  // 3. Kirill bo'lsa, lotinga o'tkazish
-  if (isCyrillic) {
-    step1 = cyrillicToLatin(step1);
-  }
+  // 3. Kirill harflarini (to'liq yoki aralash) lotinga o'tkazish
+  step1 = cyrillicToLatin(step1);
 
   // 4. Tokenlarga ajratish va typo tekshiruvi
   const words = step1.split(/\s+/);

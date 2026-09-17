@@ -13,7 +13,15 @@ describe("search lru cache", () => {
     },
     durationMs: 120,
     model: "test-model",
-    usage: { inputTokens: 50, outputTokens: 100, totalTokens: 150 },
+    usage: { inputTokens: 50, outputTokens: 100 },
+    understanding: understandQuery("5-sinf matematika kasrlar"),
+    curriculumMatches: [],
+    grounding: {
+      isGrounded: true,
+      groundingScore: 0.9,
+      sourceCitations: [],
+    },
+    suggestedActions: [],
   };
 
   it("deterministik kalit yaratadi va ma'lumotni keshlaydi", () => {

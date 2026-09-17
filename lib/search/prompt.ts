@@ -1,78 +1,73 @@
 import type { LanguageCode } from "@/lib/validations/common";
 import type { SearchInput } from "@/lib/validations/search";
+import type { QueryUnderstanding } from "./understanding";
+import type { RankedCurriculumMatch } from "./curriculum-matcher";
 
 /**
  * AI qidiruv promptlari.
  *
- * ── Nega har bir til uchun to'liq matn ────────────────────────────────────
- * "Javobni rus tilida ber" deb o'zbekcha promptga qo'shish yetarli emas:
- * model ko'rsatmani qisman bajaradi — sarlavhalarni tarjima qilib,
- * matnni prompt tilida qoldiradi. Bu qoida loyihaning qolgan uch
- * modulida ham amal qiladi.
+ * O'quv dasturi, sinf/fan konteksti, auditoriya (o'qituvchi/o'quvchi) va intentga moslangan.
  */
 
 const SYSTEM: Record<LanguageCode, string> = {
-  UZ: `Sen O'zbekiston maktab o'qituvchilariga yordam beradigan metodist yordamchisisan.
+  UZ: `Sen O'zbekiston maktab ta'lim tizimi va Davlat ta'lim standartlari (DTS) bo'yicha ekspert-metodist yordamchisisan.
 
-Sening vazifang — o'qituvchining savoliga DARSGA TAYYORLANISH uchun javob berish.
+Sening vazifang — foydalanuvchining (o'qituvchi yoki o'quvchi) savoliga DARS VA O'QITISHGA TAYYORLANISH uchun chuqur, aniq va ilmiy asoslangan javob berish.
 
 Qoidalar:
-· Javob aniq va amaliy bo'lsin. Umumiy gaplar ("bu muhim mavzu") kerak emas.
-· Sinf darajasiga mosla: 5-sinf uchun sodda tilda, 11-sinf uchun chuqurroq.
-· Asosiy nuqtalar doskaga yozsa bo'ladigan darajada qisqa bo'lsin.
-· Sinfda qo'llash g'oyalari HAQIQIY sinf sharoitiga mos bo'lsin: maxsus
-  jihoz, internet yoki qimmat material talab qilmasin.
-· Aniq bilmagan narsangni o'ylab topma. Ishonching komil bo'lmasa yoki
-  manbalar farq qilsa — buni "caution" maydonida ayt.
+· Javob aniq, to'g'ri va amaliy bo'lsin. Quruq umumiy gaplar ("bu juda muhim") kerak emas.
+· Sinf darajasiga qat'iy mosla: boshlang'ich sinf uchun sodda tushunarli, yuqori sinflar uchun chuqur ilmiy asoslangan.
+· Asosiy nuqtalar doskaga yozsa yoki daftarga qayd etsa bo'ladigan darajada qisqa, mustahkam bo'lsin.
+· Sinfda qo'llash g'oyalari HAQIQIY sinf sharoitiga mos, amaliy va interaktiv bo'lsin: ortiqcha xarajat yoki murakkab jihoz talab qilmasin.
+· Berilgan RASMIY O'QUV DASTURI ma'lumotlariga qat'iy tayangan holda javob ber. Dasturdagi atamalar va bo'limlarni hisobga ol.
+· Aniq bilmagan narsangni o'ylab topma. Ishonching komil bo'lmasa yoki dasturda farq bo'lsa — buni "caution" maydonida ayt.
 · Faqat JSON qaytar, boshqa hech narsa yozma.`,
 
-  RU: `Ты методист-помощник для школьных учителей Узбекистана.
+  RU: `Ты эксперт-методист по школьной системе образования Узбекистана и государственным образовательным стандартам.
 
-Твоя задача — ответить на вопрос учителя так, чтобы он мог ПОДГОТОВИТЬСЯ К УРОКУ.
+Твоя задача — ответить на вопрос пользователя (учителя или ученика) для ПОДГОТОВКИ К УРОКУ и качественного обучения.
 
 Правила:
-· Ответ должен быть конкретным и практичным. Общие фразы («это важная тема») не нужны.
-· Подстраивайся под класс: для 5 класса — простым языком, для 11 — глубже.
-· Ключевые пункты должны быть настолько краткими, чтобы их можно было записать на доске.
-· Идеи для урока должны подходить реальному классу: без специального
-  оборудования, интернета и дорогих материалов.
-· Не выдумывай то, чего не знаешь точно. Если не уверен или источники
-  расходятся — скажи об этом в поле "caution".
+· Ответ должен быть конкретным, научно выверенным и практичным. Без лишней "воды".
+· Строго подстраивайся под класс: для начальных классов — простым и наглядным языком, для старших — глубоко и научно.
+· Ключевые пункты должны быть настолько краткими и ёмкими, чтобы их можно было записать на доске или в тетрадь.
+· Идеи для урока должны подходить реальному классу: без специального оборудования, интернета и лишних затрат.
+· Строго опирайся на предоставленные данные ОФИЦИАЛЬНОЙ УЧЕБНОЙ ПРОГРАММЫ Узбекистана.
+· Не выдумывай то, чего не знаешь точно. Если не уверен или источники расходятся — укажи в поле "caution".
 · Верни только JSON, ничего больше.`,
 
-  EN: `You are a methodology assistant for school teachers in Uzbekistan.
+  EN: `You are an expert methodology assistant for school teachers in Uzbekistan, specialized in the national curriculum standards.
 
-Your task is to answer the teacher's question so they can PREPARE FOR A LESSON.
+Your task is to answer the teacher's question to PREPARE FOR A LESSON and facilitate effective teaching and learning.
 
 Rules:
-· Be concrete and practical. Skip generic statements ("this is an important topic").
-· Match the grade level: simple language for grade 5, deeper for grade 11.
-· Key points must be short enough to write on a blackboard.
-· Classroom ideas must fit a real classroom: no special equipment, no
-  internet, no expensive materials.
-· Do not invent what you do not know. If you are unsure or sources differ,
-  say so in the "caution" field.
+· Be concrete, accurate, and practical. Skip generic fluff.
+· Match the grade level strictly: simple and intuitive for lower grades, rigorous and deep for upper grades.
+· Key points must be concise and memorable, suitable for blackboard notes.
+· Classroom ideas must fit real classroom environments: feasible without expensive equipment or reliance on internet.
+· Strictly ground your response in the provided OFFICIAL CURRICULUM data from Uzbekistan.
+· Do not hallucinate. If unsure or if topic is outside standard syllabus, specify in the "caution" field.
 · Return JSON only, nothing else.`,
 };
 
 const SHAPE: Record<LanguageCode, string> = {
   UZ: `Javob shakli (JSON):
 {
-  "answer": "2-5 jumlalik to'g'ridan-to'g'ri javob",
+  "answer": "2-5 jumlalik to'g'ridan-to'g'ri, ilmiy asoslangan javob",
   "keyPoints": ["asosiy nuqta", "..."],            // 3-7 ta, qisqa
   "classroomIdeas": ["sinfda qanday ishlatish", "..."], // 2-5 ta, amaliy
   "caution": "ehtiyot bo'lish kerak bo'lgan joy"   // ixtiyoriy, kerak bo'lmasa tashlab ket
 }`,
   RU: `Формат ответа (JSON):
 {
-  "answer": "прямой ответ на 2-5 предложений",
+  "answer": "прямой, научно выверенный ответ на 2-5 предложений",
   "keyPoints": ["ключевой пункт", "..."],               // 3-7 штук, кратко
   "classroomIdeas": ["как применить на уроке", "..."],  // 2-5 штук, практично
   "caution": "на что обратить внимание"                 // необязательно, можно не указывать
 }`,
   EN: `Response shape (JSON):
 {
-  "answer": "a direct answer, 2-5 sentences",
+  "answer": "a direct, grounded answer in 2-5 sentences",
   "keyPoints": ["key point", "..."],                 // 3-7 items, short
   "classroomIdeas": ["how to use it in class", "..."], // 2-5 items, practical
   "caution": "what to watch out for"                 // optional, omit if not needed
@@ -81,24 +76,78 @@ const SHAPE: Record<LanguageCode, string> = {
 
 const CONTEXT_LABELS: Record<
   LanguageCode,
-  { subject: string; grade: string; question: string }
+  {
+    subject: string;
+    grade: string;
+    question: string;
+    audience: string;
+    intent: string;
+    curriculumHeader: string;
+  }
 > = {
-  UZ: { subject: "Fan", grade: "Sinf", question: "O'qituvchining savoli" },
-  RU: { subject: "Предмет", grade: "Класс", question: "Вопрос учителя" },
-  EN: { subject: "Subject", grade: "Grade", question: "Teacher's question" },
+  UZ: {
+    subject: "Fan",
+    grade: "Sinf",
+    question: "Foydalanuvchi savoli",
+    audience: "Auditoriya",
+    intent: "Maqsad (Intent)",
+    curriculumHeader: "RASMIY O'QUV DASTURIDAN MA'LUMOTLAR:",
+  },
+  RU: {
+    subject: "Предмет",
+    grade: "Класс",
+    question: "Вопрос пользователя",
+    audience: "Аудитория",
+    intent: "Цель (Intent)",
+    curriculumHeader: "ДАННЫЕ ИЗ ОФИЦИАЛЬНОЙ УЧЕБНОЙ ПРОГРАММЫ:",
+  },
+  EN: {
+    subject: "Subject",
+    grade: "Grade",
+    question: "User's question",
+    audience: "Audience",
+    intent: "Intent",
+    curriculumHeader: "DATA FROM OFFICIAL CURRICULUM:",
+  },
 };
 
 export function buildSearchSystemPrompt(language: LanguageCode): string {
   return SYSTEM[language];
 }
 
-export function buildSearchUserPrompt(input: SearchInput): string {
+export function buildSearchUserPrompt(
+  input: SearchInput,
+  understanding?: QueryUnderstanding,
+  curriculumTopics?: RankedCurriculumMatch[],
+): string {
   const labels = CONTEXT_LABELS[input.language];
   const lines: string[] = [];
 
-  // Kontekst savoldan OLDIN: model avval kimga javob berayotganini bilsin.
-  if (input.subject !== undefined) lines.push(`${labels.subject}: ${input.subject}`);
-  if (input.grade !== undefined) lines.push(`${labels.grade}: ${input.grade}`);
+  const effectiveSubject = input.subject ?? understanding?.detectedSubject;
+  const effectiveGrade = input.grade ?? understanding?.detectedGrade;
+
+  if (effectiveSubject !== undefined) lines.push(`${labels.subject}: ${effectiveSubject}`);
+  if (effectiveGrade !== undefined) lines.push(`${labels.grade}: ${effectiveGrade}`);
+  if (understanding) {
+    lines.push(`${labels.audience}: ${understanding.audience === "student" ? "O'quvchi / Student" : "O'qituvchi / Teacher"}`);
+    lines.push(`${labels.intent}: ${understanding.detectedIntent}`);
+  }
+
+  // Rasmiy o'quv dasturi kontekstini kiritish (Grounding Context)
+  if (curriculumTopics && curriculumTopics.length > 0) {
+    lines.push("", labels.curriculumHeader);
+    for (const topic of curriculumTopics.slice(0, 2)) {
+      lines.push(`- Bo'lim: ${topic.topicName}`);
+      if (topic.expectedHours) lines.push(`  Ajratilgan soat: ${topic.expectedHours}`);
+      if (topic.description) {
+        lines.push(`  Mavzular mazmuni: ${topic.description.slice(0, 300)}`);
+      }
+      if (topic.expectedOutcomes.length > 0) {
+        lines.push(`  Kutilayotgan natijalar: ${topic.expectedOutcomes.slice(0, 2).join("; ")}`);
+      }
+    }
+    lines.push("");
+  }
 
   lines.push(`${labels.question}: ${input.question}`);
   lines.push("", SHAPE[input.language]);

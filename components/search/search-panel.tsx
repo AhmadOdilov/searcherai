@@ -2,37 +2,36 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { AlertTriangle, Lightbulb, ListChecks, Search, Sparkles } from "lucide-react";
+import {
+  AlertTriangle,
+  BookOpen,
+  CheckCircle2,
+  FileSpreadsheet,
+  FileText,
+  Lightbulb,
+  ListChecks,
+  Presentation,
+  Search,
+  Sparkles,
+} from "lucide-react";
 import { ApiClientError, apiRequest } from "@/lib/api-client";
 import { GENERATION_LANGUAGES } from "@/lib/ui/options";
 import { Card, FormSection, ToneCard } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button, LinkButton } from "@/components/ui/button";
 import { FormError, Input, Select, Textarea } from "@/components/ui/field";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { SearchAnswer } from "@/lib/validations/search";
-
-/**
- * AI qidiruv — savol berish va javobni ko'rsatish.
- *
- * ── Nega bitta klient komponenti ──────────────────────────────────────────
- * Forma va javob BIR EKRANDA turadi: o'qituvchi savolni o'zgartirib,
- * darhol yangi javob oladi. Ular alohida sahifa bo'lsa, har savolda
- * orqaga-oldinga yurish kerak bo'lardi.
- *
- * ── Kutish rejimi ─────────────────────────────────────────────────────────
- * Bu modul boshqalaridan tez (5-10 soniya), shuning uchun bu yerda
- * `GenerationProgress` (bosqichli matn, progress chizig'i) ishlatilmaydi —
- * u 60-90 soniyalik kutish uchun yasalgan. Bu yerda tugmaning o'zidagi
- * aylanuvchi belgi va bitta tinchlantiruvchi jumla yetarli.
- *
- * ── Uslub ─────────────────────────────────────────────────────────────────
- * Bu faylda birorta ham yangi rang yoki o'lcham yozilmagan: hamma narsa
- * `Card`, `ToneCard`, `Button`, `Input`, `Textarea`, `Select`,
- * `EmptyState` va dizayn tokenlaridan keladi.
- */
+import type { QueryUnderstanding } from "@/lib/search/understanding";
+import type { RankedCurriculumMatch } from "@/lib/search/curriculum-matcher";
+import type { GroundingValidationResult } from "@/lib/search/validator";
+import type { OrchestrationAction } from "@/lib/search/orchestration";
 
 interface SearchResponse {
   answer: SearchAnswer;
+  understanding?: QueryUnderstanding;
+  curriculumMatches?: RankedCurriculumMatch[];
+  grounding?: GroundingValidationResult;
+  suggestedActions?: OrchestrationAction[];
 }
 
 export function SearchPanel() {
@@ -42,7 +41,7 @@ export function SearchPanel() {
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
-  const [answer, setAnswer] = useState<SearchAnswer | null>(null);
+  const [result, setResult] = useState<SearchResponse | null>(null);
   /** Javob qaysi savolga berilganini ko'rsatish uchun. */
   const [askedQuestion, setAskedQuestion] = useState<string>("");
 
@@ -55,8 +54,6 @@ export function SearchPanel() {
     const formData = new FormData(event.currentTarget);
     const question = String(formData.get("question") ?? "");
 
-    // Bo'sh ixtiyoriy maydonlar yuborilmaydi: sxemada ular `optional`,
-    // bo'sh satr esa "juda qisqa" xatosiga tushardi.
     const body: Record<string, unknown> = {
       question,
       language: formData.get("language"),
@@ -67,11 +64,11 @@ export function SearchPanel() {
     if (grade !== "") body.grade = grade;
 
     try {
-      const result = await apiRequest<SearchResponse>("/api/search", {
+      const res = await apiRequest<SearchResponse>("/api/search", {
         method: "POST",
         body,
       });
-      setAnswer(result.answer);
+      setResult(res);
       setAskedQuestion(question);
     } catch (error) {
       if (error instanceof ApiClientError) {
@@ -157,7 +154,7 @@ export function SearchPanel() {
         </form>
       </Card>
 
-      {answer === null ? (
+      {result === null ? (
         !loading && (
           <EmptyState
             icon={<Sparkles aria-hidden className="size-9" />}
@@ -178,7 +175,7 @@ export function SearchPanel() {
           />
         )
       ) : (
-        <AnswerView answer={answer} question={askedQuestion} />
+        <AnswerView result={result} question={askedQuestion} />
       )}
     </>
   );
@@ -187,23 +184,50 @@ export function SearchPanel() {
 /** Bo'sh ekrandagi namuna savollar — nimadan boshlashni ko'rsatadi. */
 const EXAMPLE_KEYS = ["first", "second", "third"] as const;
 
-function AnswerView({ answer, question }: { answer: SearchAnswer; question: string }) {
+function AnswerView({
+  result,
+  question,
+}: {
+  result: SearchResponse;
+  question: string;
+}) {
   const t = useTranslations("search");
+  const { answer, curriculumMatches, suggestedActions, understanding } = result;
 
   return (
-    <section className="mt-8">
-      <h2 className="text-2xl font-semibold text-neutral-900">{t("answerTitle")}</h2>
-      <p className="mt-2 text-base leading-relaxed text-neutral-600">
-        {t("answerFor", { question })}
-      </p>
+    <section className="mt-8 space-y-6">
+      <div>
+        <h2 className="text-2xl font-semibold text-neutral-900">{t("answerTitle")}</h2>
+        <p className="mt-2 text-base leading-relaxed text-neutral-600">
+          {t("answerFor", { question })}
+        </p>
+
+        {understanding && (
+          <div className="mt-3 flex flex-wrap gap-2 text-sm text-neutral-600">
+            {understanding.detectedSubject && (
+              <span className="rounded-full bg-neutral-100 px-3 py-1 font-medium text-neutral-700">
+                Fan: {understanding.detectedSubject}
+              </span>
+            )}
+            {understanding.detectedGrade && (
+              <span className="rounded-full bg-neutral-100 px-3 py-1 font-medium text-neutral-700">
+                Sinf: {understanding.detectedGrade}
+              </span>
+            )}
+            <span className="rounded-full bg-neutral-100 px-3 py-1 text-neutral-600">
+              Rejim: {understanding.audience === "student" ? "O'quvchi" : "O'qituvchi"}
+            </span>
+          </div>
+        )}
+      </div>
 
       {/* ── Asosiy javob ────────────────────────────────────────────────── */}
-      <ToneCard tone="primary" className="mt-4">
+      <ToneCard tone="primary">
         <p className="text-lg leading-relaxed text-primary-ink">{answer.answer}</p>
       </ToneCard>
 
       {/* ── Asosiy nuqtalar ─────────────────────────────────────────────── */}
-      <Card className="mt-4">
+      <Card>
         <div className="flex items-center gap-3">
           <span
             aria-hidden
@@ -228,7 +252,7 @@ function AnswerView({ answer, question }: { answer: SearchAnswer; question: stri
       </Card>
 
       {/* ── Sinfda qanday ishlatish ─────────────────────────────────────── */}
-      <Card className="mt-4">
+      <Card>
         <div className="flex items-center gap-3">
           <span
             aria-hidden
@@ -258,9 +282,69 @@ function AnswerView({ answer, question }: { answer: SearchAnswer; question: stri
         </ol>
       </Card>
 
+      {/* ── Rasmiy o'quv dasturi manbalari (Citations & Grounding) ───────── */}
+      {curriculumMatches && curriculumMatches.length > 0 && (
+        <Card>
+          <div className="flex items-center gap-3">
+            <span
+              aria-hidden
+              className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary"
+            >
+              <BookOpen className="size-6" />
+            </span>
+            <div>
+              <h3 className="text-xl font-semibold text-neutral-900">
+                Rasmiy o'quv dasturi (DTS)
+              </h3>
+              <p className="text-sm text-neutral-500">
+                O'zbekiston Respublikasi maktab dasturi bo'limlari bilan moslashtirilgan
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-4 space-y-3">
+            {curriculumMatches.map((topic, index) => (
+              <div
+                key={index}
+                className="rounded-lg border border-neutral-200 bg-neutral-50 p-3.5"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-neutral-900">
+                    {topic.topicName}
+                  </span>
+                  {topic.expectedHours && (
+                    <span className="text-xs font-medium text-neutral-500">
+                      {topic.expectedHours} soat ajratilgan
+                    </span>
+                  )}
+                </div>
+                {topic.expectedOutcomes.length > 0 && (
+                  <div className="mt-2 text-sm text-neutral-600">
+                    <span className="font-medium text-neutral-700">Kutilayotgan natija:</span>{" "}
+                    {topic.expectedOutcomes[0]}
+                  </div>
+                )}
+                {topic.source && (
+                  <div className="mt-2 text-xs text-primary">
+                    <a
+                      href={topic.source}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 hover:underline"
+                    >
+                      <CheckCircle2 className="size-3.5" /> Rasmiy o'quv dasturi havolasi
+                    </a>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
       {/* ── Ehtiyot bo'ling ─────────────────────────────────────────────── */}
       {answer.caution !== undefined && (
-        <ToneCard tone="accent" className="mt-4">
+        <ToneCard tone="accent">
           <div className="flex gap-3">
             <AlertTriangle aria-hidden className="mt-0.5 size-6 shrink-0 text-accent" />
             <div>
@@ -271,6 +355,60 @@ function AnswerView({ answer, question }: { answer: SearchAnswer; question: stri
             </div>
           </div>
         </ToneCard>
+      )}
+
+      {/* ── Tezkor harakatlar va Handoff (Word, PPT, Excel) ──────────────── */}
+      {suggestedActions && suggestedActions.length > 0 && (
+        <Card>
+          <h3 className="text-xl font-semibold text-neutral-900">
+            Tavsiya etilgan amallar
+          </h3>
+          <p className="mt-1 text-sm text-neutral-600">
+            Ushbu mavzu bo'yicha to'g'ridan-to'g'ri dars materiallarini tayyorlang:
+          </p>
+
+          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {suggestedActions.map((action, idx) => {
+              const icon =
+                action.type === "create_lesson_plan" ? (
+                  <FileText className="size-5" />
+                ) : action.type === "create_presentation" ? (
+                  <Presentation className="size-5" />
+                ) : (
+                  <FileSpreadsheet className="size-5" />
+                );
+
+              return (
+                <div
+                  key={idx}
+                  className="flex flex-col justify-between rounded-lg border border-neutral-200 bg-surface p-4 shadow-sm"
+                >
+                  <div>
+                    <div className="flex items-center gap-2 text-primary font-medium">
+                      {icon}
+                      <span className="text-base font-semibold text-neutral-900">
+                        {action.title}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-xs text-neutral-600 leading-normal">
+                      {action.description}
+                    </p>
+                  </div>
+                  <div className="mt-4">
+                    <LinkButton
+                      href={action.url}
+                      variant="secondary"
+                      size="sm"
+                      fullWidth
+                    >
+                      Tayyorlashga o'tish
+                    </LinkButton>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
       )}
     </section>
   );

@@ -45,7 +45,7 @@ const SUBJECT_PATTERNS: Array<{ subject: string; patterns: RegExp[] }> = [
   {
     subject: "Matematika",
     patterns: [
-      /(?:^|[^\p{L}\p{N}])(?:matematik[a-z]*|algebra[a-z]*|geometri[a-z]*|arifmetik[a-z]*|hisob|сонлар|математик[а-я]*|алгебр[а-я]*|геометр[а-я]*|дроби|числа)(?=$|[^\p{L}\p{N}])/giu,
+      /(?:^|[^\p{L}\p{N}])(?:matematik[a-z]*|algebra[a-z]*|geometri[a-z]*|arifmetik[a-z]*|tenglama[a-z]*|ildiz[a-z]*|trigonometri[a-z]*|integral[a-z]*|differensial[a-z]*|hisob|сонлар|математик[а-я]*|алгебр[а-я]*|геометр[а-я]*|уравнени[а-я]*|корень|корни|тригонометри[а-я]*|интеграл[а-я]*|дроби|числа)(?=$|[^\p{L}\p{N}])/giu,
     ],
   },
   {
