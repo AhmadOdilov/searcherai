@@ -289,6 +289,53 @@ describe("egalik va topilmaslik", () => {
     assert.equal(created.status, 400);
   });
 
+  it("PARALLEL so'rovlar AI kvotasini chetlab o'ta olmaydi", async () => {
+    /*
+      Bu sinov ATAYLAB smoke to'plamida: `next dev` da u HECH QACHON
+      yiqilmaydi. Dev serveri so'rovlarni sekinroq ishlaydi va poyga
+      oynasi ochilmaydi — ya'ni e2e qatlamida tasdiq yolg'on yashil
+      bo'lardi.
+
+      Production artefaktida esa auditda o'nta parallel so'rovdan
+      uchta emas, 4 / 4 / 9 tasi qabul qilingan edi (`consumeAiQuota()`
+      avval sanab, keyin yozardi).
+
+      Chegara PUL chegarasi: chetlab o'tilsa hech qanday xato
+      ko'rinmaydi, faqat provayder hisobi o'sadi.
+    */
+    const MAX_AI_REQUESTS = 3;
+
+    const burst = new TestClient();
+    await register(burst, "smoke-kvota-parallel");
+
+    const statuses = await Promise.all(
+      Array.from({ length: 10 }, (_, index) =>
+        burst
+          .request("/api/lesson-plans", {
+            method: "POST",
+            body: {
+              subject: "Matematika",
+              grade: "7-sinf",
+              topic: `Parallel kvota ${index}`,
+              durationMinutes: 45,
+              lessonType: "NEW_TOPIC",
+              language: "UZ",
+            },
+          })
+          .then((result) => result.status),
+      ),
+    );
+
+    const accepted = statuses.filter((status) => status === 202).length;
+
+    assert.ok(
+      accepted <= MAX_AI_REQUESTS,
+      `kvota chetlab o'tildi: ${accepted} ta qabul qilindi (chegara ${MAX_AI_REQUESTS})`,
+    );
+    // Teskari tomon: hammasi rad etilib qolmasin.
+    assert.ok(accepted >= 1, "parallel so'rovlarning hammasi rad etildi");
+  });
+
   it("kirmagan foydalanuvchi API'ga kira olmaydi", async () => {
     const anonymous = new TestClient();
 

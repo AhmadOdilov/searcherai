@@ -211,4 +211,46 @@ describe("AI tezlik cheklovi", () => {
     // 401 — 429 emas: kirish tekshiruvi birinchi turadi.
     assert.equal(result.status, 401);
   });
+
+  it("PARALLEL so'rovlar ham chegarani chetlab o'ta olmaydi", async () => {
+    /*
+      Yuqoridagi sinovlar so'rovlarni KETMA-KET yuboradi va shu holatda
+      chegara to'g'ri ishlaydi. Lekin `consumeAiQuota()` avval SANAYDI,
+      keyin yozadi — ikkisi orasida oyna bor.
+
+      Bir vaqtda kelgan so'rovlar hammasi "hali uchta emas" holatini
+      ko'radi va chegaradan ko'prog'i o'tib ketadi. Auditda o'nta
+      parallel so'rovdan UCHTA emas, BESHTASI qabul qilingan edi.
+
+      Bu xavfsizlik chegarasi emas — u PUL chegarasi. Chetlab o'tilsa,
+      hech qanday xato ko'rinmaydi, faqat provayder hisobidagi summa
+      o'sadi. Aynan shuning uchun sinov kerak: nosozlik jim.
+    */
+    const client = await signedInClient("kvota-parallel");
+
+    const statuses = await Promise.all(
+      Array.from({ length: 10 }, (_, index) =>
+        client
+          .request("/api/lesson-plans", {
+            method: "POST",
+            body: lessonPlanInput(`Parallel ${index}`),
+          })
+          .then((result) => result.status),
+      ),
+    );
+
+    const accepted = statuses.filter((status) => status === 202).length;
+
+    assert.ok(
+      accepted <= MAX_REQUESTS,
+      `parallel so'rovlar chegarani chetlab o'tdi: ${accepted} ta qabul qilindi ` +
+        `(chegara ${MAX_REQUESTS})`,
+    );
+    /*
+      Teskari tomon: himoya "hammasini rad et" bo'lib qolmasin. Kamida
+      bittasi o'tishi SHART, aks holda chegara ishlayotgandek ko'rinib,
+      aslida ilovani buzgan bo'lardi.
+    */
+    assert.ok(accepted >= 1, "parallel so'rovlarning hammasi rad etildi");
+  });
 });

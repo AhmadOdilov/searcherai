@@ -97,20 +97,58 @@ export async function consumeAiQuota(
 ): Promise<QuotaReservation> {
   const since = new Date(Date.now() - WINDOW_MS);
 
-  const used = await prisma.aiRequest.count({
-    where: { userId, createdAt: { gte: since } },
-  });
+  /*
+    ── Nega TRANZAKSIYA va QULF ─────────────────────────────────────────────
+    Ilgari bu yerda ikki alohida so'rov turardi: avval `count()`, keyin
+    `create()`. Ikkisi orasida oyna bor va bir vaqtda kelgan
+    so'rovlarning HAMMASI "hali uchta emas" holatini ko'rardi.
 
-  if (used >= MAX_REQUESTS) {
-    throw new ApiError("too_many_requests", {
-      messageKey: "errors.domain.tooManyAiRequests",
-      detail: `ai rate limit: user=${userId} route=${route} used=${used}`,
+    Auditda bu production artefaktida har safar takrorlandi: o'nta
+    parallel so'rovdan uchta emas, 4 / 6 / 7 / 8 / 9 tasi qabul
+    qilindi. Chegarani chetlab o'tish uchun so'rovlarni shunchaki bir
+    vaqtda yuborish yetarli edi.
+
+    DIQQAT: `next dev` da bu KO'RINMAYDI — u so'rovlarni sekinroq
+    ishlaydi va oyna ochilmaydi. Shuning uchun regressiya sinovi
+    smoke to'plamida (`tests/smoke/shared/security.smoke.ts`), e2e
+    qatlamida emas.
+
+    ── Nega shunchaki tartibni almashtirish YETMAYDI ────────────────────────
+    "Avval yoz, keyin o'z navbatingni sana" varianti ishonchli emas:
+    har bir yozuv ALOHIDA tranzaksiyada va biri ikkinchisi COMMIT
+    qilgunicha uni KO'RMAYDI. Ya'ni keyin kelgan so'rov o'zidan
+    oldingilarni sanamay, navbatini past deb hisoblab o'tib ketishi
+    mumkin — poyga torayadi, lekin yopilmaydi.
+
+    Yagona ishonchli yo'l — sanash va yozishni BITTA tranzaksiyada,
+    foydalanuvchi bo'yicha qulf ostida bajarish.
+
+    ── Nega `pg_advisory_xact_lock` ─────────────────────────────────────────
+    Qulf FOYDALANUVCHI bo'yicha: boshqa o'qituvchilarning so'rovlari
+    bir-birini kutmaydi. Tranzaksiya tugashi bilan qulf o'zi
+    bo'shaydi — qo'lda ochish kerak emas, xato bo'lsa ham osilib
+    qolmaydi.
+
+    Yangi infratuzilma kerak emas: bu Postgres'ning o'z imkoniyati.
+  */
+  const reservation = await prisma.$transaction(async (tx) => {
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${userId}))`;
+
+    const used = await tx.aiRequest.count({
+      where: { userId, createdAt: { gte: since } },
     });
-  }
 
-  const reservation = await prisma.aiRequest.create({
-    data: { userId, route },
-    select: { id: true },
+    if (used >= MAX_REQUESTS) {
+      throw new ApiError("too_many_requests", {
+        messageKey: "errors.domain.tooManyAiRequests",
+        detail: `ai rate limit: user=${userId} route=${route} used=${used}`,
+      });
+    }
+
+    return tx.aiRequest.create({
+      data: { userId, route },
+      select: { id: true },
+    });
   });
 
   await cleanupOldRequests();
