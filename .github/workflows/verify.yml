@@ -106,7 +106,24 @@ jobs:
       # Chiqarib tashlash `next.config.ts` da.
       - run: mkdir -p storage/presentations && echo belgi > storage/presentations/belgi.pptx
 
+      # `.env` ham deploy paketiga tushmasligi kerak. CI'da sirlar muhit
+      # o'zgaruvchilari orqali beriladi, ya'ni `.env` fayli umuman yo'q —
+      # tekshiruv busiz hech narsa isbotlamasdi. Shuning uchun belgi fayl
+      # qo'yiladi. Ichidagi kalit ATAYLAB ishlatilmaydigan nom: Next uni
+      # yuklasa ham hech narsaga ta'sir qilmaydi.
+      - run: echo 'AUDIT_MARKER=belgi' > .env
+
       - run: npm run build
+
+      - name: .env standalone paketiga tushmaganini tekshirish
+        run: |
+          if compgen -G ".next/standalone/.env*" > /dev/null; then
+            echo "XATO: .env deploy paketiga ko'chirilgan:"
+            ls -la .next/standalone/.env*
+            exit 1
+          fi
+          echo ".env paketga tushmadi — to'g'ri"
+        shell: bash
 
       - name: storage standalone paketiga tushmaganini tekshirish
         run: |
