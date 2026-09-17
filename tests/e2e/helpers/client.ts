@@ -86,6 +86,20 @@ export class TestClient {
   }
 
   /**
+   * Yig'ilgan cookie'lar `Cookie` sarlavhasi shaklida.
+   *
+   * Nega kerak: `Origin` sarlavhasini qo'lda qo'yish talab qilinadigan
+   * sinovlar (CSRF) `request()` dan foydalana olmaydi va xom `fetch`
+   * yozadi — lekin ularga HAQIQIY sessiya cookie'si kerak, chunki hujum
+   * aynan shunday ko'rinadi.
+   */
+  cookieHeader(): string {
+    return [...this.cookies.entries()]
+      .map(([name, value]) => `${name}=${value}`)
+      .join("; ");
+  }
+
+  /**
    * Xom `Response` qaytaradi — sarlavhalar va ikkilik (binary) tanani
    * tekshirish uchun.
    *

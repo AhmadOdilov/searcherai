@@ -46,6 +46,8 @@ export interface AiPromptRecord {
 
 export interface MockAiServer {
   baseUrl: string;
+  /** Tinglanayotgan port — havolani boshqa xost nomi bilan qayta qurish uchun. */
+  port: number;
   requestCount: number;
   /** Oxirgi so'rovdagi promptlar — tilni tekshirish uchun. */
   lastPrompts: AiPromptRecord | null;
@@ -326,7 +328,22 @@ function buildPresentation(topic: string) {
   };
 }
 
-export async function startMockAiServer(): Promise<MockAiServer> {
+export interface MockAiOptions {
+  /**
+   * Qaysi interfeysda tinglansin. Standart `127.0.0.1` — soxta server
+   * faqat shu mashinadagi sinovlarga ochiq bo'lsin.
+   *
+   * Production smoke testi Docker konteynerida ishlayotgan ilovani
+   * sinaydi va konteyner uchun `127.0.0.1` — uning O'Z ichi, xost emas.
+   * O'sha holatda `0.0.0.0` beriladi (tests/smoke/helpers/target.ts).
+   */
+  host?: string;
+}
+
+export async function startMockAiServer(
+  options: MockAiOptions = {},
+): Promise<MockAiServer> {
+  const host = options.host ?? "127.0.0.1";
   const state = {
     requestCount: 0,
     lastPrompts: null as MockAiServer["lastPrompts"],
@@ -469,14 +486,20 @@ export async function startMockAiServer(): Promise<MockAiServer> {
     });
   });
 
-  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  await new Promise<void>((resolve) => server.listen(0, host, resolve));
   const address = server.address();
   if (address === null || typeof address === "string") {
     throw new Error("soxta AI serveri manzilini olib bo'lmadi");
   }
 
   return {
-    baseUrl: `http://127.0.0.1:${address.port}`,
+    /*
+      `0.0.0.0` — tinglash manzili, murojaat manzili emas: unga so'rov
+      yuborib bo'lmaydi. Shu holatda havola `127.0.0.1` bilan quriladi,
+      konteyner uchun kerakli xost nomini esa chaqiruvchi o'zi qo'yadi.
+    */
+    baseUrl: `http://${host === "0.0.0.0" ? "127.0.0.1" : host}:${address.port}`,
+    port: address.port,
     get requestCount() {
       return state.requestCount;
     },
