@@ -268,6 +268,55 @@ ishlab turadi.
 Migratsiya yiqilsa skript to'xtaydi va **eski versiya ishlab turaveradi** —
 sayt buzilmaydi.
 
+### Yiqilgan migratsiyadan keyin: majburiy tozalash
+
+> ❗ Sayt ishlab turgani bilan muammo O'Z-O'ZIDAN yo'qolmaydi.
+
+Prisma yiqilgan migratsiyani `_prisma_migrations` jadvalida "tugallanmagan"
+deb belgilab qo'yadi va **shundan keyin `prisma migrate deploy` umuman
+ishlamaydi** — keyingi har bir deploy o'sha joyda to'xtaydi. Prisma
+migratsiyani o'zi orqaga qaytarmaydi va bu loyihada "down" migratsiyalar
+yozilmagan.
+
+Ya'ni sayt ishlayotgan bo'lsa ham, **tuzatilmaguncha yangi versiya
+chiqara olmaysiz**.
+
+Tartib:
+
+```bash
+cd /opt/searcher-ai
+
+# 1. Aynan nima yiqilganini o'qing — xato matni `logs` ustunida turadi.
+dc logs migrate
+docker compose -f docker-compose.prod.yml run --rm migrate \
+  npx prisma migrate status
+```
+
+Keyin IKKI yo'ldan BIRI:
+
+**A. Migratsiya hech narsa o'zgartirmagan** (masalan sintaksis xatosi —
+DDL tranzaksiya ichida qaytarilgan):
+
+```bash
+docker compose -f docker-compose.prod.yml run --rm migrate \
+  npx prisma migrate resolve --rolled-back <migratsiya_nomi>
+```
+
+Keyin `migration.sql` ni tuzatib, qaytadan deploy qiling.
+
+**B. Migratsiya QISMAN bajarilgan** (bir nechta alohida bayonot, biri
+o'tib biri yiqilgan): bazani zaxiradan tiklash eng ishonchli yo'l —
+pastdagi "Bazani tiklash" bo'limiga qarang. Qo'lda tuzatish kerak
+bo'lsa, bajarilib bo'lgan qadamlarni teskari qaytaring, so'ng:
+
+```bash
+docker compose -f docker-compose.prod.yml run --rm migrate \
+  npx prisma migrate resolve --applied <migratsiya_nomi>
+```
+
+> Har qanday holatda `update.sh` deploydan OLDIN zaxira oladi — ya'ni
+> eng yomon holatda ham tiklanadigan nuqta bor.
+
 ---
 
 ## Zaxira va tiklash
