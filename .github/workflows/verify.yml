@@ -141,3 +141,92 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  # ── Production ARTEFAKTI ────────────────────────────────────────────────────
+  # Nega alohida ish: yuqoridagi `verify` manba kodini tekshiradi —
+  # `next dev` serveri, birlik sinovlari, brauzer. Bu yerda esa DEPLOY
+  # QILINADIGAN NARSANING o'zi sinaladi: `next build` chiqargan standalone
+  # paketi va `Dockerfile` dan yig'ilgan image.
+  #
+  # Farq nazariy emas. Phase 5 va Phase 6 dagi ikkala nuqson ham
+  # (`storage/` va `.env` ning deploy paketiga tushishi) 826 ta yashil
+  # testdan o'tib ketgan edi: ularning birortasi ham haqiqiy paketni
+  # ko'rmasdi. Shu sababdan bu ish `verify` ga bog'lanmaydi va u bilan
+  # PARALLEL ishlaydi — ikkalasi boshqa-boshqa nosozlik sinfini tutadi.
+  production-artifact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: searcher
+          POSTGRES_PASSWORD: searcher_ci_password
+          POSTGRES_DB: searcher_ai
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U searcher -d searcher_ai"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    env:
+      DATABASE_URL: postgresql://searcher:searcher_ci_password@localhost:5432/searcher_ai?schema=public
+      AUTH_SECRET: ci-uchun-yaratilgan-kalit-kamida-32-belgi
+      # Smoke to'plami ilovaga O'ZINING soxta AI manzilini beradi
+      # (`tests/smoke/helpers/target.ts`). Bu qiymat boshqa maqsad uchun:
+      # "paketda sir bormi?" tekshiruvi AYNAN shu satrni qidiradi. 16
+      # belgidan uzun bo'lishi shart, aks holda tekshiruv uni chetlab
+      # o'tadi va hech narsa isbotlamaydi.
+      AI_API_KEY: ci-soxta-ai-kaliti-hech-qayerda-ishlatilmaydi
+      REGISTER_MAX_PER_IP: "1000"
+      NEXT_TELEMETRY_DISABLED: "1"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npx prisma generate
+      - run: npx prisma migrate deploy
+
+      # ── Belgi fayllar: tekshiruvlar BO'SH bo'lib qolmasin ────────────────
+      # Toza checkout'da `storage/` bo'sh va `.env` umuman yo'q (CI sirlarni
+      # muhit o'zgaruvchilari orqali oladi). Ya'ni "paketda storage yo'q" va
+      # "paketda .env yo'q" tasdiqlari hech narsa isbotlamasdan yashil
+      # bo'lardi — aynan o'sha yolg'on yashillik Phase 5 va Phase 6
+      # nuqsonlarini o'tkazib yuborgan edi.
+      #
+      # Shuning uchun build'dan OLDIN ikkala fayl ATAYLAB qo'yiladi: agar
+      # chiqarib tashlash ishlamay qolsa, ular paketda paydo bo'ladi va
+      # `tests/smoke/standalone.smoke.ts` darhol yiqiladi.
+      #
+      # `.env` ichidagi kalit ataylab ishlatilmaydigan nom: Next uni yuklasa
+      # ham hech narsaga ta'sir qilmaydi.
+      - name: Chiqarib tashlash tekshiruvlari uchun belgi fayllar
+        run: |
+          mkdir -p storage/presentations
+          echo belgi > storage/presentations/belgi.pptx
+          echo 'AUDIT_MARKER=belgi' > .env
+
+      # `npm run test:smoke` build'ni O'ZI bajaradi — ya'ni bu qadam
+      # ayni paytda "Build PASS" darvozasi ham.
+      - name: Standalone artefakt smoke
+        run: npm run test:smoke
+
+      # Docker yo'li image'ni `Dockerfile` dan qaytadan yig'adi. Konteyner
+      # xostdagi Postgres va soxta AI serveriga `host.docker.internal`
+      # orqali ulanadi — `--add-host=...:host-gateway` buni Linux
+      # runner'da ham beradi.
+      - name: Docker artefakt smoke
+        run: npm run test:smoke:docker
+
+      # Nosozlik sababi: konteyner jurnali odatda yagona manba.
+      - if: failure()
+        run: docker logs searcher-ai-smoke 2>&1 | tail -100 || true
