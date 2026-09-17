@@ -222,3 +222,20 @@ export function correctWord(rawWord: string): TypoCorrectionResult {
     method: "none",
   };
 }
+
+/**
+ * Butun matndagi xatolar bo'yicha takliflar ro'yxatini qaytaradi.
+ */
+export function getCorrectionSuggestions(text: string): string[] {
+  const words = text.split(/\s+/);
+  const suggestions: string[] = [];
+  for (const w of words) {
+    const res = correctWord(w);
+    if (res.didYouMean && !suggestions.includes(res.didYouMean)) {
+      suggestions.push(res.didYouMean);
+    } else if (res.method !== "none" && res.corrected !== res.original && !suggestions.includes(res.corrected)) {
+      suggestions.push(res.corrected);
+    }
+  }
+  return suggestions;
+}

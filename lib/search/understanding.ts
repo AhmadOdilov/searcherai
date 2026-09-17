@@ -14,6 +14,7 @@
 import type { LanguageCode } from "@/lib/validations/common";
 import { normalizeQuery, type NormalizedQuery } from "./normalization";
 import { resolveAmbiguity } from "./ambiguity";
+import { getCorrectionSuggestions } from "./typo-engine";
 
 export type SearchIntent =
   | "explain"
@@ -36,12 +37,18 @@ export type SearchIntent =
   | "topic_search"
   | "fact_check"
   | "experiment"
-  | "translation";
+  | "translation"
+  | "exam_prep";
 
 export type AudienceMode = "teacher" | "student";
 
 export interface SubjectCandidate {
   subject: string;
+  confidence: number;
+}
+
+export interface IntentCandidate {
+  intent: SearchIntent;
   confidence: number;
 }
 
@@ -58,22 +65,60 @@ export interface ConversationTurnContext {
   previousIntent?: SearchIntent;
 }
 
+export interface QueryUnderstandingEntities {
+  terms: string[];
+  gradeMentions: string[];
+  subjectMentions: string[];
+  keywords: string[];
+}
+
+export interface QueryAmbiguityFlags {
+  isSubjectAmbiguous: boolean;
+  isGradeAmbiguous: boolean;
+  isPolysemic: boolean;
+  candidateSubjects?: string[];
+}
+
 export interface QueryUnderstanding {
+  // === Phase 2 Structured Result ===
+  normalizedQuery: string;
+  language: LanguageCode;
+  languageConfidence: number;
+
+  subject?: string;
+  subjectConfidence: number;
+  subjectCandidates: SubjectCandidate[];
+
+  grade?: string;
+  gradeConfidence: number;
+
+  intent: SearchIntent;
+  intentConfidence: number;
+  intentCandidates: IntentCandidate[];
+
+  audience: AudienceMode;
+  audienceConfidence: number;
+
+  topic: string;
+  topicConfidence: number;
+
+  entities: QueryUnderstandingEntities;
+
+  ambiguityFlags: QueryAmbiguityFlags;
+
+  correctionSuggestions: string[];
+
+  // === Backwards Compatibility Aliases ===
   normalized: NormalizedQuery;
   detectedLanguage: LanguageCode;
   detectedSubject?: string;
-  subjectConfidence: number;
-  subjectCandidates: SubjectCandidate[];
+  detectedGrade?: string;
+  detectedIntent: SearchIntent;
+  extractedTopic: string;
+  keywords: string[];
   isAmbiguous?: boolean;
   ambiguityTerm?: string;
   clarificationQuestion?: string;
-  detectedGrade?: string;
-  detectedIntent: SearchIntent;
-  intentConfidence: number;
-  audience: AudienceMode;
-  audienceConfidence: number;
-  extractedTopic: string;
-  keywords: string[];
 }
 
 /**
@@ -278,6 +323,13 @@ const INTENT_PATTERNS: Array<{ intent: SearchIntent; confidence: number; pattern
     confidence: 0.91,
     patterns: [
       /(?:^|[^\p{L}\p{N}])(?:to['‘`ʻ]g['‘`ʻ]rimi|rostmi|haqiqatmi|shundaymi|tekshirib ber|правда ли|верно ли|fact check|is it true)(?=$|[^\p{L}\p{N}])/giu,
+    ],
+  },
+  {
+    intent: "exam_prep",
+    confidence: 0.94,
+    patterns: [
+      /(?:^|[^\p{L}\p{N}])(?:imtihon[a-z]*|attestatsiya[a-z]*|olimpiada[a-z]*|olimpiada masalalari|yakuniy nazorat|davlat imtihoni|подготовка к экзамену|экзаменационн[а-я]*|олимпиадн[а-я]*|exam prep|olympiad|test prep)(?=$|[^\p{L}\p{N}])/giu,
     ],
   },
   {
@@ -652,21 +704,63 @@ export function understandQuery(
     keywords = parentTopicInfo.keywords.length > 0 ? parentTopicInfo.keywords : [conversationContext.previousTopic];
   }
 
+  const correctionSuggestions = getCorrectionSuggestions(rawQuery);
+
+  const entities: QueryUnderstandingEntities = {
+    terms: keywords,
+    gradeMentions: detectedGrade ? [detectedGrade] : [],
+    subjectMentions: detectedSubject ? [detectedSubject] : [],
+    keywords,
+  };
+
+  const ambiguityFlags: QueryAmbiguityFlags = {
+    isSubjectAmbiguous: Boolean(subjectDetails.isAmbiguous),
+    isGradeAmbiguous: !detectedGrade,
+    isPolysemic: Boolean(subjectDetails.ambiguityTerm),
+    candidateSubjects: subjectCandidates.map((c) => c.subject),
+  };
+
+  const intentCandidates: IntentCandidate[] = [
+    { intent: detectedIntent, confidence: intentConfidence },
+  ];
+
   return {
+    // === Phase 2 Structured Result ===
+    normalizedQuery: normalized.normalized,
+    language: detectedLanguage,
+    languageConfidence: detectedLanguage === "UZ" ? 0.99 : 0.98,
+
+    subject: detectedSubject,
+    subjectConfidence,
+    subjectCandidates,
+
+    grade: detectedGrade,
+    gradeConfidence: detectedGrade ? 0.98 : 0.0,
+
+    intent: detectedIntent,
+    intentConfidence,
+    intentCandidates,
+
+    audience,
+    audienceConfidence,
+
+    topic: extractedTopic,
+    topicConfidence: extractedTopic.length >= 3 ? 0.92 : 0.50,
+
+    entities,
+    ambiguityFlags,
+    correctionSuggestions,
+
+    // === Backwards Compatibility Aliases ===
     normalized,
     detectedLanguage,
     detectedSubject,
-    subjectConfidence,
-    subjectCandidates,
+    detectedGrade,
+    detectedIntent,
+    extractedTopic,
+    keywords,
     isAmbiguous: subjectDetails.isAmbiguous,
     ambiguityTerm: subjectDetails.ambiguityTerm,
     clarificationQuestion: subjectDetails.clarificationQuestion,
-    detectedGrade,
-    detectedIntent,
-    intentConfidence,
-    audience,
-    audienceConfidence,
-    extractedTopic,
-    keywords,
   };
 }

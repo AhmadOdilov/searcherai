@@ -45,12 +45,12 @@ const POLYSEMIC_RULES: Record<string, PolysemicTermRule> = {
     contexts: [
       {
         subject: "Fizika",
-        contextPattern: /(?:jism|zichlik|tezlik|kuch|nyuton|og['‘`ʻ]irlik|ogirligi|dinamik|iner|плотност|сил|скорост|gravity|density|physics)/i,
+        contextPattern: /(?:jism|zichlik|tezlik|kuch|nyuton|markaz|og['‘`ʻ]irlik|ogirligi|dinamik|iner|плотност|сил|скорост|gravity|density|physics)/i,
         weight: 0.90,
       },
       {
         subject: "Kimyo",
-        contextPattern: /(?:molyar|atom|molekula|modda|eritma|valent|reaksiya|хими|химическ|chemistry|molar)/i,
+        contextPattern: /(?:molyar|atom|molekula|modda|eritma|valent|reaksiya|soni|хими|химическ|chemistry|molar)/i,
         weight: 0.90,
       },
     ],
