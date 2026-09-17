@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile, stat } from "node:fs/promises";
+import { readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 import { describe, it } from "node:test";
 import { STANDALONE_DIR } from "./helpers/target.ts";
@@ -51,6 +51,48 @@ async function bundleFiles(): Promise<string[]> {
 }
 
 /**
+ * Paketning JO'NATILADIGAN holati — sinov paytida diskda nima bo'lsa.
+ *
+ * ── Nega surat (snapshot) YETMAYDI ────────────────────────────────────────
+ * Surat `stageStandalone()` dan OLDIN olinadi va bu "ortiqcha fayl
+ * bormi?" tekshiruvlari uchun to'g'ri: staging paketga `public/` va
+ * `.next/static` ni ataylab qo'shadi va ular qonuniy.
+ *
+ * Lekin SIR qidiruvi uchun bu jiddiy bo'shliq edi: `next build`
+ * `.next/static` ni standalone papkasiga UMUMAN qo'ymaydi, ya'ni
+ * KLIENT bo'laklari va `public/` fayllari suratga hech qachon
+ * tushmaydi. Auditda `AUTH_SECRET` haqiqiy klient bo'lagiga ekildi —
+ * u `.next/standalone/.next/static/chunks/` ga ko'chdi, ya'ni HAR BIR
+ * BRAUZERGA ketadigan faylga — va sinov 6/6 yashil qoldi.
+ *
+ * Aynan shu eng qimmat xato turi: `NEXT_PUBLIC_` bilan adashtirilgan
+ * sir butun dunyoga tarqaladi. Shuning uchun sir qidiruvi suratga
+ * emas, PAKETNING O'ZIGA qaraydi.
+ *
+ * `node_modules` chetlab o'tiladi — u bog'liqlik kodi va bizning
+ * sirimiz u yerga tusha olmaydi (paket hajmi esa sezilarli).
+ */
+async function stagedFiles(): Promise<string[]> {
+  const found: string[] = [];
+
+  async function walk(directory: string, prefix: string): Promise<void> {
+    const entries = await readdir(directory, { withFileTypes: true }).catch(() => []);
+    for (const entry of entries) {
+      if (entry.name === "node_modules") continue;
+      const relative = prefix === "" ? entry.name : `${prefix}/${entry.name}`;
+      if (entry.isDirectory()) {
+        await walk(path.join(directory, entry.name), relative);
+      } else {
+        found.push(relative);
+      }
+    }
+  }
+
+  await walk(STANDALONE_DIR, "");
+  return found;
+}
+
+/**
  * Sir sifatida qidiriladigan qiymatlar.
  *
  * Qiymatlarning O'ZI hech qachon chop etilmaydi — nosozlikda faqat
@@ -90,16 +132,23 @@ describe("standalone paketi — sirlar", () => {
       "tekshirish uchun birorta ham sir topilmadi — muhit sozlanmagan",
     );
 
-    const snapshot = await bundleFiles();
-    const scannable = snapshot.filter(
-      (file) =>
-        file === "server.js" ||
-        file.startsWith(".next/") ||
-        file.endsWith(".js") ||
-        file.endsWith(".map") ||
-        file.endsWith(".json"),
-    );
+    /*
+      Kengaytma bo'yicha FILTR YO'Q.
+
+      Ilgari faqat `.js`, `.map`, `.json` va `.next/` qaraladi edi. Bunday
+      ro'yxat har doim to'liqmas bo'ladi: ertaga sir `.txt`, `.wasm` yoki
+      kengaytmasiz faylga tushsa, qidiruv uni jim o'tkazib yuborardi.
+      Paket `node_modules` siz kichik, ya'ni hammasini o'qish arzon.
+    */
+    const scannable = await stagedFiles();
     assert.ok(scannable.length > 0, "tekshiriladigan fayl topilmadi");
+
+    // Klient bo'laklari HAQIQATAN qidiruvga tushayotganini tasdiqlaymiz:
+    // ular staging'da qo'shiladi va ilgari bu tekshiruvdan chetda qolardi.
+    assert.ok(
+      scannable.some((file) => file.startsWith(".next/static/")),
+      "paketda klient bo'laklari topilmadi — sir qidiruvi ularni ko'rmayapti",
+    );
 
     for (const relative of scannable) {
       const full = path.join(STANDALONE_DIR, relative);
