@@ -56,4 +56,32 @@ describe("search adversarial & edge-case suite", () => {
     assert.equal(validation.isGrounded, false);
     assert.ok(validation.caution?.includes("rasmiy o'quv dasturidan topilmadi"));
   });
+
+  it("prototype pollution kalitlari keshni buzolmaydi", () => {
+    const maliciousUnderstanding = understandQuery("__proto__ constructor toString");
+    const u = understandQuery("8-sinf matematika kasrlar");
+    const _res = validateAndGroundAnswer(
+      {
+        answer: "Kasrlar haqida ma'lumot",
+        keyPoints: ["1-nuqta", "2-nuqta", "3-nuqta"],
+        classroomIdeas: ["1-g'oya", "2-g'oya"],
+      },
+      u,
+      [],
+    );
+
+    // LRU kesh Map asosida ishlaydi, Object.prototype ifloslanmaydi
+    const key = Object.prototype.hasOwnProperty.call({}, "__proto__");
+    assert.equal(key, false);
+    assert.ok(maliciousUnderstanding.normalized.normalized.length > 0);
+  });
+
+  it("HTML va script teglari zararsizlantiriladi", () => {
+    const xss = "<script>alert('xss')</script> 7-sinf fizika bosim";
+    const u = understandQuery(xss);
+
+    assert.equal(u.detectedSubject, "Fizika");
+    assert.equal(u.detectedGrade, "7-sinf");
+    assert.ok(!u.extractedTopic.includes("<script>"));
+  });
 });

@@ -25,6 +25,9 @@ describe("search validator & grounding guard", () => {
     const understanding = understandQuery("5-sinf matematika kasrlar");
     const matches: RankedCurriculumMatch[] = [
       {
+        sourceId: "mock-curriculum-id-1",
+        subject: "Matematika",
+        grade: "5-sinf",
         topicName: "ODDIY KASRLAR",
         description: "Oddiy kasrlar haqida",
         expectedHours: 16,

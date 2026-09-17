@@ -114,13 +114,31 @@ export function buildOrchestrationActions(
     });
   }
 
-  // Agar intent presentation bo'lsa, presentationni birinchi o'ringa olib chiqamiz
+  // Intent va auditoriyaga qarab tartiblash (Phase 19 Action Quality)
   if (detectedIntent === "presentation") {
     const pIdx = actions.findIndex((a) => a.type === "create_presentation");
     if (pIdx > 0) {
       const [pAction] = actions.splice(pIdx, 1);
       actions.unshift(pAction);
     }
+  } else if (detectedIntent === "curriculum") {
+    const cIdx = actions.findIndex((a) => a.type === "create_calendar_plan");
+    if (cIdx > 0) {
+      const [cAction] = actions.splice(cIdx, 1);
+      actions.unshift(cAction);
+    }
+  } else {
+    // Standart: dars ishlanma (Word) birinchi
+    const lIdx = actions.findIndex((a) => a.type === "create_lesson_plan");
+    if (lIdx > 0) {
+      const [lAction] = actions.splice(lIdx, 1);
+      actions.unshift(lAction);
+    }
+  }
+
+  // O'quvchi rejimida taqvim reja (o'qituvchi yillik rejasi) ikkinchi darajali qilinadi
+  if (understanding.audience === "student") {
+    return actions.filter((a) => a.type !== "create_calendar_plan");
   }
 
   return actions;

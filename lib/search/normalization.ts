@@ -137,13 +137,72 @@ export function normalizeApostrophes(text: string): string {
 }
 
 /**
- * Sinf ifodalarini standart shaklga keltiradi: "7 sinf", "7sinf", "7-синф" -> "7-sinf"
- * Unicode mos bo'lishi uchun \b o'rniga boundary tekshiruvi.
+ * Sinf ifodalarini standart shaklga keltiradi: "7 sinf", "7sinf", "7-синф", "8-sinfga" -> "7-sinf", "8-sinf"
+ * Unicode mos bo'lishi uchun \b o'rniga boundary tekshiruvi va kelishik qo'shimchalari inobatga olinadi.
  */
 export function normalizeGrades(text: string): string {
   return text
-    .replace(/(^|[^\p{L}\p{N}])([1-9]|1[0-1])\s*[-_]?\s*(?:sinf|синф|class|grade|класс[а-я]*)(?=$|[^\p{L}\p{N}])/giu, "$1$2-sinf")
-    .replace(/(^|[^\p{L}\p{N}])(?:sinf|синф|class|grade|класс[а-я]*)\s*([1-9]|1[0-1])(?=$|[^\p{L}\p{N}])/giu, "$1$2-sinf");
+    .replace(/(^|[^\p{L}\p{N}])([1-9]|1[0-1])\s*[-_]?\s*(?:sinf|синф|class|grade|класс)(?:[a-z'\p{L}]*)?(?=$|[^\p{L}\p{N}])/giu, "$1$2-sinf")
+    .replace(/(^|[^\p{L}\p{N}])(?:sinf|синф|class|grade|класс)\s*([1-9]|1[0-1])(?=$|[^\p{L}\p{N}])/giu, "$1$2-sinf");
+}
+
+/**
+ * O'zbek tili uchun yengil morfologik o'zak ajratgich (Phase 4).
+ * Qisqa so'zlarni (tar, ona, fan, suv, nur) false-positive yaratmaslik uchun himoyalaydi (kamida 3 harf).
+ */
+export function stemUzbekWord(word: string): string {
+  const w = word.toLowerCase().trim();
+  if (w.length <= 3) return w;
+
+  // 1. Egalik va kelishik qo'shimchalari: -larining, -laridan, -lariga, -larini, -larida
+  if (w.length > 7 && /(?:larining|laridan|lariga|larini|larida)$/.test(w)) {
+    const stem = w.replace(/(?:larining|laridan|lariga|larini|larida)$/, "");
+    if (stem.length >= 3) return stem;
+  }
+  // 2. -larning, -lardan, -larga, -larni, -larda
+  if (w.length > 6 && /(?:larning|lardan|larga|larni|larda)$/.test(w)) {
+    const stem = w.replace(/(?:larning|lardan|larga|larni|larda)$/, "");
+    if (stem.length >= 3) return stem;
+  }
+  // 3. -ning, -dan
+  if (w.length > 5 && /(?:ning|dan)$/.test(w)) {
+    const stem = w.replace(/(?:ning|dan)$/, "");
+    if (stem.length >= 3) return stem;
+  }
+  // 4. -lar, -ga, -ka, -qa, -da, -ni
+  if (w.length > 4 && /(?:lar|ga|ka|qa|da|ni)$/.test(w)) {
+    const stem = w.replace(/(?:lar|ga|ka|qa|da|ni)$/, "");
+    if (stem.length >= 3) return stem;
+  }
+  // 5. -si, -miz
+  if (w.length > 4 && /(?:si|miz)$/.test(w)) {
+    const stem = w.replace(/(?:si|miz)$/, "");
+    if (stem.length >= 3) return stem;
+  }
+
+  return w;
+}
+
+/**
+ * So'zdagi apostroflarning turli Unicode variantlarini va apostrofsiz shaklini qaytaradi.
+ * PostgreSQL ILIKE yoki contains qidiruvida ' vs ‘ vs ’ vs ʻ nomuvofiqligini yo'qotadi.
+ */
+export function getApostropheVariants(term: string): string[] {
+  const clean = term.trim();
+  if (!clean) return [];
+
+  const hasApostrophe = /['\u2018\u2019\u02BB\u02BC]/.test(clean);
+  if (!hasApostrophe) {
+    return [clean];
+  }
+
+  const ascii = clean.replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
+  const leftCurly = clean.replace(/['\u2018\u2019\u02BB\u02BC]/g, "\u2018");
+  const rightCurly = clean.replace(/['\u2018\u2019\u02BB\u02BC]/g, "\u2019");
+  const modLetter = clean.replace(/['\u2018\u2019\u02BB\u02BC]/g, "\u02BB");
+  const stripped = clean.replace(/['\u2018\u2019\u02BB\u02BC]/g, "");
+
+  return Array.from(new Set([ascii, leftCurly, rightCurly, modLetter, stripped]));
 }
 
 /**

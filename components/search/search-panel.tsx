@@ -294,10 +294,10 @@ function AnswerView({
             </span>
             <div>
               <h3 className="text-xl font-semibold text-neutral-900">
-                Rasmiy o'quv dasturi (DTS)
+                Rasmiy o&apos;quv dasturi (DTS)
               </h3>
               <p className="text-sm text-neutral-500">
-                O'zbekiston Respublikasi maktab dasturi bo'limlari bilan moslashtirilgan
+                O&apos;zbekiston Respublikasi maktab dasturi bo&apos;limlari bilan moslashtirilgan
               </p>
             </div>
           </div>
@@ -332,7 +332,7 @@ function AnswerView({
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 hover:underline"
                     >
-                      <CheckCircle2 className="size-3.5" /> Rasmiy o'quv dasturi havolasi
+                      <CheckCircle2 className="size-3.5" /> Rasmiy o&apos;quv dasturi havolasi
                     </a>
                   </div>
                 )}
@@ -364,7 +364,7 @@ function AnswerView({
             Tavsiya etilgan amallar
           </h3>
           <p className="mt-1 text-sm text-neutral-600">
-            Ushbu mavzu bo'yicha to'g'ridan-to'g'ri dars materiallarini tayyorlang:
+            Ushbu mavzu bo&apos;yicha to&apos;g&apos;ridan-to&apos;g&apos;ri dars materiallarini tayyorlang:
           </p>
 
           <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -401,7 +401,7 @@ function AnswerView({
                       size="sm"
                       fullWidth
                     >
-                      Tayyorlashga o'tish
+                      Tayyorlashga o&apos;tish
                     </LinkButton>
                   </div>
                 </div>

@@ -20,8 +20,17 @@ describe("search lru cache", () => {
       isGrounded: true,
       groundingScore: 0.9,
       sourceCitations: [],
+      claims: [],
+      contradictions: [],
     },
     suggestedActions: [],
+    latencyBreakdown: {
+      understandingMs: 2,
+      retrievalMs: 8,
+      aiMs: 100,
+      validationMs: 1,
+      totalMs: 120,
+    },
   };
 
   it("deterministik kalit yaratadi va ma'lumotni keshlaydi", () => {
