@@ -229,6 +229,39 @@ async function toErrorResponse(
 }
 
 /**
+ * Tanadagi qiymatlar ichida nol bayt bormi.
+ *
+ * ── Nega zod bu ishni qila olmaydi ────────────────────────────────────────
+ * `z.string()` uchun nol bayt oddiy belgi — sxema uni bemalol o'tkazadi.
+ * Uni har bir maydonga `.refine()` bilan qo'shish mumkin edi, lekin
+ * bugun o'nlab matn maydoni bor va ertaga yangisi qo'shiladi; bittasi
+ * unutilsa himoya jimgina yo'qoladi.
+ *
+ * ── Nega `assertNoNullBytes()` yetmaydi ───────────────────────────────────
+ * U MANZILGA qaraydi (`lib/api/url-guard.ts`) — `pathname` va
+ * `searchParams`. So'rov tanasi o'sha tekshiruvdan butunlay chetda
+ * qoladi, ya'ni Phase 6 da yopilgan yo'l ikkinchi eshikdan ochiq
+ * turardi.
+ *
+ * ── Nega REKURSIV ─────────────────────────────────────────────────────────
+ * Tekshiruv tananing SHAKLIGA bog'liq bo'lmasligi kerak: bugun
+ * maydonlar tekis, ertaga ichma-ich obyekt qo'shiladi va himoya
+ * o'zgarishsiz ishlashi kerak.
+ */
+function hasNullByte(value: unknown, depth = 0): boolean {
+  // Juda chuqur tanani zod baribir rad etadi — bu yerda faqat cheksiz
+  // rekursiyadan saqlanamiz.
+  if (depth > 20) return false;
+
+  if (typeof value === "string") return value.includes("\u0000");
+  if (Array.isArray(value)) return value.some((item) => hasNullByte(item, depth + 1));
+  if (value !== null && typeof value === "object") {
+    return Object.values(value).some((item) => hasNullByte(item, depth + 1));
+  }
+  return false;
+}
+
+/**
  * So'rov tanasini o'qib, zod sxemasi bilan tekshiradi.
  *
  * Validatsiya o'tmasa `ApiError` tashlaydi — `withErrorHandling` uni
@@ -246,6 +279,24 @@ export async function parseJsonBody<TSchema extends z.ZodType>(
       messageKey: "errors.api.invalidJsonBody",
       detail: "request.json() muvaffaqiyatsiz",
       cause,
+    });
+  }
+
+  /*
+    Nol bayt — sxemadan OLDIN.
+
+    Sabab: zod uni o'tkazib yuboradi va qiymat Prisma orqali Postgres'ga
+    boradi, u yerda esa `22021: invalid byte sequence for encoding
+    "UTF8"` bo'lib qaytadi. `withErrorHandling` bu xatoni tanimaydi va
+    500 beradi — holbuki buzuq narsa SO'ROV, ya'ni to'g'ri javob 400.
+
+    Tekshiruv XOM tanaga qo'yiladi (sxemadan keyin emas): sxema notanish
+    maydonlarni olib tashlaydi, lekin ular ham bazaga tushishi mumkin
+    bo'lgan yo'llarda uchraydi.
+  */
+  if (hasNullByte(raw)) {
+    throw new ApiError("validation_error", {
+      detail: "so'rov tanasida nol bayt",
     });
   }
 

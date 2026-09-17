@@ -251,6 +251,44 @@ describe("egalik va topilmaslik", () => {
     }
   });
 
+  it("so'rov TANASIDAGI nol bayt — 400, HECH QACHON 500 emas", async () => {
+    /*
+      Phase 8 dagi regressiya: manzil tekshirilardi, tana esa YO'Q.
+      JSON ichidagi nol bayt zod sxemasidan o'tib Postgres'ga borar va
+      `22021` xatosi 500 bo'lib qaytardi.
+
+      Eng og'ir yo'l — `register`: u KIRISHSIZ ochiq, ya'ni istalgan
+      mehmon hisobsiz 500 yasay olardi.
+    */
+    const nul = "\u0000";
+
+    const anonymous = new TestClient();
+    const registered = await anonymous.request("/api/auth/register", {
+      method: "POST",
+      body: {
+        email: testEmail("smoke-nol-bayt"),
+        password: PASSWORD,
+        fullName: `Ism${nul}`,
+      },
+    });
+    assert.notEqual(registered.status, 500, "kirishsiz route 500 qaytardi");
+    assert.equal(registered.status, 400, "nol baytli ism 400 bo'lishi kerak");
+
+    const created = await owner.request("/api/lesson-plans", {
+      method: "POST",
+      body: {
+        subject: `Matematika${nul}`,
+        grade: "7-sinf",
+        topic: "Nol bayt sinovi",
+        durationMinutes: 45,
+        lessonType: "NEW_TOPIC",
+        language: "UZ",
+      },
+    });
+    assert.notEqual(created.status, 500, "tanadagi nol bayt bazagacha bordi");
+    assert.equal(created.status, 400);
+  });
+
   it("kirmagan foydalanuvchi API'ga kira olmaydi", async () => {
     const anonymous = new TestClient();
 
