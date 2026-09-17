@@ -22,6 +22,9 @@ describe("search lru cache", () => {
       sourceCitations: [],
       claims: [],
       contradictions: [],
+      supportedClaimRate: 1,
+      contradictionRate: 0,
+      unsupportedClaimRate: 0,
     },
     suggestedActions: [],
     latencyBreakdown: {

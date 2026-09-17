@@ -127,9 +127,23 @@ export function buildSearchUserPrompt(
   const effectiveGrade = input.grade ?? understanding?.detectedGrade;
 
   if (effectiveSubject !== undefined) lines.push(`${labels.subject}: ${effectiveSubject}`);
-  if (effectiveGrade !== undefined) lines.push(`${labels.grade}: ${effectiveGrade}`);
+  if (effectiveGrade !== undefined) {
+    lines.push(`${labels.grade}: ${effectiveGrade}`);
+    const gradeNum = parseInt(effectiveGrade.replace(/\D/g, ""), 10);
+    if (!isNaN(gradeNum)) {
+      if (gradeNum <= 6) {
+        lines.push("Uslubiy yo'riqnoma: Kichik sinf darajasi (5-6 sinf) — tushuntirish sodda, ko'rgazmali, hayotiy misollar bilan berilsin.");
+      } else if (gradeNum >= 9) {
+        lines.push("Uslubiy yo'riqnoma: Yuqori sinf darajasi (9-11 sinf) — chuqur ilmiy, nazariy asoslangan, atamalar va formulalar bilan to'liq berilsin.");
+      }
+    }
+  }
+
   if (understanding) {
-    lines.push(`${labels.audience}: ${understanding.audience === "student" ? "O'quvchi / Student" : "O'qituvchi / Teacher"}`);
+    const isStudent = understanding.audience === "student";
+    lines.push(
+      `${labels.audience}: ${isStudent ? "O'quvchi (Student — sodda, bosqichma-bosqich yo'l-yo'riq)" : "O'qituvchi (Teacher — metodik, dars rejasi va baholashga yo'naltirilgan)"}`,
+    );
     lines.push(`${labels.intent}: ${understanding.detectedIntent}`);
   }
 

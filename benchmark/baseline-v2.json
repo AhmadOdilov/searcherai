@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-09-17T23:36:38+05:00",
+  "commitHash": "73c96c55d84e91d3783b13d12e945706c966c683",
+  "benchmarkScript": "scripts/evaluate-search-v2.ts",
+  "totalQueries": 150,
+  "understanding": {
+    "languageAccuracy": 100.0,
+    "languageCorrect": 150,
+    "subjectAccuracy": 97.92,
+    "subjectCorrect": 141,
+    "subjectEvaluated": 144,
+    "gradeAccuracy": 99.16,
+    "gradeCorrect": 118,
+    "gradeEvaluated": 119,
+    "intentAccuracy": 88.67,
+    "intentCorrect": 133,
+    "audienceAccuracy": 93.33,
+    "audienceCorrect": 140
+  },
+  "retrieval": {
+    "evaluatedQueries": 69,
+    "recallAt1": 68.12,
+    "recallAt3": 88.41,
+    "recallAt5": 91.30,
+    "mrr": 0.7771,
+    "ndcgAt5": 0.8115,
+    "avgDbLatencyMs": 7.51
+  }
+}

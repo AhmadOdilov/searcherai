@@ -5,15 +5,20 @@ import type { QueryUnderstanding } from "./understanding";
 import type { CurriculumMatch } from "@/lib/curriculum/service";
 import { calculateHybridScore, type ScoreResult } from "./scoring";
 import { stemUzbekWord, getApostropheVariants } from "./normalization";
+import { expandQueryConcepts } from "./concept-map";
 
 /**
  * Darajalangan o'quv dasturi bo'limi natijasi va to'liq manba provenansi (Phase 12).
  */
 export interface RankedCurriculumMatch extends CurriculumMatch {
   sourceId: string;
+  sourceVersion?: string;
+  curriculumYear?: number;
   subject: string;
   grade: string;
   score: number;
+  exactMatch: boolean;
+  crossGradeMatch: boolean;
   isCrossGrade?: boolean;
   requestedGrade?: string;
   availableGrade?: string;
@@ -91,7 +96,15 @@ export async function matchCurriculumTopics(
 
   const expandedTerms = new Set<string>([...baseTerms, ...stemmedKeywords, extractedTopic]);
 
-  // Cross-lingual tushunchalar kengaytmasi
+  // Cross-lingual tushunchalar kengaytmasi (Phase 6 & 7)
+  const conceptExpansion = expandQueryConcepts(extractedTopic, detectedSubject, detectedGrade);
+  for (const term of conceptExpansion.expandedTerms) {
+    expandedTerms.add(term);
+    for (const t of term.split(/\s+/)) {
+      if (t.length >= 3) expandedTerms.add(t);
+    }
+  }
+
   for (const word of keywords) {
     const cleanWord = word.toLowerCase().replace(/[^a-z0-9]/gi, "");
     for (const [key, synonyms] of Object.entries(CROSS_LINGUAL_CONCEPT_MAP)) {
@@ -149,9 +162,21 @@ export async function matchCurriculumTopics(
     },
   });
 
-  // 3. Ikkinchi bosqich — Cross-Grade qidiruv (Phase 11):
-  // Agar so'ralgan sinfda topilmasa, mavzu boshqa sinflarda borligini tekshiramiz
-  if (candidates.length === 0 && detectedSubject && orClauses.length > 0) {
+  // 3. Hard Filtering (Phase 7): Obvious wrong candidatesni chiqarish
+  // Agar so'ralgan sinfda nomzodlar mavjud bo'lsa, boshqa sinflar mutlaqo aralashmaydi
+  let effectiveCandidates = candidates;
+  if (detectedGrade) {
+    const exactGradeCandidates = candidates.filter(
+      (c) => c.grade.toLowerCase() === detectedGrade.toLowerCase(),
+    );
+    if (exactGradeCandidates.length > 0) {
+      effectiveCandidates = exactGradeCandidates;
+    }
+  }
+
+  // 4. Cross-Grade Fallback (Phase 7 & 8):
+  // Faqat so'ralgan sinfda UMUMAN nomzod topilmasa, boshqa sinflardan qidiramiz
+  if (effectiveCandidates.length === 0 && detectedSubject && orClauses.length > 0) {
     const crossGradeCandidates = await prisma.curriculumTopic.findMany({
       where: {
         subject: { equals: detectedSubject, mode: "insensitive" },
@@ -170,11 +195,11 @@ export async function matchCurriculumTopics(
       },
     });
 
-    candidates.push(...crossGradeCandidates);
+    effectiveCandidates = crossGradeCandidates;
   }
 
-  // 4. Ko'p mezonli reyting hisoblash (Scoring & Provenance)
-  const scored: RankedCurriculumMatch[] = candidates.map((cand) => {
+  // 5. Ko'p mezonli reyting hisoblash (Scoring & Provenance)
+  const scored: RankedCurriculumMatch[] = effectiveCandidates.map((cand) => {
     const isCrossGrade = Boolean(
       detectedGrade && cand.grade.toLowerCase() !== detectedGrade.toLowerCase(),
     );
@@ -195,6 +220,8 @@ export async function matchCurriculumTopics(
 
     return {
       sourceId: cand.id,
+      sourceVersion: "DTS-UZBMB-2025-v1",
+      curriculumYear: 2025,
       topicName: cand.topicName,
       subject: cand.subject,
       grade: cand.grade,
@@ -203,6 +230,8 @@ export async function matchCurriculumTopics(
       expectedOutcomes: cand.expectedOutcomes,
       source: cand.source,
       score: scoreRes.totalScore,
+      exactMatch: !isCrossGrade,
+      crossGradeMatch: isCrossGrade,
       isCrossGrade,
       requestedGrade: detectedGrade,
       availableGrade: cand.grade,

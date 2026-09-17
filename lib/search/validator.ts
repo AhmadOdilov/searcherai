@@ -1,22 +1,27 @@
 /**
- * Javobni tekshirish, fakt va tushuntirishlarni ajratish, hamda gallyutsinatsiyadan himoya qilish (Phase 10 & 13).
+ * Javobni tekshirish, fakt va tushuntirishlarni ajratish, hamda gallyutsinatsiyadan himoya qilish (Grounding V2 & Claim-Level Validation — Phase 16 & 17).
  *
  * Vazifalari:
  *  1. Grounding check: AI javobining rasmiy DTS o'quv dasturi bilan mosligini tekshirish.
- *  2. Claim validation: Soatlar (hours claim), sinf darajasi (grade claim), mavzu (topic claim)
- *     va kutilayotgan natijalar (outcome claim) bo'yicha ziddiyatlarni (contradictions) aniqlash.
- *  3. No result quality (Phase 10): "Fan bazada yo'q" (subject_unseeded) bilan "Mavzu topilmadi"
- *     (genuinely_absent) farqini foydalanuvchiga aniq tushuntirish.
- *  4. Cross-grade transparentlik (Phase 11): Agar mavzu boshqa sinf dasturida bo'lsa, ogohlantirish.
+ *  2. Claim validation: Har bir curriculum fact uchun aniq support status:
+ *     - "supported": Rasmiy bazadagi ma'lumot bilan tasdiqlangan.
+ *     - "contradicted": Rasmiy baza ma'lumotiga zid (masalan, dasturda 8 soat, AI 12 soat degan).
+ *     - "unsupported": Rasmiy bazada bu fakt mavjud emas yoki tasdiqlanmagan.
+ *  3. Cross-grade transparentlik (Phase 8): So'ralgan va topilgan sinf farqini aniq ko'rsatish.
+ *  4. No result quality (Phase 10): "Fan bazada yo'q" (status: NOT_AVAILABLE) bilan "Mavzu topilmadi" farqi.
  */
 
 import type { QueryUnderstanding } from "./understanding";
 import type { RankedCurriculumMatch } from "./curriculum-matcher";
 import type { SearchAnswer } from "@/lib/validations/search";
+import { getSubjectCurriculumStatus } from "../curriculum/ingestion/registry";
+
+export type ClaimStatus = "supported" | "contradicted" | "unsupported";
 
 export interface GroundingClaim {
   type: "topic" | "grade" | "hours" | "outcome" | "source";
   claim: string;
+  status: ClaimStatus;
   supported: boolean;
   contradiction?: string;
 }
@@ -27,6 +32,8 @@ export interface GroundingValidationResult {
   caution?: string;
   sourceCitations: Array<{
     sourceId: string;
+    sourceVersion?: string;
+    curriculumYear?: number;
     topicName: string;
     subject: string;
     grade: string;
@@ -35,10 +42,13 @@ export interface GroundingValidationResult {
   }>;
   claims: GroundingClaim[];
   contradictions: string[];
+  supportedClaimRate: number;
+  contradictionRate: number;
+  unsupportedClaimRate: number;
 }
 
 /**
- * AI javobini tahlil qiladi va strukturaviy da'volarni (claims) o'quv dasturi bilan tekshiradi.
+ * AI javobini tahlil qiladi va fakt darajasidagi da'volarni (claims) o'quv dasturi bilan tekshiradi.
  */
 export function validateAndGroundAnswer(
   answer: SearchAnswer,
@@ -47,6 +57,8 @@ export function validateAndGroundAnswer(
 ): GroundingValidationResult {
   const citations = curriculumMatches.map((m) => ({
     sourceId: m.sourceId,
+    sourceVersion: m.sourceVersion ?? "DTS-UZBMB-2025-v1",
+    curriculumYear: m.curriculumYear ?? 2025,
     topicName: m.topicName,
     subject: m.subject,
     grade: m.grade,
@@ -57,13 +69,10 @@ export function validateAndGroundAnswer(
   const claims: GroundingClaim[] = [];
   const contradictions: string[] = [];
 
-  // 1. Agar rasmiy dasturdan hech narsa topilmagan bo'lsa (Phase 10 No-result quality)
+  // 1. Agar rasmiy dasturdan hech narsa topilmagan bo'lsa
   if (curriculumMatches.length === 0) {
-    const isUnseededSubject =
-      understanding.detectedSubject &&
-      ["Fizika", "Kimyo", "Biologiya", "Tarix", "Geografiya", "Informatika", "Ingliz tili"].includes(
-        understanding.detectedSubject,
-      );
+    const registryInfo = understanding.detectedSubject ? getSubjectCurriculumStatus(understanding.detectedSubject) : null;
+    const isUnseededSubject = registryInfo?.status === "NOT_AVAILABLE";
 
     let ungroundedCaution = "";
 
@@ -83,38 +92,44 @@ export function validateAndGroundAnswer(
           : "Eslatma: Ushbu mavzu rasmiy o'quv dasturidan topilmadi. Javob umumiy pedagogik va metodik tavsiyalar asosida tayyorlandi.";
     }
 
+    claims.push({
+      type: "source",
+      claim: "Rasmiy o'quv dasturi bazasidan mavzu topilmadi",
+      status: "unsupported",
+      supported: false,
+    });
+
     return {
       isGrounded: false,
       groundingScore: 0.3,
       caution: answer.caution ? `${answer.caution} | ${ungroundedCaution}` : ungroundedCaution,
       sourceCitations: [],
-      claims: [
-        {
-          type: "source",
-          claim: "Rasmiy o'quv dasturi bazasidan mavzu topilmadi",
-          supported: false,
-        },
-      ],
+      claims,
       contradictions: [],
+      supportedClaimRate: 0.0,
+      contradictionRate: 0.0,
+      unsupportedClaimRate: 1.0,
     };
   }
 
   // 2. Eng yuqori ball olgan bo'lim
   const topMatch = curriculumMatches[0];
 
-  // 3. Structured Claim Validation (Phase 13)
+  // 3. Claim-Level Validation (Phase 16 & 17)
 
   // a) Topic claim
+  const isTopicSupported = topMatch.score >= 0.45;
   claims.push({
     type: "topic",
     claim: `Mavzu rasmiy dasturdagi «${topMatch.topicName}» bo'limi bilan mos`,
-    supported: topMatch.score >= 0.4,
+    status: isTopicSupported ? "supported" : "unsupported",
+    supported: isTopicSupported,
   });
 
-  // b) Grade claim va Cross-grade tekshiruvi (Phase 11)
+  // b) Grade claim va Cross-grade tekshiruvi (Phase 8)
   let crossGradeCaution: string | undefined;
   if (topMatch.isCrossGrade && topMatch.requestedGrade && topMatch.availableGrade) {
-    const isMismatch = topMatch.requestedGrade !== topMatch.availableGrade;
+    const isMismatch = topMatch.requestedGrade.toLowerCase() !== topMatch.availableGrade.toLowerCase();
     if (isMismatch) {
       crossGradeCaution =
         understanding.detectedLanguage === "RU"
@@ -126,6 +141,7 @@ export function validateAndGroundAnswer(
       claims.push({
         type: "grade",
         claim: `Sinf nomuvofiqligi: so'ralgan ${topMatch.requestedGrade}, dasturdagi ${topMatch.availableGrade}`,
+        status: "contradicted",
         supported: false,
         contradiction: crossGradeCaution,
       });
@@ -134,16 +150,17 @@ export function validateAndGroundAnswer(
   } else {
     claims.push({
       type: "grade",
-      claim: `Sinf darajasi: ${topMatch.grade}`,
+      claim: `Sinf darajasi rasmiy dasturga mos: ${topMatch.grade}`,
+      status: "supported",
       supported: true,
     });
   }
 
-  // c) Hours claim tekshiruvi (Phase 13 Contradiction Check)
-  if (topMatch.expectedHours !== null && topMatch.expectedHours > 0) {
-    const hoursRegex = /(\d+)\s*(?:soat|soatlik|chasa|chasov|chasa|hours?)\b/iu;
-    const hoursMatch = answer.answer.match(hoursRegex);
+  // c) Hours claim tekshiruvi (Phase 16 Fact Verification)
+  const hoursRegex = /(\d+)\s*(?:soat|soatlik|chasa|chasov|hours?)\b/iu;
+  const hoursMatch = answer.answer.match(hoursRegex);
 
+  if (topMatch.expectedHours !== null && topMatch.expectedHours > 0) {
     if (hoursMatch) {
       const claimedHours = parseInt(hoursMatch[1], 10);
       const diff = Math.abs(claimedHours - topMatch.expectedHours);
@@ -154,6 +171,7 @@ export function validateAndGroundAnswer(
         claims.push({
           type: "hours",
           claim: `Dars soatlari: ${claimedHours} soat`,
+          status: "contradicted",
           supported: false,
           contradiction: contra,
         });
@@ -161,6 +179,7 @@ export function validateAndGroundAnswer(
         claims.push({
           type: "hours",
           claim: `Dars soatlari rasmiy dasturga mos (${topMatch.expectedHours} soat)`,
+          status: "supported",
           supported: true,
         });
       }
@@ -168,17 +187,55 @@ export function validateAndGroundAnswer(
       claims.push({
         type: "hours",
         claim: `Rasmiy dasturda ajratilgan soat: ${topMatch.expectedHours}`,
+        status: "supported",
         supported: true,
+      });
+    }
+  } else {
+    // DBda soat noma'lum bo'lsa
+    if (hoursMatch) {
+      claims.push({
+        type: "hours",
+        claim: `Javobda ${hoursMatch[1]} soat ko'rsatilgan, ammo rasmiy bazada bu bo'lim uchun soat belgilanmagan`,
+        status: "unsupported",
+        supported: false,
+      });
+    } else {
+      claims.push({
+        type: "hours",
+        claim: "Bo'lim bo'yicha ajratilgan soat rasmiy manbada ko'rsatilmagan",
+        status: "unsupported",
+        supported: false,
       });
     }
   }
 
-  // d) Source claim
+  // d) Expected Outcomes claim tekshiruvi
+  if (topMatch.expectedOutcomes && topMatch.expectedOutcomes.length > 0) {
+    const outcomeClean = topMatch.expectedOutcomes.join(" ").toLowerCase();
+    const isOutcomeMentioned = understanding.keywords.some((k) => outcomeClean.includes(k.toLowerCase()));
+    claims.push({
+      type: "outcome",
+      claim: `Kutilayotgan ta'limiy natijalar: ${topMatch.expectedOutcomes.length} ta kompetensiya mavjud`,
+      status: isOutcomeMentioned ? "supported" : "unsupported",
+      supported: isOutcomeMentioned,
+    });
+  }
+
+  // e) Source provenance claim
   if (topMatch.source) {
     claims.push({
       type: "source",
-      claim: `Manba: ${topMatch.source}`,
+      claim: `Rasmiy manba mavjud: ${topMatch.source}`,
+      status: "supported",
       supported: true,
+    });
+  } else {
+    claims.push({
+      type: "source",
+      claim: "Rasmiy manba havolasi ko'rsatilmagan",
+      status: "unsupported",
+      supported: false,
     });
   }
 
@@ -198,14 +255,33 @@ export function validateAndGroundAnswer(
     .filter(Boolean)
     .join(" | ");
 
-  const isGrounded = topMatch.score >= 0.5 && contradictions.length === 0;
+  // Support rates hisoblash
+  const totalClaims = Math.max(1, claims.length);
+  const supportedCount = claims.filter((c) => c.status === "supported").length;
+  const contradictedCount = claims.filter((c) => c.status === "contradicted").length;
+  const unsupportedCount = claims.filter((c) => c.status === "unsupported").length;
+
+  const supportedClaimRate = Number((supportedCount / totalClaims).toFixed(2));
+  const contradictionRate = Number((contradictedCount / totalClaims).toFixed(2));
+  const unsupportedClaimRate = Number((unsupportedCount / totalClaims).toFixed(2));
+
+  const isGrounded =
+    curriculumMatches.length > 0 &&
+    topMatch.score >= 0.45 &&
+    contradictedCount === 0;
 
   return {
     isGrounded,
-    groundingScore: contradictions.length > 0 ? Math.max(0.2, topMatch.score - 0.25) : topMatch.score,
+    groundingScore:
+      contradictions.length > 0
+        ? Math.max(0.2, topMatch.score - 0.25)
+        : topMatch.score,
     caution: allCautions.length > 0 ? allCautions : undefined,
     sourceCitations: citations,
     claims,
     contradictions,
+    supportedClaimRate,
+    contradictionRate,
+    unsupportedClaimRate,
   };
 }

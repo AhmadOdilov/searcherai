@@ -1,6 +1,6 @@
 /**
- * Qidiruv natijasidan boshqa modullarga (Word dars ishlanma, PowerPoint slaydlar, Excel taqvim reja)
- * o'tish uchun triggerlar va tezkor harakatlarni (handoff) shakllantirish.
+ * Qidiruv natijasidan boshqa modullarga (Word dars ishlanma, PowerPoint slaydlar, Excel taqvim/test reja)
+ * o'tish uchun triggerlar va tezkor harakatlarni (Generator Handoff — Phase 19) shakllantirish.
  */
 
 import type { QueryUnderstanding } from "./understanding";
@@ -12,6 +12,7 @@ export type OrchestrationActionType =
 
 export interface OrchestrationAction {
   type: OrchestrationActionType;
+  generatorTarget: "docx" | "pptx" | "xlsx";
   title: string;
   description: string;
   url: string;
@@ -35,24 +36,24 @@ export function buildOrchestrationActions(
       lessonPlanDesc: "Mavzu bo'yicha 45 daqiqalik to'liq dars ishlanmasi va konspekt generatsiya qilish",
       presentationTitle: "Prezentatsiya (PPTX) yaratish",
       presentationDesc: "Sinfda ko'rgazmali namoyish qilish uchun slaydlar to'plami tayyorlash",
-      calendarTitle: "Taqvim-mavzu reja (Excel) yaratish",
-      calendarDesc: "Chorak yoki yillik soatlar taqsimoti va kutilayotgan natijalar jadvalini olish",
+      calendarTitle: "Taqvim-mavzu reja va test (Excel) yaratish",
+      calendarDesc: "Chorak yoki yillik soatlar taqsimoti, test va kutilayotgan natijalar jadvalini olish",
     },
     RU: {
       lessonPlanTitle: "Создать поурочный план (Word)",
       lessonPlanDesc: "Сгенерировать полный конспект урока на 45 минут по теме",
       presentationTitle: "Создать презентацию (PPTX)",
       presentationDesc: "Подготовить набор слайдов для демонстрации на уроке",
-      calendarTitle: "Календарный план (Excel)",
-      calendarDesc: "Сформировать таблицу распределения часов на четверть или год",
+      calendarTitle: "Календарный план и тесты (Excel)",
+      calendarDesc: "Сформировать таблицу распределения часов, тестов и результатов",
     },
     EN: {
       lessonPlanTitle: "Generate Lesson Plan (Word)",
       lessonPlanDesc: "Generate a complete 45-minute lesson plan and notes for this topic",
       presentationTitle: "Generate Presentation (PPTX)",
       presentationDesc: "Prepare presentation slides for classroom demonstration",
-      calendarTitle: "Generate Calendar Plan (Excel)",
-      calendarDesc: "Create quarterly or annual schedule and outcome table",
+      calendarTitle: "Generate Calendar & Assessment (Excel)",
+      calendarDesc: "Create quarterly schedule, test assessments and outcome matrix",
     },
   }[detectedLanguage];
 
@@ -61,9 +62,10 @@ export function buildOrchestrationActions(
   if (detectedGrade) queryParams.set("grade", detectedGrade);
   queryParams.set("topic", extractedTopic);
 
-  // 1. Dars ishlanma (Word) tavsiyasi
+  // 1. Dars ishlanma (Word — docx)
   actions.push({
     type: "create_lesson_plan",
+    generatorTarget: "docx",
     title: labels.lessonPlanTitle,
     description: labels.lessonPlanDesc,
     url: `/lesson-plans?${queryParams.toString()}`,
@@ -74,9 +76,10 @@ export function buildOrchestrationActions(
     },
   });
 
-  // 2. Prezentatsiya (PPTX) tavsiyasi
+  // 2. Prezentatsiya (PowerPoint — pptx)
   actions.push({
     type: "create_presentation",
+    generatorTarget: "pptx",
     title: labels.presentationTitle,
     description: labels.presentationDesc,
     url: `/presentations?${queryParams.toString()}`,
@@ -87,48 +90,38 @@ export function buildOrchestrationActions(
     },
   });
 
-  // 3. Taqvim-mavzu reja (Excel) tavsiyasi — ayniqsa o'quv dasturi, soatlar yoki fan rejalari so'ralganda
-  if (detectedIntent === "curriculum" || detectedIntent === "worksheet") {
-    actions.unshift({
-      type: "create_calendar_plan",
-      title: labels.calendarTitle,
-      description: labels.calendarDesc,
-      url: `/calendar-plans?${queryParams.toString()}`,
-      payload: {
-        subject: detectedSubject,
-        grade: detectedGrade,
-        topic: extractedTopic,
-      },
-    });
-  } else {
-    actions.push({
-      type: "create_calendar_plan",
-      title: labels.calendarTitle,
-      description: labels.calendarDesc,
-      url: `/calendar-plans?${queryParams.toString()}`,
-      payload: {
-        subject: detectedSubject,
-        grade: detectedGrade,
-        topic: extractedTopic,
-      },
-    });
-  }
+  // 3. Taqvim-mavzu reja va test baholash (Excel — xlsx)
+  actions.push({
+    type: "create_calendar_plan",
+    generatorTarget: "xlsx",
+    title: labels.calendarTitle,
+    description: labels.calendarDesc,
+    url: `/calendar-plans?${queryParams.toString()}`,
+    payload: {
+      subject: detectedSubject,
+      grade: detectedGrade,
+      topic: extractedTopic,
+    },
+  });
 
-  // Intent va auditoriyaga qarab tartiblash (Phase 19 Action Quality)
+  // Intentga qarab eng mos generatorni birinchi o'ringa chiqarish
   if (detectedIntent === "presentation") {
     const pIdx = actions.findIndex((a) => a.type === "create_presentation");
     if (pIdx > 0) {
       const [pAction] = actions.splice(pIdx, 1);
       actions.unshift(pAction);
     }
-  } else if (detectedIntent === "curriculum") {
+  } else if (
+    detectedIntent === "curriculum" ||
+    detectedIntent === "quiz_test" ||
+    detectedIntent === "assessment"
+  ) {
     const cIdx = actions.findIndex((a) => a.type === "create_calendar_plan");
     if (cIdx > 0) {
       const [cAction] = actions.splice(cIdx, 1);
       actions.unshift(cAction);
     }
   } else {
-    // Standart: dars ishlanma (Word) birinchi
     const lIdx = actions.findIndex((a) => a.type === "create_lesson_plan");
     if (lIdx > 0) {
       const [lAction] = actions.splice(lIdx, 1);

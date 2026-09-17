@@ -134,10 +134,23 @@ export function calculateHybridScore(input: ScoringInput): ScoreResult {
     0.10 * outcomeMatch +
     0.10 * intentMatch;
 
-  // Grade mismatch penalty (Phase 8 & 9):
-  // Agar foydalanuvchi aniq sinf so'ragan bo'lsa va nomzod boshqa sinfdan bo'lsa, jazo bali qo'llaymiz
+  // Grade mismatch penalty (Phase 8 Grade Intelligence):
+  // Exact grade: 0 penalty
+  // Adjacent grade (diff = 1): -0.10 penalty
+  // Far grade (diff >= 2): -0.25 penalty
   if (detectedGrade && candidateGrade.toLowerCase() !== detectedGrade.toLowerCase()) {
-    totalScore = Math.max(0, totalScore - 0.20);
+    const numReq = parseInt(detectedGrade, 10);
+    const numCand = parseInt(candidateGrade, 10);
+    if (!isNaN(numReq) && !isNaN(numCand)) {
+      const diff = Math.abs(numReq - numCand);
+      if (diff === 1) {
+        totalScore = Math.max(0, totalScore - 0.10);
+      } else {
+        totalScore = Math.max(0, totalScore - 0.25);
+      }
+    } else {
+      totalScore = Math.max(0, totalScore - 0.20);
+    }
   }
 
   return {

@@ -41,6 +41,8 @@ describe("search validator & grounding guard", () => {
           gradeSubjectMatch: 1,
           intentMatch: 1,
         },
+        exactMatch: true,
+        crossGradeMatch: false,
       },
     ];
 

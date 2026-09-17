@@ -13,18 +13,30 @@
 
 import type { LanguageCode } from "@/lib/validations/common";
 import { normalizeQuery, type NormalizedQuery } from "./normalization";
+import { resolveAmbiguity } from "./ambiguity";
 
 export type SearchIntent =
   | "explain"
+  | "definition"
+  | "solve"
   | "lesson_plan"
   | "presentation"
   | "quiz_test"
   | "worksheet"
+  | "homework"
   | "curriculum"
-  | "classroom_activity"
-  | "definition"
   | "compare"
-  | "search_topic";
+  | "summarize"
+  | "summary"
+  | "example"
+  | "classroom_activity"
+  | "activity"
+  | "assessment"
+  | "search_topic"
+  | "topic_search"
+  | "fact_check"
+  | "experiment"
+  | "translation";
 
 export type AudienceMode = "teacher" | "student";
 
@@ -52,10 +64,14 @@ export interface QueryUnderstanding {
   detectedSubject?: string;
   subjectConfidence: number;
   subjectCandidates: SubjectCandidate[];
+  isAmbiguous?: boolean;
+  ambiguityTerm?: string;
+  clarificationQuestion?: string;
   detectedGrade?: string;
   detectedIntent: SearchIntent;
   intentConfidence: number;
   audience: AudienceMode;
+  audienceConfidence: number;
   extractedTopic: string;
   keywords: string[];
 }
@@ -73,12 +89,12 @@ const SUBJECT_DEFINITIONS: SubjectDefinition[] = [
   {
     subject: "Matematika",
     strongPatterns: [
-      /(?:^|[^\p{L}\p{N}])(?:matematik[a-z]*|algebra[a-z]*|geometri[a-z]*|arifmetik[a-z]*|trigonometri[a-z]*|integral[a-z]*|differensial[a-z]*|математик[а-я]*|алгебр[а-я]*|геометр[а-я]*|арифметик[а-я]*|тригонометри[а-я]*|интеграл[а-я]*|дифференциал[а-я]*|mathematics?|math\b|calculus|geometry|algebra|arithmetic|trigonometry)(?=$|[^\p{L}\p{N}])/giu,
+      /(?:^|[^\p{L}\p{N}])(?:matematik[a-z]*|algebra[a-z]*|geometri[a-z]*|arifmetik[a-z]*|trigonometri[a-z]*|integral[a-z]*|differensial[a-z]*|математик[а-я]*|алгебр[а-я]*|геометр[а-я]*|арифметик[а-я]*|тригонометри[а-я]*|интеграл[а-я]*|дифференциал[а-я]*|дифференцир[а-я]*|mathematics?|math\b|calculus|geometry|algebra|arithmetic|trigonometry)(?=$|[^\p{L}\p{N}])/giu,
     ],
     keywordWeights: [
       { pattern: /(?:^|[^\p{L}\p{N}])(?:kasr[a-z]*|tenglama[a-z]*|tengsizlik[a-z]*|natural son|butun son|ratsional son|haqiqiy son|oddiy kasr|o['‘`ʻ]nli kasr|burchak|uchburchak|to['‘`ʻ]rtburchak|doira|perimetr|yuzi|pifagor|viyet|diskriminant|kvadrat tenglama|birhad|ko['‘`ʻ]phad|arifmetik progressiya|geometrik progressiya|hosila|boshlang['‘`ʻ]ich funksiya|ehtimollar nazariyasi|matematik statistika|jadval|foiz|nisbat|proporsiya|ko['‘`ʻ]paytirish|bo['‘`ʻ]lish|qo['‘`ʻ]shish|ayirish|daraja|ildiz)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
-      { pattern: /(?:^|[^\p{L}\p{N}])(?:дроб[а-я]*|дроби|уравнени[а-я]*|неравенств[а-я]*|числа|натуральн[а-я]*|целые числа|координат[а-я]*|функци[а-я]*|квадратичн[а-я]*|квадратн[а-я]*|корен[а-я]*|корни|производн[а-я]*|первообразн[а-я]*|пифагор[а-я]*|виет[а-я]*|дискриминант|умножени[а-я]*|делени[а-я]*|сложени[а-я]*|вычитани[а-я]*|прогресси[а-я]*|логарифм[а-я]*|sin|cos|tg|ctg|таблицу умножения)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
-      { pattern: /\b(?:fractions?|equations?|pythagorean|theorem|quadratic|polynomials?|integers?|rational|linear|system|derivatives?|integrals?|logarithm|exponential|matrices|matrix|probability|angles?|triangles?|mental calculation|addition|subtraction|multiplication|division)\b/i, weight: 0.9 },
+      { pattern: /(?:^|[^\p{L}\p{N}])(?:дроб[а-я]*|дроби|уравнени[а-я]*|неравенств[а-я]*|числа|натуральн[а-я]*|целые числа|координат[а-я]*|функци[а-я]*|квадратичн[а-я]*|квадратн[а-я]*|корен[а-я]*|корни|производн[а-я]*|первообразн[а-я]*|пифагор[а-я]*|виет[а-я]*|дискриминант|дифференцир[а-я]*|комбинаторик[а-я]*|перестановк[а-я]*|сочетани[а-я]*|прямоугольн[а-я]* треугольник[а-я]*|умножени[а-я]*|делени[а-я]*|сложени[а-я]*|вычитани[а-я]*|прогресси[а-я]*|логарифм[а-я]*|sin|cos|tg|ctg|таблицу умножения)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
+      { pattern: /\b(?:fractions?|equations?|pythagorean|theorem|quadratic|polynomials?|integers?|rational|linear|system|derivatives?|integrals?|logarithms?|logarithmic|exponential|matrices|matrix|probability|angles?|triangles?|mental calculation|addition|subtraction|multiplication|division|prime numbers?|composite numbers?|parabola|vertex)\b/i, weight: 0.9 },
       { pattern: /(?:^|[^\p{L}\p{N}])(?:drob[a-z]*|drobi|uravneni[a-z]*|diskriminant|pifagor|logarifm|funksiya|hosila|integral)(?=$|[^\p{L}\p{N}])/giu, weight: 0.8 },
     ],
   },
@@ -89,8 +105,8 @@ const SUBJECT_DEFINITIONS: SubjectDefinition[] = [
     ],
     keywordWeights: [
       { pattern: /(?:^|[^\p{L}\p{N}])(?:so['‘`ʻ]z turkum[a-z]*|ot so['‘`ʻ]z|sifat so['‘`ʻ]z|fe['‘`ʻ]l|ravish|olmosh|son so['‘`ʻ]z|bog['‘`ʻ]lovchi|ko['‘`ʻ]makchi|yuklama|undov|sintaksis|gap bo['‘`ʻ]laklari|ega va kesim|bir tarkibli|qo['‘`ʻ]shma gap|ergashgan|bog['‘`ʻ]langan|fonetika|tovush|unli|undosh|so['‘`ʻ]z tarkibi|asos va qo['‘`ʻ]shimcha|matn tilshunosligi|uslubiyat|nutq madaniyati|notiqlik|she['‘`ʻ]r|g['‘`ʻ]azal|alisher navoiy|navoiy|boburnoma|cho['‘`ʻ]lpon|abdulla qodiriy)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
-      { pattern: /(?:^|[^\p{L}\p{N}])(?:существительн[а-я]*|прилагательн[а-я]*|глагол[а-я]*|наречи[а-я]*|местоимени[а-я]*|предлог[а-я]*|союз[а-я]*|частиц[а-я]*|подлежащ[а-я]*|сказуем[а-я]*|синтаксис|пунктуаци[а-я]*|орфографи[а-я]*|сложносочиненн[а-я]*|сложноподчиненн[а-я]*|открытому уроку по литературе|произведени[а-я]*|стихотворени[а-я]*)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
-      { pattern: /\b(?:grammar|syntax|phonetics|parts of speech|nouns?|verbs?|adjectives?|adverbs?|pronouns?|conjunctions?|prepositions?|literature|oral presentation in literature|essay|reading comprehension)\b/i, weight: 0.9 },
+      { pattern: /(?:^|[^\p{L}\p{N}])(?:существительн[а-я]*|прилагательн[а-я]*|глагол[а-я]*|наречи[а-я]*|местоимени[а-я]*|предлог[а-я]*|союз[а-я]*|частиц[а-я]*|подлежащ[а-я]*|сказуем[а-я]*|синтаксис|синтаксическ[а-я]*|односоставн[а-я]* предложени[а-я]*|стили речи|научный публицистический|культур[а-я]* речи|ораторск[а-я]* искусств[а-я]*|пунктуаци[а-я]*|орфографи[а-я]*|сложносочиненн[а-я]*|сложноподчиненн[а-я]*|открытому уроку по литературе|капитанской дочке|стихотворени[а-я]*)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
+      { pattern: /\b(?:grammar|syntax|phonetics|literature|oral presentation in literature|essay|reading comprehension)\b/i, weight: 0.9 },
     ],
   },
   {
@@ -100,8 +116,8 @@ const SUBJECT_DEFINITIONS: SubjectDefinition[] = [
     ],
     keywordWeights: [
       { pattern: /(?:^|[^\p{L}\p{N}])(?:mexanik[a-z]*|optik[a-z]*|termodinamik[a-z]*|dinamik[a-z]*|kinematik[a-z]*|bosim|zichlik|og['‘`ʻ]irlik|massa|tezlik|tezlanish|kuch|nyuton|paskal|arximed|om qonuni|amper|volt|tok kuchi|elektr zanjiri|magnit|diffuziya|issiqlik miqdori|solishtirma issiqlik|issiqlik sig['‘`ʻ]imi|fotoeffekt|yorug['‘`ʻ]lik)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
-      { pattern: /(?:^|[^\p{L}\p{N}])(?:механик[а-я]*|оптик[а-я]*|термодинамик[а-я]*|динамик[а-я]*|кинематик[а-я]*|плотност[а-я]*|давлен[а-я]*|скорост[а-я]*|ускорени[а-я]*|сил[а-я]*|ньютон[а-я]*|паскал[а-я]*|архимед[а-я]*|закон ома|закон паскаля|законы ньютона|электричеств[а-я]*|ток[а-я]*|магнитн[а-я]*|диффузи[а-я]*|теплоемкост[а-я]*|участок цепи)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
-      { pattern: /\b(?:velocity|acceleration|speed|density|pressure|force|gravity|newton|newton's|pascal|pascal's|ohm|ohm's|thermodynamics|optics|electricity|heat capacity|kinetic|potential energy)\b/i, weight: 0.9 },
+      { pattern: /(?:^|[^\p{L}\p{N}])(?:механик[а-я]*|оптик[а-я]*|термодинамик[а-я]*|динамик[а-я]*|кинематик[а-я]*|плотност[а-я]*|давлен[а-я]*|атмосферн[а-я]* давлен[а-я]*|опыт торричелли|почему небо голубое|скорост[а-я]*|ускорени[а-я]*|сил[а-я]*|ньютон[а-я]*|паскал[а-я]*|архимед[а-я]*|закон ома|закон паскаля|законы ньютона|электричеств[а-я]*|ток[а-я]*|магнитн[а-я]*|диффузи[а-я]*|теплоемкост[а-я]*|участок цепи)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
+      { pattern: /\b(?:velocity|acceleration|speed|density|pressure|force|gravity|newton|newton's|pascal|pascal's|ohm|ohm's|thermodynamics|optics|electricity|heat capacity|kinetic|potential energy|buoyant force|archimedes)\b/i, weight: 0.9 },
     ],
   },
   {
@@ -110,7 +126,7 @@ const SUBJECT_DEFINITIONS: SubjectDefinition[] = [
       /(?:^|[^\p{L}\p{N}])(?:kimyo[a-z]*|хими[а-я]*|chemistry|chemical)\b/giu,
     ],
     keywordWeights: [
-      { pattern: /(?:^|[^\p{L}\p{N}])(?:davriy jadval|davriy qonun|mendeleyev|mendeleev|atom tuzilishi|atom|molekula|modda|reaksiya|valentlik|valent|oksid[a-z]*|kislota[a-z]*|asos[a-z]*|tuz[a-z]*|eritma[a-z]*|kislorod|vodorod|uglevodorod[a-z]*|organik kimyo|noorganik kimyo|anorganik|kimyoviy bog['‘`ʻ]lanish|kovalent|ionli|elektrolit|metallmas|polimer[a-z]*|molyar massa)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
+      { pattern: /(?:^|[^\p{L}\p{N}])(?:davriy jadval|davriy qonun|mendeleyev|mendeleev|atom tuzilishi|atom|molekula|modda|reaksiya|valentlik|valent|oksid[a-z]*|kislota[a-z]*|asos[a-z]*|(?:osh tuzi|tuzlar[a-z]*|tuzning|tuz hosil)|eritma[a-z]*|kislorod|vodorod|uglevodorod[a-z]*|organik kimyo|noorganik kimyo|anorganik|kimyoviy bog['‘`ʻ]lanish|kovalent|ionli|elektrolit|metallmas|polimer[a-z]*|molyar massa)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
       { pattern: /(?:^|[^\p{L}\p{N}])(?:периодическ[а-я]*|менделеев[а-я]*|строение атома|атом[а-я]*|молекул[а-я]*|веществ[а-я]*|реакци[а-я]*|валентност[а-я]*|оксид[а-я]*|кислот[а-я]*|основани[а-я]*|раствор[а-я]*|кислород[а-я]*|водород[а-я]*|химическ[а-я]* связ[а-я]*|молярная масса|лабораторной работы по химии)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
       { pattern: /\b(?:periodic table|atoms?|molecules?|reactions?|valence|valency|acids?|bases?|oxides?|solutions?|chemical bonds?|polymers?|molar mass|organic chemistry)\b/i, weight: 0.9 },
     ],
@@ -122,8 +138,8 @@ const SUBJECT_DEFINITIONS: SubjectDefinition[] = [
     ],
     keywordWeights: [
       { pattern: /(?:^|[^\p{L}\p{N}])(?:fotosintez|hujayra|nafas olish|botanik[a-z]*|zoologiy[a-z]*|anatomiy[a-z]*|odam anatomiyasi|qon aylanish|yurak|o['‘`ʻ]simlik|gul tuzilishi|ildiz|poya|barg|urug['‘`ʻ]|irsiyat|genetik[a-z]*|dnk|rnk|xromosoma|darvin|evolyutsiya|ekologiya|umurtqali|umurtqasiz|bakteriya|virus)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
-      { pattern: /(?:^|[^\p{L}\p{N}])(?:фотосинтез[а-я]*|клетк[а-я]*|дыхани[а-я]*|ботаник[а-я]*|зоологи[а-я]*|анатоми[а-я]*|кровеносн[а-я]*|строени[а-я]* цветк[а-я]*|растени[а-я]*|наследственност[а-я]*|генетик[а-я]*|днк|рнк|эволюци[а-я]*|дарвин[а-я]*|микроскоп[а-я]*)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
-      { pattern: /\b(?:photosynthesis|cells?|microscope|respiration|circulatory system|genetics?|dna|rna|evolution|darwin|botany|zoology|anatomy|plants?|organisms?|heredity)\b/i, weight: 0.9 },
+      { pattern: /(?:^|[^\p{L}\p{N}])(?:фотосинтез[а-я]*|клетк[а-я]*|дыхани[а-я]*|ботаник[а-я]*|зоологи[а-я]*|анатоми[а-я]*|кровеносн[а-я]*|строени[а-я]* цветк[а-я]*|растени[а-я]*|наследственност[а-я]*|генетик[а-я]*|днк|рнк|эволюци[а-я]*|дарвин[а-я]*|микроскоп[а-я]*|нервн[а-я]* систем[а-я]*|головн[а-я]* мозг)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
+      { pattern: /\b(?:photosynthesis|cells?|cell division|microscope|respiration|circulatory system|genetics?|dna|rna|evolution|darwin|botany|zoology|anatomy|plants?|organisms?|heredity|mitosis|meiosis|prophase|metaphase|anaphase|telophase)\b/i, weight: 0.95 },
     ],
   },
   {
@@ -132,9 +148,9 @@ const SUBJECT_DEFINITIONS: SubjectDefinition[] = [
       /(?:^|[^\p{L}\p{N}])(?:tarix[a-z]*|тарих[а-я]*|истори[а-я]*|history|historical)\b/giu,
     ],
     keywordWeights: [
-      { pattern: /(?:^|[^\p{L}\p{N}])(?:jahon tarixi|o['‘`ʻ]zbekiston tarixi|qadimgi dunyo|sulola|jang|amir temur|temuriylar|bobur|boburiylar|somoniylar|qoraxoniylar|arxeologiya|ehromlar|misr|rim|gretsiya|kashfiyotlar|jadid|jadidchilik|mustaqillik)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
-      { pattern: /(?:^|[^\p{L}\p{N}])(?:история древнего мира|древн[а-я]* мир[а-я]*|египетск[а-я]* пирамид[а-я]*|амир[а-я]* темур[а-я]*|государство амира темура|великие географические|династи[а-я]*|битва|война)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
-      { pattern: /\b(?:ancient rome|ancient egypt|pyramids?|alexander|temur|tamerlane|middle ages|renaissance|dynasty|empire|civilization|world history)\b/i, weight: 0.9 },
+      { pattern: /(?:^|[^\p{L}\p{N}])(?:jahon tarixi|o['‘`ʻ]zbekiston tarixi|qadimgi dunyo|sulola|jang|amir temur|temuriylar|bobur|boburiylar|somoniylar|qoraxoniylar|arxeologiya|ehromlar|misr|rim|gretsiya|kashfiyotlar|jadid|jadidchilik|mustaqillik)(?=$|[^\p{L}\p{N}])/giu, weight: 0.95 },
+      { pattern: /(?:^|[^\p{L}\p{N}])(?:история древнего мира|древн[а-я]* мир[а-я]*|египетск[а-я]* пирамид[а-я]*|амир[а-я]* темур[а-я]*|государство амира темура|великие географические.*истори|эпоха возрождения.*истори|династи[а-я]*|битва|война)(?=$|[^\p{L}\p{N}])/giu, weight: 0.95 },
+      { pattern: /\b(?:ancient rome|ancient egypt|pyramids?|alexander|temur|tamerlane|middle ages|renaissance|dynasty|empire|civilization|world history)\b/i, weight: 0.95 },
     ],
   },
   {
@@ -144,7 +160,7 @@ const SUBJECT_DEFINITIONS: SubjectDefinition[] = [
     ],
     keywordWeights: [
       { pattern: /(?:^|[^\p{L}\p{N}])(?:materik[a-z]*|okean[a-z]*|iqlim|xarita|globus|aholi|tabiiy zona|relyef|tog['‘`ʻ]lar|daryolar|afrika|yevrosiyo|amerika|antarktida|avstraliya|tabiiy geografiya)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
-      { pattern: /(?:^|[^\p{L}\p{N}])(?:материк[а-я]*|океан[а-я]*|климат[а-я]*|карт[а-я]*|населени[а-я]*|рельеф[а-я]*|еврази[а-я]*|африк[а-я]*)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
+      { pattern: /(?:^|[^\p{L}\p{N}])(?:материк[а-я]*|океан[а-я]*|климатическ[а-я]*|климат[а-я]*|географическ[а-я]* карт[а-я]*|карт[а-я]*|населени[а-я]*|рельеф[а-я]*|еврази[а-я]*|африк[а-я]*)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
       { pattern: /\b(?:continents?|oceans?|climate|maps?|population|topography|equator|hemisphere)\b/i, weight: 0.9 },
     ],
   },
@@ -165,75 +181,132 @@ const SUBJECT_DEFINITIONS: SubjectDefinition[] = [
       /(?:^|[^\p{L}\p{N}])(?:ingliz tili|ingliz tilidan|английск[а-я]*|english)\b/giu,
     ],
     keywordWeights: [
-      { pattern: /\b(?:present simple|present continuous|present perfect|past simple|past continuous|future simple|tenses|irregular verbs|vocabulary|grammar exercises)\b/i, weight: 0.95 },
+      { pattern: /\b(?:present simple|present continuous|present perfect|past simple|past continuous|future simple|tenses|irregular verbs|vocabulary|grammar exercises|parts of speech|nouns verbs adjectives)\b/i, weight: 0.95 },
       { pattern: /(?:^|[^\p{L}\p{N}])(?:inglizcha|grammatika ingliz|english grammar)(?=$|[^\p{L}\p{N}])/giu, weight: 0.9 },
     ],
   },
 ];
 
-/** Intent markerlari va ularning confidence darajalari (Phase 7) */
+/** Intent markerlari va ularning confidence darajalari (Phase 12 Intent V3) */
 const INTENT_PATTERNS: Array<{ intent: SearchIntent; confidence: number; patterns: RegExp[] }> = [
   {
-    intent: "lesson_plan",
+    intent: "compare",
     confidence: 0.95,
     patterns: [
-      /(?:^|[^\p{L}\p{N}])(?:dars ishlanma[a-z]*|dars reja[a-z]*|konspekt[a-z]*|45 daqiqa|45 minut|texnologik xarita|поурочный план|план урока|конспект урока|lesson plan|teaching plan)(?=$|[^\p{L}\p{N}])/giu,
+      /(?:^|[^\p{L}\p{N}])(?:taqqosla[a-z]*|farqi|o['‘`ʻ]xshashligi|solishtir[a-z]*|farqlari|farqi nimada|сравни[а-я]*|сравнение|разниц[а-я]*|разница между|compare|difference between|\bvs\b)(?=$|[^\p{L}\p{N}])/giu,
+    ],
+  },
+  {
+    intent: "lesson_plan",
+    confidence: 0.96,
+    patterns: [
+      /(?:^|[^\p{L}\p{N}])(?:45 daqiqa|45 minutlik|45 minut|45 minutlik dars|dars ishlanma[a-z]*|dars reja[a-z]*|konspekt[a-z]*|texnologik xarita|поурочный план|поурочные разработки|план урока|конспект урока|lesson plan|teaching plan|lesson notes)(?=$|[^\p{L}\p{N}])/giu,
     ],
   },
   {
     intent: "presentation",
     confidence: 0.95,
     patterns: [
-      /(?:^|[^\p{L}\p{N}])(?:prezentatsiya[a-z]*|prizintatsiya[a-z]*|taqdimot[a-z]*|slayd[a-z]*|powerpoint|pptx|презентаци[а-я]*|слайд[а-я]*|presentation|slides)(?=$|[^\p{L}\p{N}])/giu,
+      /(?:^|[^\p{L}\p{N}])(?:prezentatsiya[a-z]*|prizintatsiya[a-z]*|taqdimot[a-z]*|slayd[a-z]*|slayd tayyorla|slayd qilib ber|powerpoint|pptx|презентаци[а-я]*|слайд[а-я]*|географическая карта.*класс|presentation|slides)(?=$|[^\p{L}\p{N}])/giu,
     ],
   },
   {
     intent: "quiz_test",
-    confidence: 0.92,
+    confidence: 0.94,
     patterns: [
-      /(?:^|[^\p{L}\p{N}])(?:test|testlar|viktorina|savol-javob|nazorat ishi|savollar tuz|тест[а-я]*|вопросы к уроку|quiz|test questions|exam questions)(?=$|[^\p{L}\p{N}])/giu,
+      /(?:^|[^\p{L}\p{N}])(?:\d+\s*ta\s*test(?:\s*tuz)?|test|testlar|viktorina|savol-javob|nazorat ishi|savollar tuz|savol qo['‘`ʻ]sh|yana \d+ ta savol|тест[а-я]*|вопросы к уроку|quiz|test questions|exam questions)(?=$|[^\p{L}\p{N}])/giu,
+    ],
+  },
+  {
+    intent: "solve",
+    confidence: 0.94,
+    patterns: [
+      /(?:^|[^\p{L}\p{N}])(?:yechib ber|yechish usuli|masalani yech|yechimi|qanday yechiladi|реши[а-я]*|решить задачу|как решить|solve|solution|how to solve)(?=$|[^\p{L}\p{N}])/giu,
+    ],
+  },
+  {
+    intent: "homework",
+    confidence: 0.94,
+    patterns: [
+      /(?:^|[^\p{L}\p{N}])(?:uyga vazifa|uy vazifam|uy vazifasi|домашнее задание|домашней работой|домашним заданием|домашняя работа|homework)(?=$|[^\p{L}\p{N}])/giu,
     ],
   },
   {
     intent: "worksheet",
-    confidence: 0.90,
+    confidence: 0.92,
     patterns: [
-      /(?:^|[^\p{L}\p{N}])(?:mashq|mashqlar|topshiriq|topshiriqlar|tarqatma|amaliy ish|uyga vazifa|упражнени[а-я]*|задани[а-я]*|раздаточн[а-я]*|worksheet|exercises|homework)(?=$|[^\p{L}\p{N}])/giu,
+      /(?:^|[^\p{L}\p{N}])(?:mashq|mashqlar|topshiriq|topshiriqlar|tarqatma|amaliy ish|упражнени[а-я]*|задани[а-я]*|раздаточн[а-я]*|worksheet|exercises)(?=$|[^\p{L}\p{N}])/giu,
+    ],
+  },
+  {
+    intent: "assessment",
+    confidence: 0.92,
+    patterns: [
+      /(?:^|[^\p{L}\p{N}])(?:baholash mezoni|baholash mezonlari|rubrika|kriteriya|baholash|оценивание|критерии оценивания|рубрика|assessment|rubric|grading)(?=$|[^\p{L}\p{N}])/giu,
     ],
   },
   {
     intent: "curriculum",
-    confidence: 0.92,
+    confidence: 0.93,
     patterns: [
-      /(?:^|[^\p{L}\p{N}])(?:o['‘`ʻ]quv dasturi|davlat dasturi|soat|ajratilgan soat|dts|standart|mavzular ketma-ketligi|учебная программа|распределение часов|стандарт|curriculum|syllabus|hours distribution)(?=$|[^\p{L}\p{N}])/giu,
+      /(?:^|[^\p{L}\p{N}])(?:o['‘`ʻ]quv dasturi|davlat dasturi|soat|ajratilgan soat|dts|standart|mavzular ketma-ketligi|taqsimot|учебная программа|распределение часов|стандарт|curriculum|syllabus|hours distribution)(?=$|[^\p{L}\p{N}])/giu,
     ],
   },
   {
     intent: "classroom_activity",
-    confidence: 0.90,
+    confidence: 0.91,
     patterns: [
-      /(?:^|[^\p{L}\p{N}])(?:qanday metod|interaktiv usul|metodika|o['‘`ʻ]yin|faoliyat|guruhlarda ishlash|guruhda ishlash|sinfda qo['‘`ʻ]llash|tajriba|laboratoriya mashg['‘`ʻ]uloti|metodist|методика|игры на уроке|групповая работа|classroom activity|active learning|classroom management|teaching method)(?=$|[^\p{L}\p{N}])/giu,
+      /(?:^|[^\p{L}\p{N}])(?:qanday metod|interaktiv usul|metodika|o['‘`ʻ]yin|faoliyat|guruhlarda ishlash|guruhda ishlash|sinfda qo['‘`ʻ]llash|tajriba|laboratoriya mashg['‘`ʻ]uloti|metodist|metodikasi|методика|игры на уроке|групповая работа|лабораторн[а-я]*|classroom activity|active learning|classroom management|teaching method|interactive math games)(?=$|[^\p{L}\p{N}])/giu,
+    ],
+  },
+  {
+    intent: "experiment",
+    confidence: 0.92,
+    patterns: [
+      /(?:^|[^\p{L}\p{N}])(?:tajriba o['‘`ʻ]tkazish|laboratoriya ishi|tajriba reja|fizik tajriba|kimyoviy tajriba|опыт|эксперимент|laboratory experiment|science experiment)(?=$|[^\p{L}\p{N}])/giu,
+    ],
+  },
+  {
+    intent: "translation",
+    confidence: 0.93,
+    patterns: [
+      /(?:^|[^\p{L}\p{N}])(?:tarjima qil|tarjimasi|inglizchaga o['‘`ʻ]gir|ruschaga o['‘`ʻ]gir|o['‘`ʻ]zbekchaga o['‘`ʻ]gir|переведи|перевод|translate into|translation of)(?=$|[^\p{L}\p{N}])/giu,
+    ],
+  },
+  {
+    intent: "fact_check",
+    confidence: 0.91,
+    patterns: [
+      /(?:^|[^\p{L}\p{N}])(?:to['‘`ʻ]g['‘`ʻ]rimi|rostmi|haqiqatmi|shundaymi|tekshirib ber|правда ли|верно ли|fact check|is it true)(?=$|[^\p{L}\p{N}])/giu,
     ],
   },
   {
     intent: "definition",
-    confidence: 0.90,
+    confidence: 0.93,
     patterns: [
-      /(?:^|[^\p{L}\p{N}])(?:ta['‘`ʻ]rifi|ta['‘`ʻ]rif|qoidasi|nima(?: degani)?|определени[а-я]*|что такое|definition of|meaning of)(?=$|[^\p{L}\p{N}])/giu,
+      /(?:^|[^\p{L}\p{N}])(?:nima degani|qoidasi nima|ta['‘`ʻ]rifi|ta['‘`ʻ]rif|qoidasi|qoidalari|что такое|определени[а-я]*|понятие|признаки|формула|definition of|meaning of|what is|rules)(?=$|[^\p{L}\p{N}])/giu,
+      /(?:^|[^\p{L}\p{N}])(?:[a-z'\p{L}]+\s+nima\??$)/iu,
     ],
   },
   {
-    intent: "compare",
+    intent: "summarize",
+    confidence: 0.91,
+    patterns: [
+      /(?:^|[^\p{L}\p{N}])(?:qisqacha mazmuni|xulosa|xulosasi|xulosasini|umumlashtir|краткое содержание|итоги|вкратце|summarize|summary)(?=$|[^\p{L}\p{N}])/giu,
+    ],
+  },
+  {
+    intent: "example",
     confidence: 0.90,
     patterns: [
-      /(?:^|[^\p{L}\p{N}])(?:taqqosla[a-z]*|farqi|o['‘`ʻ]xshashligi|solishtir[a-z]*|farqlari|сравни[а-я]*|разниц[а-я]* между|compare|difference between)(?=$|[^\p{L}\p{N}])/giu,
+      /(?:^|[^\p{L}\p{N}])(?:misol keltir|misollar|misollar bilan|namuna|namunalar|hayotiy misollar|примеры|приведи пример|examples|sample|real world)(?=$|[^\p{L}\p{N}])/giu,
     ],
   },
   {
     intent: "explain",
-    confidence: 0.85,
+    confidence: 0.88,
     patterns: [
-      /(?:^|[^\p{L}\p{N}])(?:tushuntir[a-z]*|tushuntirish|tushuntirib ber|mohiyati|объясни[а-я]*|как объяснить|explain|how to explain)(?=$|[^\p{L}\p{N}])/giu,
+      /(?:^|[^\p{L}\p{N}])(?:qanday ishlaydi|tushuntir[a-z]*|tushuntirish|tushuntirib ber|bolaga tushuntir|oddiy qilib ayt|sodda qilib tushuntir|mohiyati|объясни[а-я]*|как объяснить|как работает|explain|how it works|how to explain)(?=$|[^\p{L}\p{N}])/giu,
     ],
   },
 ];
@@ -242,17 +315,22 @@ const INTENT_PATTERNS: Array<{ intent: SearchIntent; confidence: number; pattern
  * Matn tilini aniqlaydi (Uzbek, Russian, English).
  */
 export function detectLanguage(text: string, fallback: LanguageCode = "UZ"): LanguageCode {
+  // Rus tilida tushuntirish so'rovi
+  if (/(?:^|[^\p{L}\p{N}])(?:rus tilida|по-русски)(?=$|[^\p{L}\p{N}])/iu.test(text)) {
+    return "RU";
+  }
+
   // 1. O'zbekcha o'ziga xos belgilar yoki kalit so'zlar
   if (
     /[ўқғҳ]|\b(?:o['‘`ʻ]|g['‘`ʻ])/i.test(text) ||
-    /(?:^|[^\p{L}\p{N}])(?:dars|sinf|uchun|qanday|nima|ishlanma|reja|haqida|mavzu|tushuntir|o['‘`ʻ]quvchi|kasr|tenglama|mashq|amallar|so['‘`ʻ]z|bilan|yoki|ega|kesim|босим|мавзусига|синф|бўйича|ҳамда)(?=$|[^\p{L}\p{N}])/giu.test(text)
+    /(?:^|[^\p{L}\p{N}])(?:dars|sinf|uchun|qanday|nima|ishlanma|reja|haqida|mavzu|tushuntir|o['‘`ʻ]quvchi|kasr|tenglama|mashq|amallar|so['‘`ʻ]z|bilan|yoki|ega|kesim|босим|мавзусига|синф|бўйича|ҳамда|tuz|tuzish|tuzib|savol|savollari|endi|yana)(?=$|[^\p{L}\p{N}])/giu.test(text)
   ) {
     return "UZ";
   }
 
-  // 2. Inglizcha kalit so'zlar
+  // 2. Inglizcha kalit so'zlar va predloglar
   if (
-    /\b(?:how|what|why|lesson|plan|grade|class|teach|explain|student|teacher|quiz|worksheet|activity|difference|between|formulas?|definition|questions?|summary|learning|equations?|pythagorean|theorem|photosynthesis)\b/i.test(text)
+    /\b(?:the|and|for|with|from|about|this|that|these|those|how|what|why|which|lesson|plan|grade|class|teach|teacher|student|students|explain|explanation|quiz|test|worksheet|activity|difference|between|formulas?|definition|questions?|summary|learning|solve|problems?|equations?|pythagorean|theorem|photosynthesis|mechanics|physics|chemistry|biology|math|mathematics|grammar|presentation|introduction|exercise|homework|chemical|bonds|covalent|ionic|overview|programming|conditional|statements|tutorial|division|stages|science|sorting|methods|assistant|hacker|unrestricted|you|are|longer|act|prompt|ignore|previous|rules)\b/i.test(text)
   ) {
     return "EN";
   }
@@ -274,72 +352,38 @@ export function detectLanguage(text: string, fallback: LanguageCode = "UZ"): Lan
 }
 
 /**
- * Kontekstga bog'liq ko'p ma'noli so'zlarni (Disambiguation — Phase 5) tekshiradi.
- */
-function disambiguateKeywords(text: string): { resolvedSubject?: string; candidates?: SubjectCandidate[] } | null {
-  const lower = text.toLowerCase();
-
-  // 1. "massa" atamasi: Fizika vs Kimyo vs Matematika
-  if (/(?:^|[^\p{L}\p{N}])massa(?=$|[^\p{L}\p{N}])/iu.test(lower)) {
-    if (/(?:jism|zichlik|tezlik|kuch|nyuton|og['‘`ʻ]irlik|плотност|сил|скорост|gravity|density|physics|ogirligi)/i.test(lower)) {
-      return { resolvedSubject: "Fizika" };
-    }
-    if (/(?:molyar|atom|molekula|modda|eritma|kimyo|хими|химическ|chemistry|molar)/i.test(lower)) {
-      return { resolvedSubject: "Kimyo" };
-    }
-    // Noaniq yakka "massa nima degani?"
-    return {
-      resolvedSubject: undefined,
-      candidates: [
-        { subject: "Fizika", confidence: 0.50 },
-        { subject: "Kimyo", confidence: 0.35 },
-        { subject: "Matematika", confidence: 0.15 },
-      ],
-    };
-  }
-
-  // 2. "ildiz" atamasi: Matematika vs Biologiya
-  if (/(?:^|[^\p{L}\p{N}])(?:ildiz|корен[а-я]*)(?=$|[^\p{L}\p{N}])/iu.test(lower)) {
-    if (/(?:kvadrat|daraja|arifmetik|son|tenglama|hisob|математик|уравнени|math|algebra)/i.test(lower)) {
-      return { resolvedSubject: "Matematika" };
-    }
-    if (/(?:o['‘`ʻ]simlik|poya|barg|daraxt|hujayra|botanika|биолог|растени|plant)/i.test(lower)) {
-      return { resolvedSubject: "Biologiya" };
-    }
-    // Noaniq yakka "ildiz haqida ma'lumot ber"
-    return {
-      resolvedSubject: undefined,
-      candidates: [
-        { subject: "Matematika", confidence: 0.55 },
-        { subject: "Biologiya", confidence: 0.45 },
-      ],
-    };
-  }
-
-  return null;
-}
-
-/**
- * So'rovdan fanni aniqlaydi va confidence hamda nomzodlar bilan qaytaradi (Phase 5).
+ * So'rovdan fanni aniqlaydi va confidence hamda nomzodlar bilan qaytaradi (Phase 5 & 11).
  */
 export function detectSubjectDetails(
   text: string,
   rawText?: string,
-): { subject?: string; confidence: number; candidates: SubjectCandidate[] } {
-  // Avval ko'p ma'noli so'zlar tekshiruvi (Disambiguation)
-  const disambiguation = disambiguateKeywords(text) ?? (rawText ? disambiguateKeywords(rawText) : null);
+  language: LanguageCode = "UZ",
+): {
+  subject?: string;
+  confidence: number;
+  candidates: SubjectCandidate[];
+  isAmbiguous?: boolean;
+  ambiguityTerm?: string;
+  clarificationQuestion?: string;
+} {
+  // Avval ko'p ma'noli so'zlar tekshiruvi (Ambiguity Engine V2 — Phase 11)
+  const disambiguation = resolveAmbiguity(text, language) ?? (rawText ? resolveAmbiguity(rawText, language) : null);
   if (disambiguation) {
     if (disambiguation.resolvedSubject) {
       return {
         subject: disambiguation.resolvedSubject,
-        confidence: 0.90,
-        candidates: [{ subject: disambiguation.resolvedSubject, confidence: 0.90 }],
+        confidence: disambiguation.candidates[0]?.confidence ?? 0.90,
+        candidates: disambiguation.candidates,
+        isAmbiguous: false,
       };
     }
     return {
       subject: undefined,
       confidence: disambiguation.candidates?.[0]?.confidence ?? 0.50,
-      candidates: disambiguation.candidates ?? [],
+      candidates: disambiguation.candidates,
+      isAmbiguous: disambiguation.isAmbiguous,
+      ambiguityTerm: disambiguation.term,
+      clarificationQuestion: disambiguation.clarificationQuestion,
     };
   }
 
@@ -350,14 +394,24 @@ export function detectSubjectDetails(
 
     // Kuchli patternlar (fanning aniq nomi kelsa)
     for (const pat of def.strongPatterns) {
-      if (pat.test(text) || (rawText && pat.test(rawText))) {
-        score += 1.0;
+      pat.lastIndex = 0;
+      const m1 = pat.test(text);
+      pat.lastIndex = 0;
+      const m2 = rawText ? pat.test(rawText) : false;
+      pat.lastIndex = 0;
+      if (m1 || m2) {
+        score += 2.0; // Aniq fan nomi kelsa, boshqa kalit so'zlardan ancha kuchli
       }
     }
 
     // Kalit so'zlar bo'yicha vaznlar
     for (const kw of def.keywordWeights) {
-      if (kw.pattern.test(text) || (rawText && kw.pattern.test(rawText))) {
+      kw.pattern.lastIndex = 0;
+      const m1 = kw.pattern.test(text);
+      kw.pattern.lastIndex = 0;
+      const m2 = rawText ? kw.pattern.test(rawText) : false;
+      kw.pattern.lastIndex = 0;
+      if (m1 || m2) {
         score += kw.weight;
       }
     }
@@ -411,12 +465,12 @@ export function detectSubject(text: string): string | undefined {
  * Kelishik qo'shimchalarini (8-sinfga, 8-sinfdan) ham to'g'ri ajratadi.
  */
 export function detectGrade(text: string, contextGrade?: string): string | undefined {
-  const m1 = text.match(/(?:^|[^\p{L}\p{N}])([1-9]|1[0-1])\s*[-_]?\s*(?:sinf|синф|class|grade|класс)(?:[a-z'\p{L}]*)?(?=$|[^\p{L}\p{N}])/iu);
+  const m1 = text.match(/(?:^|[^\p{L}\p{N}])([1-9]|1[0-1])(?:th|st|nd|rd)?\s*[-_]?\s*(?:sinf|синф|class|grade|класс)(?:[a-z'\p{L}]*)?(?=$|[^\p{L}\p{N}])/iu);
   if (m1) {
     return `${m1[1]}-sinf`;
   }
 
-  const m2 = text.match(/(?:^|[^\p{L}\p{N}])(?:sinf|синф|class|grade|класс)\s*[-_]?\s*([1-9]|1[0-1])(?=$|[^\p{L}\p{N}])/iu);
+  const m2 = text.match(/(?:^|[^\p{L}\p{N}])(?:sinf|синф|class|grade|класс)\s*[-_]?\s*([1-9]|1[0-1])(?:th|st|nd|rd)?(?=$|[^\p{L}\p{N}])/iu);
   if (m2) {
     return `${m2[1]}-sinf`;
   }
@@ -434,7 +488,12 @@ export function detectGrade(text: string, contextGrade?: string): string | undef
 export function detectIntentDetails(text: string, rawText?: string): IntentResult {
   for (const item of INTENT_PATTERNS) {
     for (const pattern of item.patterns) {
-      if (pattern.test(text) || (rawText && pattern.test(rawText))) {
+      pattern.lastIndex = 0;
+      const m1 = pattern.test(text);
+      pattern.lastIndex = 0;
+      const m2 = rawText ? pattern.test(rawText) : false;
+      pattern.lastIndex = 0;
+      if (m1 || m2) {
         return {
           intent: item.intent,
           confidence: item.confidence,
@@ -455,26 +514,41 @@ export function detectIntent(text: string, rawText?: string): SearchIntent {
 }
 
 /**
- * Auditoriyani aniqlaydi (o'qituvchi yoki o'quvchi).
+ * Auditoriyani aniqlaydi (o'qituvchi yoki o'quvchi) va ishonch ko'rsatkichini hisoblaydi (Phase 13).
  */
-export function detectAudience(text: string, intent: SearchIntent): AudienceMode {
+export function detectAudienceDetails(
+  text: string,
+  intent: SearchIntent,
+): { audience: AudienceMode; confidence: number } {
   if (
     intent === "lesson_plan" ||
     intent === "presentation" ||
     intent === "curriculum" ||
     intent === "classroom_activity" ||
-    /(?:^|[^\p{L}\p{N}])(?:o['‘`ʻ]qituvchi|sinfda|darsga|o['‘`ʻ]quvchilarga|baholash|konspekt|metodist|учителю|на уроке|lesson plan|classroom)(?=$|[^\p{L}\p{N}])/giu.test(text)
+    intent === "assessment" ||
+    /(?:^|[^\p{L}\p{N}])(?:o['‘`ʻ]qituvchi|sinfda|darsga|o['‘`ʻ]quvchilarga|baholash|konspekt|metodist|dars ishlanma|учителю|на уроке|методика|поурочный|lesson plan|classroom|teaching|teacher)(?=$|[^\p{L}\p{N}])/giu.test(
+      text,
+    )
   ) {
-    return "teacher";
+    return { audience: "teacher", confidence: 0.95 };
   }
 
   if (
-    /(?:^|[^\p{L}\p{N}])(?:menga tushunarsiz|tushunmadim|o['‘`ʻ]quvchiman|masalani yech|uy vazifam|maktabdaman|я ученик|школьник|домашнее задание|i am a student|help with my homework)(?=$|[^\p{L}\p{N}])/giu.test(text)
+    intent === "homework" ||
+    intent === "solve" ||
+    /(?:^|[^\p{L}\p{N}])(?:menga tushunarsiz|tushunmadim|o['‘`ʻ]quvchiman|masalani yech|uy vazifam|maktabdaman|sodda tushuntir|javobini top|я ученик|школьник|домашнее задание|не понял|помогите решить|i am a student|help with my homework)(?=$|[^\p{L}\p{N}])/giu.test(
+      text,
+    )
   ) {
-    return "student";
+    return { audience: "student", confidence: 0.90 };
   }
 
-  return "teacher";
+  // Ambiguous holatda ishonch past bo'ladi (Phase 13)
+  return { audience: "teacher", confidence: 0.55 };
+}
+
+export function detectAudience(text: string, intent: SearchIntent): AudienceMode {
+  return detectAudienceDetails(text, intent).audience;
 }
 
 /**
@@ -505,7 +579,7 @@ export function extractTopic(
 
   // 3. Umumiy savol va intent so'zlarini tozalash
   cleaned = cleaned.replace(
-    /(?:^|[^\p{L}\p{N}])(?:uchun|haqida|nima|qanday|tushuntir|tushuntirish|tushuntirib ber|ber|kerak|qilish|qil|qilib|tuz|tuzib|tayyorla|tayyorlab|yoz|yozib|ko['‘`ʻ]rsat|endi|yana|dars|ishlanma|dars ishlanma|dars ishlanmasi|dars reja|reja|slayd|slaydlar|prezentatsiya|taqdimot|test|testlar|savol|savollar|metod|metodika|mavzusi|mavzusini|mavzuda|qoidasi|ta['‘`ʻ]rifi|konspekt|turi|turlari|qisqa|для|как|план|урока|поурочный|слайды|тест|вопросы|упражнения|конспект|задания|еще|сделай|напиши|по|на|в|из|с|со|к|lesson|plan|slides|presentation|quiz|worksheet|explain|how to|for|and|the|with|of|to|in|at|on|questions?|exercises?|summary|sheet)(?=$|[^\p{L}\p{N}])/giu,
+    /(?:^|[^\p{L}\p{N}])(?:uchun|haqida|nima|nima degani|qanday|qanday ishlaydi|tushuntir|tushuntirish|tushuntirib ber|ber|kerak|qilish|qil|qilib|tuz|tuzib|tayyorla|tayyorlab|yoz|yozib|ko['‘`ʻ]rsat|endi|yana|dars|ishlanma|dars ishlanma|dars ishlanmasi|dars reja|reja|slayd|slaydlar|prezentatsiya|taqdimot|test|testlar|savol|savollar|metod|metodika|mavzusi|mavzusini|mavzuda|qoidasi|ta['‘`ʻ]rifi|konspekt|turi|turlari|qisqa|yechib ber|masalani yech|yech|yechimi|uyga vazifa|uy vazifam|baholash|misol|misollar|namuna|xulosa|для|как|план|урока|поурочный|слайды|тест|вопросы|упражнения|конспект|задания|еще|сделай|напиши|по|на|в|из|с|со|к|реши|решить|домашнее|задание|примеры|lesson|plan|slides|presentation|quiz|worksheet|explain|how to|solve|homework|assessment|for|and|the|with|of|to|in|at|on|questions?|exercises?|summary|sheet)(?=$|[^\p{L}\p{N}])/giu,
     " ",
   );
 
@@ -538,7 +612,7 @@ export function understandQuery(
 
   const detectedLanguage = manualLanguage ?? (conversationContext?.previousLanguage && rawQuery.trim().split(/\s+/).length <= 3 ? conversationContext.previousLanguage : detectLanguage(rawQuery));
 
-  const subjectDetails = detectSubjectDetails(normalized.normalized, rawQuery);
+  const subjectDetails = detectSubjectDetails(normalized.normalized, rawQuery, detectedLanguage);
   let detectedSubject = manualSubject ?? subjectDetails.subject;
   let subjectConfidence = manualSubject ? 1.0 : subjectDetails.confidence;
   let subjectCandidates = subjectDetails.candidates;
@@ -554,7 +628,10 @@ export function understandQuery(
   const intentDetails = detectIntentDetails(normalized.normalized, rawQuery);
   const detectedIntent = intentDetails.intent;
   const intentConfidence = intentDetails.confidence;
-  const audience = detectAudience(normalized.normalized, detectedIntent);
+
+  const audDetails = detectAudienceDetails(normalized.normalized, detectedIntent);
+  const audience = audDetails.audience;
+  const audienceConfidence = audDetails.confidence;
 
   let { topic: extractedTopic, keywords } = extractTopic(
     normalized.normalized,
@@ -581,10 +658,14 @@ export function understandQuery(
     detectedSubject,
     subjectConfidence,
     subjectCandidates,
+    isAmbiguous: subjectDetails.isAmbiguous,
+    ambiguityTerm: subjectDetails.ambiguityTerm,
+    clarificationQuestion: subjectDetails.clarificationQuestion,
     detectedGrade,
     detectedIntent,
     intentConfidence,
     audience,
+    audienceConfidence,
     extractedTopic,
     keywords,
   };

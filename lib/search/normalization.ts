@@ -9,6 +9,8 @@
  *  5. Asl so'rovni (originalQuery) va tozalangan so'rovni (normalizedQuery) saqlash.
  */
 
+import { correctWord } from "./typo-engine";
+
 /** Turli xil apostrof belgilarini yagona standartga keltirish */
 const APOSTROPHE_REGEX = /[\u2018\u2019\u02BB\u02BC\u0060\u00B4]/g;
 
@@ -53,49 +55,6 @@ const CYRILLIC_TO_LATIN_MAP: Record<string, string> = {
   ҳ: "h",
 };
 
-/** Pedagogik va faniy atamalar bo'yicha keng tarqalgan xatolar lug'ati (o'zak va to'liq shakllar) */
-const TYPO_MAP: Record<string, string> = {
-  matimatika: "matematika",
-  matimatikada: "matematikada",
-  matimatikadan: "matematikadan",
-  matimatikani: "matematikani",
-  bialogiya: "biologiya",
-  bialogiyada: "biologiyada",
-  bialogiyadan: "biologiyadan",
-  bialogiyani: "biologiyani",
-  geagrafiya: "geografiya",
-  geagrafiyadan: "geografiyadan",
-  fizka: "fizika",
-  fizkadan: "fizikadan",
-  fizkani: "fizikani",
-  kimiya: "kimyo",
-  kimiyodan: "kimyodan",
-  tarx: "tarix",
-  tarxdan: "tarixdan",
-  tarxni: "tarixni",
-  onatili: "ona tili",
-  fatasintez: "fotosintez",
-  fatasintezni: "fotosintezni",
-  fotosintezni: "fotosintezni",
-  tanglama: "tenglama",
-  tanglamalar: "tenglamalar",
-  tanglamalarni: "tenglamalarni",
-  kasirlar: "kasrlar",
-  kasirlarni: "kasrlarni",
-  kasir: "kasr",
-  ushburchak: "uchburchak",
-  turburchak: "to'rtburchak",
-  prizintatsiya: "prezentatsiya",
-  prezintatsiya: "prezentatsiya",
-  prizintasiya: "prezentatsiya",
-  slayd: "slayd",
-  ishlanmas: "ishlanma",
-  darsishlanma: "dars ishlanma",
-  kalindr: "kalendar",
-  kalendr: "kalendar",
-  tematik: "tematik",
-};
-
 export interface NormalizedQuery {
   original: string;
   cleaned: string;
@@ -103,6 +62,7 @@ export interface NormalizedQuery {
   isCyrillic: boolean;
   tokens: string[];
   corrections: Array<{ from: string; to: string }>;
+  didYouMean?: string;
 }
 
 /**
@@ -221,23 +181,22 @@ export function normalizeQuery(query: string): NormalizedQuery {
   // 3. Kirill harflarini (to'liq yoki aralash) lotinga o'tkazish
   step1 = cyrillicToLatin(step1);
 
-  // 4. Tokenlarga ajratish va typo tekshiruvi
+  // 4. Tokenlarga ajratish va typo tekshiruvi (Typo Engine V2)
   const words = step1.split(/\s+/);
   const corrections: Array<{ from: string; to: string }> = [];
+  const didYouMeanSuggestions: string[] = [];
 
   const normalizedWords = words.map((rawWord) => {
-    // Tinish belgilaridan tozalash
     const cleanWord = rawWord.toLowerCase().replace(/^[^\p{L}\p{N}']+|[^\p{L}\p{N}']+$/gu, "");
-    if (TYPO_MAP[cleanWord]) {
-      const fixed = TYPO_MAP[cleanWord];
-      corrections.push({ from: cleanWord, to: fixed });
-      return rawWord.toLowerCase().replace(cleanWord, fixed);
+    if (!cleanWord) return rawWord.toLowerCase();
+
+    const typoResult = correctWord(cleanWord);
+    if (typoResult.method !== "none" && typoResult.corrected !== cleanWord) {
+      corrections.push({ from: cleanWord, to: typoResult.corrected });
+      return rawWord.toLowerCase().replace(cleanWord, typoResult.corrected);
     }
-    // Agar o'zagi fatasintez bo'lsa
-    if (cleanWord.startsWith("fatasintez")) {
-      const fixed = cleanWord.replace("fatasintez", "fotosintez");
-      corrections.push({ from: cleanWord, to: fixed });
-      return rawWord.toLowerCase().replace(cleanWord, fixed);
+    if (typoResult.didYouMean) {
+      didYouMeanSuggestions.push(typoResult.didYouMean);
     }
     return rawWord.toLowerCase();
   });
@@ -254,5 +213,6 @@ export function normalizeQuery(query: string): NormalizedQuery {
     isCyrillic,
     tokens,
     corrections,
+    didYouMean: didYouMeanSuggestions.length > 0 ? didYouMeanSuggestions.join(" ") : undefined,
   };
 }

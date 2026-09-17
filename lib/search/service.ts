@@ -13,6 +13,9 @@ import { matchCurriculumTopics, type RankedCurriculumMatch } from "./curriculum-
 import { validateAndGroundAnswer, type GroundingValidationResult } from "./validator";
 import { buildOrchestrationActions, type OrchestrationAction } from "./orchestration";
 import { searchCache } from "./cache";
+import { createLogger } from "@/lib/observability/log";
+
+const searchLog = createLogger("search");
 
 /**
  * AI qidiruv — biznes mantiq qatlami (Intelligence V2).
@@ -131,6 +134,23 @@ export async function runSearch(
     model: meta.model,
     usage: meta.usage,
   };
+
+  // Production Observability (Phase 26): xavfsiz qidiruv ko'rsatkichlari (full prompt va maxfiy ma'lumotlarsiz)
+  searchLog.info("search_pipeline_completed", {
+    language: understanding.detectedLanguage,
+    subject: understanding.detectedSubject,
+    grade: understanding.detectedGrade,
+    intent: understanding.detectedIntent,
+    confidence: understanding.intentConfidence,
+    audience: understanding.audience,
+    retrievalCount: curriculumMatches.length,
+    topScore: curriculumMatches[0]?.score ?? 0,
+    cached: false,
+    durationMs: totalMs,
+    aiMs,
+    grounded: grounding.isGrounded,
+    supportedClaimRate: grounding.supportedClaimRate,
+  });
 
   // Faqat muvaffaqiyatli natijani keshlaymiz
   searchCache.set(cacheKey, finalResult);

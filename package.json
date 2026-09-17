@@ -25,7 +25,8 @@
     "test:smoke:docker": "SMOKE_TARGET=docker node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --env-file-if-exists=.env --conditions=react-server --import tsx --test-concurrency=1 --test-global-setup=tests/smoke/helpers/global-setup.ts --test \"tests/smoke/shared/*.smoke.ts\" \"tests/smoke/docker.smoke.ts\"",
     "ai:stats": "tsx --conditions=react-server --tsconfig tsconfig.json --env-file-if-exists=.env scripts/ai-stats.ts",
     "db:seed-curriculum": "tsx --conditions=react-server --env-file-if-exists=.env scripts/seed-curriculum.ts",
-    "curriculum:extract": "tsx scripts/extract-curriculum.ts"
+    "curriculum:extract": "tsx scripts/extract-curriculum.ts",
+    "search:gate": "tsx --conditions=react-server --env-file-if-exists=.env scripts/search-quality-gate.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1131.0",
