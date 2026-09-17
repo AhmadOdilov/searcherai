@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import {
   BookOpen,
@@ -228,8 +229,22 @@ export default async function HomePage() {
           <p className="mt-6 text-base text-neutral-500">{t("team")}</p>
         </section>
 
-        <div className="mt-10 flex justify-center border-t border-neutral-200 pt-6">
+        {/*
+          Pastki qator: yordam + "Biz haqimizda".
+
+          Havola AYNAN shu yerda, sahifaning oxirida. Yuqoridagi menyuga
+          qo'yilsa, birinchi marta kelgan odamning ko'zi "Boshlash"
+          tugmasi bilan raqobatlashardi — "biz kimmiz?" savoli esa
+          va'dani O'QIGANDAN keyin paydo bo'ladi.
+        */}
+        <div className="mt-10 flex flex-col items-center gap-1 border-t border-neutral-200 pt-6 sm:flex-row sm:justify-center sm:gap-6">
           <HelpLink />
+          <Link
+            href="/about"
+            className="inline-flex min-h-11 items-center rounded-md px-3 py-2 text-base text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-primary"
+          >
+            {t("about")}
+          </Link>
         </div>
       </div>
     </main>

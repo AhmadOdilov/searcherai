@@ -171,7 +171,56 @@
     },
     "curriculum": "Materiallar rasmiy o'quv dasturi asosida tayyorlanadi.",
     "trust": "Ro'yxatdan o'tish bepul — faqat ism, email va parol kerak.",
-    "team": "Searcher AI'ni «Expelled Coders» jamoasi O'zbekiston o'qituvchilari uchun yaratmoqda."
+    "team": "Searcher AI'ni «Expelled Coders» jamoasi O'zbekiston o'qituvchilari uchun yaratmoqda.",
+    "about": "Biz haqimizda"
+  },
+  "about": {
+    "metaTitle": "Biz haqimizda — Searcher AI",
+    "metaDescription": "Searcher AI — O'zbekiston o'qituvchilari uchun AI-yordamchi. Loyiha, jamoa va platforma qanday ishlashi haqida.",
+    "backHome": "Bosh sahifaga",
+    "title": "Biz haqimizda",
+    "lead": "Searcher AI — O'zbekiston o'qituvchilari uchun AI-yordamchi platforma. Dars ishlanmasi, prezentatsiya va kalendar-tematik rejalarni bir necha daqiqada tayyorlab beradi.",
+    "story": {
+      "title": "Loyiha haqida",
+      "p1": "O'qituvchining vaqti sinfda o'tishi kerak. Amalda esa uning katta qismi qog'oz ishiga ketadi: dars ishlanmasini yozish, prezentatsiya terish, kalendar-tematik rejani jadvalga tushirish. Bitta dars uchun bu bir necha soat, bitta chorak uchun esa butun dam olish kuni.",
+      "p2": "Searcher AI shu ishning mashinaga tushadigan qismini o'z zimmasiga oladi. Siz fan, sinf va mavzuni yozasiz — tizim tayyor hujjatni qaytaradi. Uni o'zingizga moslab tahrirlaysiz va darsga olib kirasiz.",
+      "p3": "Maqsad o'qituvchining o'rnini bosish emas: dars kimga va qanday o'tilishini faqat o'qituvchi biladi. Maqsad — bo'sh varaqdan boshlashni yo'q qilish, ya'ni tayyorgarlik soatlar emas, daqiqalar olsin."
+    },
+    "team": {
+      "title": "Jamoa",
+      "name": "Expelled Coders",
+      "location": "Toshkent, O'zbekiston",
+      "description": "Searcher AI'ni «Expelled Coders» — talaba dasturchilar jamoasi ishlab chiqmoqda. Biz Toshkentda ishlaymiz va mahsulotni o'qituvchilarning fikri asosida yaxshilab boramiz: qaysi narsa ishlamayotganini bizga aytsangiz, u ro'yxatimizga tushadi."
+    },
+    "how": {
+      "title": "Qanday ishlaydi",
+      "intro": "Ichkarida nima bo'layotgani — texnik atamalarsiz.",
+      "ai": {
+        "title": "Materialni sun'iy intellekt yozadi",
+        "description": "Siz kiritgan fan, sinf va mavzu asosida matn yaratiladi. Natija — tayyor qoralama: uni o'qib chiqish va o'z sinfingizga moslash foydali, chunki sinfni siz bilasiz."
+      },
+      "curriculum": {
+        "title": "Rasmiy o'quv dasturiga tayanadi",
+        "description": "Matematika va ona tili (5-11-sinf) bo'yicha rasmiy dastur bazamizga kiritilgan: bo'lim nomlari, ajratilgan soatlar va kutilayotgan natijalar shundan olinadi. Boshqa fanlar uchun material umumiy bilim asosida tayyorlanadi."
+      },
+      "files": {
+        "title": "Natija — tanish fayl",
+        "description": "Dars ishlanmasi Word'da, prezentatsiya PowerPoint'da, kalendar-tematik reja Excel'da yuklab olinadi. Yangi dastur o'rnatish yoki yangi narsani o'rganish shart emas."
+      },
+      "privacy": {
+        "title": "Ma'lumotlaringiz o'zingizniki",
+        "description": "Parolingiz ochiq saqlanmaydi — u qaytarib bo'lmaydigan shaklga o'tkaziladi, ya'ni bazani ko'rgan odam ham uni o'qiy olmaydi. Yaratgan materiallaringiz va fayllaringizni faqat siz ochasiz: har bir yuklab olishda fayl kimga tegishli ekani tekshiriladi."
+      }
+    },
+    "price": {
+      "title": "Narxi qancha",
+      "description": "Hozircha Searcher AI bepul: ro'yxatdan o'tish ham, material tayyorlash ham. Karta ma'lumoti so'ralmaydi.",
+      "note": "Bitta hisobdan bir daqiqada 3 tagacha material so'rash mumkin. Bu cheklov xizmatni hamma uchun ochiq ushlab turish uchun kerak."
+    },
+    "contact": {
+      "title": "Bog'lanish",
+      "description": "Savolingiz, taklifingiz yoki xato haqida xabaringiz bo'lsa — Telegram orqali yozing. Har bir xabarni o'qiymiz."
+    }
   },
   "auth": {
     "login": {
