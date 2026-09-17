@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { ApiError } from "@/lib/api/errors";
 import { assertSameOrigin } from "@/lib/api/csrf";
+import { assertNoNullBytes } from "@/lib/api/url-guard";
 import { AiError } from "@/lib/ai/types";
 import { EnvError } from "@/lib/env";
 import { translateFieldErrors, translateKey } from "@/lib/i18n/translate";
@@ -92,6 +93,15 @@ export function withErrorHandling<TContext>(
         himoyalanadi.
       */
       assertSameOrigin(request);
+
+      /*
+        Manzil shakli — CSRF bilan bir xil sababga ko'ra shu yerda.
+
+        Yo'ldagi nol bayt (`%00`) `params.id` ga o'zgarishsiz tushar va
+        bazadan 500 qaytarardi. Sababi va nega faqat nol bayt
+        tekshirilishi: lib/api/url-guard.ts
+      */
+      assertNoNullBytes(request);
 
       return await handler(request, context);
     } catch (caught) {
