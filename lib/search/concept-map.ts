@@ -19,6 +19,96 @@ export interface ConceptDefinition {
 }
 
 export const CANONICAL_CONCEPTS: ConceptDefinition[] = [
+  /*
+    ── ONA TILI TUSHUNCHALARI (V5 da qo'shildi) ────────────────────────────
+
+    V4 da konsept xaritasida FAQAT matematika bor edi. Natijada ruscha va
+    inglizcha Ona tili so'rovlari rasmiy bo'limga bog'lanmasdi va tizim
+    "dalil topilmadi" deb javob berardi, holbuki bo'lim bazada bor:
+
+      «узбекский язык 6 класс части речи»  -> SO'Z TURKUMLARI (6-sinf)
+      «uzbek language parts of speech»     -> SO'Z TURKUMLARI (6-sinf)
+      «ritorika va notiqlik san'ati»       -> Nutq madaniyati (11-sinf)
+  */
+  {
+    conceptKey: "parts_of_speech",
+    subject: "Ona tili",
+    grades: ["6-sinf", "7-sinf"],
+    canonicalUz: "so'z turkumlari",
+    canonicalRu: "части речи",
+    canonicalEn: "parts of speech",
+    aliasesUz: [
+      "so'z turkumi", "soz turkumlari", "mustaqil so'z turkumlari",
+      "yordamchi so'z turkumlari", "ot", "sifat", "son", "olmosh",
+      "fe'l", "fel", "ravish", "ko'makchi", "bog'lovchi", "yuklama",
+    ],
+    aliasesRu: ["части речи", "часть речи", "существительное", "прилагательное", "глагол", "местоимение", "наречие"],
+    aliasesEn: ["parts of speech", "part of speech", "noun", "adjective", "verb", "pronoun", "adverb"],
+    relatedConcepts: ["morfologiya", "grammatika"],
+  },
+  {
+    conceptKey: "morphology",
+    subject: "Ona tili",
+    grades: ["6-sinf", "7-sinf"],
+    canonicalUz: "morfologiya",
+    canonicalRu: "морфология",
+    canonicalEn: "morphology",
+    aliasesUz: ["morfologik tahlil", "so'z tarkibi", "o'zak", "qo'shimcha", "nisbat", "fe'l nisbatlari"],
+    aliasesRu: ["морфология", "морфологический разбор", "состав слова", "залог глагола"],
+    aliasesEn: ["morphology", "word structure", "root", "affix", "verb voice"],
+    relatedConcepts: ["so'z turkumlari", "grammatika"],
+  },
+  {
+    conceptKey: "syntax_punctuation",
+    subject: "Ona tili",
+    grades: ["8-sinf", "9-sinf"],
+    canonicalUz: "sintaksis va tinish belgilari",
+    canonicalRu: "синтаксис и пунктуация",
+    canonicalEn: "syntax and punctuation",
+    aliasesUz: ["sintaksis", "gap bo'laklari", "sodda gap", "qo'shma gap", "tinish belgilari", "ohang"],
+    aliasesRu: ["синтаксис", "пунктуация", "члены предложения", "простое предложение", "сложное предложение", "знаки препинания"],
+    aliasesEn: ["syntax", "punctuation", "sentence parts", "simple sentence", "compound sentence"],
+    relatedConcepts: ["gap", "matn"],
+  },
+  {
+    conceptKey: "speech_culture",
+    subject: "Ona tili",
+    grades: ["11-sinf"],
+    canonicalUz: "nutq madaniyati",
+    canonicalRu: "культура речи",
+    canonicalEn: "speech culture",
+    aliasesUz: [
+      "notiqlik", "notiqlik san'ati", "ritorika", "nutq texnikasi",
+      "nutqning to'g'riligi", "nutqning aniqligi", "nutq uslublari", "uslubiyat",
+    ],
+    aliasesRu: ["культура речи", "риторика", "ораторское искусство", "техника речи", "стилистика"],
+    aliasesEn: ["speech culture", "rhetoric", "public speaking", "oratory", "stylistics"],
+    relatedConcepts: ["matn", "uslub"],
+  },
+  {
+    conceptKey: "text_analysis",
+    subject: "Ona tili",
+    grades: ["6-sinf", "7-sinf", "11-sinf"],
+    canonicalUz: "matn",
+    canonicalRu: "текст",
+    canonicalEn: "text",
+    aliasesUz: ["matn tahlili", "matn tuzilishi", "esse", "insho", "bayon", "mavzu va g'oya"],
+    aliasesRu: ["текст", "анализ текста", "структура текста", "эссе", "сочинение", "изложение"],
+    aliasesEn: ["text", "text analysis", "essay", "composition", "text structure"],
+    relatedConcepts: ["nutq madaniyati", "uslubiyat"],
+  },
+  {
+    conceptKey: "orthography",
+    subject: "Ona tili",
+    grades: ["5-sinf", "10-sinf"],
+    canonicalUz: "imlo va orfoepiya",
+    canonicalRu: "орфография и орфоэпия",
+    canonicalEn: "spelling and pronunciation",
+    aliasesUz: ["imlo", "orfografiya", "orfoepiya", "talaffuz", "imlo qoidalari", "fonetika", "tovush"],
+    aliasesRu: ["орфография", "орфоэпия", "произношение", "правописание", "фонетика"],
+    aliasesEn: ["spelling", "orthography", "pronunciation", "phonetics"],
+    relatedConcepts: ["fonetika", "til"],
+  },
   {
     conceptKey: "fraction",
     subject: "Matematika",
@@ -306,6 +396,27 @@ const CROSS_LINGUAL_CONCEPT_MAP: Record<string, string[]> = {
   sokrashennogo: ["qisqa ko'paytirish"],
   pifagor: ["pifagor"],
   pythagorean: ["pifagor"],
+  // Ona tili (V5): ruscha/inglizcha atamalar o'zbekcha DTS atamalariga.
+  chasti: ["so'z turkumlari", "turkumlari"],
+  rechi: ["so'z turkumlari", "nutq"],
+  speech: ["so'z turkumlari", "nutq"],
+  glagol: ["fe'l", "fel"],
+  sushestvitelnoe: ["ot"],
+  prilagatelnoe: ["sifat"],
+  mestoimenie: ["olmosh"],
+  narechie: ["ravish"],
+  morfologiya: ["morfologiya", "so'z turkumlari"],
+  morphology: ["morfologiya", "so'z turkumlari"],
+  sintaksis: ["sintaksis", "gap"],
+  syntax: ["sintaksis", "gap"],
+  punktuatsiya: ["tinish belgilari"],
+  punctuation: ["tinish belgilari"],
+  orfografiya: ["imlo", "orfografiya"],
+  orfoepiya: ["orfoepiya", "talaffuz"],
+  ritorika: ["notiqlik", "nutq madaniyati"],
+  rhetoric: ["notiqlik", "nutq madaniyati"],
+  tekst: ["matn"],
+  nisbat: ["nisbat", "fe'l nisbatlari"],
 };
 
 /**

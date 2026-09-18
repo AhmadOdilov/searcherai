@@ -239,20 +239,32 @@ export async function rerankCandidates(
       }
     }
 
-    // Grade Distance Penalty (Phase 7 Cross-Grade Intelligence)
+    /*
+      Grade Distance Penalty (Phase 7 Cross-Grade Intelligence).
+
+      Jazo endi DALIL KUCHIGA qarab yumshatiladi.
+
+      Sabab (o'lchangan nosozlik): «9-sinf matematika parallel to'g'ri
+      chiziqlar» so'rovida rasmiy bo'lim — 7-sinfdagi AYNAN shu nomli
+      «PARALLEL TO'G'RI CHIZIQLAR». Lekin 7-sinf 2 pog'ona uzoq (-0.25),
+      10-sinf esa 1 pog'ona (-0.10). Natijada sarlavhasi mos kelmaydigan
+      10-sinf bo'limi aniq mos keluvchi 7-sinf bo'limidan yuqori turardi
+      va foydalanuvchi NOTO'G'RI sinfga yo'naltirilardi.
+
+      Sarlavha aynan mos kelganda dalil bir ma'noli — sinf masofasi uni
+      ko'mib yubormasligi kerak. Jazo butunlay olib tashlanmaydi: so'ralgan
+      sinfdagi teng kuchli nomzod baribir ustun turadi.
+    */
     if (detectedGrade && isCrossGrade) {
       const numReq = parseInt(detectedGrade, 10);
       const numCand = parseInt(cand.grade, 10);
-      if (!isNaN(numReq) && !isNaN(numCand)) {
-        const diff = Math.abs(numReq - numCand);
-        if (diff === 1) {
-          hybridScore = Math.max(0, hybridScore - 0.10);
-        } else {
-          hybridScore = Math.max(0, hybridScore - 0.25);
-        }
-      } else {
-        hybridScore = Math.max(0, hybridScore - 0.20);
-      }
+      const basePenalty = !isNaN(numReq) && !isNaN(numCand)
+        ? (Math.abs(numReq - numCand) === 1 ? 0.10 : 0.25)
+        : 0.20;
+
+      // exactScore 1.0 -> jazo 40% ga tushadi; 0 -> to'liq jazo.
+      const evidenceStrength = Math.min(1, Math.max(0, exactScore));
+      hybridScore = Math.max(0, hybridScore - basePenalty * (1 - 0.6 * evidenceStrength));
     }
 
     scored.push({

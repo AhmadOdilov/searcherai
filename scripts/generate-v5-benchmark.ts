@@ -131,8 +131,32 @@ async function main() {
     if (!gradesByTitle.has(key)) gradesByTitle.set(key, new Set());
     gradesByTitle.get(key)!.add(t.grade);
   }
-  const isGradeUnique = (t: { subject: string; topicName: string }) =>
-    gradesByTitle.get(`${t.subject.toLowerCase()}|${topicPhrase(t.topicName)}`)?.size === 1;
+  /*
+    Sarlavha BOSHQA sinfdagi bo'lim nomining bir qismi bo'lmasligi ham shart.
+
+    Masalan: 7-sinf «ALGEBRAIK KASRLAR» va 8-sinf «ALGEBRAIK KASRLAR VA
+    ULAR USTIDA AMALLAR». «9-sinf algebraik kasrlar» so'rovi uchun ikkala
+    javob ham to'g'ri — ya'ni bu so'rovning YAGONA to'g'ri javobi yo'q va
+    uni cross-grade o'lchoviga qo'yish natijani chalg'itadi.
+  */
+  const phrasesByGrade = topics.map((t) => ({
+    subject: t.subject.toLowerCase(),
+    grade: t.grade,
+    phrase: topicPhrase(t.topicName),
+  }));
+
+  const isGradeUnique = (t: { subject: string; grade: string; topicName: string }) => {
+    const phrase = topicPhrase(t.topicName);
+    const key = `${t.subject.toLowerCase()}|${phrase}`;
+    if (gradesByTitle.get(key)?.size !== 1) return false;
+
+    return !phrasesByGrade.some(
+      (other) =>
+        other.subject === t.subject.toLowerCase() &&
+        other.grade !== t.grade &&
+        (other.phrase.includes(phrase) || phrase.includes(other.phrase)),
+    );
+  };
 
   // ── A. CROSS-GRADE (50) ────────────────────────────────────────────────
   // Real bo'lim olinadi va ATAYLAB boshqa sinf so'raladi.
