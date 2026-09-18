@@ -37,6 +37,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { z } from "zod";
 import { prisma } from "../lib/db";
+import { curriculumTopicId } from "../lib/curriculum/topic-id";
 
 const DATA_DIR = path.join(process.cwd(), "data", "curriculum");
 
@@ -75,18 +76,26 @@ function toSql(data: z.infer<typeof fileSchema>): string {
     `DELETE FROM "CurriculumTopic" WHERE subject = ${quote(subject)} AND grade = ${quote(grade)};`,
   ];
 
-  for (const topic of topics) {
+  topics.forEach((topic, index) => {
     const outcomes =
       topic.expectedOutcomes.length === 0
         ? "ARRAY[]::text[]"
         : `ARRAY[${topic.expectedOutcomes.map(quote).join(", ")}]`;
 
+    /*
+      id `gen_random_uuid()` EMAS: SQL va TS yo'llari aynan bir xil
+      deterministik id berishi shart (lib/curriculum/topic-id.ts).
+      Aks holda production (SQL) va dev (TS) bazalarida bir xil bo'lim
+      turli id oladi va dalil havolalari muhitga bog'lanib qoladi.
+    */
+    const id = curriculumTopicId(subject, grade, topic.topicName, index);
+
     lines.push(
       `INSERT INTO "CurriculumTopic" (id, subject, grade, "topicName", description, "expectedHours", "expectedOutcomes", source) ` +
-        `VALUES (gen_random_uuid()::text, ${quote(subject)}, ${quote(grade)}, ${quote(topic.topicName)}, ` +
+        `VALUES (${quote(id)}, ${quote(subject)}, ${quote(grade)}, ${quote(topic.topicName)}, ` +
         `${quote(topic.description)}, ${topic.expectedHours ?? "NULL"}, ${outcomes}, ${quote(source)});`,
     );
-  }
+  });
 
   return lines.join("\n");
 }
@@ -102,7 +111,8 @@ async function seedFile(fileName: string): Promise<{ subject: string; count: num
   await prisma.$transaction([
     prisma.curriculumTopic.deleteMany({ where: { subject, grade } }),
     prisma.curriculumTopic.createMany({
-      data: topics.map((topic) => ({
+      data: topics.map((topic, index) => ({
+        id: curriculumTopicId(subject, grade, topic.topicName, index),
         subject,
         grade,
         topicName: topic.topicName,

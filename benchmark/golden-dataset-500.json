@@ -10,7 +10,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "NATURAL SONLARNI QO",
-    "goldEvidenceTopicId": "cmu5uy31g000jci2e5fom3dqm",
+    "goldEvidenceTopicId": "dts_6f975e0feeb0444858223259",
     "goldEvidenceTopicTitle": "NATURAL SONLARNI QO‘SHISH VA AYIRISH"
   },
   {
@@ -24,7 +24,7 @@
     "difficulty": "easy",
     "category": "canonical",
     "expectedCurriculumTopic": "ODDIY KASRLAR",
-    "goldEvidenceTopicId": "cmu5uy31g000nci2erqq71q88",
+    "goldEvidenceTopicId": "dts_6cf1f2489222ff2b8957a456",
     "goldEvidenceTopicTitle": "ODDIY KASRLAR"
   },
   {
@@ -38,7 +38,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "GEOMETRIK SHAKLLAR",
-    "goldEvidenceTopicId": "cmu5uy31g000mci2eq66q16gf",
+    "goldEvidenceTopicId": "dts_accd924da9a6880dd858d91e",
     "goldEvidenceTopicTitle": "GEOMETRIK SHAKLLAR"
   },
   {
@@ -52,7 +52,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "O‘NLI KASRLAR",
-    "goldEvidenceTopicId": "cmu5uy31g000pci2ejhyxcnrg",
+    "goldEvidenceTopicId": "dts_62e3ddf828b9f630d8a89952",
     "goldEvidenceTopicTitle": "O‘NLI KASRLAR"
   },
   {
@@ -66,7 +66,7 @@
     "difficulty": "hard",
     "category": "canonical",
     "expectedCurriculumTopic": "MATNLI MASALALARNI YECHISH",
-    "goldEvidenceTopicId": "cmu5uy31g000lci2e0536ppqg",
+    "goldEvidenceTopicId": "dts_637bb1454416861e0c0d9209",
     "goldEvidenceTopicTitle": "MATNLI MASALALARNI YECHISH"
   },
   {
@@ -80,7 +80,7 @@
     "difficulty": "medium",
     "category": "natural_language",
     "expectedCurriculumTopic": "ODDIY KASRLAR",
-    "goldEvidenceTopicId": "cmu5uy31g000nci2erqq71q88",
+    "goldEvidenceTopicId": "dts_6cf1f2489222ff2b8957a456",
     "goldEvidenceTopicTitle": "ODDIY KASRLAR"
   },
   {
@@ -94,7 +94,7 @@
     "difficulty": "easy",
     "category": "canonical",
     "expectedCurriculumTopic": "BUTUN SONLAR",
-    "goldEvidenceTopicId": "cmu5uy31p000vci2eh6wbhcpj",
+    "goldEvidenceTopicId": "dts_a19d692275c541e3ae2fea31",
     "goldEvidenceTopicTitle": "MUSBAT VA MANFIY SONLAR. BUTUN SONLAR"
   },
   {
@@ -108,7 +108,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "MUSBAT VA MANFIY SONLAR",
-    "goldEvidenceTopicId": "cmu5uy31p000vci2eh6wbhcpj",
+    "goldEvidenceTopicId": "dts_a19d692275c541e3ae2fea31",
     "goldEvidenceTopicTitle": "MUSBAT VA MANFIY SONLAR. BUTUN SONLAR"
   },
   {
@@ -122,7 +122,7 @@
     "difficulty": "easy",
     "category": "canonical",
     "expectedCurriculumTopic": "NISBAT VA PROPORSIYA",
-    "goldEvidenceTopicId": "cmu5uy31p000uci2esaqb1huk",
+    "goldEvidenceTopicId": "dts_b01ffb4fbe1466cac3821bef",
     "goldEvidenceTopicTitle": "NISBAT VA PROPORSIYA"
   },
   {
@@ -162,7 +162,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "BIRHADLAR VA KO‘PHADLAR",
-    "goldEvidenceTopicId": "cmu5uy31x0013ci2e0vvsnxz4",
+    "goldEvidenceTopicId": "dts_9eb3b5cf98f79875c529cf83",
     "goldEvidenceTopicTitle": "BIRHADLAR VA KO‘PHADLAR"
   },
   {
@@ -176,7 +176,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "KO‘PHADNI KO‘PAYTUVCHILARGA AJRATISH",
-    "goldEvidenceTopicId": "cmu5uy31x0014ci2e16d53avy",
+    "goldEvidenceTopicId": "dts_54bc38fbc313744f2b5d7110",
     "goldEvidenceTopicTitle": "KO‘PHADNI KO‘PAYTUVCHILARGA AJRATISH"
   },
   {
@@ -190,7 +190,7 @@
     "difficulty": "hard",
     "category": "canonical",
     "expectedCurriculumTopic": "BIR NOMA’LUMLI BIRINCHI DARAJALI TENGLAMALAR",
-    "goldEvidenceTopicId": "cmu5uy31x0012ci2e4zpyvdaj",
+    "goldEvidenceTopicId": "dts_45511b58ad089c3239979429",
     "goldEvidenceTopicTitle": "BIR NOMA’LUMLI BIRINCHI DARAJALI TENGLAMALAR"
   },
   {
@@ -204,7 +204,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "ALGEBRAIK KASRLAR",
-    "goldEvidenceTopicId": "cmu5uy31x0015ci2emho8alxz",
+    "goldEvidenceTopicId": "dts_8a8fbaffd153b3c5729f1191",
     "goldEvidenceTopicTitle": "ALGEBRAIK KASRLAR"
   },
   {
@@ -218,7 +218,7 @@
     "difficulty": "hard",
     "category": "canonical",
     "expectedCurriculumTopic": "UCHBURCHAKLAR",
-    "goldEvidenceTopicId": "cmu5uy31x0018ci2ectc48cky",
+    "goldEvidenceTopicId": "dts_527c16a7aab8925e157d262b",
     "goldEvidenceTopicTitle": "UCHBURCHAKLAR"
   },
   {
@@ -232,7 +232,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "KVADRAT TENGLAMALAR",
-    "goldEvidenceTopicId": "cmu5uy325001eci2e9o4rige5",
+    "goldEvidenceTopicId": "dts_f02b836411d3d6f82e70ca7f",
     "goldEvidenceTopicTitle": "KVADRAT TENGLAMALAR"
   },
   {
@@ -246,7 +246,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "KVADRAT TENGLAMALAR",
-    "goldEvidenceTopicId": "cmu5uy325001eci2e9o4rige5",
+    "goldEvidenceTopicId": "dts_f02b836411d3d6f82e70ca7f",
     "goldEvidenceTopicTitle": "KVADRAT TENGLAMALAR"
   },
   {
@@ -260,7 +260,7 @@
     "difficulty": "easy",
     "category": "canonical",
     "expectedCurriculumTopic": "TENGSIZLIKLAR",
-    "goldEvidenceTopicId": "cmu5uy325001dci2eb16fngbv",
+    "goldEvidenceTopicId": "dts_ab4470a3490060b2b4152535",
     "goldEvidenceTopicTitle": "TENGSIZLIKLAR"
   },
   {
@@ -274,7 +274,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "TO‘RTBURCHAKLAR",
-    "goldEvidenceTopicId": "cmu5uy325001hci2es4ixl003",
+    "goldEvidenceTopicId": "dts_db20d82679b8db7bf9f159c6",
     "goldEvidenceTopicTitle": "TO‘RTBURCHAKLAR"
   },
   {
@@ -288,7 +288,7 @@
     "difficulty": "hard",
     "category": "canonical",
     "expectedCurriculumTopic": "TO‘G‘RI BURCHAKLI UCHBURCHAKNING TOMONLARI",
-    "goldEvidenceTopicId": "cmu5uy325001ici2etb3iv3qp",
+    "goldEvidenceTopicId": "dts_4f9d41dcaf370f94a236eac1",
     "goldEvidenceTopicTitle": "TO‘G‘RI BURCHAKLI UCHBURCHAKNING TOMONLARI VA BURCHAKLARI ORASIDAGI MUNOSABATLAR"
   },
   {
@@ -302,7 +302,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "KVADRATIK FUNKSIYA",
-    "goldEvidenceTopicId": "cmu5uy32a001mci2e8zv1lj6l",
+    "goldEvidenceTopicId": "dts_6d2adbad89dbc08e52bf9cd8",
     "goldEvidenceTopicTitle": "KVADRATIK FUNKSIYA."
   },
   {
@@ -316,7 +316,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "SONLI KETMA-KETLIKLAR",
-    "goldEvidenceTopicId": "cmu5uy32a001pci2eebvcmfp3",
+    "goldEvidenceTopicId": "dts_c9595a75440569b7178908ed",
     "goldEvidenceTopicTitle": "SONLI KETMA-KETLIKLAR"
   },
   {
@@ -330,7 +330,7 @@
     "difficulty": "hard",
     "category": "canonical",
     "expectedCurriculumTopic": "TRIGONOMETRIYA ELEMENTLARI",
-    "goldEvidenceTopicId": "cmu5uy32a001oci2eigonflwb",
+    "goldEvidenceTopicId": "dts_28b02fc31702e7ca8ec3df80",
     "goldEvidenceTopicTitle": "TRIGONOMETRIYA ELEMENTLARI"
   },
   {
@@ -344,8 +344,10 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "AYLANA VA DOIRA",
-    "goldEvidenceTopicId": "cmu5uy325001kci2el6436zf9",
-    "goldEvidenceTopicTitle": "AYLANA"
+    "goldEvidenceTopicId": "dts_5ad4ee495b6bb0118b171292",
+    "goldEvidenceTopicTitle": "AYLANA",
+    "isCrossGrade": true,
+    "expectedAvailableGrade": "8-sinf"
   },
   {
     "id": "math-026",
@@ -358,7 +360,7 @@
     "difficulty": "hard",
     "category": "canonical",
     "expectedCurriculumTopic": "KO‘RSATKICHLI VA LOGARIFMIK",
-    "goldEvidenceTopicId": "cmu5uy30w0002ci2eshec25o2",
+    "goldEvidenceTopicId": "dts_b8f06992d8ddb0a2e6aa43ba",
     "goldEvidenceTopicTitle": "KOʻRSATKICHLI VA LOGARIFMIK FUNKSIYALAR"
   },
   {
@@ -372,8 +374,10 @@
     "difficulty": "hard",
     "category": "canonical",
     "expectedCurriculumTopic": "HOSILA",
-    "goldEvidenceTopicId": "cmu5uy316000aci2elfdcoxby",
-    "goldEvidenceTopicTitle": "HOSILA VA UNING TATBIQLARI"
+    "goldEvidenceTopicId": "dts_954f282973783afa3b8d0bdc",
+    "goldEvidenceTopicTitle": "HOSILA VA UNING TATBIQLARI",
+    "isCrossGrade": true,
+    "expectedAvailableGrade": "11-sinf"
   },
   {
     "id": "math-028",
@@ -386,7 +390,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "FAZODA TO‘G‘RI CHIZIQLAR",
-    "goldEvidenceTopicId": "cmu5uy30w0008ci2e5vjosthp",
+    "goldEvidenceTopicId": "dts_e5e0c853f179fec61326c231",
     "goldEvidenceTopicTitle": "FAZODA TOʻGʻRI CHIZIQLAR VA TEKISLIKLARNING PARALLELLIGI"
   },
   {
@@ -400,7 +404,7 @@
     "difficulty": "hard",
     "category": "canonical",
     "expectedCurriculumTopic": "INTEGRAL",
-    "goldEvidenceTopicId": "cmu5uy316000bci2eftixue6r",
+    "goldEvidenceTopicId": "dts_a0959cd31a098355661e41f9",
     "goldEvidenceTopicTitle": "INTEGRAL VA UNING TATBIQLARI"
   },
   {
@@ -414,8 +418,10 @@
     "difficulty": "hard",
     "category": "canonical",
     "expectedCurriculumTopic": "KOMBINATORIKA",
-    "goldEvidenceTopicId": "cmu5uy31x0016ci2e2k1htx2y",
-    "goldEvidenceTopicTitle": "KOMBINATORIKA ELEMENTLARI"
+    "goldEvidenceTopicId": "dts_4282899e1ee1a9a158dceffc",
+    "goldEvidenceTopicTitle": "KOMBINATORIKA ELEMENTLARI",
+    "isCrossGrade": true,
+    "expectedAvailableGrade": "7-sinf"
   },
   {
     "id": "math-031",
@@ -428,8 +434,10 @@
     "difficulty": "hard",
     "category": "canonical",
     "expectedCurriculumTopic": "AYLANMA JISMLAR",
-    "goldEvidenceTopicId": "cmu5uy325001kci2el6436zf9",
-    "goldEvidenceTopicTitle": "AYLANA"
+    "goldEvidenceTopicId": "dts_5ad4ee495b6bb0118b171292",
+    "goldEvidenceTopicTitle": "AYLANA",
+    "isCrossGrade": true,
+    "expectedAvailableGrade": "8-sinf"
   },
   {
     "id": "math-032",
@@ -442,7 +450,7 @@
     "difficulty": "medium",
     "category": "cross-lingual",
     "expectedCurriculumTopic": "KVADRAT TENGLAMALAR",
-    "goldEvidenceTopicId": "cmu5uy325001eci2e9o4rige5",
+    "goldEvidenceTopicId": "dts_f02b836411d3d6f82e70ca7f",
     "goldEvidenceTopicTitle": "KVADRAT TENGLAMALAR"
   },
   {
@@ -456,7 +464,7 @@
     "difficulty": "medium",
     "category": "cross-lingual",
     "expectedCurriculumTopic": "ODDIY KASRLAR",
-    "goldEvidenceTopicId": "cmu5uy31g000nci2erqq71q88",
+    "goldEvidenceTopicId": "dts_6cf1f2489222ff2b8957a456",
     "goldEvidenceTopicTitle": "ODDIY KASRLAR"
   },
   {
@@ -470,7 +478,7 @@
     "difficulty": "medium",
     "category": "cross-lingual",
     "expectedCurriculumTopic": "SONLI KETMA-KETLIKLAR",
-    "goldEvidenceTopicId": "cmu5uy32a001pci2eebvcmfp3",
+    "goldEvidenceTopicId": "dts_c9595a75440569b7178908ed",
     "goldEvidenceTopicTitle": "SONLI KETMA-KETLIKLAR"
   },
   {
@@ -484,8 +492,10 @@
     "difficulty": "medium",
     "category": "cross-lingual",
     "expectedCurriculumTopic": "HOSILA",
-    "goldEvidenceTopicId": "cmu5uy316000aci2elfdcoxby",
-    "goldEvidenceTopicTitle": "HOSILA VA UNING TATBIQLARI"
+    "goldEvidenceTopicId": "dts_954f282973783afa3b8d0bdc",
+    "goldEvidenceTopicTitle": "HOSILA VA UNING TATBIQLARI",
+    "isCrossGrade": true,
+    "expectedAvailableGrade": "11-sinf"
   },
   {
     "id": "math-036",
@@ -498,7 +508,7 @@
     "difficulty": "medium",
     "category": "cross-lingual",
     "expectedCurriculumTopic": "KVADRAT TENGLAMALAR",
-    "goldEvidenceTopicId": "cmu5uy325001eci2e9o4rige5",
+    "goldEvidenceTopicId": "dts_f02b836411d3d6f82e70ca7f",
     "goldEvidenceTopicTitle": "KVADRAT TENGLAMALAR"
   },
   {
@@ -512,7 +522,7 @@
     "difficulty": "medium",
     "category": "cross-lingual",
     "expectedCurriculumTopic": "ODDIY KASRLAR",
-    "goldEvidenceTopicId": "cmu5uy31g000nci2erqq71q88",
+    "goldEvidenceTopicId": "dts_6cf1f2489222ff2b8957a456",
     "goldEvidenceTopicTitle": "ODDIY KASRLAR"
   },
   {
@@ -526,7 +536,7 @@
     "difficulty": "hard",
     "category": "cross-lingual",
     "expectedCurriculumTopic": "TO‘G‘RI BURCHAKLI UCHBURCHAKNING TOMONLARI",
-    "goldEvidenceTopicId": "cmu5uy325001ici2etb3iv3qp",
+    "goldEvidenceTopicId": "dts_4f9d41dcaf370f94a236eac1",
     "goldEvidenceTopicTitle": "TO‘G‘RI BURCHAKLI UCHBURCHAKNING TOMONLARI VA BURCHAKLARI ORASIDAGI MUNOSABATLAR"
   },
   {
@@ -541,7 +551,7 @@
     "difficulty": "medium",
     "category": "cyrillic",
     "expectedCurriculumTopic": "ODDIY KASRLAR",
-    "goldEvidenceTopicId": "cmu5uy31g000nci2erqq71q88",
+    "goldEvidenceTopicId": "dts_6cf1f2489222ff2b8957a456",
     "goldEvidenceTopicTitle": "ODDIY KASRLAR"
   },
   {
@@ -556,7 +566,7 @@
     "difficulty": "medium",
     "category": "cyrillic",
     "expectedCurriculumTopic": "KVADRAT TENGLAMALAR",
-    "goldEvidenceTopicId": "cmu5uy325001eci2e9o4rige5",
+    "goldEvidenceTopicId": "dts_f02b836411d3d6f82e70ca7f",
     "goldEvidenceTopicTitle": "KVADRAT TENGLAMALAR"
   },
   {
@@ -571,7 +581,7 @@
     "difficulty": "medium",
     "category": "cyrillic",
     "expectedCurriculumTopic": "SONLI KETMA-KETLIKLAR",
-    "goldEvidenceTopicId": "cmu5uy32a001pci2eebvcmfp3",
+    "goldEvidenceTopicId": "dts_c9595a75440569b7178908ed",
     "goldEvidenceTopicTitle": "SONLI KETMA-KETLIKLAR"
   },
   {
@@ -637,7 +647,7 @@
     "difficulty": "adversarial",
     "category": "typo",
     "expectedCurriculumTopic": "ODDIY KASRLAR",
-    "goldEvidenceTopicId": "cmu5uy31g000nci2erqq71q88",
+    "goldEvidenceTopicId": "dts_6cf1f2489222ff2b8957a456",
     "goldEvidenceTopicTitle": "ODDIY KASRLAR"
   },
   {
@@ -690,7 +700,7 @@
     "difficulty": "hard",
     "category": "canonical",
     "expectedCurriculumTopic": "KVADRAT TENGLAMALAR",
-    "goldEvidenceTopicId": "cmu5uy325001eci2e9o4rige5",
+    "goldEvidenceTopicId": "dts_f02b836411d3d6f82e70ca7f",
     "goldEvidenceTopicTitle": "KVADRAT TENGLAMALAR"
   },
   {
@@ -704,7 +714,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "SINTAKSIS VA PUNKTUATSIYA",
-    "goldEvidenceTopicId": "cmu5uy32y002kci2eq334ujij",
+    "goldEvidenceTopicId": "dts_8f7c99ffbad3f81592d98118",
     "goldEvidenceTopicTitle": "SINTAKSIS VA PUNKTUATSIYA. MATN"
   },
   {
@@ -718,7 +728,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "FONETIKA",
-    "goldEvidenceTopicId": "cmu5uy32y002ici2epsz3jlym",
+    "goldEvidenceTopicId": "dts_462c7019d261fe4b8544f57c",
     "goldEvidenceTopicTitle": "KIRISH. FONETIKA, IMLO HAMDA LEKSIKA BO‘YICHA TAKRORLASH"
   },
   {
@@ -732,7 +742,7 @@
     "difficulty": "easy",
     "category": "canonical",
     "expectedCurriculumTopic": "MORFOLOGIYA",
-    "goldEvidenceTopicId": "cmu5uy32y002jci2esi4pn2pd",
+    "goldEvidenceTopicId": "dts_4b8451283292a236b2abc330",
     "goldEvidenceTopicTitle": "MORFOLOGIYA"
   },
   {
@@ -746,7 +756,7 @@
     "difficulty": "easy",
     "category": "canonical",
     "expectedCurriculumTopic": "SO‘Z TURKUMLARI",
-    "goldEvidenceTopicId": "cmu5uy337002sci2effxa6hqm",
+    "goldEvidenceTopicId": "dts_cc06f70e9e7267fa035cb1c6",
     "goldEvidenceTopicTitle": "SO‘Z TURKUMLARI"
   },
   {
@@ -760,7 +770,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "SO‘Z TURKUMLARI",
-    "goldEvidenceTopicId": "cmu5uy337002sci2effxa6hqm",
+    "goldEvidenceTopicId": "dts_cc06f70e9e7267fa035cb1c6",
     "goldEvidenceTopicTitle": "SO‘Z TURKUMLARI"
   },
   {
@@ -774,7 +784,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "SO‘Z TURKUMLARI",
-    "goldEvidenceTopicId": "cmu5uy337002sci2effxa6hqm",
+    "goldEvidenceTopicId": "dts_cc06f70e9e7267fa035cb1c6",
     "goldEvidenceTopicTitle": "SO‘Z TURKUMLARI"
   },
   {
@@ -788,7 +798,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "MUSTAQIL SO‘Z TURKUMLARI",
-    "goldEvidenceTopicId": "cmu5uy33b002vci2equz4881t",
+    "goldEvidenceTopicId": "dts_ea4abe161472799155564236",
     "goldEvidenceTopicTitle": "MUSTAQIL SO‘Z TURKUMLARI HAQIDA MA’LUMOT"
   },
   {
@@ -802,7 +812,7 @@
     "difficulty": "easy",
     "category": "canonical",
     "expectedCurriculumTopic": "MUSTAQIL SO‘Z TURKUMLARI",
-    "goldEvidenceTopicId": "cmu5uy33b002vci2equz4881t",
+    "goldEvidenceTopicId": "dts_ea4abe161472799155564236",
     "goldEvidenceTopicTitle": "MUSTAQIL SO‘Z TURKUMLARI HAQIDA MA’LUMOT"
   },
   {
@@ -816,7 +826,7 @@
     "difficulty": "hard",
     "category": "canonical",
     "expectedCurriculumTopic": "YORDAMCHI SO‘Z",
-    "goldEvidenceTopicId": "cmu5uy33b002xci2ebj7nzby2",
+    "goldEvidenceTopicId": "dts_80711ceeba36c40c868f358d",
     "goldEvidenceTopicTitle": "YORDAMCHI SO‘Z TURKUMLARI"
   },
   {
@@ -830,7 +840,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "SINTAKSIS",
-    "goldEvidenceTopicId": "cmu5uy33h0030ci2er8mkkqgf",
+    "goldEvidenceTopicId": "dts_791ac7428316a9a19207981b",
     "goldEvidenceTopicTitle": "SINTAKSIS, OHANG VA TINISH BELGILARI"
   },
   {
@@ -844,7 +854,7 @@
     "difficulty": "easy",
     "category": "canonical",
     "expectedCurriculumTopic": "SODDA GAP SINTAKSISI",
-    "goldEvidenceTopicId": "cmu5uy33h0031ci2elqs5g4if",
+    "goldEvidenceTopicId": "dts_d05efb2f4ba6ddcba000bcf6",
     "goldEvidenceTopicTitle": "SODDA GAP SINTAKSISI"
   },
   {
@@ -858,7 +868,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "IKKINCHI DARAJALI BO‘LAKLAR",
-    "goldEvidenceTopicId": "cmu5uy33h0032ci2e5clr9y6t",
+    "goldEvidenceTopicId": "dts_206b23fdd89b2489a3a3d959",
     "goldEvidenceTopicTitle": "IKKINCHI DARAJALI BO‘LAKLAR"
   },
   {
@@ -872,7 +882,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "QO‘SHMA GAP",
-    "goldEvidenceTopicId": "cmu5uy33m0036ci2eydg32etm",
+    "goldEvidenceTopicId": "dts_a95d963bdd7e5534dc7e50e7",
     "goldEvidenceTopicTitle": "QO‘SHMA GAPLAR"
   },
   {
@@ -886,7 +896,7 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "KO‘CHIRMA GAPLI QO‘SHMA GAPLAR",
-    "goldEvidenceTopicId": "cmu5uy33m0036ci2eydg32etm",
+    "goldEvidenceTopicId": "dts_a95d963bdd7e5534dc7e50e7",
     "goldEvidenceTopicTitle": "QO‘SHMA GAPLAR"
   },
   {
@@ -900,8 +910,10 @@
     "difficulty": "medium",
     "category": "canonical",
     "expectedCurriculumTopic": "NUTQ USLUBLARI",
-    "goldEvidenceTopicId": "cmu5uy33m003cci2ehs2i5kin",
-    "goldEvidenceTopicTitle": "NUTQ USLUBLARI VA USLUBIYAT. TAKRORLASH"
+    "goldEvidenceTopicId": "dts_b5e79792e97ab55b847e7849",
+    "goldEvidenceTopicTitle": "NUTQ USLUBLARI VA USLUBIYAT. TAKRORLASH",
+    "isCrossGrade": true,
+    "expectedAvailableGrade": "9-sinf"
   },
   {
     "id": "lang-016",
@@ -914,7 +926,7 @@
     "difficulty": "hard",
     "category": "canonical",
     "expectedCurriculumTopic": "TILIM – BOYLIGIM",
-    "goldEvidenceTopicId": "cmu5uy32i0022ci2efk8gyuyj",
+    "goldEvidenceTopicId": "dts_efb434d8175d4fc61fb0841d",
     "goldEvidenceTopicTitle": "TILIM – BOYLIGIM"
   },
   {
@@ -928,8 +940,10 @@
     "difficulty": "hard",
     "category": "canonical",
     "expectedCurriculumTopic": "MATN LINGVISTIKASI",
-    "goldEvidenceTopicId": "cmu5uy337002qci2e8zhpnbf4",
-    "goldEvidenceTopicTitle": "MATN"
+    "goldEvidenceTopicId": "dts_980e89b9c5970a3c81febfc4",
+    "goldEvidenceTopicTitle": "MATN",
+    "isCrossGrade": true,
+    "expectedAvailableGrade": "6-sinf"
   },
   {
     "id": "lang-018",
@@ -942,7 +956,7 @@
     "difficulty": "hard",
     "category": "canonical",
     "expectedCurriculumTopic": "Nutq madaniyati va nutq texnikasi",
-    "goldEvidenceTopicId": "cmu5uy32r002gci2evz27pmjx",
+    "goldEvidenceTopicId": "dts_0f38a6df1d4dbe1a23b3cf0d",
     "goldEvidenceTopicTitle": "Nutq madaniyati va nutq texnikasi"
   },
   {
@@ -957,7 +971,7 @@
     "difficulty": "medium",
     "category": "cyrillic",
     "expectedCurriculumTopic": "FONETIKA",
-    "goldEvidenceTopicId": "cmu5uy32y002ici2epsz3jlym",
+    "goldEvidenceTopicId": "dts_462c7019d261fe4b8544f57c",
     "goldEvidenceTopicTitle": "KIRISH. FONETIKA, IMLO HAMDA LEKSIKA BO‘YICHA TAKRORLASH"
   },
   {
@@ -972,7 +986,7 @@
     "difficulty": "medium",
     "category": "cyrillic",
     "expectedCurriculumTopic": "MUSTAQIL SO‘Z TURKUMLARI",
-    "goldEvidenceTopicId": "cmu5uy33b002vci2equz4881t",
+    "goldEvidenceTopicId": "dts_ea4abe161472799155564236",
     "goldEvidenceTopicTitle": "MUSTAQIL SO‘Z TURKUMLARI HAQIDA MA’LUMOT"
   },
   {
@@ -986,7 +1000,7 @@
     "difficulty": "medium",
     "category": "cross-lingual",
     "expectedCurriculumTopic": "SO‘Z TURKUMLARI",
-    "goldEvidenceTopicId": "cmu5uy337002sci2effxa6hqm",
+    "goldEvidenceTopicId": "dts_cc06f70e9e7267fa035cb1c6",
     "goldEvidenceTopicTitle": "SO‘Z TURKUMLARI"
   },
   {
@@ -1000,7 +1014,7 @@
     "difficulty": "medium",
     "category": "cross-lingual",
     "expectedCurriculumTopic": "SO‘Z TURKUMLARI",
-    "goldEvidenceTopicId": "cmu5uy337002sci2effxa6hqm",
+    "goldEvidenceTopicId": "dts_cc06f70e9e7267fa035cb1c6",
     "goldEvidenceTopicTitle": "SO‘Z TURKUMLARI"
   },
   {
@@ -2177,7 +2191,7 @@
     "difficulty": "medium",
     "category": "polysemic_contextual",
     "expectedCurriculumTopic": "KVADRAT TENGLAMALAR",
-    "goldEvidenceTopicId": "cmu5uy325001eci2e9o4rige5",
+    "goldEvidenceTopicId": "dts_f02b836411d3d6f82e70ca7f",
     "goldEvidenceTopicTitle": "KVADRAT TENGLAMALAR"
   },
   {
@@ -2202,7 +2216,7 @@
     "difficulty": "medium",
     "category": "polysemic_contextual",
     "expectedCurriculumTopic": "MORFOLOGIYA",
-    "goldEvidenceTopicId": "cmu5uy32y002jci2esi4pn2pd",
+    "goldEvidenceTopicId": "dts_4b8451283292a236b2abc330",
     "goldEvidenceTopicTitle": "MORFOLOGIYA"
   },
   {
@@ -2249,7 +2263,7 @@
     "difficulty": "adversarial",
     "category": "xss_sanitization",
     "expectedCurriculumTopic": "ODDIY KASRLAR",
-    "goldEvidenceTopicId": "cmu5uy31g000nci2erqq71q88",
+    "goldEvidenceTopicId": "dts_6cf1f2489222ff2b8957a456",
     "goldEvidenceTopicTitle": "ODDIY KASRLAR"
   },
   {
