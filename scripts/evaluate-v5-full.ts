@@ -286,7 +286,9 @@ async function main() {
     claimSupported += grounding.claims.filter((c) => c.status === "supported").length;
     for (const claim of grounding.claims.filter((c) => c.status === "contradicted")) {
       claimContradicted++;
-      contradictionsByType[claim.type] = (contradictionsByType[claim.type] ?? 0) + 1;
+      // V6: `conflictType` semantik toifa (claim.type esa da'vo maydoni).
+      const bucket = claim.conflictType ?? `UNCLASSIFIED_${claim.type}`;
+      contradictionsByType[bucket] = (contradictionsByType[bucket] ?? 0) + 1;
     }
     claimUnsupported += grounding.claims.filter((c) => c.status === "unsupported").length;
 
@@ -548,9 +550,22 @@ async function main() {
       supportedClaimRate: pct(claimSupported, claimTotal),
       contradictionRate: pct(claimContradicted, claimTotal),
       contradictionsByType,
-      // Sinf tafovuti ogohlantirishlarisiz — ya'ni javob dalilga zid kelgan holatlar.
-      factualContradictionRate: pct(
-        claimContradicted - (contradictionsByType.grade ?? 0),
+      /*
+        Ziddiyatlar semantik toifalarga ajratiladi (V6).
+
+        `contradictionRate` eski ta'rifda qoladi — u o'chirilmaydi va
+        hisobotda ko'rinadi. Yonida esa tizim SIFATINI o'lchaydigan
+        ko'rsatkich turadi: javobning dalilga zidligi + to'qib chiqarilgan
+        bo'lim havolasi. Sinf tafovuti esa alohida hisoblanadi, chunki u
+        tizimning ochiq OGOHLANTIRISHI va u cross-grade aniqligi
+        chegarasi bilan allaqachon qattiq nazorat qilinadi.
+      */
+      factualContradictionRate: pct(contradictionsByType.FACTUAL_CONTRADICTION ?? 0, claimTotal),
+      sourceConflictRate: pct(contradictionsByType.SOURCE_CONFLICT ?? 0, claimTotal),
+      gradeConflictRate: pct(contradictionsByType.GRADE_CONFLICT ?? 0, claimTotal),
+      // Gate uchun: javob-dalil ziddiyatlari (sinf ogohlantirishisiz).
+      answerEvidenceConflictRate: pct(
+        (contradictionsByType.FACTUAL_CONTRADICTION ?? 0) + (contradictionsByType.SOURCE_CONFLICT ?? 0),
         claimTotal,
       ),
       unsupportedClaimRate: pct(claimUnsupported, claimTotal),
@@ -629,7 +644,10 @@ async function main() {
   console.log("\n## 6. GROUNDING");
   console.log(`- Supported claim rate: ${report.grounding.supportedClaimRate}%`);
   console.log(`- Contradiction rate:   ${report.grounding.contradictionRate}% (turlar: ${JSON.stringify(contradictionsByType)})`);
-  console.log(`    · shundan FAKTIK (sinf ogohlantirishisiz): ${report.grounding.factualContradictionRate}%`);
+  console.log(`    · FACTUAL_CONTRADICTION: ${report.grounding.factualContradictionRate}%`);
+  console.log(`    · SOURCE_CONFLICT:       ${report.grounding.sourceConflictRate}%`);
+  console.log(`    · GRADE_CONFLICT:        ${report.grounding.gradeConflictRate}%  (shaffoflik ogohlantirishi)`);
+  console.log(`    · javob-dalil ziddiyati (gate): ${report.grounding.answerEvidenceConflictRate}%`);
   console.log(`- Fake DTS citations:   ${fakeCitations}/${totalCitations}`);
   console.log(`- Soat ziddiyati zondi: ${report.grounding.hoursProbe.detectionRate}% (${hoursContradictionDetected}/${hoursProbeTotal}), yolg'on musbat: ${hoursFalsePositive}`);
 

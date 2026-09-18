@@ -84,7 +84,7 @@ async function main() {
     answer: { answer: "Kesh javobi", keyPoints: [], classroomIdeas: [] },
     understanding: testU,
     curriculumMatches: [],
-    grounding: { isGrounded: true, groundingScore: 1, sourceCitations: [], claims: [], contradictions: [], supportedClaimRate: 1, contradictionRate: 0, unsupportedClaimRate: 0 },
+    grounding: { isGrounded: true, groundingScore: 1, sourceCitations: [], claims: [], contradictions: [], supportedClaimRate: 1, contradictionRate: 0, factualContradictionRate: 0, gradeConflictRate: 0, sourceConflictRate: 0, unsupportedClaimRate: 0 },
     suggestedActions: [],
     durationMs: 1,
     latencyBreakdown: { understandingMs: 0.5, retrievalMs: 0.5, aiMs: 0, validationMs: 0, totalMs: 1 },

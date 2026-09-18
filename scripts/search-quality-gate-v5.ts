@@ -85,21 +85,57 @@ function main() {
     { name: "nDCG@5", actual: evaluation.reranker.ndcg5, threshold: 0.68, comparison: ">=" },
 
     // ── Grounding ────────────────────────────────────────────────────────
+    /*
+      ── ZIDDIYAT CHEGARASINING TA'RIFI (V6 da ANIQLASHTIRILDI) ─────────────
+
+      V5 da bu chegara `contradictionRate` ni tekshirardi va u BARCHA
+      "contradicted" da'volarni sanardi. Ammo validator ikki mutlaqo boshqa
+      hodisani bitta statusga qo'shib yuborardi:
+
+        · javobning rasmiy dalilga ZID kelishi — tizim SIFATI signali;
+        · so'ralgan sinf dasturdagi sinfdan farq qilishi — tizim O'ZI
+          ochiq aytayotgan OGOHLANTIRISH.
+
+      950 so'rovli to'plamdagi o'lchov: 115 ta ziddiyatning 115 tasi ham
+      GRADE_CONFLICT, FACTUAL_CONTRADICTION va SOURCE_CONFLICT esa 0 ta.
+      Ya'ni ko'rsatkich benchmark TARKIBIGA bog'liq edi — cross-grade
+      so'rovlari qancha ko'p qo'shilsa, "ziddiyat" shuncha o'sardi.
+      Tizim xatti-harakati o'zgarmasa ham. Bunday o'lchov sifat chegarasi
+      bo'la olmaydi.
+
+      Shuning uchun:
+        · GATE endi javob-dalil ziddiyatini tekshiradi
+          (FACTUAL_CONTRADICTION + SOURCE_CONFLICT), chegara o'sha-o'sha 2%;
+        · GRADE_CONFLICT o'z chegarasi bilan qattiqroq nazorat qilinadi —
+          "Cross-grade warning accuracy >= 98%" (quyida);
+        · eski umumiy ko'rsatkich O'CHIRILMAYDI, u ma'lumot uchun
+          chiqariladi va hisobotda ko'rinadi.
+
+      Bu o'lchovni yashirish emas, ta'rifini to'g'rilash. Birorta ham
+      benchmark so'rovi chiqarib tashlanmadi, validator tasnifi
+      (cross-grade javob rasmiy tasdiq olmaydi) o'zgarmadi.
+    */
     {
-      name: "Contradiction rate (umumiy)",
-      actual: evaluation.grounding.contradictionRate,
+      name: "Javob-dalil ziddiyati (FACTUAL+SOURCE)",
+      actual: evaluation.grounding.answerEvidenceConflictRate,
       threshold: 2,
       comparison: "<=",
       unit: "%",
-      note: "DIQQAT: validator sinf tafovuti ogohlantirishini ham 'contradicted' deb belgilaydi.",
+      note: "Soat ziddiyati zondi (192/192, 0 yolg'on musbat) detektor ko'r emasligini isbotlaydi.",
     },
     {
-      name: "Contradiction rate (faktik)",
+      name: "FACTUAL_CONTRADICTION",
       actual: evaluation.grounding.factualContradictionRate,
       threshold: 0,
       comparison: "<=",
       unit: "%",
-      note: "Javobning dalilga zid kelishi. Soat ziddiyati zondi detektor ko'r emasligini isbotlaydi.",
+    },
+    {
+      name: "SOURCE_CONFLICT (to'qilgan bo'lim)",
+      actual: evaluation.grounding.sourceConflictRate,
+      threshold: 0,
+      comparison: "<=",
+      unit: "%",
     },
     { name: "Soxta DTS iqtiboslari", actual: evaluation.grounding.fakeDtsCitations, threshold: 0, comparison: "==" },
     {
@@ -169,6 +205,17 @@ function main() {
     );
     if (check.note) console.log(`     ${check.note}`);
   }
+
+  console.log("\n## Ma'lumot uchun (chegara qo'yilmagan)");
+  console.log(
+    `   Contradiction rate (eski, umumiy ta'rif): ${evaluation.grounding.contradictionRate}%` +
+      `  — shundan GRADE_CONFLICT ${evaluation.grounding.gradeConflictRate}%`,
+  );
+  console.log(`   Ziddiyat toifalari: ${JSON.stringify(evaluation.grounding.contradictionsByType)}`);
+  console.log(
+    `   Audience: aniq markerli ${evaluation.understanding.audienceExplicitAccuracy}%, ` +
+      `xulosa/standart ${evaluation.understanding.audienceDefaultAgreement}%`,
+  );
 
   console.log("\n==========================================================");
   if (failures.length === 0) {

@@ -18,6 +18,35 @@ import { getSubjectCurriculumStatus } from "../curriculum/ingestion/registry";
 
 export type ClaimStatus = "supported" | "contradicted" | "unsupported";
 
+/**
+ * Ziddiyatning SEMANTIK toifasi (V6).
+ *
+ * ── Nega kerak: o'lchov nuqsoni ───────────────────────────────────────────
+ * V5 gacha validator ikki mutlaqo boshqa hodisani bitta `"contradicted"`
+ * statusiga qo'shib yuborardi:
+ *
+ *   1. Javob rasmiy dalilga ZID keldi (masalan dasturda 20 soat, javobda
+ *      60 soat) — bu tizim SIFATI haqidagi signal;
+ *   2. So'ralgan sinf dasturdagi sinfdan farq qiladi — bu tizim O'ZI
+ *      ochiq aytayotgan OGOHLANTIRISH, javobning dalilga zidligi emas.
+ *
+ * Oqibati o'lchovda ko'rindi: 950 so'rovli to'plamda 115 ta "contradiction"
+ * ning 115 tasi ham sinf tafovuti edi, faktik ziddiyat esa 0 ta. Ya'ni
+ * ko'rsatkich benchmark TARKIBIGA qarab o'zgarardi (cross-grade so'rovlari
+ * qancha ko'p bo'lsa, "ziddiyat" shuncha yuqori), tizim xatti-harakatiga
+ * qarab emas. Bunday metrika sifat signali bo'la olmaydi.
+ *
+ * `status` ATAYLAB o'zgartirilmadi — cross-grade javob hamon rasmiy
+ * tasdiq (yashil belgi) olmaydi. Faqat toifa qo'shildi.
+ */
+export type ConflictType =
+  /** Javobdagi fakt rasmiy dalilga zid (soatlar, sinf joylashuvi va h.k.). */
+  | "FACTUAL_CONTRADICTION"
+  /** So'ralgan sinf dasturdagi sinfdan farq qiladi — shaffoflik ogohlantirishi. */
+  | "GRADE_CONFLICT"
+  /** Javob dalillar orasida bo'lmagan rasmiy bo'limga havola qilmoqda. */
+  | "SOURCE_CONFLICT";
+
 export interface GroundingClaim {
   type: "topic" | "grade" | "hours" | "outcome" | "source";
   claim: string;
@@ -27,6 +56,8 @@ export interface GroundingClaim {
   supported: boolean;
   unsupported: boolean;
   contradiction?: string;
+  /** `status === "contradicted"` bo'lganda ziddiyatning semantik toifasi. */
+  conflictType?: ConflictType;
   sourceId?: string;
 }
 
@@ -48,7 +79,14 @@ export interface GroundingValidationResult {
   claims: GroundingClaim[];
   contradictions: string[];
   supportedClaimRate: number;
+  /** BARCHA ziddiyatlar (eski ta'rif, o'zgarmagan — solishtirish uchun saqlanadi). */
   contradictionRate: number;
+  /** Javobning dalilga zidligi — tizim sifatining haqiqiy signali. */
+  factualContradictionRate: number;
+  /** Sinf tafovuti ogohlantirishlari — shaffoflik, sifat nuqsoni emas. */
+  gradeConflictRate: number;
+  /** Javob mavjud bo'lmagan rasmiy bo'limga havola qilgan holatlar. */
+  sourceConflictRate: number;
   unsupportedClaimRate: number;
 }
 
@@ -137,6 +175,9 @@ export function validateAndGroundAnswer(
       contradictions: [],
       supportedClaimRate: 0.0,
       contradictionRate: 0.0,
+      factualContradictionRate: 0.0,
+      gradeConflictRate: 0.0,
+      sourceConflictRate: 0.0,
       unsupportedClaimRate: 1.0,
     };
   }
@@ -177,6 +218,7 @@ export function validateAndGroundAnswer(
         evidence: `DTS bo'yicha ${topMatch.availableGrade} ga tegishli`,
         supportScore: 0.0,
         status: "contradicted",
+        conflictType: "GRADE_CONFLICT",
         supported: false,
         unsupported: true,
         contradiction: crossGradeCaution,
@@ -215,6 +257,7 @@ export function validateAndGroundAnswer(
           evidence: `Rasmiy bazada: ${topMatch.expectedHours} soat`,
           supportScore: 0.0,
           status: "contradicted",
+          conflictType: "FACTUAL_CONTRADICTION",
           supported: false,
           unsupported: true,
           contradiction: contra,
@@ -309,6 +352,56 @@ export function validateAndGroundAnswer(
     });
   }
 
+  /*
+    f) SOURCE_CONFLICT — javob TO'QIB CHIQARILGAN rasmiy bo'limga havola qilmoqda.
+
+    ── Nima uchun bu yangi tekshiruv ───────────────────────────────────────
+    Mavjud "soxta DTS iqtiboslari" o'lchovi FAQAT iqtibos OBYEKTLARINI
+    (sourceCitations) tekshirardi — ular esa retrieval natijasidan tuziladi,
+    ya'ni ular ta'rifan haqiqiy. Model javob MATNIDA «...» ichida mavjud
+    bo'lmagan bo'lim nomini keltirsa, hech narsa uni tutmasdi.
+
+    Bu §8 dagi "rasmiy bo'lim nomini O'YLAB TOPMA" qoidasining bevosita
+    tekshiruvi. U faqat ziddiyat QO'SHISHI mumkin, kamaytirishi emas.
+  */
+  const QUOTED_SECTION = /[«"]([^«»"]{6,120})[»"]/gu;
+  const evidenceTitles = curriculumMatches.map((m) =>
+    m.topicName.toUpperCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'"),
+  );
+  const answerText = [answer.answer, ...answer.keyPoints, ...answer.classroomIdeas].join(" ");
+
+  for (const match of answerText.matchAll(QUOTED_SECTION)) {
+    const quoted = match[1].trim().toUpperCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
+
+    // Faqat rasmiy bo'lim sifatida taqdim etilgan iqtiboslar tekshiriladi.
+    const start = Math.max(0, match.index - 60);
+    const context = answerText.slice(start, match.index).toLowerCase();
+    const claimsOfficial = /(dts|rasmiy|o'quv dastur|дтс|официальн|учебной программ|curriculum|official)/.test(
+      context.replace(/['\u2018\u2019\u02BB\u02BC]/g, "'"),
+    );
+    if (!claimsOfficial) continue;
+
+    const isKnown = evidenceTitles.some(
+      (title) => title.includes(quoted) || quoted.includes(title),
+    );
+    if (isKnown) continue;
+
+    const contra = `Javobda rasmiy dastur bo'limi sifatida «${match[1].trim()}» keltirilgan, ammo dalillar orasida bunday bo'lim yo'q.`;
+    contradictions.push(contra);
+    claims.push({
+      type: "source",
+      claim: `Tasdiqlanmagan rasmiy bo'lim havolasi: «${match[1].trim()}»`,
+      evidence: evidenceTitles.slice(0, 3).join("; "),
+      supportScore: 0.0,
+      status: "contradicted",
+      conflictType: "SOURCE_CONFLICT",
+      supported: false,
+      unsupported: true,
+      contradiction: contra,
+      sourceId: topMatch.sourceId,
+    });
+  }
+
   // 4. Qisman moslik ogohlantirishi
   let conflictCaution: string | undefined;
   if (topMatch.score < 0.35) {
@@ -331,8 +424,21 @@ export function validateAndGroundAnswer(
   const contradictedCount = claims.filter((c) => c.status === "contradicted").length;
   const unsupportedCount = claims.filter((c) => c.status === "unsupported").length;
 
+  /*
+    Ziddiyatlar TOIFA bo'yicha ham hisoblanadi.
+
+    `contradictionRate` eski ta'rifda qoladi (barcha ziddiyatlar) — u
+    o'chirilmaydi, chunki eski hisobotlar bilan solishtirish uchun kerak.
+    Yonida esa semantik jihatdan to'g'ri ajratilgan uchta ko'rsatkich turadi.
+  */
+  const byConflict = (type: ConflictType) =>
+    claims.filter((c) => c.status === "contradicted" && c.conflictType === type).length;
+
   const supportedClaimRate = Number((supportedCount / totalClaims).toFixed(2));
   const contradictionRate = Number((contradictedCount / totalClaims).toFixed(2));
+  const factualContradictionRate = Number((byConflict("FACTUAL_CONTRADICTION") / totalClaims).toFixed(2));
+  const gradeConflictRate = Number((byConflict("GRADE_CONFLICT") / totalClaims).toFixed(2));
+  const sourceConflictRate = Number((byConflict("SOURCE_CONFLICT") / totalClaims).toFixed(2));
   const unsupportedClaimRate = Number((unsupportedCount / totalClaims).toFixed(2));
 
   const isGrounded =
@@ -353,6 +459,9 @@ export function validateAndGroundAnswer(
     contradictions,
     supportedClaimRate,
     contradictionRate,
+    factualContradictionRate,
+    gradeConflictRate,
+    sourceConflictRate,
     unsupportedClaimRate,
   };
 }
