@@ -1,27 +1,27 @@
 {
-  "timestamp": "2026-09-18T14:00:54.361Z",
+  "timestamp": "2026-09-18T14:47:21.432Z",
   "totalQueries": 500,
   "understanding": {
     "languageAccuracy": 100,
     "subjectAccuracy": 99.79591836734694,
     "gradeAccuracy": 100,
     "intentAccuracy": 91.8,
-    "audienceAccuracy": 89.60000000000001,
+    "audienceAccuracy": 96,
     "byDifficulty": {
       "easy": {
         "total": 150,
-        "correct": 127,
-        "accuracy": 84.66666666666667
+        "correct": 136,
+        "accuracy": 90.66666666666666
       },
       "medium": {
         "total": 188,
-        "correct": 161,
-        "accuracy": 85.63829787234043
+        "correct": 170,
+        "accuracy": 90.42553191489363
       },
       "hard": {
         "total": 147,
-        "correct": 126,
-        "accuracy": 85.71428571428571
+        "correct": 134,
+        "accuracy": 91.15646258503402
       },
       "adversarial": {
         "total": 15,
@@ -32,43 +32,43 @@
     "byLanguage": {
       "UZ": {
         "total": 341,
-        "correct": 277,
-        "accuracy": 81.23167155425219
+        "correct": 293,
+        "accuracy": 85.92375366568915
       },
       "RU": {
         "total": 81,
-        "correct": 74,
-        "accuracy": 91.35802469135803
+        "correct": 79,
+        "accuracy": 97.53086419753086
       },
       "EN": {
         "total": 78,
-        "correct": 68,
-        "accuracy": 87.17948717948718
+        "correct": 73,
+        "accuracy": 93.58974358974359
       }
     }
   },
   "candidateRetrievalStage": {
     "evaluatedQueries": 66,
-    "recall20": 93.94,
-    "recall50": 95.45,
-    "recall100": 95.45,
-    "avgLatencyMs": 11.41
+    "recall20": 98.48,
+    "recall50": 100,
+    "recall100": 100,
+    "avgLatencyMs": 12.43
   },
   "rerankerStage": {
     "evaluatedQueries": 66,
-    "recall1": 65.15,
-    "recall3": 90.91,
-    "recall5": 92.42,
-    "precision5": 18.48,
-    "precision10": 9.39,
-    "mrr": 0.7841,
-    "ndcg5": 0.8186,
-    "ndcg10": 0.824,
-    "avgLatencyMs": 1.85
+    "recall1": 69.7,
+    "recall3": 95.45,
+    "recall5": 96.97,
+    "precision5": 19.39,
+    "precision10": 9.85,
+    "mrr": 0.8295,
+    "ndcg5": 0.864,
+    "ndcg10": 0.8694,
+    "avgLatencyMs": 1.82
   },
   "failureBuckets": {
     "typo": 0,
-    "synonym_gap": 3,
+    "synonym_gap": 0,
     "grade_mismatch": 0,
     "subject_mismatch": 0,
     "intent_misclassification": 0,
@@ -84,24 +84,24 @@
   },
   "abstentionQuality": {
     "totalUnseededQueries": 434,
-    "correctlyAbstained": 380,
+    "correctlyAbstained": 418,
     "precision": 100,
-    "recall": 87.56,
-    "f1": 93.37
+    "recall": 96.31,
+    "f1": 98.12
   },
   "crossGradeWarnings": {
     "totalCrossGradeQueries": 8,
-    "correctlyDetectedWarnings": 6,
-    "accuracy": 75
+    "correctlyDetectedWarnings": 7,
+    "accuracy": 87.5
   },
   "latencyPercentiles": {
-    "understandingAvgMs": 1.86,
-    "retrievalAvgMs": 11.41,
-    "rerankerAvgMs": 1.85,
-    "totalColdAvgMs": 14.71,
-    "p50Ms": 13.35,
-    "p95Ms": 22.83,
-    "p99Ms": 56.28,
-    "cacheHitAvgMs": 0.00062
+    "understandingAvgMs": 0.89,
+    "retrievalAvgMs": 12.43,
+    "rerankerAvgMs": 1.82,
+    "totalColdAvgMs": 3.34,
+    "p50Ms": 0.37,
+    "p95Ms": 14.29,
+    "p99Ms": 62.58,
+    "cacheHitAvgMs": 0.00025
   }
 }
