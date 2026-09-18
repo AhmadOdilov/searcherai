@@ -1,0 +1,902 @@
+[
+  {
+    "id": "v5-uns-001",
+    "suite": "unsupported",
+    "q": "5-sinf adabiyot Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Adabiyot",
+    "expectedGrade": "5-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-002",
+    "suite": "unsupported",
+    "q": "6-sinf biologiya Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Biologiya",
+    "expectedGrade": "6-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-003",
+    "suite": "unsupported",
+    "q": "7-sinf fizika present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Fizika",
+    "expectedGrade": "7-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-004",
+    "suite": "unsupported",
+    "q": "8-sinf geografiya genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Geografiya",
+    "expectedGrade": "8-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-005",
+    "suite": "unsupported",
+    "q": "9-sinf informatika massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Informatika",
+    "expectedGrade": "9-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-006",
+    "suite": "unsupported",
+    "q": "10-sinf ingliz tili Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ingliz tili",
+    "expectedGrade": "10-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-007",
+    "suite": "unsupported",
+    "q": "11-sinf kimyo Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Kimyo",
+    "expectedGrade": "11-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-008",
+    "suite": "unsupported",
+    "q": "5-sinf tarix present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Tarix",
+    "expectedGrade": "5-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-009",
+    "suite": "unsupported",
+    "q": "6-sinf adabiyot genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Adabiyot",
+    "expectedGrade": "6-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-010",
+    "suite": "unsupported",
+    "q": "7-sinf biologiya massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Biologiya",
+    "expectedGrade": "7-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-011",
+    "suite": "unsupported",
+    "q": "8-sinf fizika Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Fizika",
+    "expectedGrade": "8-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-012",
+    "suite": "unsupported",
+    "q": "9-sinf geografiya Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Geografiya",
+    "expectedGrade": "9-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-013",
+    "suite": "unsupported",
+    "q": "10-sinf informatika present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Informatika",
+    "expectedGrade": "10-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-014",
+    "suite": "unsupported",
+    "q": "11-sinf ingliz tili genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ingliz tili",
+    "expectedGrade": "11-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-015",
+    "suite": "unsupported",
+    "q": "5-sinf kimyo massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Kimyo",
+    "expectedGrade": "5-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-016",
+    "suite": "unsupported",
+    "q": "6-sinf tarix Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Tarix",
+    "expectedGrade": "6-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-017",
+    "suite": "unsupported",
+    "q": "7-sinf adabiyot Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Adabiyot",
+    "expectedGrade": "7-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-018",
+    "suite": "unsupported",
+    "q": "8-sinf biologiya present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Biologiya",
+    "expectedGrade": "8-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-019",
+    "suite": "unsupported",
+    "q": "9-sinf fizika genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Fizika",
+    "expectedGrade": "9-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-020",
+    "suite": "unsupported",
+    "q": "10-sinf geografiya massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Geografiya",
+    "expectedGrade": "10-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-021",
+    "suite": "unsupported",
+    "q": "11-sinf informatika Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Informatika",
+    "expectedGrade": "11-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-022",
+    "suite": "unsupported",
+    "q": "5-sinf ingliz tili Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ingliz tili",
+    "expectedGrade": "5-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-023",
+    "suite": "unsupported",
+    "q": "6-sinf kimyo present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Kimyo",
+    "expectedGrade": "6-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-024",
+    "suite": "unsupported",
+    "q": "7-sinf tarix genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Tarix",
+    "expectedGrade": "7-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-025",
+    "suite": "unsupported",
+    "q": "8-sinf adabiyot massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Adabiyot",
+    "expectedGrade": "8-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-026",
+    "suite": "unsupported",
+    "q": "9-sinf biologiya Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Biologiya",
+    "expectedGrade": "9-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-027",
+    "suite": "unsupported",
+    "q": "10-sinf fizika Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Fizika",
+    "expectedGrade": "10-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-028",
+    "suite": "unsupported",
+    "q": "11-sinf geografiya present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Geografiya",
+    "expectedGrade": "11-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-029",
+    "suite": "unsupported",
+    "q": "5-sinf informatika genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Informatika",
+    "expectedGrade": "5-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-030",
+    "suite": "unsupported",
+    "q": "6-sinf ingliz tili massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ingliz tili",
+    "expectedGrade": "6-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-031",
+    "suite": "unsupported",
+    "q": "7-sinf kimyo Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Kimyo",
+    "expectedGrade": "7-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-032",
+    "suite": "unsupported",
+    "q": "8-sinf tarix Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Tarix",
+    "expectedGrade": "8-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-033",
+    "suite": "unsupported",
+    "q": "9-sinf adabiyot present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Adabiyot",
+    "expectedGrade": "9-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-034",
+    "suite": "unsupported",
+    "q": "10-sinf biologiya genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Biologiya",
+    "expectedGrade": "10-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-035",
+    "suite": "unsupported",
+    "q": "11-sinf fizika massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Fizika",
+    "expectedGrade": "11-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-036",
+    "suite": "unsupported",
+    "q": "5-sinf geografiya Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Geografiya",
+    "expectedGrade": "5-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-037",
+    "suite": "unsupported",
+    "q": "6-sinf informatika Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Informatika",
+    "expectedGrade": "6-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-038",
+    "suite": "unsupported",
+    "q": "7-sinf ingliz tili present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ingliz tili",
+    "expectedGrade": "7-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-039",
+    "suite": "unsupported",
+    "q": "8-sinf kimyo genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Kimyo",
+    "expectedGrade": "8-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-040",
+    "suite": "unsupported",
+    "q": "9-sinf tarix massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Tarix",
+    "expectedGrade": "9-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-041",
+    "suite": "unsupported",
+    "q": "10-sinf adabiyot Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Adabiyot",
+    "expectedGrade": "10-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-042",
+    "suite": "unsupported",
+    "q": "11-sinf biologiya Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Biologiya",
+    "expectedGrade": "11-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-043",
+    "suite": "unsupported",
+    "q": "5-sinf fizika present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Fizika",
+    "expectedGrade": "5-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-044",
+    "suite": "unsupported",
+    "q": "6-sinf geografiya genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Geografiya",
+    "expectedGrade": "6-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-045",
+    "suite": "unsupported",
+    "q": "7-sinf informatika massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Informatika",
+    "expectedGrade": "7-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-046",
+    "suite": "unsupported",
+    "q": "8-sinf ingliz tili Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ingliz tili",
+    "expectedGrade": "8-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-047",
+    "suite": "unsupported",
+    "q": "9-sinf kimyo Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Kimyo",
+    "expectedGrade": "9-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-048",
+    "suite": "unsupported",
+    "q": "10-sinf tarix present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Tarix",
+    "expectedGrade": "10-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-049",
+    "suite": "unsupported",
+    "q": "11-sinf adabiyot genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Adabiyot",
+    "expectedGrade": "11-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-050",
+    "suite": "unsupported",
+    "q": "5-sinf biologiya massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Biologiya",
+    "expectedGrade": "5-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-051",
+    "suite": "unsupported",
+    "q": "6-sinf fizika Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Fizika",
+    "expectedGrade": "6-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-052",
+    "suite": "unsupported",
+    "q": "7-sinf geografiya Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Geografiya",
+    "expectedGrade": "7-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-053",
+    "suite": "unsupported",
+    "q": "8-sinf informatika present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Informatika",
+    "expectedGrade": "8-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-054",
+    "suite": "unsupported",
+    "q": "9-sinf ingliz tili genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ingliz tili",
+    "expectedGrade": "9-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-055",
+    "suite": "unsupported",
+    "q": "10-sinf kimyo massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Kimyo",
+    "expectedGrade": "10-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-056",
+    "suite": "unsupported",
+    "q": "11-sinf tarix Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Tarix",
+    "expectedGrade": "11-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-057",
+    "suite": "unsupported",
+    "q": "5-sinf adabiyot Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Adabiyot",
+    "expectedGrade": "5-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-058",
+    "suite": "unsupported",
+    "q": "6-sinf biologiya present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Biologiya",
+    "expectedGrade": "6-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-059",
+    "suite": "unsupported",
+    "q": "7-sinf fizika genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Fizika",
+    "expectedGrade": "7-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-060",
+    "suite": "unsupported",
+    "q": "8-sinf geografiya massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Geografiya",
+    "expectedGrade": "8-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-061",
+    "suite": "unsupported",
+    "q": "9-sinf informatika Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Informatika",
+    "expectedGrade": "9-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-062",
+    "suite": "unsupported",
+    "q": "10-sinf ingliz tili Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ingliz tili",
+    "expectedGrade": "10-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-063",
+    "suite": "unsupported",
+    "q": "11-sinf kimyo present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Kimyo",
+    "expectedGrade": "11-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-064",
+    "suite": "unsupported",
+    "q": "5-sinf tarix genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Tarix",
+    "expectedGrade": "5-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-065",
+    "suite": "unsupported",
+    "q": "6-sinf adabiyot massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Adabiyot",
+    "expectedGrade": "6-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-066",
+    "suite": "unsupported",
+    "q": "7-sinf biologiya Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Biologiya",
+    "expectedGrade": "7-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-067",
+    "suite": "unsupported",
+    "q": "8-sinf fizika Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Fizika",
+    "expectedGrade": "8-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-068",
+    "suite": "unsupported",
+    "q": "9-sinf geografiya present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Geografiya",
+    "expectedGrade": "9-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-069",
+    "suite": "unsupported",
+    "q": "10-sinf informatika genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Informatika",
+    "expectedGrade": "10-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-070",
+    "suite": "unsupported",
+    "q": "11-sinf ingliz tili massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ingliz tili",
+    "expectedGrade": "11-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-071",
+    "suite": "unsupported",
+    "q": "5-sinf kimyo Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Kimyo",
+    "expectedGrade": "5-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-072",
+    "suite": "unsupported",
+    "q": "6-sinf tarix Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Tarix",
+    "expectedGrade": "6-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-073",
+    "suite": "unsupported",
+    "q": "7-sinf adabiyot present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Adabiyot",
+    "expectedGrade": "7-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-074",
+    "suite": "unsupported",
+    "q": "8-sinf biologiya genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Biologiya",
+    "expectedGrade": "8-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-075",
+    "suite": "unsupported",
+    "q": "9-sinf fizika massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Fizika",
+    "expectedGrade": "9-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-076",
+    "suite": "unsupported",
+    "q": "10-sinf geografiya Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Geografiya",
+    "expectedGrade": "10-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-077",
+    "suite": "unsupported",
+    "q": "11-sinf informatika Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Informatika",
+    "expectedGrade": "11-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-078",
+    "suite": "unsupported",
+    "q": "5-sinf ingliz tili present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ingliz tili",
+    "expectedGrade": "5-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-079",
+    "suite": "unsupported",
+    "q": "6-sinf kimyo genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Kimyo",
+    "expectedGrade": "6-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-080",
+    "suite": "unsupported",
+    "q": "7-sinf tarix massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Tarix",
+    "expectedGrade": "7-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-081",
+    "suite": "unsupported",
+    "q": "8-sinf adabiyot Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Adabiyot",
+    "expectedGrade": "8-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-082",
+    "suite": "unsupported",
+    "q": "9-sinf biologiya Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Biologiya",
+    "expectedGrade": "9-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-083",
+    "suite": "unsupported",
+    "q": "10-sinf fizika present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Fizika",
+    "expectedGrade": "10-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-084",
+    "suite": "unsupported",
+    "q": "11-sinf geografiya genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Geografiya",
+    "expectedGrade": "11-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-085",
+    "suite": "unsupported",
+    "q": "5-sinf informatika massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Informatika",
+    "expectedGrade": "5-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-086",
+    "suite": "unsupported",
+    "q": "6-sinf ingliz tili Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ingliz tili",
+    "expectedGrade": "6-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-087",
+    "suite": "unsupported",
+    "q": "7-sinf kimyo Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Kimyo",
+    "expectedGrade": "7-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-088",
+    "suite": "unsupported",
+    "q": "8-sinf tarix present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Tarix",
+    "expectedGrade": "8-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-089",
+    "suite": "unsupported",
+    "q": "9-sinf adabiyot genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Adabiyot",
+    "expectedGrade": "9-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-090",
+    "suite": "unsupported",
+    "q": "10-sinf biologiya massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Biologiya",
+    "expectedGrade": "10-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-091",
+    "suite": "unsupported",
+    "q": "11-sinf fizika Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Fizika",
+    "expectedGrade": "11-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-092",
+    "suite": "unsupported",
+    "q": "5-sinf geografiya Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Geografiya",
+    "expectedGrade": "5-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-093",
+    "suite": "unsupported",
+    "q": "6-sinf informatika present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Informatika",
+    "expectedGrade": "6-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-094",
+    "suite": "unsupported",
+    "q": "7-sinf ingliz tili genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ingliz tili",
+    "expectedGrade": "7-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-095",
+    "suite": "unsupported",
+    "q": "8-sinf kimyo massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Kimyo",
+    "expectedGrade": "8-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-096",
+    "suite": "unsupported",
+    "q": "9-sinf tarix Nyuton qonunlari dars ishlanma",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Tarix",
+    "expectedGrade": "9-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-097",
+    "suite": "unsupported",
+    "q": "10-sinf adabiyot Amir Temur davri tushuntirib ber",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Adabiyot",
+    "expectedGrade": "10-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-098",
+    "suite": "unsupported",
+    "q": "11-sinf biologiya present perfect test tuz",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Biologiya",
+    "expectedGrade": "11-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-099",
+    "suite": "unsupported",
+    "q": "5-sinf fizika genetika asoslari prezentatsiya qil",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Fizika",
+    "expectedGrade": "5-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-uns-100",
+    "suite": "unsupported",
+    "q": "6-sinf geografiya massiv va sikllar o'quv dasturidagi soatlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Geografiya",
+    "expectedGrade": "6-sinf",
+    "expectAbstention": true
+  }
+]

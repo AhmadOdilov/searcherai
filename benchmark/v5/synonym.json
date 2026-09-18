@@ -1,0 +1,1002 @@
+[
+  {
+    "id": "v5-syn-001",
+    "suite": "synonym",
+    "q": "10-sinf matematika ehtimollik nazariyasi mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_8ca3d46ae16a36a2cd04a404",
+    "goldEvidenceTopicTitle": "EHTIMOLLIK NAZARIYASI"
+  },
+  {
+    "id": "v5-syn-002",
+    "suite": "synonym",
+    "q": "10-sinf matematika elementar funksiyalar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_e5c81cfdbc83f584e88fb32d",
+    "goldEvidenceTopicTitle": "ELEMENTAR FUNKSIYALAR"
+  },
+  {
+    "id": "v5-syn-003",
+    "suite": "synonym",
+    "q": "10-sinf matematika fazoda toʻgʻri chiziq va tekislikning perpendikulyarligi mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_4057dea833a6beb360d67726",
+    "goldEvidenceTopicTitle": "FAZODA TOʻGʻRI CHIZIQ VA TEKISLIKNING PERPENDIKULYARLIGI"
+  },
+  {
+    "id": "v5-syn-004",
+    "suite": "synonym",
+    "q": "10-sinf matematika fazoda toʻgʻri chiziqlar va tekisliklarning parallelligi mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_e5e0c853f179fec61326c231",
+    "goldEvidenceTopicTitle": "FAZODA TOʻGʻRI CHIZIQLAR VA TEKISLIKLARNING PARALLELLIGI"
+  },
+  {
+    "id": "v5-syn-005",
+    "suite": "synonym",
+    "q": "10-sinf matematika koʻrsatkichli va logarifmik funksiyalar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_b8f06992d8ddb0a2e6aa43ba",
+    "goldEvidenceTopicTitle": "KOʻRSATKICHLI VA LOGARIFMIK FUNKSIYALAR"
+  },
+  {
+    "id": "v5-syn-006",
+    "suite": "synonym",
+    "q": "10-sinf matematika planimetriyani tizimli takrorlash mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_604fa2801ae835a0c34ec860",
+    "goldEvidenceTopicTitle": "PLANIMETRIYANI TIZIMLI TAKRORLASH"
+  },
+  {
+    "id": "v5-syn-007",
+    "suite": "synonym",
+    "q": "10-sinf matematika ratsional tenglamalar va tengsizliklar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_bc45cfc5be27d4b48d23b6e1",
+    "goldEvidenceTopicTitle": "RATSIONAL TENGLAMALAR VA TENGSIZLIKLAR. IRRATSIONAL TENGLAMALAR"
+  },
+  {
+    "id": "v5-syn-008",
+    "suite": "synonym",
+    "q": "10-sinf matematika stereometriyaga kirish mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_da9f2428433ead70b5e2a823",
+    "goldEvidenceTopicTitle": "STEREOMETRIYAGA KIRISH"
+  },
+  {
+    "id": "v5-syn-009",
+    "suite": "synonym",
+    "q": "10-sinf matematika trigonometrik funksiyalar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_94966901313e89bdd9494108",
+    "goldEvidenceTopicTitle": "TRIGONOMETRIK FUNKSIYALAR"
+  },
+  {
+    "id": "v5-syn-010",
+    "suite": "synonym",
+    "q": "10-sinf matematika trigonometrik tenglamalar va tengsizliklar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_3828a55c36ff7fb2364e1a98",
+    "goldEvidenceTopicTitle": "TRIGONOMETRIK TENGLAMALAR VA TENGSIZLIKLAR"
+  },
+  {
+    "id": "v5-syn-011",
+    "suite": "synonym",
+    "q": "11-sinf matematika algebra va analiz asoslari kursini mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_d95a428bb2849c066cc6f51c",
+    "goldEvidenceTopicTitle": "ALGEBRA VA ANALIZ ASOSLARI KURSINI"
+  },
+  {
+    "id": "v5-syn-012",
+    "suite": "synonym",
+    "q": "11-sinf matematika fazoda dekart koordinatalari va vektorlar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_d64ddd7884f23fa9a4221c75",
+    "goldEvidenceTopicTitle": "FAZODA DEKART KOORDINATALARI VA VEKTORLAR"
+  },
+  {
+    "id": "v5-syn-013",
+    "suite": "synonym",
+    "q": "11-sinf matematika hosila va uning tatbiqlari mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_954f282973783afa3b8d0bdc",
+    "goldEvidenceTopicTitle": "HOSILA VA UNING TATBIQLARI"
+  },
+  {
+    "id": "v5-syn-014",
+    "suite": "synonym",
+    "q": "11-sinf matematika integral va uning tatbiqlari mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_a0959cd31a098355661e41f9",
+    "goldEvidenceTopicTitle": "INTEGRAL VA UNING TATBIQLARI"
+  },
+  {
+    "id": "v5-syn-015",
+    "suite": "synonym",
+    "q": "11-sinf matematika ma’lumotlar tahlili mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_23097329eb7521eada6e0e4d",
+    "goldEvidenceTopicTitle": "MA’LUMOTLAR TAHLILI. EHTIMOLLIK"
+  },
+  {
+    "id": "v5-syn-016",
+    "suite": "synonym",
+    "q": "11-sinf matematika piramida va konus mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_2b60075759477a11bffe657c",
+    "goldEvidenceTopicTitle": "PIRAMIDA VA KONUS"
+  },
+  {
+    "id": "v5-syn-017",
+    "suite": "synonym",
+    "q": "11-sinf matematika prizma va silindr mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_08eeec4d60709a2fd3b8b994",
+    "goldEvidenceTopicTitle": "PRIZMA VA SILINDR"
+  },
+  {
+    "id": "v5-syn-018",
+    "suite": "synonym",
+    "q": "11-sinf matematika sfera va shar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_e9258a6df681f9c0e72b5110",
+    "goldEvidenceTopicTitle": "SFERA VA SHAR"
+  },
+  {
+    "id": "v5-syn-019",
+    "suite": "synonym",
+    "q": "11-sinf matematika takrorlash mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_b3277d9daccb28e5109cc453",
+    "goldEvidenceTopicTitle": "TAKRORLASH"
+  },
+  {
+    "id": "v5-syn-020",
+    "suite": "synonym",
+    "q": "5-sinf matematika fazoviy geometrik shakllar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf",
+    "goldEvidenceTopicId": "dts_73b31c5a344f788f1898c1f3",
+    "goldEvidenceTopicTitle": "FAZOVIY GEOMETRIK SHAKLLAR"
+  },
+  {
+    "id": "v5-syn-021",
+    "suite": "synonym",
+    "q": "5-sinf matematika geometrik shakllar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf",
+    "goldEvidenceTopicId": "dts_accd924da9a6880dd858d91e",
+    "goldEvidenceTopicTitle": "GEOMETRIK SHAKLLAR"
+  },
+  {
+    "id": "v5-syn-022",
+    "suite": "synonym",
+    "q": "5-sinf matematika matnli masalalarni yechish mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf",
+    "goldEvidenceTopicId": "dts_637bb1454416861e0c0d9209",
+    "goldEvidenceTopicTitle": "MATNLI MASALALARNI YECHISH"
+  },
+  {
+    "id": "v5-syn-023",
+    "suite": "synonym",
+    "q": "5-sinf matematika ma’lumotlar tahlili mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf",
+    "goldEvidenceTopicId": "dts_da7519b63002d1bc488acf8f",
+    "goldEvidenceTopicTitle": "MA’LUMOTLAR TAHLILI"
+  },
+  {
+    "id": "v5-syn-024",
+    "suite": "synonym",
+    "q": "5-sinf matematika natural sonlarni ko‘paytirish va bo‘lish mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf",
+    "goldEvidenceTopicId": "dts_b5038c47410e89630c6f45b8",
+    "goldEvidenceTopicTitle": "NATURAL SONLARNI KO‘PAYTIRISH VA BO‘LISH"
+  },
+  {
+    "id": "v5-syn-025",
+    "suite": "synonym",
+    "q": "5-sinf matematika natural sonlarni qo‘shish va ayirish mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf",
+    "goldEvidenceTopicId": "dts_6f975e0feeb0444858223259",
+    "goldEvidenceTopicTitle": "NATURAL SONLARNI QO‘SHISH VA AYIRISH"
+  },
+  {
+    "id": "v5-syn-026",
+    "suite": "synonym",
+    "q": "5-sinf matematika oddiy kasrlar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf",
+    "goldEvidenceTopicId": "dts_6cf1f2489222ff2b8957a456",
+    "goldEvidenceTopicTitle": "ODDIY KASRLAR"
+  },
+  {
+    "id": "v5-syn-027",
+    "suite": "synonym",
+    "q": "5-sinf matematika o‘nli kasrlar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf",
+    "goldEvidenceTopicId": "dts_62e3ddf828b9f630d8a89952",
+    "goldEvidenceTopicTitle": "O‘NLI KASRLAR"
+  },
+  {
+    "id": "v5-syn-028",
+    "suite": "synonym",
+    "q": "6-sinf matematika geometrik material mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "goldEvidenceTopicId": "dts_a6aa7cac7ab3c6ce84c7809f",
+    "goldEvidenceTopicTitle": "GEOMETRIK MATERIAL"
+  },
+  {
+    "id": "v5-syn-029",
+    "suite": "synonym",
+    "q": "6-sinf matematika har xil maxrajli kasrlarni qo‘shish va ayirish mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "goldEvidenceTopicId": "dts_4475fbd09c1a4d456db9269f",
+    "goldEvidenceTopicTitle": "HAR XIL MAXRAJLI KASRLARNI QO‘SHISH VA AYIRISH"
+  },
+  {
+    "id": "v5-syn-030",
+    "suite": "synonym",
+    "q": "6-sinf matematika ma’lumotlar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "goldEvidenceTopicId": "dts_4bca62a8ab4c8f52f48941f5",
+    "goldEvidenceTopicTitle": "MA’LUMOTLAR"
+  },
+  {
+    "id": "v5-syn-031",
+    "suite": "synonym",
+    "q": "6-sinf matematika musbat va manfiy sonlar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "goldEvidenceTopicId": "dts_a19d692275c541e3ae2fea31",
+    "goldEvidenceTopicTitle": "MUSBAT VA MANFIY SONLAR. BUTUN SONLAR"
+  },
+  {
+    "id": "v5-syn-032",
+    "suite": "synonym",
+    "q": "6-sinf matematika musbat va manfiy sonlarni ko‘paytirish va mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "goldEvidenceTopicId": "dts_b9fede0b01f943e11f4a9674",
+    "goldEvidenceTopicTitle": "MUSBAT VA MANFIY SONLARNI KO‘PAYTIRISH VA"
+  },
+  {
+    "id": "v5-syn-033",
+    "suite": "synonym",
+    "q": "6-sinf matematika musbat va manfiy sonlarni qo‘shish va ayirish mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "goldEvidenceTopicId": "dts_bdb28db3d5ce47be85a5e206",
+    "goldEvidenceTopicTitle": "MUSBAT VA MANFIY SONLARNI QO‘SHISH VA AYIRISH"
+  },
+  {
+    "id": "v5-syn-034",
+    "suite": "synonym",
+    "q": "6-sinf matematika nisbat va proporsiya mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "goldEvidenceTopicId": "dts_b01ffb4fbe1466cac3821bef",
+    "goldEvidenceTopicTitle": "NISBAT VA PROPORSIYA"
+  },
+  {
+    "id": "v5-syn-035",
+    "suite": "synonym",
+    "q": "6-sinf matematika oddiy kasrlarni ko‘paytirish va bo‘lish mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "goldEvidenceTopicId": "dts_609d18e3ea70f5d0091f3f3b",
+    "goldEvidenceTopicTitle": "ODDIY KASRLARNI KO‘PAYTIRISH VA BO‘LISH"
+  },
+  {
+    "id": "v5-syn-036",
+    "suite": "synonym",
+    "q": "6-sinf matematika sonlarning bo‘linish belgilari mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "goldEvidenceTopicId": "dts_7406c2630cf64f4f48b95db0",
+    "goldEvidenceTopicTitle": "SONLARNING BO‘LINISH BELGILARI"
+  },
+  {
+    "id": "v5-syn-037",
+    "suite": "synonym",
+    "q": "6-sinf matematika tenglamalarni yechish mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "goldEvidenceTopicId": "dts_1ee58dd2b148f5c63557f89c",
+    "goldEvidenceTopicTitle": "TENGLAMALARNI YECHISH"
+  },
+  {
+    "id": "v5-syn-038",
+    "suite": "synonym",
+    "q": "7-sinf matematika algebraik ifodalar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "goldEvidenceTopicId": "dts_82d72e5f82a74395e635be3a",
+    "goldEvidenceTopicTitle": "ALGEBRAIK IFODALAR"
+  },
+  {
+    "id": "v5-syn-039",
+    "suite": "synonym",
+    "q": "7-sinf matematika algebraik kasrlar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "goldEvidenceTopicId": "dts_8a8fbaffd153b3c5729f1191",
+    "goldEvidenceTopicTitle": "ALGEBRAIK KASRLAR"
+  },
+  {
+    "id": "v5-syn-040",
+    "suite": "synonym",
+    "q": "7-sinf matematika bir noma’lumli birinchi darajali tenglamalar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "goldEvidenceTopicId": "dts_45511b58ad089c3239979429",
+    "goldEvidenceTopicTitle": "BIR NOMA’LUMLI BIRINCHI DARAJALI TENGLAMALAR"
+  },
+  {
+    "id": "v5-syn-041",
+    "suite": "synonym",
+    "q": "7-sinf matematika birhadlar va ko‘phadlar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "goldEvidenceTopicId": "dts_9eb3b5cf98f79875c529cf83",
+    "goldEvidenceTopicTitle": "BIRHADLAR VA KO‘PHADLAR"
+  },
+  {
+    "id": "v5-syn-042",
+    "suite": "synonym",
+    "q": "7-sinf matematika geometriyaning boshlang‘ich tushunchalari mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "goldEvidenceTopicId": "dts_effe010211e8d36ef7483a2d",
+    "goldEvidenceTopicTitle": "GEOMETRIYANING BOSHLANG‘ICH TUSHUNCHALARI"
+  },
+  {
+    "id": "v5-syn-043",
+    "suite": "synonym",
+    "q": "7-sinf matematika kombinatorika elementlari mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "goldEvidenceTopicId": "dts_4282899e1ee1a9a158dceffc",
+    "goldEvidenceTopicTitle": "KOMBINATORIKA ELEMENTLARI"
+  },
+  {
+    "id": "v5-syn-044",
+    "suite": "synonym",
+    "q": "7-sinf matematika ko‘phadni ko‘paytuvchilarga ajratish mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "goldEvidenceTopicId": "dts_54bc38fbc313744f2b5d7110",
+    "goldEvidenceTopicTitle": "KO‘PHADNI KO‘PAYTUVCHILARGA AJRATISH"
+  },
+  {
+    "id": "v5-syn-045",
+    "suite": "synonym",
+    "q": "7-sinf matematika parallel to‘g‘ri chiziqlar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "goldEvidenceTopicId": "dts_9512f6b99c1e61f0c91b1a03",
+    "goldEvidenceTopicTitle": "PARALLEL TO‘G‘RI CHIZIQLAR"
+  },
+  {
+    "id": "v5-syn-046",
+    "suite": "synonym",
+    "q": "7-sinf matematika uchburchaklar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "goldEvidenceTopicId": "dts_527c16a7aab8925e157d262b",
+    "goldEvidenceTopicTitle": "UCHBURCHAKLAR"
+  },
+  {
+    "id": "v5-syn-047",
+    "suite": "synonym",
+    "q": "7-sinf matematika uchburchakning tomonlari va burchaklari mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "goldEvidenceTopicId": "dts_e7ff126fe28684953094f0be",
+    "goldEvidenceTopicTitle": "UCHBURCHAKNING TOMONLARI VA BURCHAKLARI"
+  },
+  {
+    "id": "v5-syn-048",
+    "suite": "synonym",
+    "q": "7-sinf matematika yasashga doir masalalar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "goldEvidenceTopicId": "dts_db63becb9ae048e29fc2b724",
+    "goldEvidenceTopicTitle": "YASASHGA DOIR MASALALAR"
+  },
+  {
+    "id": "v5-syn-049",
+    "suite": "synonym",
+    "q": "8-sinf matematika algebraik kasrlar va ular ustida amallar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf",
+    "goldEvidenceTopicId": "dts_41d53f70cc84adb7583e6eb2",
+    "goldEvidenceTopicTitle": "ALGEBRAIK KASRLAR VA ULAR USTIDA AMALLAR"
+  },
+  {
+    "id": "v5-syn-050",
+    "suite": "synonym",
+    "q": "8-sinf matematika aylana mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf",
+    "goldEvidenceTopicId": "dts_5ad4ee495b6bb0118b171292",
+    "goldEvidenceTopicTitle": "AYLANA"
+  },
+  {
+    "id": "v5-syn-051",
+    "suite": "synonym",
+    "q": "8-sinf matematika koordinatalar usuli va vektorlar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf",
+    "goldEvidenceTopicId": "dts_386672ae7023daf19cadf19c",
+    "goldEvidenceTopicTitle": "KOORDINATALAR USULI VA VEKTORLAR"
+  },
+  {
+    "id": "v5-syn-052",
+    "suite": "synonym",
+    "q": "8-sinf matematika kvadrat tenglamalar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf",
+    "goldEvidenceTopicId": "dts_f02b836411d3d6f82e70ca7f",
+    "goldEvidenceTopicTitle": "KVADRAT TENGLAMALAR"
+  },
+  {
+    "id": "v5-syn-053",
+    "suite": "synonym",
+    "q": "8-sinf matematika ma’lumotlar tahlili mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf",
+    "goldEvidenceTopicId": "dts_fef3cccba5abec0b5c8f8a79",
+    "goldEvidenceTopicTitle": "MA’LUMOTLAR TAHLILI"
+  },
+  {
+    "id": "v5-syn-054",
+    "suite": "synonym",
+    "q": "8-sinf matematika takrorlash mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf",
+    "goldEvidenceTopicId": "dts_42e8843c8ebcdc40bafa4245",
+    "goldEvidenceTopicTitle": "TAKRORLASH"
+  },
+  {
+    "id": "v5-syn-055",
+    "suite": "synonym",
+    "q": "8-sinf matematika tengsizliklar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf",
+    "goldEvidenceTopicId": "dts_ab4470a3490060b2b4152535",
+    "goldEvidenceTopicTitle": "TENGSIZLIKLAR"
+  },
+  {
+    "id": "v5-syn-056",
+    "suite": "synonym",
+    "q": "8-sinf matematika to‘g‘ri burchakli uchburchakning tomonlari va burchaklari orasidagi munosabatlar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf",
+    "goldEvidenceTopicId": "dts_4f9d41dcaf370f94a236eac1",
+    "goldEvidenceTopicTitle": "TO‘G‘RI BURCHAKLI UCHBURCHAKNING TOMONLARI VA BURCHAKLARI ORASIDAGI MUNOSABATLAR"
+  },
+  {
+    "id": "v5-syn-057",
+    "suite": "synonym",
+    "q": "8-sinf matematika to‘rtburchaklar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf",
+    "goldEvidenceTopicId": "dts_db20d82679b8db7bf9f159c6",
+    "goldEvidenceTopicTitle": "TO‘RTBURCHAKLAR"
+  },
+  {
+    "id": "v5-syn-058",
+    "suite": "synonym",
+    "q": "9-sinf matematika aylana uzunligi va doira yuzi mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf",
+    "goldEvidenceTopicId": "dts_d8f22cc2ae18f4a753bd77a5",
+    "goldEvidenceTopicTitle": "AYLANA UZUNLIGI VA DOIRA YUZI"
+  },
+  {
+    "id": "v5-syn-059",
+    "suite": "synonym",
+    "q": "9-sinf matematika algebradan qo‘shimcha chuqurlashtirilgan mavzular mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf",
+    "goldEvidenceTopicId": "dts_3481e8e261e31310e75ca953",
+    "goldEvidenceTopicTitle": "Algebradan qo‘shimcha chuqurlashtirilgan mavzular"
+  },
+  {
+    "id": "v5-syn-060",
+    "suite": "synonym",
+    "q": "9-sinf matematika eht mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf",
+    "goldEvidenceTopicId": "dts_e7e4f09edfb7c5a45461dc55",
+    "goldEvidenceTopicTitle": "EHT.IMOLLAR NAZARIYASI VA MATEMATIK STATISTIKA ELEMENTLARI"
+  },
+  {
+    "id": "v5-syn-061",
+    "suite": "synonym",
+    "q": "9-sinf matematika geometrik almashtirishlar va o‘xshashlik mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf",
+    "goldEvidenceTopicId": "dts_831b8253f001e1bb923f0f61",
+    "goldEvidenceTopicTitle": "GEOMETRIK ALMASHTIRISHLAR VA O‘XSHASHLIK"
+  },
+  {
+    "id": "v5-syn-062",
+    "suite": "synonym",
+    "q": "9-sinf matematika kvadratik funksiya mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf",
+    "goldEvidenceTopicId": "dts_6d2adbad89dbc08e52bf9cd8",
+    "goldEvidenceTopicTitle": "KVADRATIK FUNKSIYA."
+  },
+  {
+    "id": "v5-syn-063",
+    "suite": "synonym",
+    "q": "9-sinf matematika sonli ketma-ketliklar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf",
+    "goldEvidenceTopicId": "dts_c9595a75440569b7178908ed",
+    "goldEvidenceTopicTitle": "SONLI KETMA-KETLIKLAR"
+  },
+  {
+    "id": "v5-syn-064",
+    "suite": "synonym",
+    "q": "9-sinf matematika takrorlash mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf",
+    "goldEvidenceTopicId": "dts_9e2c44d8b80d919a991d5cc7",
+    "goldEvidenceTopicTitle": "TAKRORLASH"
+  },
+  {
+    "id": "v5-syn-065",
+    "suite": "synonym",
+    "q": "9-sinf matematika tenglamalar va tengsizliklar sistemalari mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf",
+    "goldEvidenceTopicId": "dts_6ddc6b4736b795f18675f17f",
+    "goldEvidenceTopicTitle": "TENGLAMALAR VA TENGSIZLIKLAR SISTEMALARI"
+  },
+  {
+    "id": "v5-syn-066",
+    "suite": "synonym",
+    "q": "9-sinf matematika trigonometriya elementlari mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf",
+    "goldEvidenceTopicId": "dts_28b02fc31702e7ca8ec3df80",
+    "goldEvidenceTopicTitle": "TRIGONOMETRIYA ELEMENTLARI"
+  },
+  {
+    "id": "v5-syn-067",
+    "suite": "synonym",
+    "q": "9-sinf matematika uchburchak tomonlari va burchaklari orasidagi munosabatlar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf",
+    "goldEvidenceTopicId": "dts_f85b01707163fd3f9ced337d",
+    "goldEvidenceTopicTitle": "UCHBURCHAK TOMONLARI VA BURCHAKLARI ORASIDAGI MUNOSABATLAR"
+  },
+  {
+    "id": "v5-syn-068",
+    "suite": "synonym",
+    "q": "9-sinf matematika uchburchak va aylanadagi metrik munosabatlar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf",
+    "goldEvidenceTopicId": "dts_e0217071627c9d57bbee8b97",
+    "goldEvidenceTopicTitle": "Uchburchak va aylanadagi metrik munosabatlar"
+  },
+  {
+    "id": "v5-syn-069",
+    "suite": "synonym",
+    "q": "10-sinf ona tili boy bo‘lsam mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_4553ab7bfc714f0471382bff",
+    "goldEvidenceTopicTitle": "BOY BO‘LSAM..."
+  },
+  {
+    "id": "v5-syn-070",
+    "suite": "synonym",
+    "q": "10-sinf ona tili fan va texnologiyalar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_6bf5fb16aaef8db946165633",
+    "goldEvidenceTopicTitle": "FAN VA TEXNOLOGIYALAR"
+  },
+  {
+    "id": "v5-syn-071",
+    "suite": "synonym",
+    "q": "10-sinf ona tili huquqdan burchgacha mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_6a997ddba941c98357ad2d08",
+    "goldEvidenceTopicTitle": "HUQUQDAN BURCHGACHA"
+  },
+  {
+    "id": "v5-syn-072",
+    "suite": "synonym",
+    "q": "10-sinf ona tili jamiyatning bir bo‘lagiman mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_f32deeabf55cf6b7f9e466f7",
+    "goldEvidenceTopicTitle": "JAMIYATNING BIR BO‘LAGIMAN"
+  },
+  {
+    "id": "v5-syn-073",
+    "suite": "synonym",
+    "q": "10-sinf ona tili kino sanoati mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_73b8336edda18b4f8e6d24f8",
+    "goldEvidenceTopicTitle": "KINO SANOATi"
+  },
+  {
+    "id": "v5-syn-074",
+    "suite": "synonym",
+    "q": "10-sinf ona tili men va boshqalar mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_fc4f4297003065db8a14b410",
+    "goldEvidenceTopicTitle": "MEN VA BOSHQALAR"
+  },
+  {
+    "id": "v5-syn-075",
+    "suite": "synonym",
+    "q": "10-sinf ona tili muhabbat o‘zi nima? mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_943a7c673af8ba0ddac46a4a",
+    "goldEvidenceTopicTitle": "MUHABBAT O‘ZI NIMA?"
+  },
+  {
+    "id": "v5-syn-076",
+    "suite": "synonym",
+    "q": "10-sinf ona tili ruhiy tarbiya mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_cc34f4dc6369ccaee29da67d",
+    "goldEvidenceTopicTitle": "RUHIY TARBIYA"
+  },
+  {
+    "id": "v5-syn-077",
+    "suite": "synonym",
+    "q": "10-sinf ona tili tabiat va inson mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_de4279c14787d2eb73b6b2a3",
+    "goldEvidenceTopicTitle": "TABIAT VA INSON"
+  },
+  {
+    "id": "v5-syn-078",
+    "suite": "synonym",
+    "q": "10-sinf ona tili tilim – boyligim mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf",
+    "goldEvidenceTopicId": "dts_efb434d8175d4fc61fb0841d",
+    "goldEvidenceTopicTitle": "TILIM – BOYLIGIM"
+  },
+  {
+    "id": "v5-syn-079",
+    "suite": "synonym",
+    "q": "11-sinf ona tili ish qog‘ozlari ustida ishlash mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_89ef5e1e204fcc0e7f78e1b4",
+    "goldEvidenceTopicTitle": "Ish qog‘ozlari ustida ishlash."
+  },
+  {
+    "id": "v5-syn-080",
+    "suite": "synonym",
+    "q": "11-sinf ona tili nutq madaniyati mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_75606b9340385cce557cf62c",
+    "goldEvidenceTopicTitle": "Nutq madaniyati"
+  },
+  {
+    "id": "v5-syn-081",
+    "suite": "synonym",
+    "q": "11-sinf ona tili nutq madaniyati va nutq texnikasi mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_0f38a6df1d4dbe1a23b3cf0d",
+    "goldEvidenceTopicTitle": "Nutq madaniyati va nutq texnikasi"
+  },
+  {
+    "id": "v5-syn-082",
+    "suite": "synonym",
+    "q": "11-sinf ona tili nutqning aniqligi mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_5e390c9703e7c6ea2413034c",
+    "goldEvidenceTopicTitle": "Nutqning aniqligi"
+  },
+  {
+    "id": "v5-syn-083",
+    "suite": "synonym",
+    "q": "11-sinf ona tili nutqning boyligi mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_3b4cd76115f4ed94fd20d33e",
+    "goldEvidenceTopicTitle": "Nutqning boyligi"
+  },
+  {
+    "id": "v5-syn-084",
+    "suite": "synonym",
+    "q": "11-sinf ona tili nutqning ifodaliligi mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_1cb69271bfe0bc59fb422be1",
+    "goldEvidenceTopicTitle": "Nutqning ifodaliligi"
+  },
+  {
+    "id": "v5-syn-085",
+    "suite": "synonym",
+    "q": "11-sinf ona tili nutqning jo‘yaliligi mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_20ce6e090151cd8f4504afcc",
+    "goldEvidenceTopicTitle": "Nutqning jo‘yaliligi"
+  },
+  {
+    "id": "v5-syn-086",
+    "suite": "synonym",
+    "q": "11-sinf ona tili nutqning mantiqiyligi mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_6c2d4d584cc0e35ce0b114fd",
+    "goldEvidenceTopicTitle": "Nutqning mantiqiyligi"
+  },
+  {
+    "id": "v5-syn-087",
+    "suite": "synonym",
+    "q": "11-sinf ona tili nutqning sofligi mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_c1f33526e7020d6e700f0b88",
+    "goldEvidenceTopicTitle": "Nutqning sofligi"
+  },
+  {
+    "id": "v5-syn-088",
+    "suite": "synonym",
+    "q": "11-sinf ona tili nutqning to‘g‘riligi mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_dd19f2613553110d0fe33c0d",
+    "goldEvidenceTopicTitle": "Nutqning to‘g‘riligi"
+  },
+  {
+    "id": "v5-syn-089",
+    "suite": "synonym",
+    "q": "11-sinf ona tili o‘zbek tili va uning taraqqiyoti mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf",
+    "goldEvidenceTopicId": "dts_8042dc1730ffa4ee62c5020c",
+    "goldEvidenceTopicTitle": "O‘zbek tili va uning taraqqiyoti"
+  },
+  {
+    "id": "v5-syn-090",
+    "suite": "synonym",
+    "q": "5-sinf ona tili fonetika va imlo mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "5-sinf",
+    "goldEvidenceTopicId": "dts_9b4e02a698ed260f32673af7",
+    "goldEvidenceTopicTitle": "FONETIKA VA IMLO"
+  },
+  {
+    "id": "v5-syn-091",
+    "suite": "synonym",
+    "q": "5-sinf ona tili kirish mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "5-sinf",
+    "goldEvidenceTopicId": "dts_462c7019d261fe4b8544f57c",
+    "goldEvidenceTopicTitle": "KIRISH. FONETIKA, IMLO HAMDA LEKSIKA BO‘YICHA TAKRORLASH"
+  },
+  {
+    "id": "v5-syn-092",
+    "suite": "synonym",
+    "q": "5-sinf ona tili leksikologiya mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "5-sinf",
+    "goldEvidenceTopicId": "dts_a713b1d8f75d723a63299cf7",
+    "goldEvidenceTopicTitle": "LEKSIKOLOGIYA"
+  },
+  {
+    "id": "v5-syn-093",
+    "suite": "synonym",
+    "q": "5-sinf ona tili morfologiya mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "5-sinf",
+    "goldEvidenceTopicId": "dts_4b8451283292a236b2abc330",
+    "goldEvidenceTopicTitle": "MORFOLOGIYA"
+  },
+  {
+    "id": "v5-syn-094",
+    "suite": "synonym",
+    "q": "5-sinf ona tili o‘quv yili oxirida takrorlash mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "5-sinf",
+    "goldEvidenceTopicId": "dts_65012cfe736b8bfafa03157b",
+    "goldEvidenceTopicTitle": "O‘QUV YILI OXIRIDA TAKRORLASH. MATN USTIDA ISHLASH"
+  },
+  {
+    "id": "v5-syn-095",
+    "suite": "synonym",
+    "q": "5-sinf ona tili sintaksis va punktuatsiya mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "5-sinf",
+    "goldEvidenceTopicId": "dts_8f7c99ffbad3f81592d98118",
+    "goldEvidenceTopicTitle": "SINTAKSIS VA PUNKTUATSIYA. MATN"
+  },
+  {
+    "id": "v5-syn-096",
+    "suite": "synonym",
+    "q": "5-sinf ona tili takrorlash mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "5-sinf",
+    "goldEvidenceTopicId": "dts_f06508929a98b983acacfcea",
+    "goldEvidenceTopicTitle": "TAKRORLASH"
+  },
+  {
+    "id": "v5-syn-097",
+    "suite": "synonym",
+    "q": "6-sinf ona tili kirish mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "6-sinf",
+    "goldEvidenceTopicId": "dts_6b9bb540e2deeaefc3eae56f",
+    "goldEvidenceTopicTitle": "KIRISH. 5-SINFDA O‘TILGANLARNI TAKRORLASH"
+  },
+  {
+    "id": "v5-syn-098",
+    "suite": "synonym",
+    "q": "6-sinf ona tili matn mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "6-sinf",
+    "goldEvidenceTopicId": "dts_980e89b9c5970a3c81febfc4",
+    "goldEvidenceTopicTitle": "MATN"
+  },
+  {
+    "id": "v5-syn-099",
+    "suite": "synonym",
+    "q": "6-sinf ona tili morfologiya mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "6-sinf",
+    "goldEvidenceTopicId": "dts_9b3b8e3ceae550e5f942a8d5",
+    "goldEvidenceTopicTitle": "MORFOLOGIYA"
+  },
+  {
+    "id": "v5-syn-100",
+    "suite": "synonym",
+    "q": "6-sinf ona tili so‘z turkumlari mavzusini qanday tushuntiraman",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "6-sinf",
+    "goldEvidenceTopicId": "dts_cc06f70e9e7267fa035cb1c6",
+    "goldEvidenceTopicTitle": "SO‘Z TURKUMLARI"
+  }
+]

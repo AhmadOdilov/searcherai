@@ -1,0 +1,131 @@
+{
+  "timestamp": "2026-09-18T13:19:46.551Z",
+  "datasetComposition": {
+    "total": 950,
+    "bySuite": {
+      "golden_core": 500,
+      "adversarial": 100,
+      "cross_grade": 50,
+      "multilingual": 100,
+      "synonym": 100,
+      "unsupported": 100
+    },
+    "withGoldEvidence": 216
+  },
+  "understanding": {
+    "languageAccuracy": 98.59,
+    "subjectAccuracy": 99.88,
+    "gradeAccuracy": 100,
+    "intentAccuracy": 91.8,
+    "audienceAccuracy": 89.6,
+    "audienceExplicitAccuracy": 100,
+    "audienceDefaultAgreement": 88.44,
+    "evaluated": {
+      "langTotal": 850,
+      "subjTotal": 840,
+      "gradeTotal": 831,
+      "intentTotal": 500,
+      "audTotal": 500,
+      "audExplicitTotal": 50,
+      "audDefaultTotal": 450
+    }
+  },
+  "candidateRetrieval": {
+    "evaluatedQueries": 216,
+    "recall20": 98.15,
+    "recall50": 98.61,
+    "recall100": 98.61,
+    "avgLatencyMs": 12.19
+  },
+  "reranker": {
+    "evaluatedQueries": 216,
+    "recall1": 86.57,
+    "recall3": 94.91,
+    "recall5": 97.22,
+    "precision5": 19.44,
+    "mrr": 0.9111,
+    "ndcg5": 0.9261,
+    "ndcg10": 0.9276,
+    "avgLatencyMs": 1.31
+  },
+  "abstention": {
+    "shouldAbstainTotal": 516,
+    "correctlyAbstained": 514,
+    "shouldGroundTotal": 216,
+    "wronglyAbstained": 6,
+    "precision": 98.85,
+    "recall": 99.61,
+    "falseGrounding": 0
+  },
+  "crossGrade": {
+    "total": 58,
+    "correct": 51,
+    "wrongGradeReported": 5,
+    "accuracy": 87.93,
+    "nonCrossGradeTotal": 159,
+    "falsePositives": 1,
+    "falsePositiveRate": 0.63
+  },
+  "grounding": {
+    "totalClaims": 2818,
+    "supportedClaimRate": 64.05,
+    "contradictionRate": 3.83,
+    "unsupportedClaimRate": 32.11,
+    "totalCitations": 2189,
+    "fakeDtsCitations": 0,
+    "hoursProbe": {
+      "probed": 187,
+      "contradictionsDetected": 187,
+      "detectionRate": 100,
+      "falsePositives": 0
+    }
+  },
+  "security": {
+    "adversarialQueries": 100,
+    "leaks": 0,
+    "passRate": 100,
+    "findings": []
+  },
+  "latencyLocalPipelineMs": {
+    "note": "Tashqi LLM generatsiyasi KIRMAGAN — faqat mahalliy quvur.",
+    "understandingAvg": 1.656,
+    "retrievalAvg": 12.19,
+    "rerankAvg": 1.31,
+    "validationAvg": 0.026,
+    "p50": 14.22,
+    "p95": 25.13,
+    "p99": 43.01
+  },
+  "failureBuckets": {
+    "typo": 0,
+    "synonym_gap": 3,
+    "grade_mismatch": 0,
+    "subject_mismatch": 0,
+    "intent_misclassification": 0,
+    "polysemy": 0,
+    "cross_lingual_mismatch": 12,
+    "complex_multi_concept": 0,
+    "ocr_phonetic_noise": 0,
+    "conversational_vague_query": 0,
+    "over_filtering": 0,
+    "curriculum_out_of_scope": 2,
+    "reranker_demotion": 2,
+    "truncation_embedding_dimension_limit": 0,
+    "false_grounding": 0,
+    "false_abstention": 6,
+    "unsupported_claim": 0,
+    "contradiction": 0,
+    "subject_boundary": 1,
+    "audience_boundary": 52,
+    "intent_boundary": 41,
+    "cache_collision": 0,
+    "cache_staleness": 0,
+    "prompt_injection": 0,
+    "evidence_mismatch": 0,
+    "cross_grade_false_positive": 1,
+    "cross_grade_false_negative": 7,
+    "UI_grounding_mismatch": 0,
+    "malformed_llm_output": 0,
+    "stale_curriculum": 0
+  }
+}

@@ -1,0 +1,1752 @@
+[
+  {
+    "id": "v5-mt-001",
+    "suite": "multi_turn",
+    "q": "10-sinf matematika ehtimollik nazariyasi nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "turns": [
+      {
+        "q": "10-sinf matematika ehtimollik nazariyasi nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "ehtimollik"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "ehtimollik"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "ehtimollik"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "ehtimollik"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-002",
+    "suite": "multi_turn",
+    "q": "10-sinf matematika elementar funksiyalar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "turns": [
+      {
+        "q": "10-sinf matematika elementar funksiyalar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "elementar"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "elementar"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "elementar"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "elementar"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-003",
+    "suite": "multi_turn",
+    "q": "10-sinf matematika fazoda toʻgʻri chiziq va tekislikning perpendikulyarligi nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "turns": [
+      {
+        "q": "10-sinf matematika fazoda toʻgʻri chiziq va tekislikning perpendikulyarligi nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "fazoda"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "fazoda"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "fazoda"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "fazoda"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-004",
+    "suite": "multi_turn",
+    "q": "10-sinf matematika fazoda toʻgʻri chiziqlar va tekisliklarning parallelligi nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "turns": [
+      {
+        "q": "10-sinf matematika fazoda toʻgʻri chiziqlar va tekisliklarning parallelligi nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "fazoda"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "fazoda"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "fazoda"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "fazoda"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-005",
+    "suite": "multi_turn",
+    "q": "10-sinf matematika koʻrsatkichli va logarifmik funksiyalar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "turns": [
+      {
+        "q": "10-sinf matematika koʻrsatkichli va logarifmik funksiyalar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "koʻrsatkichli"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "koʻrsatkichli"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "koʻrsatkichli"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "koʻrsatkichli"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-006",
+    "suite": "multi_turn",
+    "q": "10-sinf matematika planimetriyani tizimli takrorlash nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "turns": [
+      {
+        "q": "10-sinf matematika planimetriyani tizimli takrorlash nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "planimetriyani"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "planimetriyani"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "planimetriyani"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "planimetriyani"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-007",
+    "suite": "multi_turn",
+    "q": "10-sinf matematika ratsional tenglamalar va tengsizliklar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "turns": [
+      {
+        "q": "10-sinf matematika ratsional tenglamalar va tengsizliklar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "ratsional"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "ratsional"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "ratsional"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "ratsional"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-008",
+    "suite": "multi_turn",
+    "q": "10-sinf matematika stereometriyaga kirish nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "turns": [
+      {
+        "q": "10-sinf matematika stereometriyaga kirish nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "stereometriyaga"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "stereometriyaga"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "stereometriyaga"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "stereometriyaga"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-009",
+    "suite": "multi_turn",
+    "q": "10-sinf matematika trigonometrik funksiyalar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "turns": [
+      {
+        "q": "10-sinf matematika trigonometrik funksiyalar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "trigonometrik"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "trigonometrik"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "trigonometrik"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "trigonometrik"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-010",
+    "suite": "multi_turn",
+    "q": "10-sinf matematika trigonometrik tenglamalar va tengsizliklar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf",
+    "turns": [
+      {
+        "q": "10-sinf matematika trigonometrik tenglamalar va tengsizliklar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "trigonometrik"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "trigonometrik"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "trigonometrik"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedTopicContains": "trigonometrik"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-011",
+    "suite": "multi_turn",
+    "q": "11-sinf matematika algebra va analiz asoslari kursini nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "turns": [
+      {
+        "q": "11-sinf matematika algebra va analiz asoslari kursini nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "algebra"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "algebra"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "algebra"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "algebra"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-012",
+    "suite": "multi_turn",
+    "q": "11-sinf matematika fazoda dekart koordinatalari va vektorlar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "turns": [
+      {
+        "q": "11-sinf matematika fazoda dekart koordinatalari va vektorlar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "fazoda"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "fazoda"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "fazoda"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "fazoda"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-013",
+    "suite": "multi_turn",
+    "q": "11-sinf matematika hosila va uning tatbiqlari nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "turns": [
+      {
+        "q": "11-sinf matematika hosila va uning tatbiqlari nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "hosila"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "hosila"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "hosila"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "hosila"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-014",
+    "suite": "multi_turn",
+    "q": "11-sinf matematika integral va uning tatbiqlari nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "turns": [
+      {
+        "q": "11-sinf matematika integral va uning tatbiqlari nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "integral"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "integral"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "integral"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "integral"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-015",
+    "suite": "multi_turn",
+    "q": "11-sinf matematika ma’lumotlar tahlili nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "turns": [
+      {
+        "q": "11-sinf matematika ma’lumotlar tahlili nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "ma’lumotlar"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "ma’lumotlar"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "ma’lumotlar"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "ma’lumotlar"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-016",
+    "suite": "multi_turn",
+    "q": "11-sinf matematika piramida va konus nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "turns": [
+      {
+        "q": "11-sinf matematika piramida va konus nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "piramida"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "piramida"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "piramida"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "piramida"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-017",
+    "suite": "multi_turn",
+    "q": "11-sinf matematika prizma va silindr nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "turns": [
+      {
+        "q": "11-sinf matematika prizma va silindr nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "prizma"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "prizma"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "prizma"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "prizma"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-018",
+    "suite": "multi_turn",
+    "q": "11-sinf matematika sfera va shar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "turns": [
+      {
+        "q": "11-sinf matematika sfera va shar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "sfera"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "sfera"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "sfera"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "sfera"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-019",
+    "suite": "multi_turn",
+    "q": "11-sinf matematika takrorlash nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf",
+    "turns": [
+      {
+        "q": "11-sinf matematika takrorlash nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "takrorlash"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "takrorlash"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "takrorlash"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedTopicContains": "takrorlash"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-020",
+    "suite": "multi_turn",
+    "q": "5-sinf matematika fazoviy geometrik shakllar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf",
+    "turns": [
+      {
+        "q": "5-sinf matematika fazoviy geometrik shakllar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "fazoviy"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "fazoviy"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "fazoviy"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "fazoviy"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-021",
+    "suite": "multi_turn",
+    "q": "5-sinf matematika geometrik shakllar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf",
+    "turns": [
+      {
+        "q": "5-sinf matematika geometrik shakllar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "geometrik"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "geometrik"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "geometrik"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "geometrik"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-022",
+    "suite": "multi_turn",
+    "q": "5-sinf matematika matnli masalalarni yechish nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf",
+    "turns": [
+      {
+        "q": "5-sinf matematika matnli masalalarni yechish nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "matnli"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "matnli"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "matnli"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "matnli"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-023",
+    "suite": "multi_turn",
+    "q": "5-sinf matematika ma’lumotlar tahlili nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf",
+    "turns": [
+      {
+        "q": "5-sinf matematika ma’lumotlar tahlili nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "ma’lumotlar"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "ma’lumotlar"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "ma’lumotlar"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "ma’lumotlar"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-024",
+    "suite": "multi_turn",
+    "q": "5-sinf matematika natural sonlarni ko‘paytirish va bo‘lish nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf",
+    "turns": [
+      {
+        "q": "5-sinf matematika natural sonlarni ko‘paytirish va bo‘lish nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "natural"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "natural"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "natural"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "natural"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-025",
+    "suite": "multi_turn",
+    "q": "5-sinf matematika natural sonlarni qo‘shish va ayirish nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf",
+    "turns": [
+      {
+        "q": "5-sinf matematika natural sonlarni qo‘shish va ayirish nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "natural"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "natural"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "natural"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "natural"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-026",
+    "suite": "multi_turn",
+    "q": "5-sinf matematika oddiy kasrlar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf",
+    "turns": [
+      {
+        "q": "5-sinf matematika oddiy kasrlar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "oddiy"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "oddiy"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "oddiy"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "oddiy"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-027",
+    "suite": "multi_turn",
+    "q": "5-sinf matematika o‘nli kasrlar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf",
+    "turns": [
+      {
+        "q": "5-sinf matematika o‘nli kasrlar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "o‘nli"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "o‘nli"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "o‘nli"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "o‘nli"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-028",
+    "suite": "multi_turn",
+    "q": "6-sinf matematika geometrik material nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "turns": [
+      {
+        "q": "6-sinf matematika geometrik material nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "geometrik"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "geometrik"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "geometrik"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "geometrik"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-029",
+    "suite": "multi_turn",
+    "q": "6-sinf matematika har xil maxrajli kasrlarni qo‘shish va ayirish nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "turns": [
+      {
+        "q": "6-sinf matematika har xil maxrajli kasrlarni qo‘shish va ayirish nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "har"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "har"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "har"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "har"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-030",
+    "suite": "multi_turn",
+    "q": "6-sinf matematika ma’lumotlar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "turns": [
+      {
+        "q": "6-sinf matematika ma’lumotlar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "ma’lumotlar"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "ma’lumotlar"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "ma’lumotlar"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "ma’lumotlar"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-031",
+    "suite": "multi_turn",
+    "q": "6-sinf matematika musbat va manfiy sonlar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "turns": [
+      {
+        "q": "6-sinf matematika musbat va manfiy sonlar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "musbat"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "musbat"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "musbat"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "musbat"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-032",
+    "suite": "multi_turn",
+    "q": "6-sinf matematika musbat va manfiy sonlarni ko‘paytirish va nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "turns": [
+      {
+        "q": "6-sinf matematika musbat va manfiy sonlarni ko‘paytirish va nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "musbat"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "musbat"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "musbat"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "musbat"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-033",
+    "suite": "multi_turn",
+    "q": "6-sinf matematika musbat va manfiy sonlarni qo‘shish va ayirish nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "turns": [
+      {
+        "q": "6-sinf matematika musbat va manfiy sonlarni qo‘shish va ayirish nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "musbat"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "musbat"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "musbat"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "musbat"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-034",
+    "suite": "multi_turn",
+    "q": "6-sinf matematika nisbat va proporsiya nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "turns": [
+      {
+        "q": "6-sinf matematika nisbat va proporsiya nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "nisbat"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "nisbat"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "nisbat"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "nisbat"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-035",
+    "suite": "multi_turn",
+    "q": "6-sinf matematika oddiy kasrlarni ko‘paytirish va bo‘lish nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "turns": [
+      {
+        "q": "6-sinf matematika oddiy kasrlarni ko‘paytirish va bo‘lish nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "oddiy"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "oddiy"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "oddiy"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "oddiy"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-036",
+    "suite": "multi_turn",
+    "q": "6-sinf matematika sonlarning bo‘linish belgilari nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "turns": [
+      {
+        "q": "6-sinf matematika sonlarning bo‘linish belgilari nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "sonlarning"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "sonlarning"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "sonlarning"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "sonlarning"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-037",
+    "suite": "multi_turn",
+    "q": "6-sinf matematika tenglamalarni yechish nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf",
+    "turns": [
+      {
+        "q": "6-sinf matematika tenglamalarni yechish nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "tenglamalarni"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "tenglamalarni"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "tenglamalarni"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedTopicContains": "tenglamalarni"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-038",
+    "suite": "multi_turn",
+    "q": "7-sinf matematika algebraik ifodalar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "turns": [
+      {
+        "q": "7-sinf matematika algebraik ifodalar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "algebraik"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "algebraik"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "algebraik"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "algebraik"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-039",
+    "suite": "multi_turn",
+    "q": "7-sinf matematika algebraik kasrlar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "turns": [
+      {
+        "q": "7-sinf matematika algebraik kasrlar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "algebraik"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "algebraik"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "algebraik"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "algebraik"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-040",
+    "suite": "multi_turn",
+    "q": "7-sinf matematika bir noma’lumli birinchi darajali tenglamalar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "turns": [
+      {
+        "q": "7-sinf matematika bir noma’lumli birinchi darajali tenglamalar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "bir"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "bir"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "bir"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "bir"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-041",
+    "suite": "multi_turn",
+    "q": "7-sinf matematika birhadlar va ko‘phadlar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "turns": [
+      {
+        "q": "7-sinf matematika birhadlar va ko‘phadlar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "birhadlar"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "birhadlar"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "birhadlar"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "birhadlar"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-042",
+    "suite": "multi_turn",
+    "q": "7-sinf matematika geometriyaning boshlang‘ich tushunchalari nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "turns": [
+      {
+        "q": "7-sinf matematika geometriyaning boshlang‘ich tushunchalari nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "geometriyaning"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "geometriyaning"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "geometriyaning"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "geometriyaning"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-043",
+    "suite": "multi_turn",
+    "q": "7-sinf matematika kombinatorika elementlari nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "turns": [
+      {
+        "q": "7-sinf matematika kombinatorika elementlari nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "kombinatorika"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "kombinatorika"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "kombinatorika"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "kombinatorika"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-044",
+    "suite": "multi_turn",
+    "q": "7-sinf matematika ko‘phadni ko‘paytuvchilarga ajratish nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "turns": [
+      {
+        "q": "7-sinf matematika ko‘phadni ko‘paytuvchilarga ajratish nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "ko‘phadni"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "ko‘phadni"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "ko‘phadni"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "ko‘phadni"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-045",
+    "suite": "multi_turn",
+    "q": "7-sinf matematika parallel to‘g‘ri chiziqlar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "turns": [
+      {
+        "q": "7-sinf matematika parallel to‘g‘ri chiziqlar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "parallel"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "parallel"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "parallel"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "parallel"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-046",
+    "suite": "multi_turn",
+    "q": "7-sinf matematika uchburchaklar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "turns": [
+      {
+        "q": "7-sinf matematika uchburchaklar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "uchburchaklar"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "uchburchaklar"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "uchburchaklar"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "uchburchaklar"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-047",
+    "suite": "multi_turn",
+    "q": "7-sinf matematika uchburchakning tomonlari va burchaklari nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "turns": [
+      {
+        "q": "7-sinf matematika uchburchakning tomonlari va burchaklari nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "uchburchakning"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "uchburchakning"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "uchburchakning"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "uchburchakning"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-048",
+    "suite": "multi_turn",
+    "q": "7-sinf matematika yasashga doir masalalar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf",
+    "turns": [
+      {
+        "q": "7-sinf matematika yasashga doir masalalar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "yasashga"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "yasashga"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "yasashga"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedTopicContains": "yasashga"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-049",
+    "suite": "multi_turn",
+    "q": "8-sinf matematika algebraik kasrlar va ular ustida amallar nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf",
+    "turns": [
+      {
+        "q": "8-sinf matematika algebraik kasrlar va ular ustida amallar nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "8-sinf",
+        "expectedTopicContains": "algebraik"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "algebraik"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "8-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "algebraik"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "8-sinf",
+        "expectedTopicContains": "algebraik"
+      }
+    ]
+  },
+  {
+    "id": "v5-mt-050",
+    "suite": "multi_turn",
+    "q": "8-sinf matematika aylana nima",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf",
+    "turns": [
+      {
+        "q": "8-sinf matematika aylana nima",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "8-sinf",
+        "expectedTopicContains": "aylana"
+      },
+      {
+        "q": "5-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "5-sinf",
+        "expectedTopicContains": "aylana"
+      },
+      {
+        "q": "endi 10 ta test qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "8-sinf",
+        "expectedIntent": "quiz_test",
+        "expectedTopicContains": "aylana"
+      },
+      {
+        "q": "javoblarini ham ber",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "8-sinf",
+        "expectedTopicContains": "aylana"
+      }
+    ]
+  }
+]

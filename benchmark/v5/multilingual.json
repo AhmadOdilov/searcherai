@@ -1,0 +1,802 @@
+[
+  {
+    "id": "v5-ml-001",
+    "suite": "multilingual",
+    "q": "10 класс математика тема ehtimollik nazariyasi",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-002",
+    "suite": "multilingual",
+    "q": "10 класс математика тема elementar funksiyalar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-003",
+    "suite": "multilingual",
+    "q": "10 класс математика тема fazoda toʻgʻri chiziq va tekislikning perpendikulyarligi",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-004",
+    "suite": "multilingual",
+    "q": "10 класс математика тема fazoda toʻgʻri chiziqlar va tekisliklarning parallelligi",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-005",
+    "suite": "multilingual",
+    "q": "10 класс математика тема koʻrsatkichli va logarifmik funksiyalar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-006",
+    "suite": "multilingual",
+    "q": "10 класс математика тема planimetriyani tizimli takrorlash",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-007",
+    "suite": "multilingual",
+    "q": "10 класс математика тема ratsional tenglamalar va tengsizliklar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-008",
+    "suite": "multilingual",
+    "q": "10 класс математика тема stereometriyaga kirish",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-009",
+    "suite": "multilingual",
+    "q": "10 класс математика тема trigonometrik funksiyalar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-010",
+    "suite": "multilingual",
+    "q": "10 класс математика тема trigonometrik tenglamalar va tengsizliklar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-011",
+    "suite": "multilingual",
+    "q": "11 класс математика тема algebra va analiz asoslari kursini",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-012",
+    "suite": "multilingual",
+    "q": "11 класс математика тема fazoda dekart koordinatalari va vektorlar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-013",
+    "suite": "multilingual",
+    "q": "11 класс математика тема hosila va uning tatbiqlari",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-014",
+    "suite": "multilingual",
+    "q": "11 класс математика тема integral va uning tatbiqlari",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-015",
+    "suite": "multilingual",
+    "q": "11 класс математика тема ma’lumotlar tahlili",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-016",
+    "suite": "multilingual",
+    "q": "11 класс математика тема piramida va konus",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-017",
+    "suite": "multilingual",
+    "q": "11 класс математика тема prizma va silindr",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-018",
+    "suite": "multilingual",
+    "q": "11 класс математика тема sfera va shar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-019",
+    "suite": "multilingual",
+    "q": "11 класс математика тема takrorlash",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-020",
+    "suite": "multilingual",
+    "q": "5 класс математика тема fazoviy geometrik shakllar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf"
+  },
+  {
+    "id": "v5-ml-021",
+    "suite": "multilingual",
+    "q": "5 класс математика тема geometrik shakllar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf"
+  },
+  {
+    "id": "v5-ml-022",
+    "suite": "multilingual",
+    "q": "5 класс математика тема matnli masalalarni yechish",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf"
+  },
+  {
+    "id": "v5-ml-023",
+    "suite": "multilingual",
+    "q": "5 класс математика тема ma’lumotlar tahlili",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf"
+  },
+  {
+    "id": "v5-ml-024",
+    "suite": "multilingual",
+    "q": "5 класс математика тема natural sonlarni ko‘paytirish va bo‘lish",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf"
+  },
+  {
+    "id": "v5-ml-025",
+    "suite": "multilingual",
+    "q": "5 класс математика тема natural sonlarni qo‘shish va ayirish",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf"
+  },
+  {
+    "id": "v5-ml-026",
+    "suite": "multilingual",
+    "q": "5 класс математика тема oddiy kasrlar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf"
+  },
+  {
+    "id": "v5-ml-027",
+    "suite": "multilingual",
+    "q": "5 класс математика тема o‘nli kasrlar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "5-sinf"
+  },
+  {
+    "id": "v5-ml-028",
+    "suite": "multilingual",
+    "q": "6 класс математика тема geometrik material",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf"
+  },
+  {
+    "id": "v5-ml-029",
+    "suite": "multilingual",
+    "q": "6 класс математика тема har xil maxrajli kasrlarni qo‘shish va ayirish",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf"
+  },
+  {
+    "id": "v5-ml-030",
+    "suite": "multilingual",
+    "q": "6 класс математика тема ma’lumotlar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf"
+  },
+  {
+    "id": "v5-ml-031",
+    "suite": "multilingual",
+    "q": "6 класс математика тема musbat va manfiy sonlar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf"
+  },
+  {
+    "id": "v5-ml-032",
+    "suite": "multilingual",
+    "q": "6 класс математика тема musbat va manfiy sonlarni ko‘paytirish va",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf"
+  },
+  {
+    "id": "v5-ml-033",
+    "suite": "multilingual",
+    "q": "6 класс математика тема musbat va manfiy sonlarni qo‘shish va ayirish",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf"
+  },
+  {
+    "id": "v5-ml-034",
+    "suite": "multilingual",
+    "q": "6 класс математика тема nisbat va proporsiya",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf"
+  },
+  {
+    "id": "v5-ml-035",
+    "suite": "multilingual",
+    "q": "6 класс математика тема oddiy kasrlarni ko‘paytirish va bo‘lish",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf"
+  },
+  {
+    "id": "v5-ml-036",
+    "suite": "multilingual",
+    "q": "6 класс математика тема sonlarning bo‘linish belgilari",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf"
+  },
+  {
+    "id": "v5-ml-037",
+    "suite": "multilingual",
+    "q": "6 класс математика тема tenglamalarni yechish",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "6-sinf"
+  },
+  {
+    "id": "v5-ml-038",
+    "suite": "multilingual",
+    "q": "7 класс математика тема algebraik ifodalar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf"
+  },
+  {
+    "id": "v5-ml-039",
+    "suite": "multilingual",
+    "q": "7 класс математика тема algebraik kasrlar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf"
+  },
+  {
+    "id": "v5-ml-040",
+    "suite": "multilingual",
+    "q": "7 класс математика тема bir noma’lumli birinchi darajali tenglamalar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf"
+  },
+  {
+    "id": "v5-ml-041",
+    "suite": "multilingual",
+    "q": "7 класс математика тема birhadlar va ko‘phadlar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf"
+  },
+  {
+    "id": "v5-ml-042",
+    "suite": "multilingual",
+    "q": "7 класс математика тема geometriyaning boshlang‘ich tushunchalari",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf"
+  },
+  {
+    "id": "v5-ml-043",
+    "suite": "multilingual",
+    "q": "7 класс математика тема kombinatorika elementlari",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf"
+  },
+  {
+    "id": "v5-ml-044",
+    "suite": "multilingual",
+    "q": "7 класс математика тема ko‘phadni ko‘paytuvchilarga ajratish",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf"
+  },
+  {
+    "id": "v5-ml-045",
+    "suite": "multilingual",
+    "q": "7 класс математика тема parallel to‘g‘ri chiziqlar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf"
+  },
+  {
+    "id": "v5-ml-046",
+    "suite": "multilingual",
+    "q": "7 класс математика тема uchburchaklar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf"
+  },
+  {
+    "id": "v5-ml-047",
+    "suite": "multilingual",
+    "q": "7 класс математика тема uchburchakning tomonlari va burchaklari",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf"
+  },
+  {
+    "id": "v5-ml-048",
+    "suite": "multilingual",
+    "q": "7 класс математика тема yasashga doir masalalar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "7-sinf"
+  },
+  {
+    "id": "v5-ml-049",
+    "suite": "multilingual",
+    "q": "8 класс математика тема algebraik kasrlar va ular ustida amallar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf"
+  },
+  {
+    "id": "v5-ml-050",
+    "suite": "multilingual",
+    "q": "8 класс математика тема aylana",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf"
+  },
+  {
+    "id": "v5-ml-051",
+    "suite": "multilingual",
+    "q": "8 класс математика тема koordinatalar usuli va vektorlar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf"
+  },
+  {
+    "id": "v5-ml-052",
+    "suite": "multilingual",
+    "q": "8 класс математика тема kvadrat tenglamalar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf"
+  },
+  {
+    "id": "v5-ml-053",
+    "suite": "multilingual",
+    "q": "8 класс математика тема ma’lumotlar tahlili",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf"
+  },
+  {
+    "id": "v5-ml-054",
+    "suite": "multilingual",
+    "q": "8 класс математика тема takrorlash",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf"
+  },
+  {
+    "id": "v5-ml-055",
+    "suite": "multilingual",
+    "q": "8 класс математика тема tengsizliklar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf"
+  },
+  {
+    "id": "v5-ml-056",
+    "suite": "multilingual",
+    "q": "8 класс математика тема to‘g‘ri burchakli uchburchakning tomonlari va burchaklari orasidagi munosabatlar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf"
+  },
+  {
+    "id": "v5-ml-057",
+    "suite": "multilingual",
+    "q": "8 класс математика тема to‘rtburchaklar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "8-sinf"
+  },
+  {
+    "id": "v5-ml-058",
+    "suite": "multilingual",
+    "q": "9 класс математика тема aylana uzunligi va doira yuzi",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf"
+  },
+  {
+    "id": "v5-ml-059",
+    "suite": "multilingual",
+    "q": "9 класс математика тема algebradan qo‘shimcha chuqurlashtirilgan mavzular",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf"
+  },
+  {
+    "id": "v5-ml-060",
+    "suite": "multilingual",
+    "q": "9 класс математика тема eht",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf"
+  },
+  {
+    "id": "v5-ml-061",
+    "suite": "multilingual",
+    "q": "9 класс математика тема geometrik almashtirishlar va o‘xshashlik",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf"
+  },
+  {
+    "id": "v5-ml-062",
+    "suite": "multilingual",
+    "q": "9 класс математика тема kvadratik funksiya",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf"
+  },
+  {
+    "id": "v5-ml-063",
+    "suite": "multilingual",
+    "q": "9 класс математика тема sonli ketma-ketliklar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf"
+  },
+  {
+    "id": "v5-ml-064",
+    "suite": "multilingual",
+    "q": "9 класс математика тема takrorlash",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf"
+  },
+  {
+    "id": "v5-ml-065",
+    "suite": "multilingual",
+    "q": "9 класс математика тема tenglamalar va tengsizliklar sistemalari",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf"
+  },
+  {
+    "id": "v5-ml-066",
+    "suite": "multilingual",
+    "q": "9 класс математика тема trigonometriya elementlari",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf"
+  },
+  {
+    "id": "v5-ml-067",
+    "suite": "multilingual",
+    "q": "9 класс математика тема uchburchak tomonlari va burchaklari orasidagi munosabatlar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf"
+  },
+  {
+    "id": "v5-ml-068",
+    "suite": "multilingual",
+    "q": "9 класс математика тема uchburchak va aylanadagi metrik munosabatlar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "9-sinf"
+  },
+  {
+    "id": "v5-ml-069",
+    "suite": "multilingual",
+    "q": "10 класс узбекский язык тема boy bo‘lsam",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-070",
+    "suite": "multilingual",
+    "q": "10 класс узбекский язык тема fan va texnologiyalar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-071",
+    "suite": "multilingual",
+    "q": "10 класс узбекский язык тема huquqdan burchgacha",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-072",
+    "suite": "multilingual",
+    "q": "10 класс узбекский язык тема jamiyatning bir bo‘lagiman",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-073",
+    "suite": "multilingual",
+    "q": "10 класс узбекский язык тема kino sanoati",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-074",
+    "suite": "multilingual",
+    "q": "10 класс узбекский язык тема men va boshqalar",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-075",
+    "suite": "multilingual",
+    "q": "10 класс узбекский язык тема muhabbat o‘zi nima?",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-076",
+    "suite": "multilingual",
+    "q": "10 класс узбекский язык тема ruhiy tarbiya",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-077",
+    "suite": "multilingual",
+    "q": "10 класс узбекский язык тема tabiat va inson",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-078",
+    "suite": "multilingual",
+    "q": "10 класс узбекский язык тема tilim – boyligim",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "10-sinf"
+  },
+  {
+    "id": "v5-ml-079",
+    "suite": "multilingual",
+    "q": "11 класс узбекский язык тема ish qog‘ozlari ustida ishlash",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-080",
+    "suite": "multilingual",
+    "q": "11 класс узбекский язык тема nutq madaniyati",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-081",
+    "suite": "multilingual",
+    "q": "11 класс узбекский язык тема nutq madaniyati va nutq texnikasi",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-082",
+    "suite": "multilingual",
+    "q": "11 класс узбекский язык тема nutqning aniqligi",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-083",
+    "suite": "multilingual",
+    "q": "11 класс узбекский язык тема nutqning boyligi",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-084",
+    "suite": "multilingual",
+    "q": "11 класс узбекский язык тема nutqning ifodaliligi",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-085",
+    "suite": "multilingual",
+    "q": "11 класс узбекский язык тема nutqning jo‘yaliligi",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-086",
+    "suite": "multilingual",
+    "q": "11 класс узбекский язык тема nutqning mantiqiyligi",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-087",
+    "suite": "multilingual",
+    "q": "11 класс узбекский язык тема nutqning sofligi",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-088",
+    "suite": "multilingual",
+    "q": "11 класс узбекский язык тема nutqning to‘g‘riligi",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-089",
+    "suite": "multilingual",
+    "q": "11 класс узбекский язык тема o‘zbek tili va uning taraqqiyoti",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "11-sinf"
+  },
+  {
+    "id": "v5-ml-090",
+    "suite": "multilingual",
+    "q": "5 класс узбекский язык тема fonetika va imlo",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "5-sinf"
+  },
+  {
+    "id": "v5-ml-091",
+    "suite": "multilingual",
+    "q": "5 класс узбекский язык тема kirish",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "5-sinf"
+  },
+  {
+    "id": "v5-ml-092",
+    "suite": "multilingual",
+    "q": "5 класс узбекский язык тема leksikologiya",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "5-sinf"
+  },
+  {
+    "id": "v5-ml-093",
+    "suite": "multilingual",
+    "q": "5 класс узбекский язык тема morfologiya",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "5-sinf"
+  },
+  {
+    "id": "v5-ml-094",
+    "suite": "multilingual",
+    "q": "5 класс узбекский язык тема o‘quv yili oxirida takrorlash",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "5-sinf"
+  },
+  {
+    "id": "v5-ml-095",
+    "suite": "multilingual",
+    "q": "5 класс узбекский язык тема sintaksis va punktuatsiya",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "5-sinf"
+  },
+  {
+    "id": "v5-ml-096",
+    "suite": "multilingual",
+    "q": "5 класс узбекский язык тема takrorlash",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "5-sinf"
+  },
+  {
+    "id": "v5-ml-097",
+    "suite": "multilingual",
+    "q": "6 класс узбекский язык тема kirish",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "6-sinf"
+  },
+  {
+    "id": "v5-ml-098",
+    "suite": "multilingual",
+    "q": "6 класс узбекский язык тема matn",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "6-sinf"
+  },
+  {
+    "id": "v5-ml-099",
+    "suite": "multilingual",
+    "q": "6 класс узбекский язык тема morfologiya",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "6-sinf"
+  },
+  {
+    "id": "v5-ml-100",
+    "suite": "multilingual",
+    "q": "6 класс узбекский язык тема so‘z turkumlari",
+    "expectedLanguage": "RU",
+    "expectedSubject": "Ona tili",
+    "expectedGrade": "6-sinf"
+  }
+]
