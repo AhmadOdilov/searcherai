@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-09-18T13:40:27.382Z",
-  "total": 122,
+  "timestamp": "2026-09-18T14:17:34.124Z",
+  "total": 90,
   "failures": [
     {
       "id": "math-015",
@@ -370,22 +370,8 @@
       "id": "gen-166",
       "suite": "golden_core",
       "q": "1-sinf matematika sonlar va sanash mustaqil ish topshiriqlari",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
-      "id": "gen-166",
-      "suite": "golden_core",
-      "q": "1-sinf matematika sonlar va sanash mustaqil ish topshiriqlari",
       "bucket": "curriculum_out_of_scope",
       "detail": "rasmiy dalil yo'q, lekin tizim ehtiyot rejimiga o'tmadi"
-    },
-    {
-      "id": "gen-179",
-      "suite": "golden_core",
-      "q": "grade 8 physics electric circuit and Ohm's law homework",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
     },
     {
       "id": "gen-181",
@@ -402,13 +388,6 @@
       "detail": "intent: explain != definition"
     },
     {
-      "id": "gen-192",
-      "suite": "golden_core",
-      "q": "5-sinf tarix qadimgi sharq sivilizatsiyalari mustaqil ish topshiriqlari",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
       "id": "gen-194",
       "suite": "golden_core",
       "q": "7-sinf informatika Scratch dasturlash o'yin yaratish qanday tushuntirish kerak",
@@ -423,32 +402,11 @@
       "detail": "intent: explain != compare"
     },
     {
-      "id": "gen-205",
-      "suite": "golden_core",
-      "q": "10-sinf ingliz tili academic essay structure mustaqil ish topshiriqlari",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
-      "id": "gen-218",
-      "suite": "golden_core",
-      "q": "6 класс литература рубаи Навои и Бабура самостоятельная работа",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
       "id": "gen-227",
       "suite": "golden_core",
       "q": "2 класс узбекский язык слова и предложения правила",
       "bucket": "intent_boundary",
       "detail": "intent: explain != definition"
-    },
-    {
-      "id": "gen-231",
-      "suite": "golden_core",
-      "q": "6-sinf biologiya ildiz va barg tuzilishi mustaqil ish topshiriqlari",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
     },
     {
       "id": "gen-243",
@@ -458,32 +416,11 @@
       "detail": "intent: explain != compare"
     },
     {
-      "id": "gen-244",
-      "suite": "golden_core",
-      "q": "6-sinf informatika chiziqli va tarmoqlanuvchi algoritmlar mustaqil ish topshiriqlari",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
       "id": "gen-246",
       "suite": "golden_core",
       "q": "1-sinf matematika sonlar va sanash mazmuni nima",
       "bucket": "intent_boundary",
       "detail": "intent: definition != explain"
-    },
-    {
-      "id": "gen-257",
-      "suite": "golden_core",
-      "q": "2 класс узбекский язык слова и предложения самостоятельная работа",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
-      "id": "gen-270",
-      "suite": "golden_core",
-      "q": "grade 11 chemistry proteins lipids carbohydrates homework",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
     },
     {
       "id": "gen-276",
@@ -493,13 +430,6 @@
       "detail": "intent: solve != example"
     },
     {
-      "id": "gen-276",
-      "suite": "golden_core",
-      "q": "1-sinf matematika sonlar va sanash yechimi bilan misol",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
       "id": "gen-282",
       "suite": "golden_core",
       "q": "6-sinf tarix yunoniston va rim tarixi o'rtasidagi farq",
@@ -507,32 +437,11 @@
       "detail": "intent: explain != compare"
     },
     {
-      "id": "gen-283",
-      "suite": "golden_core",
-      "q": "7-sinf geografiya materiklar tabiat zonalari mustaqil ish topshiriqlari",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
       "id": "gen-285",
       "suite": "golden_core",
       "q": "10-sinf ingliz tili academic essay structure mazmuni nima",
       "bucket": "intent_boundary",
       "detail": "intent: definition != explain"
-    },
-    {
-      "id": "gen-296",
-      "suite": "golden_core",
-      "q": "1-sinf matematika sonlar va sanash bo'yicha mustaqil ish topshiriqlari",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
-      "id": "gen-309",
-      "suite": "golden_core",
-      "q": "grade 7 physics inertia and speed homework",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
     },
     {
       "id": "gen-311",
@@ -549,25 +458,11 @@
       "detail": "intent: solve != example"
     },
     {
-      "id": "gen-315",
-      "suite": "golden_core",
-      "q": "10-sinf ingliz tili academic essay structure yechimi bilan misol",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
       "id": "gen-321",
       "suite": "golden_core",
       "q": "7-sinf biologiya umurtqali va umurtqasiz hayvonlar o'rtasidagi farq",
       "bucket": "intent_boundary",
       "detail": "intent: explain != compare"
-    },
-    {
-      "id": "gen-322",
-      "suite": "golden_core",
-      "q": "8-sinf tarix xonliklar davri madaniyati mustaqil ish topshiriqlari",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
     },
     {
       "id": "gen-324",
@@ -577,13 +472,6 @@
       "detail": "intent: definition != explain"
     },
     {
-      "id": "gen-335",
-      "suite": "golden_core",
-      "q": "10-sinf ingliz tili academic essay structure bo'yicha mustaqil ish topshiriqlari",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
       "id": "gen-346",
       "suite": "golden_core",
       "q": "1-sinf matematika sonlar va sanash ish varag'i",
@@ -591,32 +479,11 @@
       "detail": "rasmiy dalil yo'q, lekin tizim ehtiyot rejimiga o'tmadi"
     },
     {
-      "id": "gen-348",
-      "suite": "golden_core",
-      "q": "9 класс литература мировая классическая литература самостоятельная работа",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
       "id": "gen-354",
       "suite": "golden_core",
       "q": "8-sinf informatika Python sintaksisi va operatorlar yechimi bilan misol",
       "bucket": "intent_boundary",
       "detail": "intent: solve != example"
-    },
-    {
-      "id": "gen-354",
-      "suite": "golden_core",
-      "q": "8-sinf informatika Python sintaksisi va operatorlar yechimi bilan misol",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
-      "id": "gen-361",
-      "suite": "golden_core",
-      "q": "9-sinf biologiya hujayra biologiyasi sitologiya mustaqil ish topshiriqlari",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
     },
     {
       "id": "gen-363",
@@ -626,39 +493,11 @@
       "detail": "intent: definition != explain"
     },
     {
-      "id": "gen-374",
-      "suite": "golden_core",
-      "q": "9-sinf informatika satrlar va ro'yxatlar bilan ishlash mustaqil ish topshiriqlari",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
-      "id": "gen-387",
-      "suite": "golden_core",
-      "q": "2 класс узбекский язык тема слова и предложения самостоятельная работа",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
       "id": "gen-393",
       "suite": "golden_core",
       "q": "9-sinf geografiya hududiy iqtisodiy rayonlar yechimi bilan misol",
       "bucket": "intent_boundary",
       "detail": "intent: solve != example"
-    },
-    {
-      "id": "gen-393",
-      "suite": "golden_core",
-      "q": "9-sinf geografiya hududiy iqtisodiy rayonlar yechimi bilan misol",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
-      "id": "gen-400",
-      "suite": "golden_core",
-      "q": "grade 9 chemistry classes of inorganic substances homework",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
     },
     {
       "id": "gen-402",
@@ -668,39 +507,11 @@
       "detail": "intent: definition != explain"
     },
     {
-      "id": "gen-413",
-      "suite": "golden_core",
-      "q": "10-sinf geografiya jahon energetika xaritasi mustaqil ish topshiriqlari",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
-      "id": "gen-426",
-      "suite": "golden_core",
-      "q": "maktab 1-sinf matematika sonlar va sanash mustaqil ish topshiriqlari",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
       "id": "gen-432",
       "suite": "golden_core",
       "q": "10-sinf tarix jadidchilik va milliy uyg'onish yechimi bilan misol",
       "bucket": "intent_boundary",
       "detail": "intent: solve != example"
-    },
-    {
-      "id": "gen-432",
-      "suite": "golden_core",
-      "q": "10-sinf tarix jadidchilik va milliy uyg'onish yechimi bilan misol",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
-      "id": "gen-439",
-      "suite": "golden_core",
-      "q": "grade 6 physics mass and density homework",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
     },
     {
       "id": "gen-441",
@@ -717,20 +528,6 @@
       "detail": "auditoriya: teacher != student"
     },
     {
-      "id": "gen-452",
-      "suite": "golden_core",
-      "q": "11-sinf tarix eng yangi davr O'zbekiston mustaqil ish topshiriqlari",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
-      "id": "gen-465",
-      "suite": "golden_core",
-      "q": "maktab 10-sinf ingliz tili academic essay structure mustaqil ish topshiriqlari",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
       "id": "gen-471",
       "suite": "golden_core",
       "q": "11-sinf biologiya evolyutsiya va biosfera yechimi bilan misol",
@@ -738,32 +535,11 @@
       "detail": "intent: solve != example"
     },
     {
-      "id": "gen-471",
-      "suite": "golden_core",
-      "q": "11-sinf biologiya evolyutsiya va biosfera yechimi bilan misol",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
       "id": "gen-474",
       "suite": "golden_core",
       "q": "7-sinf informatika Scratch dasturlash o'yin yaratish nima degani",
       "bucket": "intent_boundary",
       "detail": "intent: classroom_activity != definition"
-    },
-    {
-      "id": "gen-478",
-      "suite": "golden_core",
-      "q": "5 класс литература сказки и пословицы самостоятельная работа",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
-    },
-    {
-      "id": "gen-491",
-      "suite": "golden_core",
-      "q": "5-sinf biologiya o'simliklar dunyosi organlari mustaqil ish topshiriqlari",
-      "bucket": "audience_boundary",
-      "detail": "auditoriya: student != teacher"
     },
     {
       "id": "v5-ml-003",

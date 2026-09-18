@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-18T13:40:27.382Z",
+  "timestamp": "2026-09-18T14:17:34.124Z",
   "datasetComposition": {
     "total": 950,
     "bySuite": {
@@ -17,17 +17,44 @@
     "subjectAccuracy": 99.88,
     "gradeAccuracy": 100,
     "intentAccuracy": 91.8,
-    "audienceAccuracy": 89.6,
+    "audienceAccuracy": 96,
     "audienceExplicitAccuracy": 100,
-    "audienceDefaultAgreement": 88.44,
+    "audienceDefaultAgreement": 95.54,
+    "audienceByResolution": {
+      "EXPLICIT_TEACHER": {
+        "total": 48,
+        "correct": 48,
+        "accuracy": 100
+      },
+      "UNKNOWN": {
+        "total": 327,
+        "correct": 308,
+        "accuracy": 94.19
+      },
+      "INFERRED_TEACHER": {
+        "total": 119,
+        "correct": 118,
+        "accuracy": 99.16
+      },
+      "EXPLICIT_STUDENT": {
+        "total": 4,
+        "correct": 4,
+        "accuracy": 100
+      },
+      "INFERRED_STUDENT": {
+        "total": 2,
+        "correct": 2,
+        "accuracy": 100
+      }
+    },
     "evaluated": {
       "langTotal": 850,
       "subjTotal": 840,
       "gradeTotal": 831,
       "intentTotal": 500,
       "audTotal": 500,
-      "audExplicitTotal": 50,
-      "audDefaultTotal": 450
+      "audExplicitTotal": 52,
+      "audDefaultTotal": 448
     }
   },
   "candidateRetrieval": {
@@ -35,7 +62,7 @@
     "recall20": 98.15,
     "recall50": 98.61,
     "recall100": 98.61,
-    "avgLatencyMs": 10.67
+    "avgLatencyMs": 8.03
   },
   "reranker": {
     "evaluatedQueries": 216,
@@ -46,7 +73,7 @@
     "mrr": 0.9294,
     "ndcg5": 0.9399,
     "ndcg10": 0.9416,
-    "avgLatencyMs": 1.24
+    "avgLatencyMs": 0.72
   },
   "abstention": {
     "shouldAbstainTotal": 516,
@@ -92,13 +119,13 @@
   },
   "latencyLocalPipelineMs": {
     "note": "Tashqi LLM generatsiyasi KIRMAGAN — faqat mahalliy quvur.",
-    "understandingAvg": 1.411,
-    "retrievalAvg": 10.67,
-    "rerankAvg": 1.24,
-    "validationAvg": 0.022,
-    "p50": 12.15,
-    "p95": 20.98,
-    "p99": 41.28
+    "understandingAvg": 0.921,
+    "retrievalAvg": 8.03,
+    "rerankAvg": 0.72,
+    "validationAvg": 0.01,
+    "p50": 8.24,
+    "p95": 15.11,
+    "p99": 32.68
   },
   "failureBuckets": {
     "typo": 0,
@@ -120,7 +147,7 @@
     "unsupported_claim": 0,
     "contradiction": 0,
     "subject_boundary": 1,
-    "audience_boundary": 52,
+    "audience_boundary": 20,
     "intent_boundary": 41,
     "cache_collision": 0,
     "cache_staleness": 0,

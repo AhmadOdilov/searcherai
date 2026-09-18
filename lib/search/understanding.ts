@@ -42,6 +42,68 @@ export type SearchIntent =
 
 export type AudienceMode = "teacher" | "student";
 
+/**
+ * Auditoriya QANDAY aniqlanganini bildiruvchi holat (V6).
+ *
+ * ── Nega yagona "teacher" | "student" yetarli emas ────────────────────────
+ * V5 gacha tizim faqat ikkilik qiymat qaytarardi va "foydalanuvchi aytdi"
+ * bilan "biz taxmin qildik" farqlanmasdi. Oqibatlari:
+ *
+ *   · 500 so'rovli datasetda auditoriya aniqligi 89.60% chiqardi, lekin
+ *     bu raqam ikki xil narsani aralashtirardi — aniq markerli holatlarda
+ *     aniqlik 100% (70/70), markersizlarida esa standart qiymat bilan
+ *     kelishmovchilik o'lchanardi;
+ *   · dalilsiz xulosa (intent=homework -> student) aniq marker bilan bir
+ *     xil ishonch bilan taqdim etilardi.
+ *
+ * Endi holat ochiq: EXPLICIT_* — foydalanuvchi o'zi aytgan; INFERRED_* —
+ * ishoradan chiqarilgan; UNKNOWN — dalil yo'q.
+ *
+ * UNKNOWN hech qachon yashirincha "teacher" yoki "student" deb
+ * belgilanmaydi: `audience` maydonidagi qiymat mahsulot standarti bo'lib,
+ * uni `resolveEffectiveAudience` beradi va chaqiruvchi buni `resolution`
+ * orqali ko'rib turadi.
+ */
+export type AudienceResolution =
+  | "EXPLICIT_TEACHER"
+  | "EXPLICIT_STUDENT"
+  | "INFERRED_TEACHER"
+  | "INFERRED_STUDENT"
+  | "UNKNOWN";
+
+export interface AudienceDetection {
+  /** Quyi qatlamlar (prompt, orchestration) uchun amaldagi ikkilik rejim. */
+  audience: AudienceMode;
+  confidence: number;
+  /** `resolution` EXPLICIT_* bo'lsa true. Eski chaqiruvchilar uchun saqlangan. */
+  isExplicit: boolean;
+  resolution: AudienceResolution;
+}
+
+/**
+ * Aniqlangan holatni amaldagi ikkilik rejimga aylantiradi.
+ *
+ * Bu YAGONA joy, ya'ni "dalil yo'q bo'lsa nima qilamiz" degan mahsulot
+ * qarori aynan shu funksiyada yozilgan va boshqa hech qayerda takrorlanmaydi.
+ *
+ * Searcher AI — o'qituvchi uchun mo'ljallangan vosita (dars ishlanma,
+ * prezentatsiya, taqvim reja modullari), shuning uchun dalil bo'lmaganda
+ * o'qituvchi rejimi tanlanadi. Bu TAXMIN va u `UNKNOWN` holati orqali
+ * ko'rinib turadi — o'lchovda aniq markerli holatlar bilan qo'shilmaydi.
+ */
+export function resolveEffectiveAudience(resolution: AudienceResolution): AudienceMode {
+  switch (resolution) {
+    case "EXPLICIT_STUDENT":
+    case "INFERRED_STUDENT":
+      return "student";
+    case "EXPLICIT_TEACHER":
+    case "INFERRED_TEACHER":
+      return "teacher";
+    case "UNKNOWN":
+      return "teacher";
+  }
+}
+
 export interface SubjectCandidate {
   subject: string;
   confidence: number;
@@ -99,14 +161,17 @@ export interface QueryUnderstanding {
   audience: AudienceMode;
   audienceConfidence: number;
   /**
-   * Auditoriya so'rovda ANIQ aytilganmi ("bolaga tushuntir", "o'qituvchi uchun",
-   * "простыми словами") yoki standart qiymat qo'llanganmi.
+   * Auditoriya so'rovda ANIQ aytilganmi ("bolaga tushuntir", "o'qituvchi uchun")
+   * yoki xulosa/standart qiymat qo'llanganmi.
    *
    * Baholashda muhim: markersiz so'rovda "teacher" — bu TAXMIN, aniqlangan
    * fakt emas. Ikkalasini bitta aniqlik foizida aralashtirish o'lchovni
    * ma'nosiz qiladi.
    */
   audienceIsExplicit: boolean;
+
+  /** Auditoriya qanday aniqlanganini bildiruvchi to'liq holat (V6). */
+  audienceResolution: AudienceResolution;
 
   topic: string;
   topicConfidence: number;
@@ -643,17 +708,14 @@ export function detectAudienceDetails(
   text: string,
   intent: SearchIntent,
   rawText?: string,
-): { audience: AudienceMode; confidence: number; isExplicit: boolean } {
+): AudienceDetection {
   /*
     DIQQAT — `rawText` ixtiyoriy emas, ZARUR.
 
     `text` bu normalizatsiyadan o'tgan so'rov: kirill harflar lotinga
     ko'chirilgan («простыми словами» -> «prostimi slovami»). Shu sababli
-    quyidagi naqshlardagi BARCHA ruscha markerlar («учителю», «школьник»,
-    «для учеников», «простыми словами») normalizatsiyalangan matnda
-    HECH QACHON mos kelmasdi — ya'ni ruscha auditoriya aniqlash o'lik edi.
-
-    Endi ikkala ko'rinish ham tekshiriladi.
+    quyidagi naqshlardagi BARCHA ruscha markerlar normalizatsiyalangan
+    matnda HECH QACHON mos kelmasdi. Endi ikkala ko'rinish tekshiriladi.
   */
   const haystacks = rawText && rawText !== text ? [text, rawText] : [text];
   const matches = (pattern: RegExp) =>
@@ -661,44 +723,98 @@ export function detectAudienceDetails(
       pattern.lastIndex = 0;
       return pattern.test(h);
     });
-  // 1. O'quvchiga xos so'rovlar (bolaga tushuntirish, sodda so'zlar, o'quvchi uchun)
-  const STUDENT_MARKERS =
-    /(?:^|[^\p{L}\p{N}])(?:bolaga[a-z]*|bolalarga|oddiy qilib|oddiy tilda|sodda qilib|sodda tushuntir|tushunarli qilib|menga tushunarsiz|tushunmadim|o['‘`ʻ]quvchiman|o['‘`ʻ]quvchiga|masalani yech|uy vazifam|maktabdaman|javobini top|простыми словами|простым языком|для учеников|для ученика|ученику|для детей|я ученик|школьник|домашнее задание|не понял|помогите решить|for students?|for a child|for pupils?|i am a student|in simple words|help with my homework)(?=$|[^\p{L}\p{N}])/giu;
 
-  if (matches(STUDENT_MARKERS)) {
-    return { audience: "student", confidence: 0.92, isExplicit: true };
-  }
+  /*
+    1. ANIQ (EXPLICIT) o'quvchi markerlari.
 
-  if (intent === "homework" || intent === "solve") {
-    return { audience: "student", confidence: 0.80, isExplicit: false };
-  }
+    Bu yerda foydalanuvchi auditoriyani O'ZI aytadi: "bolaga", "o'quvchiga",
+    "men o'quvchiman", "для ученика", "for students". Taxmin qilinmaydi.
+  */
+  const EXPLICIT_STUDENT =
+    /(?:^|[^\p{L}\p{N}])(?:bolaga[a-z]*|bolalarga|o['‘`ʻ]quvchiman|o['‘`ʻ]quvchiga|o['‘`ʻ]quvchilar uchun|uy vazifam|maktabdaman|tushunmadim|menga tushunarsiz|для учеников|для ученика|ученику|для детей|я ученик|школьник|домашнее задание|не понял|for students?|for a child|for pupils?|i am a student|help with my homework)(?=$|[^\p{L}\p{N}])/giu;
 
-  // 2. O'qituvchiga xos so'rovlar (metodik, dars ishlanma, baholash)
-  const TEACHER_MARKERS =
-    /(?:^|[^\p{L}\p{N}])(?:o['‘`ʻ]qituvchi[a-z]*|ustoz[a-z]*|sinfda|darsga|o['‘`ʻ]quvchilarga|baholash|konspekt|metodist|dars ishlanma|dars reja[a-z]*|учителю|для учителя|преподавател[а-я]*|на уроке|методика|поурочный|lesson plan|classroom|teaching|teacher)(?=$|[^\p{L}\p{N}])/giu;
-
-  if (matches(TEACHER_MARKERS)) {
-    return { audience: "teacher", confidence: 0.95, isExplicit: true };
-  }
-
-  if (
-    intent === "lesson_plan" ||
-    intent === "presentation" ||
-    intent === "curriculum" ||
-    intent === "classroom_activity" ||
-    intent === "assessment"
-  ) {
-    return { audience: "teacher", confidence: 0.85, isExplicit: false };
+  if (matches(EXPLICIT_STUDENT)) {
+    return { audience: "student", confidence: 0.95, isExplicit: true, resolution: "EXPLICIT_STUDENT" };
   }
 
   /*
-    Marker ham, intent ishorasi ham yo'q.
+    2. ANIQ (EXPLICIT) o'qituvchi markerlari.
 
-    Mahsulotning asosiy foydalanuvchisi o'qituvchi, shuning uchun standart
-    qiymat — "teacher". `isExplicit: false` esa bu TAXMIN ekanini bildiradi:
-    baholashda aniq markerli holatlar bilan standart qiymat aralashtirilmaydi.
+    "o'qituvchi uchun", "dars ishlanma", "konspekt", "для учителя" —
+    bular o'qituvchi artefaktini nomlaydi yoki auditoriyani ochiq aytadi.
   */
-  return { audience: "teacher", confidence: 0.60, isExplicit: false };
+  const EXPLICIT_TEACHER =
+    /(?:^|[^\p{L}\p{N}])(?:o['‘`ʻ]qituvchi[a-z]*|ustoz[a-z]*|metodist|dars ishlanma[a-z]*|dars reja[a-z]*|konspekt[a-z]*|учителю|для учителя|преподавател[а-я]*|поурочный|конспект урока|lesson plan|for teachers?|teaching plan)(?=$|[^\p{L}\p{N}])/giu;
+
+  if (matches(EXPLICIT_TEACHER)) {
+    return { audience: "teacher", confidence: 0.95, isExplicit: true, resolution: "EXPLICIT_TEACHER" };
+  }
+
+  /*
+    3. XULOSA (INFERRED) o'quvchi ishoralari — uslub so'rovi.
+
+    "oddiy qilib tushuntir", "простыми словами" auditoriyani ATAMAYDI,
+    lekin sodda, bosqichma-bosqich tushuntirish so'raladi — bu odatda
+    o'quvchiga qaratilgan. Shuning uchun u XULOSA, aniq marker emas.
+  */
+  const INFERRED_STUDENT =
+    /(?:^|[^\p{L}\p{N}])(?:oddiy qilib|oddiyroq|oddiy tilda|sodda qilib|soddaroq|sodda tushuntir|tushunarli qilib|masalani yech|javobini top|помогите решить|простыми словами|простым языком|in simple words|step by step for beginners)(?=$|[^\p{L}\p{N}])/giu;
+
+  if (matches(INFERRED_STUDENT)) {
+    return { audience: "student", confidence: 0.80, isExplicit: false, resolution: "INFERRED_STUDENT" };
+  }
+
+  /*
+    4. XULOSA (INFERRED) o'qituvchi ishoralari.
+
+    a) sinf konteksti: "sinfda", "darsga", "o'quvchilarga", "baholash";
+    b) faqat o'qituvchi tayyorlaydigan artefakt intenti: dars rejasi,
+       prezentatsiya, taqvim reja, sinf mashg'uloti, baholash.
+
+    ── OLIB TASHLANGAN QOIDA (V6) ──────────────────────────────────────
+    V5 gacha `intent === "homework" || intent === "solve"` -> "student"
+    degan qoida bor edi. U DALILSIZ va zarar keltiruvchi bo'lib chiqdi:
+    500 so'rovli datasetda bu qoida 32 marta ishlagan va 32 martasida
+    ham NOTO'G'RI bo'lgan (0/32 to'g'ri).
+
+    Sababi: "mustaqil ish topshiriqlari", "uy vazifasi topshiriqlari"
+    kabi so'rovlarni O'QITUVCHI yozadi — u topshiriq TAYYORLAYAPTI,
+    bajarayotgani yo'q. O'quvchining o'z vazifasi haqidagi so'rovi esa
+    yuqorida aniq marker bilan ("uy vazifam", "my homework") tutiladi.
+  */
+  const INFERRED_TEACHER =
+    /(?:^|[^\p{L}\p{N}])(?:sinfda|darsga|dars uchun|o['‘`ʻ]quvchilarga|baholash|metodik[a-z]*|на уроке|методик[а-я]*|classroom|teaching)(?=$|[^\p{L}\p{N}])/giu;
+
+  const TEACHER_ARTIFACT_INTENTS: SearchIntent[] = [
+    "lesson_plan",
+    "presentation",
+    "curriculum",
+    "classroom_activity",
+    "activity",
+    "assessment",
+  ];
+
+  if (matches(INFERRED_TEACHER) || TEACHER_ARTIFACT_INTENTS.includes(intent)) {
+    return { audience: "teacher", confidence: 0.85, isExplicit: false, resolution: "INFERRED_TEACHER" };
+  }
+
+  /*
+    5. DALIL YO'Q — UNKNOWN.
+
+    Bu yerda tizim auditoriyani BILMAYDI va buni yashirmaydi:
+    `resolution: "UNKNOWN"`.
+
+    `audience` maydoni baribir to'ldiriladi, chunki quyi qatlamlar
+    (prompt, orchestration) ikkilik rejim talab qiladi. Lekin bu qiymat
+    ANIQLANGAN fakt emas, `resolveEffectiveAudience` dagi mahsulot
+    standart qiymati — va chaqiruvchi buni `resolution` orqali ko'radi.
+  */
+  return {
+    audience: resolveEffectiveAudience("UNKNOWN"),
+    confidence: 0.4,
+    isExplicit: false,
+    resolution: "UNKNOWN",
+  };
 }
 
 export function detectAudience(text: string, intent: SearchIntent): AudienceMode {
@@ -814,6 +930,7 @@ export function understandQuery(
   const audience = audDetails.audience;
   const audienceConfidence = audDetails.confidence;
   const audienceIsExplicit = audDetails.isExplicit;
+  const audienceResolution = audDetails.resolution;
 
   let { topic: extractedTopic, keywords } = extractTopic(
     normalized.normalized,
@@ -915,6 +1032,7 @@ export function understandQuery(
     audience,
     audienceConfidence,
     audienceIsExplicit,
+    audienceResolution,
 
     topic: extractedTopic,
     topicConfidence: extractedTopic.length >= 3 ? 0.92 : 0.50,

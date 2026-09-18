@@ -159,6 +159,8 @@ async function main() {
   // Auditoriya: aniq marker bo'lgan va bo'lmagan holatlar ALOHIDA o'lchanadi.
   let audExplicitCorrect = 0, audExplicitTotal = 0;
   let audDefaultAgree = 0, audDefaultTotal = 0;
+  // V6: auditoriya QANDAY aniqlanganini holat bo'yicha kesish.
+  const audienceByResolution: Record<string, { total: number; correct: number }> = {};
 
   let retrievalEvaluated = 0;
   let candHit20 = 0, candHit50 = 0, candHit100 = 0;
@@ -258,6 +260,10 @@ async function main() {
           audDefaultTotal++;
           if (audienceOk) audDefaultAgree++;
         }
+
+        audienceByResolution[u.audienceResolution] ??= { total: 0, correct: 0 };
+        audienceByResolution[u.audienceResolution].total++;
+        if (audienceOk) audienceByResolution[u.audienceResolution].correct++;
       }
     }
 
@@ -490,6 +496,12 @@ async function main() {
       audienceAccuracy: pct(audCorrect, audTotal),
       audienceExplicitAccuracy: pct(audExplicitCorrect, audExplicitTotal),
       audienceDefaultAgreement: pct(audDefaultAgree, audDefaultTotal),
+      audienceByResolution: Object.fromEntries(
+        Object.entries(audienceByResolution).map(([k, v]) => [
+          k,
+          { ...v, accuracy: pct(v.correct, v.total) },
+        ]),
+      ),
       evaluated: {
         langTotal, subjTotal, gradeTotal, intentTotal, audTotal,
         audExplicitTotal, audDefaultTotal,
@@ -587,7 +599,11 @@ async function main() {
   console.log(`- Intent:    ${report.understanding.intentAccuracy}% (${intentCorrect}/${intentTotal})`);
   console.log(`- Audience:  ${report.understanding.audienceAccuracy}% (${audCorrect}/${audTotal})`);
   console.log(`    · aniq markerli:  ${report.understanding.audienceExplicitAccuracy}% (${audExplicitCorrect}/${audExplicitTotal})`);
-  console.log(`    · markersiz (standart qiymat mosligi): ${report.understanding.audienceDefaultAgreement}% (${audDefaultAgree}/${audDefaultTotal})`);
+  console.log(`    · markersiz (xulosa/standart):     ${report.understanding.audienceDefaultAgreement}% (${audDefaultAgree}/${audDefaultTotal})`);
+  for (const [res, stat] of Object.entries(report.understanding.audienceByResolution)) {
+    const s2 = stat as { total: number; correct: number; accuracy: number };
+    console.log(`    · ${res.padEnd(18)} ${String(s2.accuracy).padStart(6)}% (${s2.correct}/${s2.total})`);
+  }
 
   console.log("\n## 2. CANDIDATE RETRIEVAL");
   console.log(`- Recall@20:  ${report.candidateRetrieval.recall20}%`);
