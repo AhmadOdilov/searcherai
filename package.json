@@ -33,6 +33,7 @@
     "search:ablation-v5": "tsx --conditions=react-server --env-file-if-exists=.env scripts/ablation-v5.ts",
     "search:benchmark-v5": "tsx --conditions=react-server --env-file-if-exists=.env scripts/generate-v5-benchmark.ts",
     "search:audit-benchmark": "tsx --conditions=react-server --env-file-if-exists=.env scripts/audit-benchmark-integrity.ts",
+    "search:e2e-live": "tsx --conditions=react-server --env-file-if-exists=.env scripts/e2e-search-live.ts",
     "search:eval-500": "tsx --conditions=react-server --env-file-if-exists=.env scripts/evaluate-search-500.ts",
     "search:eval-v4": "tsx --conditions=react-server --env-file-if-exists=.env scripts/evaluate-v4-full.ts",
     "search:eval-e2e": "tsx --conditions=react-server --env-file-if-exists=.env scripts/audit-e2e-quality.ts",

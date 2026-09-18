@@ -234,7 +234,21 @@ function AnswerView({
   const t = useTranslations("search");
   const { answer, curriculumMatches, suggestedActions, understanding } = result;
 
-  const crossGradeMatch = curriculumMatches?.find((m) => m.isCrossGrade);
+  /*
+    Sinf tafovuti — FAQAT eng yuqori moslik bo'yicha.
+
+    V4 da bu `curriculumMatches.find((m) => m.isCrossGrade)` edi, ya'ni
+    ro'yxatdagi ISTALGAN moslik boshqa sinfdan bo'lsa ogohlantirish
+    chiqardi. Backend validatori esa faqat 1-o'rindagi moslikni tekshiradi.
+
+    Natijada haqiqiy E2E tekshiruvida shu holat kuzatildi: «8-sinf
+    matematika kvadrat tenglamalar» so'rovi 1-o'rinda 8-sinf bo'limini
+    topdi va RASMIY DTS deb tasdiqlandi, lekin ro'yxatning 3-o'rnidagi
+    boshqa sinf bo'limi tufayli UI «Sinf tafovuti aniqlandi» deb
+    ogohlantirardi — javob to'g'ri sinfdan bo'lsa ham.
+  */
+  const topMatch = curriculumMatches?.[0];
+  const crossGradeMatch = topMatch?.isCrossGrade ? topMatch : undefined;
 
   /*
     ── TASDIQLANGANLIK YAGONA MANBADAN ANIQLANADI ──────────────────────────
