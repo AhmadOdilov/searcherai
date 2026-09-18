@@ -98,6 +98,15 @@ export interface QueryUnderstanding {
 
   audience: AudienceMode;
   audienceConfidence: number;
+  /**
+   * Auditoriya so'rovda ANIQ aytilganmi ("bolaga tushuntir", "o'qituvchi uchun",
+   * "простыми словами") yoki standart qiymat qo'llanganmi.
+   *
+   * Baholashda muhim: markersiz so'rovda "teacher" — bu TAXMIN, aniqlangan
+   * fakt emas. Ikkalasini bitta aniqlik foizida aralashtirish o'lchovni
+   * ma'nosiz qiladi.
+   */
+  audienceIsExplicit: boolean;
 
   topic: string;
   topicConfidence: number;
@@ -436,7 +445,50 @@ export function detectSubjectDetails(
   ambiguityTerm?: string;
   clarificationQuestion?: string;
 } {
-  // Avval ko'p ma'noli so'zlar tekshiruvi (Ambiguity Engine V2 — Phase 11)
+  /*
+    AVVAL: so'rovda fan NOMI aniq aytilganmi?
+
+    ── Nima uchun bu tartib muhim (takrorlangan xato) ──────────────────────
+    V4 da `resolveAmbiguity` birinchi ishlardi va u polisemik atamani
+    ko'rishi bilanoq erta `return` qilardi. Natijada so'rovda fan nomi
+    ochiq-oydin yozilgan bo'lsa ham e'tiborga olinmasdi:
+
+      «8-sinf informatika Python sintaksisi va operatorlar ish varag'i»
+        -> «operatorlar» polisemik deb topiladi
+        -> nomzodlar: Fizika / Ona tili, detectedSubject = undefined
+        -> qidiruv fanni bilmagani uchun 8-sinfning ONA TILI bo'limini
+           («SINTAKSIS, OHANG VA TINISH BELGILARI») 0.65 ball bilan
+           RASMIY DTS dalili sifatida qaytarardi — yolg'on grounding.
+
+    Aniq aytilgan fan nomi har qanday polisemiya taxminidan kuchliroq:
+    kontekst allaqachon berilgan, taxmin qilishning hojati yo'q.
+    Faqat BITTA fan aniq nomlangan bo'lsa qabul qilinadi — ikkitasi
+    nomlangan bo'lsa, noaniqlik haqiqiy va ambiguity dvigateli ishlaydi.
+  */
+  const explicitSubjects = new Set<string>();
+  for (const def of SUBJECT_DEFINITIONS) {
+    for (const pat of def.strongPatterns) {
+      pat.lastIndex = 0;
+      const hit = pat.test(text) || (rawText ? (pat.lastIndex = 0, pat.test(rawText)) : false);
+      pat.lastIndex = 0;
+      if (hit) {
+        explicitSubjects.add(def.subject);
+        break;
+      }
+    }
+  }
+
+  if (explicitSubjects.size === 1) {
+    const [subject] = Array.from(explicitSubjects);
+    return {
+      subject,
+      confidence: 0.96,
+      candidates: [{ subject, confidence: 0.96 }],
+      isAmbiguous: false,
+    };
+  }
+
+  // Keyin: ko'p ma'noli so'zlar tekshiruvi (Ambiguity Engine V2 — Phase 11)
   const disambiguation = resolveAmbiguity(text, language) ?? (rawText ? resolveAmbiguity(rawText, language) : null);
   if (disambiguation) {
     if (disambiguation.resolvedSubject) {
@@ -589,34 +641,63 @@ export function detectIntent(text: string, rawText?: string): SearchIntent {
 export function detectAudienceDetails(
   text: string,
   intent: SearchIntent,
-): { audience: AudienceMode; confidence: number } {
+  rawText?: string,
+): { audience: AudienceMode; confidence: number; isExplicit: boolean } {
+  /*
+    DIQQAT — `rawText` ixtiyoriy emas, ZARUR.
+
+    `text` bu normalizatsiyadan o'tgan so'rov: kirill harflar lotinga
+    ko'chirilgan («простыми словами» -> «prostimi slovami»). Shu sababli
+    quyidagi naqshlardagi BARCHA ruscha markerlar («учителю», «школьник»,
+    «для учеников», «простыми словами») normalizatsiyalangan matnda
+    HECH QACHON mos kelmasdi — ya'ni ruscha auditoriya aniqlash o'lik edi.
+
+    Endi ikkala ko'rinish ham tekshiriladi.
+  */
+  const haystacks = rawText && rawText !== text ? [text, rawText] : [text];
+  const matches = (pattern: RegExp) =>
+    haystacks.some((h) => {
+      pattern.lastIndex = 0;
+      return pattern.test(h);
+    });
   // 1. O'quvchiga xos so'rovlar (bolaga tushuntirish, sodda so'zlar, o'quvchi uchun)
-  if (
-    intent === "homework" ||
-    intent === "solve" ||
-    /(?:^|[^\p{L}\p{N}])(?:bolaga[a-z]*|oddiy qilib|sodda qilib|sodda tushuntir|menga tushunarsiz|tushunmadim|o['‘`ʻ]quvchiman|masalani yech|uy vazifam|maktabdaman|javobini top|простыми словами|для учеников|я ученик|школьник|домашнее задание|не понял|помогите решить|for students?|i am a student|help with my homework)(?=$|[^\p{L}\p{N}])/giu.test(
-      text,
-    )
-  ) {
-    return { audience: "student", confidence: 0.92 };
+  const STUDENT_MARKERS =
+    /(?:^|[^\p{L}\p{N}])(?:bolaga[a-z]*|bolalarga|oddiy qilib|oddiy tilda|sodda qilib|sodda tushuntir|tushunarli qilib|menga tushunarsiz|tushunmadim|o['‘`ʻ]quvchiman|o['‘`ʻ]quvchiga|masalani yech|uy vazifam|maktabdaman|javobini top|простыми словами|простым языком|для учеников|для ученика|ученику|для детей|я ученик|школьник|домашнее задание|не понял|помогите решить|for students?|for a child|for pupils?|i am a student|in simple words|help with my homework)(?=$|[^\p{L}\p{N}])/giu;
+
+  if (matches(STUDENT_MARKERS)) {
+    return { audience: "student", confidence: 0.92, isExplicit: true };
+  }
+
+  if (intent === "homework" || intent === "solve") {
+    return { audience: "student", confidence: 0.80, isExplicit: false };
   }
 
   // 2. O'qituvchiga xos so'rovlar (metodik, dars ishlanma, baholash)
+  const TEACHER_MARKERS =
+    /(?:^|[^\p{L}\p{N}])(?:o['‘`ʻ]qituvchi[a-z]*|ustoz[a-z]*|sinfda|darsga|o['‘`ʻ]quvchilarga|baholash|konspekt|metodist|dars ishlanma|dars reja[a-z]*|учителю|для учителя|преподавател[а-я]*|на уроке|методика|поурочный|lesson plan|classroom|teaching|teacher)(?=$|[^\p{L}\p{N}])/giu;
+
+  if (matches(TEACHER_MARKERS)) {
+    return { audience: "teacher", confidence: 0.95, isExplicit: true };
+  }
+
   if (
     intent === "lesson_plan" ||
     intent === "presentation" ||
     intent === "curriculum" ||
     intent === "classroom_activity" ||
-    intent === "assessment" ||
-    /(?:^|[^\p{L}\p{N}])(?:o['‘`ʻ]qituvchi|sinfda|darsga|o['‘`ʻ]quvchilarga|baholash|konspekt|metodist|dars ishlanma|учителю|на уроке|методика|поурочный|lesson plan|classroom|teaching|teacher)(?=$|[^\p{L}\p{N}])/giu.test(
-      text,
-    )
+    intent === "assessment"
   ) {
-    return { audience: "teacher", confidence: 0.95 };
+    return { audience: "teacher", confidence: 0.85, isExplicit: false };
   }
 
-  // Ambiguous holatda ishonch past bo'ladi (Phase 13)
-  return { audience: "teacher", confidence: 0.60 };
+  /*
+    Marker ham, intent ishorasi ham yo'q.
+
+    Mahsulotning asosiy foydalanuvchisi o'qituvchi, shuning uchun standart
+    qiymat — "teacher". `isExplicit: false` esa bu TAXMIN ekanini bildiradi:
+    baholashda aniq markerli holatlar bilan standart qiymat aralashtirilmaydi.
+  */
+  return { audience: "teacher", confidence: 0.60, isExplicit: false };
 }
 
 export function detectAudience(text: string, intent: SearchIntent): AudienceMode {
@@ -711,9 +792,10 @@ export function understandQuery(
   const detectedIntent = intentDetails.intent;
   const intentConfidence = intentDetails.confidence;
 
-  const audDetails = detectAudienceDetails(normalized.normalized, detectedIntent);
+  const audDetails = detectAudienceDetails(normalized.normalized, detectedIntent, rawQuery);
   const audience = audDetails.audience;
   const audienceConfidence = audDetails.confidence;
+  const audienceIsExplicit = audDetails.isExplicit;
 
   let { topic: extractedTopic, keywords } = extractTopic(
     normalized.normalized,
@@ -795,6 +877,7 @@ export function understandQuery(
 
     audience,
     audienceConfidence,
+    audienceIsExplicit,
 
     topic: extractedTopic,
     topicConfidence: extractedTopic.length >= 3 ? 0.92 : 0.50,
