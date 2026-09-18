@@ -1,27 +1,20 @@
 {
-  "timestamp": "2026-09-18T13:32:17.612Z",
-  "total": 127,
+  "timestamp": "2026-09-18T13:40:27.382Z",
+  "total": 122,
   "failures": [
+    {
+      "id": "math-015",
+      "suite": "golden_core",
+      "q": "7-sinf algebra algebraik kasrlar va ular ustida amallar",
+      "bucket": "cross_grade_false_positive",
+      "detail": "1-o'rinda boshqa sinf: 8-sinf"
+    },
     {
       "id": "math-030",
       "suite": "golden_core",
       "q": "11-sinf algebra ehtimollar nazariyasi va kombinatorika elementlari",
       "bucket": "intent_boundary",
       "detail": "intent: explain != lesson_plan"
-    },
-    {
-      "id": "math-030",
-      "suite": "golden_core",
-      "q": "11-sinf algebra ehtimollar nazariyasi va kombinatorika elementlari",
-      "bucket": "cross_grade_false_negative",
-      "detail": "noto'g'ri sinf ko'rsatildi: 10-sinf != 7-sinf"
-    },
-    {
-      "id": "math-031",
-      "suite": "golden_core",
-      "q": "11-sinf geometriya aylanma jismlar silindr konus shar slayd",
-      "bucket": "cross_grade_false_negative",
-      "detail": "sinf tafovuti ogohlantirishi chiqmadi"
     },
     {
       "id": "math-035",
@@ -87,11 +80,11 @@
       "detail": "intent: explain != definition"
     },
     {
-      "id": "lang-004",
+      "id": "lang-015",
       "suite": "golden_core",
-      "q": "6-sinf ona tili ot so'z turkumi va uning ma'no turlari",
-      "bucket": "cross_grade_false_positive",
-      "detail": "1-o'rinda boshqa sinf: 7-sinf"
+      "q": "10-sinf ona tili nutq uslublari rasmiy publitsistik badiiy",
+      "bucket": "cross_grade_false_negative",
+      "detail": "noto'g'ri sinf ko'rsatildi: 11-sinf != 9-sinf"
     },
     {
       "id": "lang-016",
@@ -104,8 +97,8 @@
       "id": "lang-016",
       "suite": "golden_core",
       "q": "10-sinf ona tili orfoepiya va imlo me'yorlari amaliy mashq",
-      "bucket": "false_abstention",
-      "detail": "rasmiy dalil mavjud, lekin tizim ehtiyot rejimiga o'tdi"
+      "bucket": "cross_grade_false_positive",
+      "detail": "1-o'rinda boshqa sinf: 5-sinf"
     },
     {
       "id": "lang-017",
@@ -113,13 +106,6 @@
       "q": "11-sinf ona tili matn tahlili va esse yozish metodikasi",
       "bucket": "cross_grade_false_negative",
       "detail": "noto'g'ri sinf ko'rsatildi: 5-sinf != 6-sinf"
-    },
-    {
-      "id": "lang-018",
-      "suite": "golden_core",
-      "q": "11-sinf ona tili ritorika va notiqlik san'ati dars ishlanmasi",
-      "bucket": "false_abstention",
-      "detail": "rasmiy dalil mavjud, lekin tizim ehtiyot rejimiga o'tdi"
     },
     {
       "id": "lang-020",
@@ -132,20 +118,6 @@
       "id": "lang-020",
       "suite": "golden_core",
       "q": "7-синф она тили феъл нисбатлари дарс ишланмаси",
-      "bucket": "false_abstention",
-      "detail": "rasmiy dalil mavjud, lekin tizim ehtiyot rejimiga o'tdi"
-    },
-    {
-      "id": "lang-021",
-      "suite": "golden_core",
-      "q": "узбекский язык 6 класс части речи презентация",
-      "bucket": "false_abstention",
-      "detail": "rasmiy dalil mavjud, lekin tizim ehtiyot rejimiga o'tdi"
-    },
-    {
-      "id": "lang-022",
-      "suite": "golden_core",
-      "q": "uzbek language parts of speech grade 6 overview",
       "bucket": "false_abstention",
       "detail": "rasmiy dalil mavjud, lekin tizim ehtiyot rejimiga o'tdi"
     },
@@ -402,6 +374,13 @@
       "detail": "auditoriya: student != teacher"
     },
     {
+      "id": "gen-166",
+      "suite": "golden_core",
+      "q": "1-sinf matematika sonlar va sanash mustaqil ish topshiriqlari",
+      "bucket": "curriculum_out_of_scope",
+      "detail": "rasmiy dalil yo'q, lekin tizim ehtiyot rejimiga o'tmadi"
+    },
+    {
       "id": "gen-179",
       "suite": "golden_core",
       "q": "grade 8 physics electric circuit and Ohm's law homework",
@@ -605,6 +584,13 @@
       "detail": "auditoriya: student != teacher"
     },
     {
+      "id": "gen-346",
+      "suite": "golden_core",
+      "q": "1-sinf matematika sonlar va sanash ish varag'i",
+      "bucket": "curriculum_out_of_scope",
+      "detail": "rasmiy dalil yo'q, lekin tizim ehtiyot rejimiga o'tmadi"
+    },
+    {
       "id": "gen-348",
       "suite": "golden_core",
       "q": "9 класс литература мировая классическая литература самостоятельная работа",
@@ -778,27 +764,6 @@
       "q": "5-sinf biologiya o'simliklar dunyosi organlari mustaqil ish topshiriqlari",
       "bucket": "audience_boundary",
       "detail": "auditoriya: student != teacher"
-    },
-    {
-      "id": "v5-cg-028",
-      "suite": "cross_grade",
-      "q": "9-sinf matematika algebraik kasrlar",
-      "bucket": "cross_grade_false_negative",
-      "detail": "noto'g'ri sinf ko'rsatildi: 8-sinf != 7-sinf"
-    },
-    {
-      "id": "v5-cg-034",
-      "suite": "cross_grade",
-      "q": "9-sinf matematika parallel to‘g‘ri chiziqlar",
-      "bucket": "cross_grade_false_negative",
-      "detail": "noto'g'ri sinf ko'rsatildi: 10-sinf != 7-sinf"
-    },
-    {
-      "id": "v5-cg-041",
-      "suite": "cross_grade",
-      "q": "10-sinf matematika tengsizliklar",
-      "bucket": "cross_grade_false_negative",
-      "detail": "noto'g'ri sinf ko'rsatildi: 9-sinf != 8-sinf"
     },
     {
       "id": "v5-ml-003",

@@ -1,0 +1,106 @@
+{
+  "timestamp": "2026-09-18T13:40:38.448Z",
+  "queries": 216,
+  "results": [
+    {
+      "variant": "A. Exact",
+      "queries": 216,
+      "recall1": 79.17,
+      "recall3": 90.74,
+      "recall5": 93.98,
+      "mrr": 0.858,
+      "ndcg5": 0.8752,
+      "avgLatencyMs": 0.147
+    },
+    {
+      "variant": "B. Lexical",
+      "queries": 216,
+      "recall1": 58.8,
+      "recall3": 88.43,
+      "recall5": 93.52,
+      "mrr": 0.7423,
+      "ndcg5": 0.7867,
+      "avgLatencyMs": 0.174
+    },
+    {
+      "variant": "C. Semantic",
+      "queries": 216,
+      "recall1": 53.24,
+      "recall3": 77.78,
+      "recall5": 87.96,
+      "mrr": 0.6787,
+      "ndcg5": 0.7183,
+      "avgLatencyMs": 0.735
+    },
+    {
+      "variant": "D. Hybrid (A+B+C)",
+      "queries": 216,
+      "recall1": 78.7,
+      "recall3": 92.59,
+      "recall5": 96.3,
+      "mrr": 0.8598,
+      "ndcg5": 0.8841,
+      "avgLatencyMs": 0.819
+    },
+    {
+      "variant": "E. Hybrid + Metadata",
+      "queries": 216,
+      "recall1": 85.19,
+      "recall3": 95.37,
+      "recall5": 96.76,
+      "mrr": 0.9055,
+      "ndcg5": 0.9201,
+      "avgLatencyMs": 0.824
+    },
+    {
+      "variant": "F. Full V5 (production)",
+      "queries": 216,
+      "recall1": 88.89,
+      "recall3": 96.76,
+      "recall5": 97.22,
+      "mrr": 0.9294,
+      "ndcg5": 0.9399,
+      "avgLatencyMs": 0.943
+    },
+    {
+      "variant": "G. F - sinf jazosisiz",
+      "queries": 216,
+      "recall1": 84.26,
+      "recall3": 94.91,
+      "recall5": 96.3,
+      "mrr": 0.9001,
+      "ndcg5": 0.9143,
+      "avgLatencyMs": 0.826
+    },
+    {
+      "variant": "H. F - semantik ballsiz",
+      "queries": 216,
+      "recall1": 84.72,
+      "recall3": 95.37,
+      "recall5": 96.76,
+      "mrr": 0.9004,
+      "ndcg5": 0.9155,
+      "avgLatencyMs": 0.177
+    },
+    {
+      "variant": "I. F - cross-lingual kengaytmasiz",
+      "queries": 216,
+      "recall1": 81.48,
+      "recall3": 94.44,
+      "recall5": 96.3,
+      "mrr": 0.8812,
+      "ndcg5": 0.8999,
+      "avgLatencyMs": 0.791
+    },
+    {
+      "variant": "J. F - metadata mosligisiz",
+      "queries": 216,
+      "recall1": 84.72,
+      "recall3": 95.37,
+      "recall5": 96.76,
+      "mrr": 0.9036,
+      "ndcg5": 0.9182,
+      "avgLatencyMs": 0.832
+    }
+  ]
+}

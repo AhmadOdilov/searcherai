@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-18T13:32:17.612Z",
+  "timestamp": "2026-09-18T13:40:27.382Z",
   "datasetComposition": {
     "total": 950,
     "bySuite": {
@@ -35,47 +35,51 @@
     "recall20": 98.15,
     "recall50": 98.61,
     "recall100": 98.61,
-    "avgLatencyMs": 10.51
+    "avgLatencyMs": 10.67
   },
   "reranker": {
     "evaluatedQueries": 216,
-    "recall1": 86.57,
-    "recall3": 94.91,
+    "recall1": 88.89,
+    "recall3": 96.76,
     "recall5": 97.22,
     "precision5": 19.44,
-    "mrr": 0.9111,
-    "ndcg5": 0.9261,
-    "ndcg10": 0.9276,
-    "avgLatencyMs": 1.22
+    "mrr": 0.9294,
+    "ndcg5": 0.9399,
+    "ndcg10": 0.9416,
+    "avgLatencyMs": 1.24
   },
   "abstention": {
     "shouldAbstainTotal": 516,
-    "correctlyAbstained": 514,
+    "correctlyAbstained": 512,
     "shouldGroundTotal": 216,
-    "wronglyAbstained": 6,
-    "precision": 98.85,
-    "recall": 99.61,
+    "wronglyAbstained": 2,
+    "precision": 99.61,
+    "recall": 99.22,
     "falseGrounding": 0
   },
   "crossGrade": {
     "total": 58,
-    "correct": 51,
-    "wrongGradeReported": 5,
-    "accuracy": 87.93,
+    "correct": 55,
+    "wrongGradeReported": 2,
+    "accuracy": 94.83,
     "nonCrossGradeTotal": 159,
-    "falsePositives": 1,
-    "falsePositiveRate": 0.63
+    "falsePositives": 2,
+    "falsePositiveRate": 1.26
   },
   "grounding": {
     "totalClaims": 2818,
-    "supportedClaimRate": 64.05,
-    "contradictionRate": 3.83,
-    "unsupportedClaimRate": 32.11,
-    "totalCitations": 2189,
+    "supportedClaimRate": 64.09,
+    "contradictionRate": 4.08,
+    "contradictionsByType": {
+      "grade": 115
+    },
+    "factualContradictionRate": 0,
+    "unsupportedClaimRate": 31.83,
+    "totalCitations": 2172,
     "fakeDtsCitations": 0,
     "hoursProbe": {
-      "probed": 187,
-      "contradictionsDetected": 187,
+      "probed": 192,
+      "contradictionsDetected": 192,
       "detectionRate": 100,
       "falsePositives": 0
     }
@@ -88,13 +92,13 @@
   },
   "latencyLocalPipelineMs": {
     "note": "Tashqi LLM generatsiyasi KIRMAGAN — faqat mahalliy quvur.",
-    "understandingAvg": 1.439,
-    "retrievalAvg": 10.51,
-    "rerankAvg": 1.22,
-    "validationAvg": 0.024,
-    "p50": 12.14,
-    "p95": 21.33,
-    "p99": 38.37
+    "understandingAvg": 1.411,
+    "retrievalAvg": 10.67,
+    "rerankAvg": 1.24,
+    "validationAvg": 0.022,
+    "p50": 12.15,
+    "p95": 20.98,
+    "p99": 41.28
   },
   "failureBuckets": {
     "typo": 0,
@@ -108,11 +112,11 @@
     "ocr_phonetic_noise": 0,
     "conversational_vague_query": 0,
     "over_filtering": 0,
-    "curriculum_out_of_scope": 2,
+    "curriculum_out_of_scope": 4,
     "reranker_demotion": 2,
     "truncation_embedding_dimension_limit": 0,
     "false_grounding": 0,
-    "false_abstention": 6,
+    "false_abstention": 2,
     "unsupported_claim": 0,
     "contradiction": 0,
     "subject_boundary": 1,
@@ -122,8 +126,8 @@
     "cache_staleness": 0,
     "prompt_injection": 0,
     "evidence_mismatch": 0,
-    "cross_grade_false_positive": 1,
-    "cross_grade_false_negative": 7,
+    "cross_grade_false_positive": 2,
+    "cross_grade_false_negative": 3,
     "UI_grounding_mismatch": 0,
     "malformed_llm_output": 0,
     "stale_curriculum": 0

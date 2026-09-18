@@ -179,6 +179,19 @@ async function main() {
   const securityFindings: string[] = [];
 
   let claimTotal = 0, claimSupported = 0, claimContradicted = 0, claimUnsupported = 0;
+  /*
+    Ziddiyatlar TURI bo'yicha ajratiladi.
+
+    Sabab: validator cross-grade holatini ham "contradicted" deb belgilaydi.
+    Lekin sinf tafovuti — bu javobning dalilga ZID kelishi emas, balki
+    tizim OCHIQ aytayotgan ogohlantirish (so'ralgan sinf boshqa). Ikkalasini
+    bitta foizga qo'shish "ziddiyat darajasi" o'lchovini chalg'ituvchi
+    qiladi, chunki benchmarkka cross-grade so'rovlari qancha ko'p qo'shilsa,
+    "ziddiyat" shuncha o'sadi.
+
+    Shuning uchun ikkala raqam ham chiqariladi va HECH BIRI yashirilmaydi.
+  */
+  const contradictionsByType: Record<string, number> = {};
   let hoursProbeTotal = 0, hoursContradictionDetected = 0, hoursFalsePositive = 0;
 
   const buckets: Record<FailureBucket, number> = Object.fromEntries(
@@ -265,7 +278,10 @@ async function main() {
 
     claimTotal += grounding.claims.length;
     claimSupported += grounding.claims.filter((c) => c.status === "supported").length;
-    claimContradicted += grounding.claims.filter((c) => c.status === "contradicted").length;
+    for (const claim of grounding.claims.filter((c) => c.status === "contradicted")) {
+      claimContradicted++;
+      contradictionsByType[claim.type] = (contradictionsByType[claim.type] ?? 0) + 1;
+    }
     claimUnsupported += grounding.claims.filter((c) => c.status === "unsupported").length;
 
     // Soxta iqtibos: bazada mavjud bo'lmagan id'ga havola.
@@ -519,6 +535,12 @@ async function main() {
       totalClaims: claimTotal,
       supportedClaimRate: pct(claimSupported, claimTotal),
       contradictionRate: pct(claimContradicted, claimTotal),
+      contradictionsByType,
+      // Sinf tafovuti ogohlantirishlarisiz — ya'ni javob dalilga zid kelgan holatlar.
+      factualContradictionRate: pct(
+        claimContradicted - (contradictionsByType.grade ?? 0),
+        claimTotal,
+      ),
       unsupportedClaimRate: pct(claimUnsupported, claimTotal),
       totalCitations,
       fakeDtsCitations: fakeCitations,
@@ -590,7 +612,8 @@ async function main() {
 
   console.log("\n## 6. GROUNDING");
   console.log(`- Supported claim rate: ${report.grounding.supportedClaimRate}%`);
-  console.log(`- Contradiction rate:   ${report.grounding.contradictionRate}%`);
+  console.log(`- Contradiction rate:   ${report.grounding.contradictionRate}% (turlar: ${JSON.stringify(contradictionsByType)})`);
+  console.log(`    · shundan FAKTIK (sinf ogohlantirishisiz): ${report.grounding.factualContradictionRate}%`);
   console.log(`- Fake DTS citations:   ${fakeCitations}/${totalCitations}`);
   console.log(`- Soat ziddiyati zondi: ${report.grounding.hoursProbe.detectionRate}% (${hoursContradictionDetected}/${hoursProbeTotal}), yolg'on musbat: ${hoursFalsePositive}`);
 
