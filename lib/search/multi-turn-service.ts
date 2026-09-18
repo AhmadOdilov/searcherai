@@ -155,6 +155,40 @@ export class MultiTurnService {
   }
 
   /**
+   * Kontekst oynasi boshqaruvi (Phase 16): Oxirgi N ta turn va suhbat qisqacha mazmuni
+   */
+  public static getContextWindowSummary(
+    threadId: string,
+    userId: string,
+    maxTurns: number = 5,
+  ): { summary: string; recentTurns: ConversationTurn[] } {
+    const thread = this.getThread(threadId, userId);
+    if (!thread || thread.turns.length === 0) {
+      return { summary: "", recentTurns: [] };
+    }
+
+    const recentTurns = thread.turns.slice(-maxTurns);
+    const olderTurns = thread.turns.slice(0, -maxTurns);
+
+    let summary = "";
+    if (olderTurns.length > 0) {
+      const topicsCovered = Array.from(
+        new Set(
+          olderTurns
+            .map((t) => t.understanding?.extractedTopic)
+            .filter((t): t is string => Boolean(t && t.length >= 3)),
+        ),
+      );
+      summary = `Avvalgi bosqichlarda muhokama qilingan mavzular: ${topicsCovered.join(", ")} (Jami ${olderTurns.length} ta savol-javob).`;
+    }
+
+    return {
+      summary,
+      recentTurns,
+    };
+  }
+
+  /**
    * Foydalanuvchining barcha suhbatlarini ro'yxatlash
    */
   public static listUserThreads(userId: string): Array<Omit<ConversationThread, "turns">> {

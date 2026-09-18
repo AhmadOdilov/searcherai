@@ -73,3 +73,20 @@ export interface PipelineSummary {
   warningsCount: number;
   issues: DataQualityIssue[];
 }
+
+export type SourceTrustLevel = "official" | "verified" | "secondary" | "generated" | "unknown";
+
+export interface CurriculumTopicRecordV3 {
+  subject: string;
+  grade: string;
+  topicName: string;
+  aliases: string[];
+  description: string;
+  expectedHours: number | null;
+  expectedOutcomes: string[];
+  source: string;
+  sourceType: SourceTrustLevel;
+  language: string;
+  educationLevel: "primary" | "secondary" | "high";
+  curriculumVersion: string;
+}

@@ -2046,10 +2046,6 @@ addQ({
 
 // Fill up systematically to reach 500 queries
 // We create programmatic variants covering grades 1-11, 10 subjects, all intents, difficulties
-const ALL_SUBJECTS = [
-  "Matematika", "Ona tili", "Adabiyot", "Fizika", "Kimyo", 
-  "Biologiya", "Tarix", "Geografiya", "Informatika", "Ingliz tili"
-];
 
 const INTENTS: SearchIntent[] = [
   "explain", "definition", "lesson_plan", "presentation", "quiz_test",

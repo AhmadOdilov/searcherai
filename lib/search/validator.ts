@@ -21,14 +21,19 @@ export type ClaimStatus = "supported" | "contradicted" | "unsupported";
 export interface GroundingClaim {
   type: "topic" | "grade" | "hours" | "outcome" | "source";
   claim: string;
+  evidence?: string;
+  supportScore?: number;
   status: ClaimStatus;
   supported: boolean;
+  unsupported: boolean;
   contradiction?: string;
+  sourceId?: string;
 }
 
 export interface GroundingValidationResult {
   isGrounded: boolean;
   groundingScore: number; // 0..1
+  isAbstained?: boolean;
   caution?: string;
   sourceCitations: Array<{
     sourceId: string;
@@ -97,11 +102,14 @@ export function validateAndGroundAnswer(
       claim: "Rasmiy o'quv dasturi bazasidan mavzu topilmadi",
       status: "unsupported",
       supported: false,
+      unsupported: true,
+      supportScore: 0.0,
     });
 
     return {
       isGrounded: false,
       groundingScore: 0.3,
+      isAbstained: true,
       caution: answer.caution ? `${answer.caution} | ${ungroundedCaution}` : ungroundedCaution,
       sourceCitations: [],
       claims,
@@ -122,8 +130,12 @@ export function validateAndGroundAnswer(
   claims.push({
     type: "topic",
     claim: `Mavzu rasmiy dasturdagi «${topMatch.topicName}» bo'limi bilan mos`,
+    evidence: topMatch.description,
+    supportScore: topMatch.score,
     status: isTopicSupported ? "supported" : "unsupported",
     supported: isTopicSupported,
+    unsupported: !isTopicSupported,
+    sourceId: topMatch.sourceId,
   });
 
   // b) Grade claim va Cross-grade tekshiruvi (Phase 8)
@@ -141,9 +153,13 @@ export function validateAndGroundAnswer(
       claims.push({
         type: "grade",
         claim: `Sinf nomuvofiqligi: so'ralgan ${topMatch.requestedGrade}, dasturdagi ${topMatch.availableGrade}`,
+        evidence: `DTS bo'yicha ${topMatch.availableGrade} ga tegishli`,
+        supportScore: 0.0,
         status: "contradicted",
         supported: false,
+        unsupported: true,
         contradiction: crossGradeCaution,
+        sourceId: topMatch.sourceId,
       });
       contradictions.push(crossGradeCaution);
     }
@@ -151,8 +167,12 @@ export function validateAndGroundAnswer(
     claims.push({
       type: "grade",
       claim: `Sinf darajasi rasmiy dasturga mos: ${topMatch.grade}`,
+      evidence: topMatch.grade,
+      supportScore: 1.0,
       status: "supported",
       supported: true,
+      unsupported: false,
+      sourceId: topMatch.sourceId,
     });
   }
 
@@ -171,24 +191,36 @@ export function validateAndGroundAnswer(
         claims.push({
           type: "hours",
           claim: `Dars soatlari: ${claimedHours} soat`,
+          evidence: `Rasmiy bazada: ${topMatch.expectedHours} soat`,
+          supportScore: 0.0,
           status: "contradicted",
           supported: false,
+          unsupported: true,
           contradiction: contra,
+          sourceId: topMatch.sourceId,
         });
       } else {
         claims.push({
           type: "hours",
           claim: `Dars soatlari rasmiy dasturga mos (${topMatch.expectedHours} soat)`,
+          evidence: `${topMatch.expectedHours} soat`,
+          supportScore: 1.0,
           status: "supported",
           supported: true,
+          unsupported: false,
+          sourceId: topMatch.sourceId,
         });
       }
     } else {
       claims.push({
         type: "hours",
         claim: `Rasmiy dasturda ajratilgan soat: ${topMatch.expectedHours}`,
+        evidence: `${topMatch.expectedHours} soat`,
+        supportScore: 1.0,
         status: "supported",
         supported: true,
+        unsupported: false,
+        sourceId: topMatch.sourceId,
       });
     }
   } else {
@@ -197,15 +229,21 @@ export function validateAndGroundAnswer(
       claims.push({
         type: "hours",
         claim: `Javobda ${hoursMatch[1]} soat ko'rsatilgan, ammo rasmiy bazada bu bo'lim uchun soat belgilanmagan`,
+        supportScore: 0.0,
         status: "unsupported",
         supported: false,
+        unsupported: true,
+        sourceId: topMatch.sourceId,
       });
     } else {
       claims.push({
         type: "hours",
         claim: "Bo'lim bo'yicha ajratilgan soat rasmiy manbada ko'rsatilmagan",
+        supportScore: 0.0,
         status: "unsupported",
         supported: false,
+        unsupported: true,
+        sourceId: topMatch.sourceId,
       });
     }
   }
@@ -217,8 +255,12 @@ export function validateAndGroundAnswer(
     claims.push({
       type: "outcome",
       claim: `Kutilayotgan ta'limiy natijalar: ${topMatch.expectedOutcomes.length} ta kompetensiya mavjud`,
+      evidence: topMatch.expectedOutcomes.slice(0, 2).join("; "),
+      supportScore: isOutcomeMentioned ? 0.9 : 0.4,
       status: isOutcomeMentioned ? "supported" : "unsupported",
       supported: isOutcomeMentioned,
+      unsupported: !isOutcomeMentioned,
+      sourceId: topMatch.sourceId,
     });
   }
 
@@ -227,15 +269,22 @@ export function validateAndGroundAnswer(
     claims.push({
       type: "source",
       claim: `Rasmiy manba mavjud: ${topMatch.source}`,
+      evidence: topMatch.source,
+      supportScore: 1.0,
       status: "supported",
       supported: true,
+      unsupported: false,
+      sourceId: topMatch.sourceId,
     });
   } else {
     claims.push({
       type: "source",
       claim: "Rasmiy manba havolasi ko'rsatilmagan",
+      supportScore: 0.0,
       status: "unsupported",
       supported: false,
+      unsupported: true,
+      sourceId: topMatch.sourceId,
     });
   }
 
@@ -272,6 +321,7 @@ export function validateAndGroundAnswer(
 
   return {
     isGrounded,
+    isAbstained: topMatch.score < 0.35,
     groundingScore:
       contradictions.length > 0
         ? Math.max(0.2, topMatch.score - 0.25)

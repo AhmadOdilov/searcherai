@@ -82,4 +82,30 @@ describe("MultiTurnService (Phase 10 Backend Context & Security)", () => {
     assert.strictEqual(fetched.turns.length, 50); // capped at 50
     assert.strictEqual(fetched.turns[fetched.turns.length - 1].query, "Savol 60");
   });
+
+  it("4. Context Window Control at scale: 10, 100, 1000 messages performance & summary", () => {
+    const userId = "scale-tester";
+    const thread = MultiTurnService.createThread(userId, "Scale test thread");
+
+    const t0 = performance.now();
+    for (let i = 1; i <= 1000; i++) {
+      const u = understandQuery(`Savol ${i} matematika kasrlar`);
+      MultiTurnService.addTurn(thread.id, userId, `Savol ${i}`, u);
+    }
+    const tDuration = performance.now() - t0;
+
+    // 1000 iterations must complete smoothly under 250ms
+    assert.ok(tDuration < 250, `1000 turn qo'shish juda sekin: ${tDuration}ms`);
+
+    // Must be safely capped at 50 turns
+    const currentThread = MultiTurnService.getThread(thread.id, userId);
+    assert.ok(currentThread);
+    assert.strictEqual(currentThread.turns.length, 50);
+
+    // Summary test
+    const win = MultiTurnService.getContextWindowSummary(thread.id, userId, 5);
+    assert.strictEqual(win.recentTurns.length, 5);
+    assert.ok(win.summary.includes("Avvalgi bosqichlarda muhokama qilingan mavzular"));
+  });
 });
+

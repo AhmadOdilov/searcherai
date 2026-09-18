@@ -151,6 +151,42 @@ export const CANONICAL_CONCEPTS: ConceptDefinition[] = [
     aliasesEn: ["newton's laws", "newton", "gravity", "inertia", "acceleration", "classical mechanics"],
     relatedConcepts: ["kuch", "massa", "bosim"],
   },
+  {
+    conceptKey: "photosynthesis",
+    subject: "Biologiya",
+    grades: ["5-sinf", "6-sinf", "7-sinf"],
+    canonicalUz: "fotosintez jarayoni va o'simliklar oziqlanishi",
+    canonicalRu: "процесс фотосинтеза и питание растений",
+    canonicalEn: "photosynthesis process and plant nutrition",
+    aliasesUz: ["fotosintez", "fotosintezni", "xlorofill", "quyosh energiyasi", "organik modda"],
+    aliasesRu: ["фотосинтез", "хлорофилл", "питание растений", "световая фаза", "темновая фаза"],
+    aliasesEn: ["photosynthesis", "chlorophyll", "plant nutrition", "light phase", "calvin cycle"],
+    relatedConcepts: ["hujayra", "nafas olish", "plastidalar"],
+  },
+  {
+    conceptKey: "ohm_law",
+    subject: "Fizika",
+    grades: ["8-sinf"],
+    canonicalUz: "om qonuni va elektr zanjiri",
+    canonicalRu: "закон ома и электрическая цепь",
+    canonicalEn: "ohm's law and electric circuit",
+    aliasesUz: ["om qonuni", "tok kuchi", "kuchlanish", "qarshilik", "elektr zanjir"],
+    aliasesRu: ["закон ома", "сила тока", "напряжение", "сопротивление", "электрическая цепь"],
+    aliasesEn: ["ohm's law", "electric current", "voltage", "resistance", "electric circuit"],
+    relatedConcepts: ["amper", "volt", "elektr toki"],
+  },
+  {
+    conceptKey: "cell_biology",
+    subject: "Biologiya",
+    grades: ["5-sinf", "9-sinf"],
+    canonicalUz: "hujayra tuzilishi va bo'linishi",
+    canonicalRu: "строение и деление клетки",
+    canonicalEn: "cell structure and division",
+    aliasesUz: ["hujayra", "mitoz", "meyoz", "yadro", "sitoplazma", "organoid"],
+    aliasesRu: ["клетка", "митоз", "мейоз", "ядро", "цитоплазма", "органоиды"],
+    aliasesEn: ["cell", "mitosis", "meiosis", "nucleus", "cytoplasm", "organelles"],
+    relatedConcepts: ["dnk", "xromosoma", "sitologiya"],
+  },
 ];
 
 /**
@@ -159,7 +195,7 @@ export const CANONICAL_CONCEPTS: ConceptDefinition[] = [
 export function expandQueryConcepts(
   text: string,
   subject?: string,
-  grade?: string,
+  _grade?: string,
 ): {
   matchedConcepts: string[];
   expandedTerms: string[];

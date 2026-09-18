@@ -3,9 +3,10 @@ import { prisma } from "@/lib/db";
 import { searchTerms } from "@/lib/curriculum/terms";
 import type { QueryUnderstanding } from "./understanding";
 import type { CurriculumMatch } from "@/lib/curriculum/service";
-import { calculateHybridScore, type ScoreResult } from "./scoring";
 import { stemUzbekWord, getApostropheVariants } from "./normalization";
 import { expandQueryConcepts } from "./concept-map";
+import { rewriteQueryForRetrieval } from "./rewrite";
+import { rerankCandidates } from "./reranker";
 
 /**
  * Darajalangan o'quv dasturi bo'limi natijasi va to'liq manba provenansi (Phase 12).
@@ -88,13 +89,19 @@ export async function matchCurriculumTopics(
   understanding: QueryUnderstanding,
   limit: number = 3,
 ): Promise<RankedCurriculumMatch[]> {
-  const { detectedSubject, detectedGrade, extractedTopic, keywords, detectedIntent } = understanding;
+  const { detectedSubject, detectedGrade, extractedTopic, keywords } = understanding;
 
-  // 1. Qidiruv so'zlarini shakllantirish va boyitish
+  // 1. Qidiruv so'zlarini shakllantirish va Query Rewrite (Phase 3 & 4)
+  const rewrites = rewriteQueryForRetrieval(understanding);
   const baseTerms = searchTerms(extractedTopic);
   const stemmedKeywords = keywords.map(stemUzbekWord);
 
-  const expandedTerms = new Set<string>([...baseTerms, ...stemmedKeywords, extractedTopic]);
+  const expandedTerms = new Set<string>([
+    ...baseTerms,
+    ...stemmedKeywords,
+    extractedTopic,
+    ...rewrites.retrievalRepresentations.flatMap((r) => r.split(/\s+/)).filter((w) => w.length >= 3),
+  ]);
 
   // Cross-lingual tushunchalar kengaytmasi (Phase 6 & 7)
   const conceptExpansion = expandQueryConcepts(extractedTopic, detectedSubject, detectedGrade);
@@ -198,63 +205,6 @@ export async function matchCurriculumTopics(
     effectiveCandidates = crossGradeCandidates;
   }
 
-  // 5. Ko'p mezonli reyting hisoblash (Scoring & Provenance)
-  const scored: RankedCurriculumMatch[] = effectiveCandidates.map((cand) => {
-    const isCrossGrade = Boolean(
-      detectedGrade && cand.grade.toLowerCase() !== detectedGrade.toLowerCase(),
-    );
-
-    const scoreRes: ScoreResult = calculateHybridScore({
-      queryTopic: extractedTopic,
-      keywords,
-      detectedSubject,
-      detectedGrade,
-      detectedIntent,
-      candidateTopicName: cand.topicName,
-      candidateDescription: cand.description,
-      candidateSubject: cand.subject,
-      candidateGrade: cand.grade,
-      candidateExpectedHours: cand.expectedHours,
-      candidateExpectedOutcomes: cand.expectedOutcomes,
-    });
-
-    return {
-      sourceId: cand.id,
-      sourceVersion: "DTS-UZBMB-2025-v1",
-      curriculumYear: 2025,
-      topicName: cand.topicName,
-      subject: cand.subject,
-      grade: cand.grade,
-      description: cand.description,
-      expectedHours: cand.expectedHours,
-      expectedOutcomes: cand.expectedOutcomes,
-      source: cand.source,
-      score: scoreRes.totalScore,
-      exactMatch: !isCrossGrade,
-      crossGradeMatch: isCrossGrade,
-      isCrossGrade,
-      requestedGrade: detectedGrade,
-      availableGrade: cand.grade,
-      scoreBreakdown: {
-        exactMatch: scoreRes.exactMatch,
-        semanticSimilarity: scoreRes.semanticSimilarity,
-        outcomeMatch: scoreRes.outcomeMatch,
-        gradeSubjectMatch: scoreRes.gradeSubjectMatch,
-        intentMatch: scoreRes.intentMatch,
-      },
-    };
-  });
-
-  // Duplikatlarni olib tashlash va reyting bo'yicha saralash
-  const uniqueMap = new Map<string, RankedCurriculumMatch>();
-  scored.sort((a, b) => b.score - a.score);
-
-  for (const item of scored) {
-    const key = `${item.topicName}|${item.grade}`;
-    if (!uniqueMap.has(key)) {
-      uniqueMap.set(key, item);
-    }
-  }
-
-  return Array.from(uniqueMap.values()).slice(0, limit);
+  // 5. Deterministik Mahalliy Reranker va Multi-Source Rank Fusion (Phase 5 & 6)
+  return rerankCandidates(effectiveCandidates, understanding, limit);
 }

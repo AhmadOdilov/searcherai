@@ -1,12 +1,11 @@
 /**
- * Qidiruv so'rovlari uchun deterministik, xavfsiz va xotirada ishlaydigan LRU kesh (Cache V3 — Phase 15).
+ * Qidiruv so'rovlari uchun deterministik, xavfsiz va xotirada ishlaydigan LRU kesh (Cache V3 — Phase 17).
  *
  * Xususiyatlari:
- *  - Kalit tarkibi: normalizedQuery | language | subject | grade | intent | audience | curriculumVersion.
+ *  - Composite Cache Key:
+ *    normalizedQuery | language | subject | grade | intent | audience | curriculumVersion | retrievalVersion | promptVersion
  *  - Xavfsizlik: Foydalanuvchining shaxsiy identifikatori, profili yoki maxfiy ma'lumotlari kesh kalitiga mutlaqo kirmaydi (cross-user leak proof).
- *  - Invalidation: Curriculum yangilanishida `curriculumVersion` o'zgarishi barcha eski kesh yozuvlarini zudlik bilan yaroqsiz qiladi yoki tozalaydi.
- *  - Multi-instance behavior: Har bir konteyner/instansiya mustaqil tezkor xotira keshiga ega (~0.001ms).
- *    Gorizontal masshtabda podlar o'rtasida muammo tug'dirmaydi, chunki kesh sof deterministik funksional natijalarga asoslanadi. Redis hozirgi bosqichda kiritilmadi.
+ *  - Invalidation: Ranking, prompt yoki DTS o'quv dasturi versiyasi o'zgarganda eski kesh yaroqsiz qilinadi va tozalanadi.
  */
 
 import { createHash } from "node:crypto";
@@ -19,53 +18,91 @@ interface CacheEntry {
 }
 
 const DEFAULT_TTL_MS = 60 * 60 * 1000; // 1 soat
-const MAX_CACHE_SIZE = 500;
+const MAX_CACHE_SIZE = 1000;
 export const DEFAULT_CURRICULUM_VERSION = "DTS-UZBMB-2025-v1";
+export const DEFAULT_RETRIEVAL_VERSION = "retrieval-v3.0.0";
+export const DEFAULT_PROMPT_VERSION = "prompt-v3.0.0";
 
 export class SearchLruCache {
   private cache = new Map<string, CacheEntry>();
   private readonly ttlMs: number;
   private readonly maxSize: number;
   private curriculumVersion: string;
+  private retrievalVersion: string;
+  private promptVersion: string;
 
   constructor(
     ttlMs: number = DEFAULT_TTL_MS,
     maxSize: number = MAX_CACHE_SIZE,
     curriculumVersion: string = DEFAULT_CURRICULUM_VERSION,
+    retrievalVersion: string = DEFAULT_RETRIEVAL_VERSION,
+    promptVersion: string = DEFAULT_PROMPT_VERSION,
   ) {
     this.ttlMs = ttlMs;
     this.maxSize = maxSize;
     this.curriculumVersion = curriculumVersion;
+    this.retrievalVersion = retrievalVersion;
+    this.promptVersion = promptVersion;
   }
 
   /**
-   * O'quv dasturi yangilanganda kesh versiyasini o'zgartirish va eski ma'lumotlarni tozalash.
+   * Versiyalar o'zgarganda (curriculum, retrieval yoki prompt) keshni avtomatik tozalash.
    */
-  public setCurriculumVersion(version: string): void {
-    if (this.curriculumVersion !== version) {
-      this.curriculumVersion = version;
+  public setVersions(versions: {
+    curriculumVersion?: string;
+    retrievalVersion?: string;
+    promptVersion?: string;
+  }): void {
+    let changed = false;
+    if (versions.curriculumVersion && versions.curriculumVersion !== this.curriculumVersion) {
+      this.curriculumVersion = versions.curriculumVersion;
+      changed = true;
+    }
+    if (versions.retrievalVersion && versions.retrievalVersion !== this.retrievalVersion) {
+      this.retrievalVersion = versions.retrievalVersion;
+      changed = true;
+    }
+    if (versions.promptVersion && versions.promptVersion !== this.promptVersion) {
+      this.promptVersion = versions.promptVersion;
+      changed = true;
+    }
+    if (changed) {
       this.clear();
     }
+  }
+
+  public setCurriculumVersion(version: string): void {
+    this.setVersions({ curriculumVersion: version });
   }
 
   public getCurriculumVersion(): string {
     return this.curriculumVersion;
   }
 
+  public getRetrievalVersion(): string {
+    return this.retrievalVersion;
+  }
+
+  public getPromptVersion(): string {
+    return this.promptVersion;
+  }
+
   /**
-   * So'rov parametrlari asosida deterministik kesh kaliti yaratadi.
+   * So'rov parametrlari asosida 9 ta mezonli deterministik kesh kaliti yaratadi (Phase 17).
    */
   public generateKey(understanding: QueryUnderstanding, customCurriculumVersion?: string): string {
-    const version = customCurriculumVersion ?? this.curriculumVersion;
-    // Hech qanday user-specific yoki private ma'lumot qo'shilmaydi
+    const cVersion = customCurriculumVersion ?? this.curriculumVersion;
+
     const rawKey = [
-      understanding.normalized.normalized,
-      understanding.detectedLanguage,
-      understanding.detectedSubject ?? "",
-      understanding.detectedGrade ?? "",
-      understanding.detectedIntent,
+      understanding.normalizedQuery || understanding.normalized.normalized,
+      understanding.language || understanding.detectedLanguage,
+      understanding.subject || understanding.detectedSubject || "",
+      understanding.grade || understanding.detectedGrade || "",
+      understanding.intent || understanding.detectedIntent,
       understanding.audience,
-      version,
+      cVersion,
+      this.retrievalVersion,
+      this.promptVersion,
     ].join("|");
 
     return createHash("sha256").update(rawKey).digest("hex");
@@ -102,6 +139,24 @@ export class SearchLruCache {
       result,
       expiresAt: Date.now() + this.ttlMs,
     });
+  }
+
+  /**
+   * Fan bo'yicha kesh yozuvlarini bekor qilish (Invalidation Strategy)
+   */
+  public invalidateBySubject(subject: string): number {
+    let deletedCount = 0;
+    const norm = subject.toLowerCase();
+
+    for (const [key, entry] of this.cache.entries()) {
+      const entrySubject = entry.result.understanding?.detectedSubject?.toLowerCase();
+      if (entrySubject === norm) {
+        this.cache.delete(key);
+        deletedCount++;
+      }
+    }
+
+    return deletedCount;
   }
 
   public clear(): void {

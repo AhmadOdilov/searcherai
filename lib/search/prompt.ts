@@ -149,9 +149,18 @@ export function buildSearchUserPrompt(
 
   // Rasmiy o'quv dasturi kontekstini kiritish (Grounding Context)
   if (curriculumTopics && curriculumTopics.length > 0) {
+    const topMatch = curriculumTopics[0];
+    if (topMatch.isCrossGrade && topMatch.requestedGrade && topMatch.availableGrade) {
+      lines.push(
+        "",
+        `[CROSS-GRADE DIQQAT]: Foydalanuvchi ko'rsatgan ${topMatch.requestedGrade} o'quv dasturida bu mavzu mavjud emas. Mos rasmiy mavzu ${topMatch.availableGrade} dasturida topildi.`,
+        `QAT'IY KO'RSATMA: Javobingizda bu mavzu ${topMatch.requestedGrade} dasturida emas, ${topMatch.availableGrade} DTS dasturida o'qitilishini aniq ko'rsating. Buni aslo ${topMatch.requestedGrade} mavzusi deb da'vo qilmang!`,
+      );
+    }
+
     lines.push("", labels.curriculumHeader);
     for (const topic of curriculumTopics.slice(0, 2)) {
-      lines.push(`- Bo'lim: ${topic.topicName}`);
+      lines.push(`- Bo'lim: ${topic.topicName} (${topic.grade})`);
       if (topic.expectedHours) lines.push(`  Ajratilgan soat: ${topic.expectedHours}`);
       if (topic.description) {
         lines.push(`  Mavzular mazmuni: ${topic.description.slice(0, 300)}`);

@@ -72,8 +72,9 @@ model User {
   sessions       Session[]
   lessonPlans    LessonPlan[]
   presentations  Presentation[]
-  calendarPlans  CalendarPlan[]
-  aiRequests     AiRequest[]
+  calendarPlans       CalendarPlan[]
+  aiRequests          AiRequest[]
+  searchConversations SearchConversation[]
 
   @@index([createdAt])
 }
@@ -429,4 +430,33 @@ model CalendarPlan {
   @@index([userId, createdAt])
   @@index([subject, grade])
   @@index([status])
+}
+
+/// Ko'p navbatli qidiruv suhbatlari (Multi-turn Search — Phase 15).
+model SearchConversation {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  language  Language @default(UZ)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages SearchMessage[]
+
+  @@index([userId, updatedAt])
+}
+
+/// Suhbatdagi har bir xabar — savol yoki AI javobi.
+model SearchMessage {
+  id                String   @id @default(cuid())
+  conversationId    String
+  conversation      SearchConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role              String   // "user" | "assistant"
+  content           String
+  understanding     Json?
+  retrievedTopicIds String[]
+  createdAt         DateTime @default(now())
+
+  @@index([conversationId, createdAt])
 }
