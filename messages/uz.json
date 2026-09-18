@@ -784,6 +784,39 @@
       "first": "Fotosintezni 6-sinf o'quvchisiga qanday tushuntirsam bo'ladi?",
       "second": "Kasrlarni qo'shishda o'quvchilar qanday xatolarga yo'l qo'yadi?",
       "third": "Amir Temur davri haqida darsni qiziqarli boshlash uchun nima qilsam bo'ladi?"
+    },
+    "detected": {
+      "subject": "Fan",
+      "grade": "Sinf",
+      "mode": "Rejim",
+      "teacher": "O'qituvchi",
+      "student": "O'quvchi"
+    },
+    "grounding": {
+      "verifiedTitle": "Rasmiy o'quv dasturi bilan tasdiqlangan: ",
+      "generalTitle": "Umumiy pedagogik qo'llanma: ",
+      "cached": "Keshdan (0ms)"
+    },
+    "crossGrade": {
+      "title": "Sinf tafovuti aniqlandi: ",
+      "body": "Ushbu mavzu so'ralgan sinf dasturida emas, {grade} o'quv dasturida o'qitiladi."
+    },
+    "clarification": {
+      "fallbackQuestion": "So'rov noaniq bo'lishi mumkin. Qaysi fanni nazarda tutyapsiz?"
+    },
+    "curriculum": {
+      "verifiedTitle": "Rasmiy o'quv dasturi (DTS)",
+      "verifiedHint": "O'zbekiston Respublikasi maktab dasturi bo'limlari bilan moslashtirilgan",
+      "relatedTitle": "Ehtimoliy aloqador bo'limlar",
+      "relatedHint": "Bu bo'limlar so'rovingizga TO'LIQ mos kelmadi — javob rasmiy dastur bilan tasdiqlanmagan. Dasturingiz bilan solishtirib ko'ring.",
+      "hours": "{hours} soat ajratilgan",
+      "outcome": "Kutilayotgan natija:",
+      "sourceLink": "Rasmiy o'quv dasturi havolasi"
+    },
+    "actions": {
+      "title": "Tavsiya etilgan amallar",
+      "hint": "Ushbu mavzu bo'yicha to'g'ridan-to'g'ri dars materiallarini tayyorlang:",
+      "open": "Tayyorlashga o'tish"
     }
   },
   "vision": {

@@ -25,7 +25,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import type { SearchAnswer } from "@/lib/validations/search";
 import type { QueryUnderstanding } from "@/lib/search/understanding";
 import type { RankedCurriculumMatch } from "@/lib/search/curriculum-matcher";
-import type { GroundingValidationResult } from "@/lib/search/validator";
+import { isOfficiallyVerified, type GroundingValidationResult } from "@/lib/search/validator";
 import type { OrchestrationAction } from "@/lib/search/orchestration";
 import type { AdaptiveSearchStrategy } from "@/lib/search/adaptive";
 import type { SearchCostMetrics } from "@/lib/search/cost";
@@ -202,6 +202,23 @@ export function SearchPanel() {
   );
 }
 
+/**
+ * Manba havolasi faqat http(s) bo'lsa chiqariladi.
+ *
+ * Havola bazadan keladi va hozir u faqat seed skripti orqali to'ladi,
+ * lekin `javascript:` yoki `data:` sxemali qiymat UI'ga yetib bormasligi
+ * uchun tekshiruv arzon va o'rinli.
+ */
+function isSafeHttpUrl(value: string | undefined | null): value is string {
+  if (!value) return false;
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 /** Bo'sh ekrandagi namuna savollar — nimadan boshlashni ko'rsatadi. */
 const EXAMPLE_KEYS = ["first", "second", "third"] as const;
 
@@ -219,6 +236,20 @@ function AnswerView({
 
   const crossGradeMatch = curriculumMatches?.find((m) => m.isCrossGrade);
 
+  /*
+    ── TASDIQLANGANLIK YAGONA MANBADAN ANIQLANADI ──────────────────────────
+
+    V4 da yuqoridagi banner `isGrounded` ni hisobga olardi, lekin pastdagi
+    «Rasmiy o'quv dasturi (DTS)» kartasi `curriculumMatches.length > 0`
+    shartigina tekshirardi. Natijada javob TASDIQLANMAGAN bo'lsa ham
+    (ball past, qisman moslik yoki boshqa sinf) foydalanuvchi yashil
+    belgili «Rasmiy o'quv dasturi havolasi» kartasini ko'rardi va uni
+    rasmiy dalil deb qabul qilardi.
+
+    Endi bitta qiymat ikkala blokni ham boshqaradi.
+  */
+  const isVerified = isOfficiallyVerified(result.grounding, curriculumMatches?.length ?? 0);
+
   return (
     <section className="mt-8 space-y-6">
       <div>
@@ -231,16 +262,17 @@ function AnswerView({
           <div className="mt-3 flex flex-wrap gap-2 text-sm text-neutral-600">
             {understanding.detectedSubject && (
               <span className="rounded-full bg-neutral-100 px-3 py-1 font-medium text-neutral-700">
-                Fan: {understanding.detectedSubject}
+                {t("detected.subject")}: {understanding.detectedSubject}
               </span>
             )}
             {understanding.detectedGrade && (
               <span className="rounded-full bg-neutral-100 px-3 py-1 font-medium text-neutral-700">
-                Sinf: {understanding.detectedGrade}
+                {t("detected.grade")}: {understanding.detectedGrade}
               </span>
             )}
             <span className="rounded-full bg-neutral-100 px-3 py-1 text-neutral-600">
-              Rejim: {understanding.audience === "student" ? "O'quvchi" : "O'qituvchi"}
+              {t("detected.mode")}:{" "}
+              {understanding.audience === "student" ? t("detected.student") : t("detected.teacher")}
             </span>
           </div>
         )}
@@ -249,22 +281,20 @@ function AnswerView({
         {result.explanation && (
           <div
             className={`mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 rounded-lg border p-3.5 text-sm ${
-              result.grounding?.isGrounded && !result.grounding?.isAbstained && result.curriculumMatches && result.curriculumMatches.length > 0
+              isVerified
                 ? "border-emerald-200 bg-emerald-50/80 text-emerald-900"
                 : "border-sky-200 bg-sky-50/80 text-sky-950"
             }`}
           >
             <div className="flex items-start sm:items-center gap-2">
-              {result.grounding?.isGrounded && !result.grounding?.isAbstained && result.curriculumMatches && result.curriculumMatches.length > 0 ? (
+              {isVerified ? (
                 <CheckCircle2 className="mt-0.5 sm:mt-0 size-4 shrink-0 text-emerald-600" />
               ) : (
                 <Info className="mt-0.5 sm:mt-0 size-4 shrink-0 text-sky-600" />
               )}
               <div>
                 <span className="font-semibold">
-                  {result.grounding?.isGrounded && !result.grounding?.isAbstained && result.curriculumMatches && result.curriculumMatches.length > 0
-                    ? "O'quv dasturi asosliligi: "
-                    : "Umumiy pedagogik qo'llanma: "}
+                  {isVerified ? t("grounding.verifiedTitle") : t("grounding.generalTitle")}
                 </span>
                 <span>{result.explanation}</span>
               </div>
@@ -272,13 +302,15 @@ function AnswerView({
             {result.costMetrics && (
               <span
                 className={`inline-flex items-center gap-1 self-start sm:self-auto rounded bg-white px-2 py-1 text-xs font-mono border shrink-0 ${
-                  result.grounding?.isGrounded && !result.grounding?.isAbstained && result.curriculumMatches && result.curriculumMatches.length > 0
+                  isVerified
                     ? "text-emerald-800 border-emerald-200"
                     : "text-sky-800 border-sky-200"
                 }`}
               >
                 <Zap className="size-3 text-amber-500" />
-                {result.cached ? "Keshdan (0ms)" : `${result.costMetrics.totalMs.toFixed(1)}ms | ~$${result.costMetrics.estimatedCostUsd.toFixed(4)}`}
+                {result.cached
+                  ? t("grounding.cached")
+                  : `${result.costMetrics.totalMs.toFixed(1)}ms | ~$${result.costMetrics.estimatedCostUsd.toFixed(4)}`}
               </span>
             )}
           </div>
@@ -289,10 +321,9 @@ function AnswerView({
           <div className="mt-3 flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50 p-3.5 text-sm text-amber-900">
             <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600" />
             <div>
-              <span className="font-semibold">Sinf tafovuti aniqlandi: </span>
+              <span className="font-semibold">{t("crossGrade.title")}</span>
               <span>
-                Ushbu mavzu so&apos;ralgan sinf dasturida emas,{" "}
-                <strong>{crossGradeMatch.availableGrade}</strong> o&apos;quv dasturida o&apos;qitiladi.
+                {t("crossGrade.body", { grade: crossGradeMatch.availableGrade ?? "" })}
               </span>
             </div>
           </div>
@@ -307,7 +338,7 @@ function AnswerView({
                 <Info className="size-4 text-blue-600" />
                 <span>
                   {result.adaptiveStrategy.clarification.question ||
-                    "So'rov noaniq bo'lishi mumkin. Qaysi fanni nazarda tutyapsiz?"}
+                    t("clarification.fallbackQuestion")}
                 </span>
               </div>
               <div className="mt-2.5 flex flex-wrap gap-2">
@@ -393,16 +424,18 @@ function AnswerView({
           <div className="flex items-center gap-3">
             <span
               aria-hidden
-              className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary"
+              className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${
+                isVerified ? "bg-primary-soft text-primary" : "bg-neutral-100 text-neutral-500"
+              }`}
             >
               <BookOpen className="size-6" />
             </span>
             <div>
               <h3 className="text-xl font-semibold text-neutral-900">
-                Rasmiy o&apos;quv dasturi (DTS)
+                {isVerified ? t("curriculum.verifiedTitle") : t("curriculum.relatedTitle")}
               </h3>
               <p className="text-sm text-neutral-500">
-                O&apos;zbekiston Respublikasi maktab dasturi bo&apos;limlari bilan moslashtirilgan
+                {isVerified ? t("curriculum.verifiedHint") : t("curriculum.relatedHint")}
               </p>
             </div>
           </div>
@@ -417,27 +450,34 @@ function AnswerView({
                   <span className="font-semibold text-neutral-900">
                     {topic.topicName}
                   </span>
-                  {topic.expectedHours && (
+                  {/* `&&` emas, aniq taqqoslash: 0 soat React'da "0" bo'lib chiqib qolardi. */}
+                  {typeof topic.expectedHours === "number" && topic.expectedHours > 0 ? (
                     <span className="text-xs font-medium text-neutral-500">
-                      {topic.expectedHours} soat ajratilgan
+                      {t("curriculum.hours", { hours: topic.expectedHours })}
                     </span>
-                  )}
+                  ) : null}
                 </div>
                 {topic.expectedOutcomes.length > 0 && (
                   <div className="mt-2 text-sm text-neutral-600">
-                    <span className="font-medium text-neutral-700">Kutilayotgan natija:</span>{" "}
+                    <span className="font-medium text-neutral-700">{t("curriculum.outcome")}</span>{" "}
                     {topic.expectedOutcomes[0]}
                   </div>
                 )}
-                {topic.source && (
-                  <div className="mt-2 text-xs text-primary">
+                {isSafeHttpUrl(topic.source) && (
+                  <div className={`mt-2 text-xs ${isVerified ? "text-primary" : "text-neutral-500"}`}>
                     <a
                       href={topic.source}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 hover:underline"
                     >
-                      <CheckCircle2 className="size-3.5" /> Rasmiy o&apos;quv dasturi havolasi
+                      {/* Yashil "tasdiqlangan" belgisi FAQAT asoslangan javobda. */}
+                      {isVerified ? (
+                        <CheckCircle2 className="size-3.5" />
+                      ) : (
+                        <Info className="size-3.5" />
+                      )}{" "}
+                      {t("curriculum.sourceLink")}
                     </a>
                   </div>
                 )}
@@ -465,12 +505,8 @@ function AnswerView({
       {/* ── Tezkor harakatlar va Handoff (Word, PPT, Excel) ──────────────── */}
       {suggestedActions && suggestedActions.length > 0 && (
         <Card>
-          <h3 className="text-xl font-semibold text-neutral-900">
-            Tavsiya etilgan amallar
-          </h3>
-          <p className="mt-1 text-sm text-neutral-600">
-            Ushbu mavzu bo&apos;yicha to&apos;g&apos;ridan-to&apos;g&apos;ri dars materiallarini tayyorlang:
-          </p>
+          <h3 className="text-xl font-semibold text-neutral-900">{t("actions.title")}</h3>
+          <p className="mt-1 text-sm text-neutral-600">{t("actions.hint")}</p>
 
           <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {suggestedActions.map((action, idx) => {
@@ -506,7 +542,7 @@ function AnswerView({
                       size="sm"
                       fullWidth
                     >
-                      Tayyorlashga o&apos;tish
+                      {t("actions.open")}
                     </LinkButton>
                   </div>
                 </div>

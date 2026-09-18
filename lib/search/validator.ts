@@ -53,6 +53,26 @@ export interface GroundingValidationResult {
 }
 
 /**
+ * Javob RASMIY o'quv dasturi bilan tasdiqlanganmi?
+ *
+ * ── Nega alohida funksiya ────────────────────────────────────────────────
+ * V4 da bu qoida ikki joyda ALOHIDA yozilgan edi va ular bir-biriga mos
+ * emasdi: yuqoridagi banner `isGrounded` ni tekshirardi, pastdagi
+ * «Rasmiy o'quv dasturi (DTS)» kartasi esa shunchaki `matches.length > 0`
+ * ni. Natijada tasdiqlanmagan javobda ham yashil belgili rasmiy manba
+ * kartasi ko'rinardi — foydalanuvchi uni tasdiq deb qabul qilardi.
+ *
+ * Endi backend ham, UI ham AYNAN shu funksiyadan foydalanadi.
+ */
+export function isOfficiallyVerified(
+  grounding: Pick<GroundingValidationResult, "isGrounded" | "isAbstained"> | undefined,
+  curriculumMatchCount: number,
+): boolean {
+  if (!grounding) return false;
+  return grounding.isGrounded === true && grounding.isAbstained !== true && curriculumMatchCount > 0;
+}
+
+/**
  * AI javobini tahlil qiladi va fakt darajasidagi da'volarni (claims) o'quv dasturi bilan tekshiradi.
  */
 export function validateAndGroundAnswer(
@@ -62,8 +82,9 @@ export function validateAndGroundAnswer(
 ): GroundingValidationResult {
   const citations = curriculumMatches.map((m) => ({
     sourceId: m.sourceId,
-    sourceVersion: m.sourceVersion ?? "DTS-UZBMB-2025-v1",
-    curriculumYear: m.curriculumYear ?? 2025,
+    // Noma'lum bo'lsa uydirilmaydi — `undefined` qoladi.
+    sourceVersion: m.sourceVersion,
+    curriculumYear: m.curriculumYear,
     topicName: m.topicName,
     subject: m.subject,
     grade: m.grade,
