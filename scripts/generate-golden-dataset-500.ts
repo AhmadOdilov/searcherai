@@ -2176,7 +2176,65 @@ const INTENT_SUFFIXES_UZ: Partial<Record<SearchIntent, string[]>> = {
   summary: ["qisqacha mazmuni", "xulosasi"],
   activity: ["faoliyat turi", "mashg'ulot"],
   experiment: ["laboratoriya tajribasi", "tajriba o'tkazish"],
-  translation: ["tarjimasi", "atamasi"]
+  translation: ["tarjimasi", "atamasi"],
+};
+
+const INTENT_SUFFIXES_RU: Partial<Record<SearchIntent, string[]>> = {
+  explain: ["объяснение", "как объяснить"],
+  definition: ["определение и формула", "что такое", "правила"],
+  lesson_plan: ["план урока", "поурочные разработки", "конспект урока"],
+  presentation: ["презентация", "слайды"],
+  quiz_test: ["тесты", "вопросы к уроку"],
+  worksheet: ["упражнения", "раздаточный материал"],
+  curriculum: ["учебная программа", "распределение часов"],
+  compare: ["сравнение и разница", "разница между"],
+  example: ["примеры с решением", "задачи с решениями"],
+  homework: ["домашнее задание", "самостоятельная работа"],
+  classroom_activity: ["методика", "игры на уроке", "лабораторная работа"],
+  exam_prep: ["подготовка к экзаменам", "олимпиадные задачи"],
+  topic_search: ["тема урока", "обзор темы"],
+};
+
+const INTENT_SUFFIXES_EN: Partial<Record<SearchIntent, string[]>> = {
+  explain: ["explanation", "how to explain"],
+  definition: ["definition and formula", "what is", "rules"],
+  lesson_plan: ["lesson plan", "teaching plan", "lesson notes"],
+  presentation: ["presentation slides", "slides"],
+  quiz_test: ["quiz test questions", "quiz"],
+  worksheet: ["worksheet exercises", "worksheet"],
+  curriculum: ["curriculum syllabus", "hours distribution"],
+  compare: ["comparison and differences", "difference between"],
+  example: ["examples with solutions", "worked examples"],
+  homework: ["homework assignments", "homework"],
+  classroom_activity: ["classroom activity", "teaching method"],
+  exam_prep: ["exam prep", "olympiad problems"],
+  topic_search: ["topic overview", "topic material"],
+};
+
+const SUBJ_RU: Record<string, string> = {
+  Matematika: "математика",
+  "Ona tili": "узбекский язык",
+  Adabiyot: "литература",
+  Fizika: "физика",
+  Kimyo: "химия",
+  Biologiya: "биология",
+  Tarix: "история",
+  Geografiya: "география",
+  Informatika: "информатика",
+  "Ingliz tili": "английский язык",
+};
+
+const SUBJ_EN: Record<string, string> = {
+  Matematika: "mathematics",
+  "Ona tili": "Uzbek language",
+  Adabiyot: "literature",
+  Fizika: "physics",
+  Kimyo: "chemistry",
+  Biologiya: "biology",
+  Tarix: "history",
+  Geografiya: "geography",
+  Informatika: "computer science",
+  "Ingliz tili": "English language",
 };
 
 // Generate queries until we reach 500
@@ -2188,8 +2246,6 @@ while (DATASET_500.length < 500) {
   const topics = TOPIC_SEEDS[currentSubj];
   const t = topics[DATASET_500.length % topics.length];
   const intent = INTENTS[DATASET_500.length % INTENTS.length];
-  const intentSuffixes = INTENT_SUFFIXES_UZ[intent] || ["tushuntir"];
-  const suffix = intentSuffixes[DATASET_500.length % intentSuffixes.length];
 
   const id = `gen-${String(queryCounter).padStart(3, "0")}`;
   queryCounter++;
@@ -2198,6 +2254,8 @@ while (DATASET_500.length < 500) {
   const mod = DATASET_500.length % 10;
   if (mod < 6) {
     // Uzbek
+    const intentSuffixes = INTENT_SUFFIXES_UZ[intent] || ["tushuntir"];
+    const suffix = intentSuffixes[DATASET_500.length % intentSuffixes.length];
     DATASET_500.push({
       id,
       q: `${t.grade} ${currentSubj.toLowerCase()} ${t.topicUz} ${suffix}`,
@@ -2208,13 +2266,16 @@ while (DATASET_500.length < 500) {
       expectedAudience: intent === "explain" && mod === 0 ? "student" : "teacher",
       difficulty: mod % 3 === 0 ? "easy" : mod % 3 === 1 ? "medium" : "hard",
       category: "generated_balanced",
-      isUnsupportedSubject: currentSubj !== "Matematika" && currentSubj !== "Ona tili"
+      isUnsupportedSubject: currentSubj !== "Matematika" && currentSubj !== "Ona tili",
     });
   } else if (mod < 8) {
     // Russian
+    const ruSubj = SUBJ_RU[currentSubj] || currentSubj.toLowerCase();
+    const ruSuffixes = INTENT_SUFFIXES_RU[intent] || ["объяснение"];
+    const suffix = ruSuffixes[DATASET_500.length % ruSuffixes.length];
     DATASET_500.push({
       id,
-      q: `${t.grade.replace("-sinf", " класс")} ${currentSubj.toLowerCase()} ${t.topicRu} ${intent === "presentation" ? "презентация" : intent === "quiz_test" ? "тесты" : intent === "lesson_plan" ? "план урока" : "объяснение"}`,
+      q: `${t.grade.replace("-sinf", " класс")} ${ruSubj} ${t.topicRu} ${suffix}`,
       expectedLanguage: "RU",
       expectedSubject: currentSubj,
       expectedGrade: t.grade,
@@ -2222,13 +2283,16 @@ while (DATASET_500.length < 500) {
       expectedAudience: "teacher",
       difficulty: "medium",
       category: "generated_balanced",
-      isUnsupportedSubject: currentSubj !== "Matematika" && currentSubj !== "Ona tili"
+      isUnsupportedSubject: currentSubj !== "Matematika" && currentSubj !== "Ona tili",
     });
   } else {
     // English
+    const enSubj = SUBJ_EN[currentSubj] || currentSubj.toLowerCase();
+    const enSuffixes = INTENT_SUFFIXES_EN[intent] || ["explanation"];
+    const suffix = enSuffixes[DATASET_500.length % enSuffixes.length];
     DATASET_500.push({
       id,
-      q: `grade ${t.grade.replace("-sinf", "")} ${currentSubj.toLowerCase()} ${t.topicEn} ${intent === "presentation" ? "slides" : intent === "quiz_test" ? "quiz" : intent === "lesson_plan" ? "lesson plan" : "explanation"}`,
+      q: `grade ${t.grade.replace("-sinf", "")} ${enSubj} ${t.topicEn} ${suffix}`,
       expectedLanguage: "EN",
       expectedSubject: currentSubj,
       expectedGrade: t.grade,
@@ -2236,7 +2300,7 @@ while (DATASET_500.length < 500) {
       expectedAudience: "teacher",
       difficulty: "medium",
       category: "generated_balanced",
-      isUnsupportedSubject: currentSubj !== "Matematika" && currentSubj !== "Ona tili"
+      isUnsupportedSubject: currentSubj !== "Matematika" && currentSubj !== "Ona tili",
     });
   }
 

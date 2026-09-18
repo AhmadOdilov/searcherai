@@ -1,0 +1,134 @@
+{
+  "timestamp": "2026-09-18T12:10:59.803Z",
+  "totalQueries": 500,
+  "understanding": {
+    "languageAccuracy": 100,
+    "subjectAccuracy": 95.71,
+    "gradeAccuracy": 100,
+    "intentAccuracy": 91.2,
+    "audienceAccuracy": 90,
+    "ambiguityAccuracy": 100,
+    "byDifficulty": {
+      "easy": {
+        "total": 82,
+        "correct": 65,
+        "accuracy": 79.27
+      },
+      "medium": {
+        "total": 290,
+        "correct": 241,
+        "accuracy": 83.1
+      },
+      "hard": {
+        "total": 113,
+        "correct": 94,
+        "accuracy": 83.19
+      },
+      "adversarial": {
+        "total": 15,
+        "correct": 5,
+        "accuracy": 33.33
+      }
+    },
+    "byLanguage": {
+      "UZ": {
+        "total": 341,
+        "correct": 276,
+        "accuracy": 80.94
+      },
+      "RU": {
+        "total": 81,
+        "correct": 65,
+        "accuracy": 80.25
+      },
+      "EN": {
+        "total": 78,
+        "correct": 64,
+        "accuracy": 82.05
+      }
+    }
+  },
+  "retrieval": {
+    "evaluatedQueries": 66,
+    "recall1": 59.09,
+    "recall3": 69.7,
+    "recall5": 74.24,
+    "mrr": 0.6477,
+    "ndcg5": 0.6715
+  },
+  "grounding": {
+    "totalClaims": 330,
+    "supportedClaimRate": 86.97,
+    "contradictionRate": 0,
+    "unsupportedClaimRate": 13.03
+  },
+  "latency": {
+    "coldAvgMs": 10.12,
+    "p50Ms": 1.91,
+    "p95Ms": 17.76,
+    "p99Ms": 426.66,
+    "cacheHitAvgMs": 0.0004
+  },
+  "ablationStudy": [
+    {
+      "config": "Config A",
+      "description": "Exact Match Only (Title SQL LIKE)",
+      "recall1": 3.03,
+      "recall3": 3.03,
+      "recall5": 3.03,
+      "mrr": 0.0303,
+      "ndcg5": 0.0303,
+      "avgLatencyMs": 0.71
+    },
+    {
+      "config": "Config B",
+      "description": "Lexical Only (BM25-style keyword overlap)",
+      "recall1": 9.09,
+      "recall3": 15.15,
+      "recall5": 22.73,
+      "mrr": 0.1361,
+      "ndcg5": 0.1585,
+      "avgLatencyMs": 3.39
+    },
+    {
+      "config": "Config C",
+      "description": "Semantic Only (Subword vector embeddings)",
+      "recall1": 13.64,
+      "recall3": 16.67,
+      "recall5": 18.18,
+      "mrr": 0.1553,
+      "ndcg5": 0.162,
+      "avgLatencyMs": 3.88
+    },
+    {
+      "config": "Config D",
+      "description": "Hybrid (Exact + Lexical + Semantic)",
+      "recall1": 6.06,
+      "recall3": 34.85,
+      "recall5": 71.21,
+      "mrr": 0.251,
+      "ndcg5": 0.3631,
+      "avgLatencyMs": 0.76
+    },
+    {
+      "config": "Config E",
+      "description": "Hybrid + Reranker (Rank Fusion without Expansion)",
+      "recall1": 59.09,
+      "recall3": 69.7,
+      "recall5": 74.24,
+      "mrr": 0.6477,
+      "ndcg5": 0.6715,
+      "avgLatencyMs": 2.42
+    },
+    {
+      "config": "Config F",
+      "description": "Hybrid + Reranker + Query Expansion (Full V3 Pipeline)",
+      "recall1": 59.09,
+      "recall3": 69.7,
+      "recall5": 74.24,
+      "mrr": 0.6477,
+      "ndcg5": 0.6715,
+      "avgLatencyMs": 2.5
+    }
+  ]
+}

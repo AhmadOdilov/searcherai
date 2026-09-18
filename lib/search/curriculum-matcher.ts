@@ -6,7 +6,7 @@ import type { CurriculumMatch } from "@/lib/curriculum/service";
 import { stemUzbekWord, getApostropheVariants } from "./normalization";
 import { expandQueryConcepts } from "./concept-map";
 import { rewriteQueryForRetrieval } from "./rewrite";
-import { rerankCandidates } from "./reranker";
+import { rerankCandidates, type RerankerCandidate } from "./reranker";
 
 /**
  * Darajalangan o'quv dasturi bo'limi natijasi va to'liq manba provenansi (Phase 12).
@@ -143,34 +143,61 @@ export async function matchCurriculumTopics(
   ]);
 
   // 2. Birinchi bosqich — so'ralgan sinf va fandan qidirish
-  const primaryWhere: Record<string, unknown> = {};
-  if (detectedSubject) {
-    primaryWhere.subject = { equals: detectedSubject, mode: "insensitive" };
-  }
-  if (detectedGrade) {
-    primaryWhere.grade = { equals: detectedGrade, mode: "insensitive" };
-  }
-  if (orClauses.length > 0) {
-    primaryWhere.OR = orClauses;
+  let candidates: RerankerCandidate[] = [];
+
+  if (detectedSubject && detectedGrade) {
+    // Agar fan va sinf ma'lum bo'lsa, shu sinf/fanning barcha mavzulari (odatda 10-30 ta)
+    // to'liq olinadi. Bu SQL LIKE dagi nozikliklar (masalan xatolar vs xatoliklar)
+    // sababli haqiqiy mavzular tushib qolishini butkul yo'qotadi.
+    candidates = await prisma.curriculumTopic.findMany({
+      where: {
+        subject: { equals: detectedSubject, mode: "insensitive" },
+        grade: { equals: detectedGrade, mode: "insensitive" },
+      },
+      take: 50,
+      select: {
+        id: true,
+        topicName: true,
+        description: true,
+        expectedHours: true,
+        expectedOutcomes: true,
+        source: true,
+        subject: true,
+        grade: true,
+      },
+    });
   }
 
-  const candidates = await prisma.curriculumTopic.findMany({
-    where: primaryWhere,
-    take: 15,
-    select: {
-      id: true,
-      topicName: true,
-      description: true,
-      expectedHours: true,
-      expectedOutcomes: true,
-      source: true,
-      subject: true,
-      grade: true,
-    },
-  });
+  // Agar aniq fan/sinf bo'yicha topilmasa yoki fan/sinf noaniq bo'lsa:
+  if (candidates.length === 0) {
+    const primaryWhere: Record<string, unknown> = {};
+    if (detectedSubject) {
+      primaryWhere.subject = { equals: detectedSubject, mode: "insensitive" };
+    }
+    if (detectedGrade) {
+      primaryWhere.grade = { equals: detectedGrade, mode: "insensitive" };
+    }
+    if (orClauses.length > 0) {
+      primaryWhere.OR = orClauses;
+    }
+
+    candidates = await prisma.curriculumTopic.findMany({
+      where: primaryWhere,
+      take: 40,
+      select: {
+        id: true,
+        topicName: true,
+        description: true,
+        expectedHours: true,
+        expectedOutcomes: true,
+        source: true,
+        subject: true,
+        grade: true,
+      },
+    });
+  }
 
   // 3. Hard Filtering (Phase 7): Obvious wrong candidatesni chiqarish
-  // Agar so'ralgan sinfda nomzodlar mavjud bo'lsa, boshqa sinflar mutlaqo aralashmaydi
   let effectiveCandidates = candidates;
   if (detectedGrade) {
     const exactGradeCandidates = candidates.filter(

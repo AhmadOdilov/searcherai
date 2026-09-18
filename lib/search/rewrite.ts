@@ -29,10 +29,17 @@ export function rewriteQueryForRetrieval(
   understanding: QueryUnderstanding,
   maxRepresentations: number = 4,
 ): QueryRewriteResult {
-  const originalQuery = understanding.normalizedQuery || understanding.topic;
-  const topic = understanding.topic || understanding.extractedTopic;
-  const grade = understanding.grade || understanding.detectedGrade;
-  const subject = understanding.subject || understanding.detectedSubject;
+  const rawTopic = understanding.topic || understanding.extractedTopic;
+  const topic = typeof rawTopic === "string" ? rawTopic : "";
+  const rawGrade = understanding.grade || understanding.detectedGrade;
+  const grade = typeof rawGrade === "string" ? rawGrade : "";
+  const rawSubject = understanding.subject || understanding.detectedSubject;
+  const subject = typeof rawSubject === "string" ? rawSubject : "";
+
+  const originalQuery =
+    (typeof understanding.normalizedQuery === "string" && understanding.normalizedQuery) ||
+    topic ||
+    "";
 
   // 1. Kanonik o'zbekcha ko'rinish
   const canonicalParts: string[] = [];
@@ -49,7 +56,7 @@ export function rewriteQueryForRetrieval(
   const lowerQuery = originalQuery.toLowerCase();
 
   for (const concept of CANONICAL_CONCEPTS) {
-    if (subject && concept.subject.toLowerCase() !== subject.toLowerCase()) {
+    if (subject && typeof concept.subject === "string" && concept.subject.toLowerCase() !== subject.toLowerCase()) {
       continue;
     }
 

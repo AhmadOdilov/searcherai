@@ -14,19 +14,23 @@ import { validateAndGroundAnswer, type GroundingValidationResult } from "./valid
 import { buildOrchestrationActions, type OrchestrationAction } from "./orchestration";
 import { searchCache } from "./cache";
 import { createLogger } from "@/lib/observability/log";
+import { determineAdaptiveStrategy, type AdaptiveSearchStrategy } from "./adaptive";
+import { calculateSearchCost, type SearchCostMetrics } from "./cost";
 
 const searchLog = createLogger("search");
 
 /**
- * AI qidiruv — biznes mantiq qatlami (Intelligence V2).
+ * AI qidiruv — biznes mantiq qatlami (Intelligence V3).
  *
  * Pipeline bosqichlari:
  *  1. UNDERSTAND: normalizatsiya, til, fan (disambiguation bilan), sinf, intent confidence, auditoriya tahlili.
- *  2. CACHE CHECK: agar ayni so'rov keshda mavjud bo'lsa, DB va AI chaqirilmasdan darhol qaytariladi (0ms DB).
- *  3. RETRIEVE & RANK: rasmiy o'quv dasturidan (CurriculumTopic) gibrid qidiruv, cross-lingual moslik va provenans.
- *  4. GENERATE: o'quv dasturi bilan boyitilgan, auditoriya va intentga mos prompt asosida AI javobini generatsiya qilish.
- *  5. VALIDATE & GROUND: da'volarni tekshirish (claims), soat/sinf ziddiyatlari va gallyutsinatsiya filtri.
- *  6. ORCHESTRATE: dars ishlanma (Word), prezentatsiya (PPT) yoki taqvim rejaga (Excel) dinamik o'tish harakatlari.
+ *  2. ADAPTIVE ROUTE: so'rov murakkabligini aniqlash va qidiruv chuqurligini moslash (Phase 20).
+ *  3. CACHE CHECK: agar ayni so'rov keshda mavjud bo'lsa, DB va AI chaqirilmasdan darhol qaytariladi (0ms DB).
+ *  4. RETRIEVE & RANK: gibrid qidiruv, cross-lingual moslik, reranker va provenans.
+ *  5. GENERATE: o'quv dasturi bilan boyitilgan, auditoriya va intentga mos prompt asosida AI javobini generatsiya qilish.
+ *  6. VALIDATE & GROUND: da'volarni tekshirish (claims), soat/sinf ziddiyatlari va gallyutsinatsiya filtri.
+ *  7. EXPLAIN & COST: xavfsiz izoh va token/xarajat monitoringini hisoblash.
+ *  8. ORCHESTRATE: dars ishlanma (Word), prezentatsiya (PPT) yoki taqvim rejaga (Excel) dinamik o'tish harakatlari.
  */
 
 export interface SearchLatencyBreakdown {
@@ -49,6 +53,9 @@ export interface SearchResult {
   latencyBreakdown: SearchLatencyBreakdown;
   model: string;
   usage: AiUsage;
+  explanation?: string;
+  adaptiveStrategy?: AdaptiveSearchStrategy;
+  costMetrics?: SearchCostMetrics;
 }
 
 export async function runSearch(
@@ -68,13 +75,28 @@ export async function runSearch(
   );
   const understandingMs = Date.now() - tUnderstandStart;
 
-  // 2. CACHE CHECK (DB va AIdan oldin tekshiriladi — optimal latency)
+  // 2. ADAPTIVE STRATEGY (Phase 20 & 21)
+  const adaptiveStrategy = determineAdaptiveStrategy(understanding);
+
+  // 3. CACHE CHECK (DB va AIdan oldin tekshiriladi — optimal latency)
   const cacheKey = searchCache.generateKey(understanding);
   const cachedResult = searchCache.get(cacheKey);
   if (cachedResult) {
+    const costMetrics = calculateSearchCost({
+      cached: true,
+      inputTokens: cachedResult.usage.inputTokens,
+      outputTokens: cachedResult.usage.outputTokens,
+      model: cachedResult.model,
+      retrievalMs: 0,
+      generationMs: 0,
+      totalMs: Date.now() - startTime,
+    });
+
     return {
       ...cachedResult,
       cached: true,
+      adaptiveStrategy,
+      costMetrics,
       durationMs: Date.now() - startTime,
       latencyBreakdown: {
         understandingMs,
@@ -86,12 +108,12 @@ export async function runSearch(
     };
   }
 
-  // 3. RETRIEVE & RANK (O'quv dasturi bilan boyitish)
+  // 4. RETRIEVE & RANK (O'quv dasturi bilan boyitish — Adaptive Depth)
   const tRetrievalStart = Date.now();
-  const curriculumMatches = await matchCurriculumTopics(understanding, 3);
+  const curriculumMatches = await matchCurriculumTopics(understanding, adaptiveStrategy.finalLimit);
   const retrievalMs = Date.now() - tRetrievalStart;
 
-  // 4. GENERATE (AI chaqiruvi)
+  // 5. GENERATE (AI chaqiruvi)
   const tAiStart = Date.now();
   const { data, meta } = await generateJson({
     schema: searchAnswerSchema,
@@ -101,7 +123,7 @@ export async function runSearch(
   });
   const aiMs = Date.now() - tAiStart;
 
-  // 5. VALIDATE & GROUND (Faktlar va da'volar tekshiruvi)
+  // 6. VALIDATE & GROUND (Faktlar va da'volar tekshiruvi)
   const tValStart = Date.now();
   const grounding = validateAndGroundAnswer(data, understanding, curriculumMatches);
 
@@ -112,10 +134,29 @@ export async function runSearch(
   };
   const validationMs = Date.now() - tValStart;
 
-  // 6. ORCHESTRATE (Word, PPT, Excel handoff)
-  const suggestedActions = buildOrchestrationActions(understanding);
+  // 7. EXPLANATION & COST INTELLIGENCE (Phase 19 & 24)
+  let explanation = "Javob umumiy metodik tavsiyalar asosida tayyorlandi.";
+  if (curriculumMatches.length > 0) {
+    const top = curriculumMatches[0];
+    explanation = top.isCrossGrade && top.requestedGrade && top.availableGrade
+      ? `Bu javob ${top.availableGrade} ${top.subject} o'quv dasturidagi «${top.topicName}» mavzusiga asoslandi (so'ralgan: ${top.requestedGrade}).`
+      : `Bu javob ${top.grade} ${top.subject} o'quv dasturidagi «${top.topicName}» mavzusiga asoslandi.`;
+  }
 
   const totalMs = Date.now() - startTime;
+
+  const costMetrics = calculateSearchCost({
+    cached: false,
+    inputTokens: meta.usage.inputTokens,
+    outputTokens: meta.usage.outputTokens,
+    model: meta.model,
+    retrievalMs,
+    generationMs: aiMs,
+    totalMs,
+  });
+
+  // 8. ORCHESTRATE (Word, PPT, Excel handoff)
+  const suggestedActions = buildOrchestrationActions(understanding);
 
   const finalResult: SearchResult = {
     answer: finalAnswer,
@@ -123,6 +164,9 @@ export async function runSearch(
     curriculumMatches,
     grounding,
     suggestedActions,
+    explanation,
+    adaptiveStrategy,
+    costMetrics,
     durationMs: totalMs,
     latencyBreakdown: {
       understandingMs,

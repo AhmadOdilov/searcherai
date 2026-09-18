@@ -116,16 +116,28 @@ export const CANONICAL_CONCEPTS: ConceptDefinition[] = [
     relatedConcepts: ["nafas olish", "o'simlik", "hujayra"],
   },
   {
-    conceptKey: "parts_of_speech",
+    conceptKey: "mustaqil_parts_of_speech",
     subject: "Ona tili",
     grades: ["5-sinf", "6-sinf", "7-sinf"],
-    canonicalUz: "so'z turkumlari",
-    canonicalRu: "части речи",
-    canonicalEn: "parts of speech",
-    aliasesUz: ["so'z turkumi", "ot", "sifat", "fe'l", "ravish", "olmosh", "son so'z", "bog'lovchi", "ko'makchi"],
-    aliasesRu: ["части речи", "существительное", "прилагательное", "глагол", "наречие", "местоимение", "предлог"],
-    aliasesEn: ["parts of speech", "noun", "verb", "adjective", "adverb", "pronoun", "preposition"],
+    canonicalUz: "mustaqil so'z turkumlari",
+    canonicalRu: "самостоятельные части речи",
+    canonicalEn: "content parts of speech",
+    aliasesUz: ["mustaqil so'z", "so'z turkumi", "ot", "sifat", "fe'l", "ravish", "olmosh", "son so'z", "fe'l zamonlari"],
+    aliasesRu: ["самостоятельные части речи", "существительное", "прилагательное", "глагол", "наречие", "местоимение"],
+    aliasesEn: ["content words", "noun", "verb", "adjective", "adverb", "pronoun", "tenses"],
     relatedConcepts: ["morfologiya", "gap bo'laklari"],
+  },
+  {
+    conceptKey: "yordamchi_parts_of_speech",
+    subject: "Ona tili",
+    grades: ["5-sinf", "6-sinf", "7-sinf"],
+    canonicalUz: "yordamchi so'z turkumlari",
+    canonicalRu: "служебные части речи",
+    canonicalEn: "function parts of speech",
+    aliasesUz: ["yordamchi so'z", "bog'lovchi", "ko'makchi", "yuklama"],
+    aliasesRu: ["служебные части речи", "предлог", "союз", "частица"],
+    aliasesEn: ["function words", "preposition", "conjunction", "particle"],
+    relatedConcepts: ["morfologiya"],
   },
   {
     conceptKey: "sentences_syntax",
@@ -205,7 +217,12 @@ export function expandQueryConcepts(
   const expanded = new Set<string>();
 
   for (const concept of CANONICAL_CONCEPTS) {
-    if (subject && concept.subject.toLowerCase() !== subject.toLowerCase()) {
+    if (
+      subject &&
+      typeof subject === "string" &&
+      typeof concept.subject === "string" &&
+      concept.subject.toLowerCase() !== subject.toLowerCase()
+    ) {
       continue;
     }
 

@@ -1972,7 +1972,7 @@
   },
   {
     "id": "gen-167",
-    "q": "2 класс ona tili слова и предложения объяснение",
+    "q": "2 класс узбекский язык слова и предложения игры на уроке",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "2-sinf",
@@ -1984,7 +1984,7 @@
   },
   {
     "id": "gen-168",
-    "q": "11 класс adabiyot современная узбекская поэзия объяснение",
+    "q": "11 класс литература современная узбекская поэзия олимпиадные задачи",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "11-sinf",
@@ -1996,7 +1996,7 @@
   },
   {
     "id": "gen-169",
-    "q": "grade 6 fizika mass and density explanation",
+    "q": "grade 6 physics mass and density topic overview",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "6-sinf",
@@ -2008,7 +2008,7 @@
   },
   {
     "id": "gen-170",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates how to explain",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -2092,7 +2092,7 @@
   },
   {
     "id": "gen-177",
-    "q": "1 класс ona tili алфавит и звуки объяснение",
+    "q": "1 класс узбекский язык алфавит и звуки сравнение и разница",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "1-sinf",
@@ -2104,7 +2104,7 @@
   },
   {
     "id": "gen-178",
-    "q": "7 класс adabiyot исторические произведения объяснение",
+    "q": "7 класс литература исторические произведения задачи с решениями",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "7-sinf",
@@ -2116,7 +2116,7 @@
   },
   {
     "id": "gen-179",
-    "q": "grade 10 fizika laws of thermodynamics explanation",
+    "q": "grade 10 physics laws of thermodynamics homework assignments",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "10-sinf",
@@ -2128,7 +2128,7 @@
   },
   {
     "id": "gen-180",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates teaching method",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -2212,7 +2212,7 @@
   },
   {
     "id": "gen-187",
-    "q": "11 класс ona tili анализ текста тесты",
+    "q": "11 класс узбекский язык анализ текста тесты",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "11-sinf",
@@ -2224,7 +2224,7 @@
   },
   {
     "id": "gen-188",
-    "q": "10 класс adabiyot узбекская проза XX века объяснение",
+    "q": "10 класс литература узбекская проза XX века раздаточный материал",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "10-sinf",
@@ -2236,7 +2236,7 @@
   },
   {
     "id": "gen-189",
-    "q": "grade 8 fizika electric circuit and Ohm's law explanation",
+    "q": "grade 8 physics electric circuit and Ohm's law curriculum syllabus",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "8-sinf",
@@ -2248,7 +2248,7 @@
   },
   {
     "id": "gen-190",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates difference between",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -2332,7 +2332,7 @@
   },
   {
     "id": "gen-197",
-    "q": "10 класс ona tili культура речи и стилистика объяснение",
+    "q": "10 класс узбекский язык культура речи и стилистика что такое",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "10-sinf",
@@ -2344,7 +2344,7 @@
   },
   {
     "id": "gen-198",
-    "q": "6 класс adabiyot рубаи Навои и Бабура план урока",
+    "q": "6 класс литература рубаи Навои и Бабура конспект урока",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "6-sinf",
@@ -2356,7 +2356,7 @@
   },
   {
     "id": "gen-199",
-    "q": "grade 6 fizika mass and density slides",
+    "q": "grade 6 physics mass and density presentation slides",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "6-sinf",
@@ -2368,7 +2368,7 @@
   },
   {
     "id": "gen-200",
-    "q": "grade 11 kimyo proteins lipids carbohydrates quiz",
+    "q": "grade 11 chemistry proteins lipids carbohydrates quiz",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -2452,7 +2452,7 @@
   },
   {
     "id": "gen-207",
-    "q": "9 класс ona tili сложные предложения объяснение",
+    "q": "9 класс узбекский язык сложные предложения подготовка к экзаменам",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "9-sinf",
@@ -2464,7 +2464,7 @@
   },
   {
     "id": "gen-208",
-    "q": "9 класс adabiyot мировая классическая литература объяснение",
+    "q": "9 класс литература мировая классическая литература обзор темы",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "9-sinf",
@@ -2476,7 +2476,7 @@
   },
   {
     "id": "gen-209",
-    "q": "grade 10 fizika laws of thermodynamics explanation",
+    "q": "grade 10 physics laws of thermodynamics explanation",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "10-sinf",
@@ -2488,7 +2488,7 @@
   },
   {
     "id": "gen-210",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates rules",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -2572,7 +2572,7 @@
   },
   {
     "id": "gen-217",
-    "q": "8 класс ona tili синтаксис простого предложения объяснение",
+    "q": "8 класс узбекский язык синтаксис простого предложения примеры с решением",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "8-sinf",
@@ -2584,7 +2584,7 @@
   },
   {
     "id": "gen-218",
-    "q": "5 класс adabiyot сказки и пословицы объяснение",
+    "q": "5 класс литература сказки и пословицы самостоятельная работа",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "5-sinf",
@@ -2596,7 +2596,7 @@
   },
   {
     "id": "gen-219",
-    "q": "grade 8 fizika electric circuit and Ohm's law explanation",
+    "q": "grade 8 physics electric circuit and Ohm's law classroom activity",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "8-sinf",
@@ -2608,7 +2608,7 @@
   },
   {
     "id": "gen-220",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates olympiad problems",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -2692,7 +2692,7 @@
   },
   {
     "id": "gen-227",
-    "q": "7 класс ona tili глаголы и наречия объяснение",
+    "q": "7 класс узбекский язык глаголы и наречия упражнения",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "7-sinf",
@@ -2704,7 +2704,7 @@
   },
   {
     "id": "gen-228",
-    "q": "8 класс adabiyot литература джадидизма объяснение",
+    "q": "8 класс литература литература джадидизма распределение часов",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "8-sinf",
@@ -2716,7 +2716,7 @@
   },
   {
     "id": "gen-229",
-    "q": "grade 6 fizika mass and density explanation",
+    "q": "grade 6 physics mass and density comparison and differences",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "6-sinf",
@@ -2728,7 +2728,7 @@
   },
   {
     "id": "gen-230",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates worked examples",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -2812,7 +2812,7 @@
   },
   {
     "id": "gen-237",
-    "q": "6 класс ona tili части речи план урока",
+    "q": "6 класс узбекский язык части речи конспект урока",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "6-sinf",
@@ -2824,7 +2824,7 @@
   },
   {
     "id": "gen-238",
-    "q": "11 класс adabiyot современная узбекская поэзия презентация",
+    "q": "11 класс литература современная узбекская поэзия слайды",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "11-sinf",
@@ -2836,7 +2836,7 @@
   },
   {
     "id": "gen-239",
-    "q": "grade 10 fizika laws of thermodynamics quiz",
+    "q": "grade 10 physics laws of thermodynamics quiz test questions",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "10-sinf",
@@ -2848,7 +2848,7 @@
   },
   {
     "id": "gen-240",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates worksheet",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -2932,7 +2932,7 @@
   },
   {
     "id": "gen-247",
-    "q": "5 класс ona tili фонетика и графика объяснение",
+    "q": "5 класс узбекский язык фонетика и графика тема урока",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "5-sinf",
@@ -2944,7 +2944,7 @@
   },
   {
     "id": "gen-248",
-    "q": "7 класс adabiyot исторические произведения объяснение",
+    "q": "7 класс литература исторические произведения как объяснить",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "7-sinf",
@@ -2956,7 +2956,7 @@
   },
   {
     "id": "gen-249",
-    "q": "grade 8 fizika electric circuit and Ohm's law explanation",
+    "q": "grade 8 physics electric circuit and Ohm's law rules",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "8-sinf",
@@ -2968,7 +2968,7 @@
   },
   {
     "id": "gen-250",
-    "q": "grade 11 kimyo proteins lipids carbohydrates lesson plan",
+    "q": "grade 11 chemistry proteins lipids carbohydrates lesson plan",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -3052,7 +3052,7 @@
   },
   {
     "id": "gen-257",
-    "q": "4 класс ona tili существительное и прилагательное объяснение",
+    "q": "4 класс узбекский язык существительное и прилагательное домашнее задание",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "4-sinf",
@@ -3064,7 +3064,7 @@
   },
   {
     "id": "gen-258",
-    "q": "10 класс adabiyot узбекская проза XX века объяснение",
+    "q": "10 класс литература узбекская проза XX века лабораторная работа",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "10-sinf",
@@ -3076,7 +3076,7 @@
   },
   {
     "id": "gen-259",
-    "q": "grade 6 fizika mass and density explanation",
+    "q": "grade 6 physics mass and density exam prep",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "6-sinf",
@@ -3088,7 +3088,7 @@
   },
   {
     "id": "gen-260",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates topic material",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -3172,7 +3172,7 @@
   },
   {
     "id": "gen-267",
-    "q": "3 класс ona tili корень и суффиксы объяснение",
+    "q": "3 класс узбекский язык корень и суффиксы учебная программа",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "3-sinf",
@@ -3184,7 +3184,7 @@
   },
   {
     "id": "gen-268",
-    "q": "6 класс adabiyot рубаи Навои и Бабура объяснение",
+    "q": "6 класс литература рубаи Навои и Бабура разница между",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "6-sinf",
@@ -3196,7 +3196,7 @@
   },
   {
     "id": "gen-269",
-    "q": "grade 10 fizika laws of thermodynamics explanation",
+    "q": "grade 10 physics laws of thermodynamics examples with solutions",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "10-sinf",
@@ -3208,7 +3208,7 @@
   },
   {
     "id": "gen-270",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates homework",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -3292,7 +3292,7 @@
   },
   {
     "id": "gen-277",
-    "q": "2 класс ona tili слова и предложения презентация",
+    "q": "2 класс узбекский язык слова и предложения презентация",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "2-sinf",
@@ -3304,7 +3304,7 @@
   },
   {
     "id": "gen-278",
-    "q": "9 класс adabiyot мировая классическая литература тесты",
+    "q": "9 класс литература мировая классическая литература вопросы к уроку",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "9-sinf",
@@ -3316,7 +3316,7 @@
   },
   {
     "id": "gen-279",
-    "q": "grade 8 fizika electric circuit and Ohm's law explanation",
+    "q": "grade 8 physics electric circuit and Ohm's law worksheet exercises",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "8-sinf",
@@ -3328,7 +3328,7 @@
   },
   {
     "id": "gen-280",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates hours distribution",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -3412,7 +3412,7 @@
   },
   {
     "id": "gen-287",
-    "q": "1 класс ona tili алфавит и звуки объяснение",
+    "q": "1 класс узбекский язык алфавит и звуки объяснение",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "1-sinf",
@@ -3424,7 +3424,7 @@
   },
   {
     "id": "gen-288",
-    "q": "5 класс adabiyot сказки и пословицы объяснение",
+    "q": "5 класс литература сказки и пословицы правила",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "5-sinf",
@@ -3436,7 +3436,7 @@
   },
   {
     "id": "gen-289",
-    "q": "grade 6 fizika mass and density lesson plan",
+    "q": "grade 6 physics mass and density lesson plan",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "6-sinf",
@@ -3448,7 +3448,7 @@
   },
   {
     "id": "gen-290",
-    "q": "grade 11 kimyo proteins lipids carbohydrates slides",
+    "q": "grade 11 chemistry proteins lipids carbohydrates slides",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -3532,7 +3532,7 @@
   },
   {
     "id": "gen-297",
-    "q": "11 класс ona tili анализ текста объяснение",
+    "q": "11 класс узбекский язык анализ текста лабораторная работа",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "11-sinf",
@@ -3544,7 +3544,7 @@
   },
   {
     "id": "gen-298",
-    "q": "8 класс adabiyot литература джадидизма объяснение",
+    "q": "8 класс литература литература джадидизма олимпиадные задачи",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "8-sinf",
@@ -3556,7 +3556,7 @@
   },
   {
     "id": "gen-299",
-    "q": "grade 10 fizika laws of thermodynamics explanation",
+    "q": "grade 10 physics laws of thermodynamics topic overview",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "10-sinf",
@@ -3568,7 +3568,7 @@
   },
   {
     "id": "gen-300",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates how to explain",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -3652,7 +3652,7 @@
   },
   {
     "id": "gen-307",
-    "q": "10 класс ona tili культура речи и стилистика объяснение",
+    "q": "10 класс узбекский язык культура речи и стилистика сравнение и разница",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "10-sinf",
@@ -3664,7 +3664,7 @@
   },
   {
     "id": "gen-308",
-    "q": "11 класс adabiyot современная узбекская поэзия объяснение",
+    "q": "11 класс литература современная узбекская поэзия задачи с решениями",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "11-sinf",
@@ -3676,7 +3676,7 @@
   },
   {
     "id": "gen-309",
-    "q": "grade 8 fizika electric circuit and Ohm's law explanation",
+    "q": "grade 8 physics electric circuit and Ohm's law homework assignments",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "8-sinf",
@@ -3688,7 +3688,7 @@
   },
   {
     "id": "gen-310",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates teaching method",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -3772,7 +3772,7 @@
   },
   {
     "id": "gen-317",
-    "q": "9 класс ona tili сложные предложения тесты",
+    "q": "9 класс узбекский язык сложные предложения тесты",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "9-sinf",
@@ -3784,7 +3784,7 @@
   },
   {
     "id": "gen-318",
-    "q": "7 класс adabiyot исторические произведения объяснение",
+    "q": "7 класс литература исторические произведения раздаточный материал",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "7-sinf",
@@ -3796,7 +3796,7 @@
   },
   {
     "id": "gen-319",
-    "q": "grade 6 fizika mass and density explanation",
+    "q": "grade 6 physics mass and density curriculum syllabus",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "6-sinf",
@@ -3808,7 +3808,7 @@
   },
   {
     "id": "gen-320",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates difference between",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -3892,7 +3892,7 @@
   },
   {
     "id": "gen-327",
-    "q": "8 класс ona tili синтаксис простого предложения объяснение",
+    "q": "8 класс узбекский язык синтаксис простого предложения правила",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "8-sinf",
@@ -3904,7 +3904,7 @@
   },
   {
     "id": "gen-328",
-    "q": "10 класс adabiyot узбекская проза XX века план урока",
+    "q": "10 класс литература узбекская проза XX века план урока",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "10-sinf",
@@ -3916,7 +3916,7 @@
   },
   {
     "id": "gen-329",
-    "q": "grade 10 fizika laws of thermodynamics slides",
+    "q": "grade 10 physics laws of thermodynamics presentation slides",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "10-sinf",
@@ -3928,7 +3928,7 @@
   },
   {
     "id": "gen-330",
-    "q": "grade 11 kimyo proteins lipids carbohydrates quiz",
+    "q": "grade 11 chemistry proteins lipids carbohydrates quiz",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -4012,7 +4012,7 @@
   },
   {
     "id": "gen-337",
-    "q": "7 класс ona tili глаголы и наречия объяснение",
+    "q": "7 класс узбекский язык глаголы и наречия подготовка к экзаменам",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "7-sinf",
@@ -4024,7 +4024,7 @@
   },
   {
     "id": "gen-338",
-    "q": "6 класс adabiyot рубаи Навои и Бабура объяснение",
+    "q": "6 класс литература рубаи Навои и Бабура обзор темы",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "6-sinf",
@@ -4036,7 +4036,7 @@
   },
   {
     "id": "gen-339",
-    "q": "grade 8 fizika electric circuit and Ohm's law explanation",
+    "q": "grade 8 physics electric circuit and Ohm's law explanation",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "8-sinf",
@@ -4048,7 +4048,7 @@
   },
   {
     "id": "gen-340",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates definition and formula",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -4132,7 +4132,7 @@
   },
   {
     "id": "gen-347",
-    "q": "6 класс ona tili части речи объяснение",
+    "q": "6 класс узбекский язык части речи примеры с решением",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "6-sinf",
@@ -4144,7 +4144,7 @@
   },
   {
     "id": "gen-348",
-    "q": "9 класс adabiyot мировая классическая литература объяснение",
+    "q": "9 класс литература мировая классическая литература самостоятельная работа",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "9-sinf",
@@ -4156,7 +4156,7 @@
   },
   {
     "id": "gen-349",
-    "q": "grade 6 fizika mass and density explanation",
+    "q": "grade 6 physics mass and density classroom activity",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "6-sinf",
@@ -4168,7 +4168,7 @@
   },
   {
     "id": "gen-350",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates olympiad problems",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -4252,7 +4252,7 @@
   },
   {
     "id": "gen-357",
-    "q": "5 класс ona tili фонетика и графика объяснение",
+    "q": "5 класс узбекский язык фонетика и графика упражнения",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "5-sinf",
@@ -4264,7 +4264,7 @@
   },
   {
     "id": "gen-358",
-    "q": "5 класс adabiyot сказки и пословицы объяснение",
+    "q": "5 класс литература сказки и пословицы распределение часов",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "5-sinf",
@@ -4276,7 +4276,7 @@
   },
   {
     "id": "gen-359",
-    "q": "grade 10 fizika laws of thermodynamics explanation",
+    "q": "grade 10 physics laws of thermodynamics comparison and differences",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "10-sinf",
@@ -4288,7 +4288,7 @@
   },
   {
     "id": "gen-360",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates worked examples",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -4372,7 +4372,7 @@
   },
   {
     "id": "gen-367",
-    "q": "4 класс ona tili существительное и прилагательное план урока",
+    "q": "4 класс узбекский язык существительное и прилагательное план урока",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "4-sinf",
@@ -4384,7 +4384,7 @@
   },
   {
     "id": "gen-368",
-    "q": "8 класс adabiyot литература джадидизма презентация",
+    "q": "8 класс литература литература джадидизма слайды",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "8-sinf",
@@ -4396,7 +4396,7 @@
   },
   {
     "id": "gen-369",
-    "q": "grade 8 fizika electric circuit and Ohm's law quiz",
+    "q": "grade 8 physics electric circuit and Ohm's law quiz test questions",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "8-sinf",
@@ -4408,7 +4408,7 @@
   },
   {
     "id": "gen-370",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates worksheet",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -4492,7 +4492,7 @@
   },
   {
     "id": "gen-377",
-    "q": "3 класс ona tili корень и суффиксы объяснение",
+    "q": "3 класс узбекский язык корень и суффиксы тема урока",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "3-sinf",
@@ -4504,7 +4504,7 @@
   },
   {
     "id": "gen-378",
-    "q": "11 класс adabiyot современная узбекская поэзия объяснение",
+    "q": "11 класс литература современная узбекская поэзия как объяснить",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "11-sinf",
@@ -4516,7 +4516,7 @@
   },
   {
     "id": "gen-379",
-    "q": "grade 6 fizika mass and density explanation",
+    "q": "grade 6 physics mass and density definition and formula",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "6-sinf",
@@ -4528,7 +4528,7 @@
   },
   {
     "id": "gen-380",
-    "q": "grade 11 kimyo proteins lipids carbohydrates lesson plan",
+    "q": "grade 11 chemistry proteins lipids carbohydrates teaching plan",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -4612,7 +4612,7 @@
   },
   {
     "id": "gen-387",
-    "q": "2 класс ona tili слова и предложения объяснение",
+    "q": "2 класс узбекский язык слова и предложения домашнее задание",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "2-sinf",
@@ -4624,7 +4624,7 @@
   },
   {
     "id": "gen-388",
-    "q": "7 класс adabiyot исторические произведения объяснение",
+    "q": "7 класс литература исторические произведения методика",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "7-sinf",
@@ -4636,7 +4636,7 @@
   },
   {
     "id": "gen-389",
-    "q": "grade 10 fizika laws of thermodynamics explanation",
+    "q": "grade 10 physics laws of thermodynamics exam prep",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "10-sinf",
@@ -4648,7 +4648,7 @@
   },
   {
     "id": "gen-390",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates topic material",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -4732,7 +4732,7 @@
   },
   {
     "id": "gen-397",
-    "q": "1 класс ona tili алфавит и звуки объяснение",
+    "q": "1 класс узбекский язык алфавит и звуки учебная программа",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "1-sinf",
@@ -4744,7 +4744,7 @@
   },
   {
     "id": "gen-398",
-    "q": "10 класс adabiyot узбекская проза XX века объяснение",
+    "q": "10 класс литература узбекская проза XX века разница между",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "10-sinf",
@@ -4756,7 +4756,7 @@
   },
   {
     "id": "gen-399",
-    "q": "grade 8 fizika electric circuit and Ohm's law explanation",
+    "q": "grade 8 physics electric circuit and Ohm's law examples with solutions",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "8-sinf",
@@ -4768,7 +4768,7 @@
   },
   {
     "id": "gen-400",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates homework",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -4852,7 +4852,7 @@
   },
   {
     "id": "gen-407",
-    "q": "11 класс ona tili анализ текста презентация",
+    "q": "11 класс узбекский язык анализ текста презентация",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "11-sinf",
@@ -4864,7 +4864,7 @@
   },
   {
     "id": "gen-408",
-    "q": "6 класс adabiyot рубаи Навои и Бабура тесты",
+    "q": "6 класс литература рубаи Навои и Бабура вопросы к уроку",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "6-sinf",
@@ -4876,7 +4876,7 @@
   },
   {
     "id": "gen-409",
-    "q": "grade 6 fizika mass and density explanation",
+    "q": "grade 6 physics mass and density worksheet exercises",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "6-sinf",
@@ -4888,7 +4888,7 @@
   },
   {
     "id": "gen-410",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates hours distribution",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -4972,7 +4972,7 @@
   },
   {
     "id": "gen-417",
-    "q": "10 класс ona tili культура речи и стилистика объяснение",
+    "q": "10 класс узбекский язык культура речи и стилистика объяснение",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "10-sinf",
@@ -4984,7 +4984,7 @@
   },
   {
     "id": "gen-418",
-    "q": "9 класс adabiyot мировая классическая литература объяснение",
+    "q": "9 класс литература мировая классическая литература определение и формула",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "9-sinf",
@@ -4996,7 +4996,7 @@
   },
   {
     "id": "gen-419",
-    "q": "grade 10 fizika laws of thermodynamics lesson plan",
+    "q": "grade 10 physics laws of thermodynamics teaching plan",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "10-sinf",
@@ -5008,7 +5008,7 @@
   },
   {
     "id": "gen-420",
-    "q": "grade 11 kimyo proteins lipids carbohydrates slides",
+    "q": "grade 11 chemistry proteins lipids carbohydrates slides",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -5092,7 +5092,7 @@
   },
   {
     "id": "gen-427",
-    "q": "9 класс ona tili сложные предложения объяснение",
+    "q": "9 класс узбекский язык сложные предложения методика",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "9-sinf",
@@ -5104,7 +5104,7 @@
   },
   {
     "id": "gen-428",
-    "q": "5 класс adabiyot сказки и пословицы объяснение",
+    "q": "5 класс литература сказки и пословицы олимпиадные задачи",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "5-sinf",
@@ -5116,7 +5116,7 @@
   },
   {
     "id": "gen-429",
-    "q": "grade 8 fizika electric circuit and Ohm's law explanation",
+    "q": "grade 8 physics electric circuit and Ohm's law topic overview",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "8-sinf",
@@ -5128,7 +5128,7 @@
   },
   {
     "id": "gen-430",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates how to explain",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -5212,7 +5212,7 @@
   },
   {
     "id": "gen-437",
-    "q": "8 класс ona tili синтаксис простого предложения объяснение",
+    "q": "8 класс узбекский язык синтаксис простого предложения сравнение и разница",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "8-sinf",
@@ -5224,7 +5224,7 @@
   },
   {
     "id": "gen-438",
-    "q": "8 класс adabiyot литература джадидизма объяснение",
+    "q": "8 класс литература литература джадидизма задачи с решениями",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "8-sinf",
@@ -5236,7 +5236,7 @@
   },
   {
     "id": "gen-439",
-    "q": "grade 6 fizika mass and density explanation",
+    "q": "grade 6 physics mass and density homework assignments",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "6-sinf",
@@ -5248,7 +5248,7 @@
   },
   {
     "id": "gen-440",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates teaching method",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -5332,7 +5332,7 @@
   },
   {
     "id": "gen-447",
-    "q": "7 класс ona tili глаголы и наречия тесты",
+    "q": "7 класс узбекский язык глаголы и наречия тесты",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "7-sinf",
@@ -5344,7 +5344,7 @@
   },
   {
     "id": "gen-448",
-    "q": "11 класс adabiyot современная узбекская поэзия объяснение",
+    "q": "11 класс литература современная узбекская поэзия раздаточный материал",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "11-sinf",
@@ -5356,7 +5356,7 @@
   },
   {
     "id": "gen-449",
-    "q": "grade 10 fizika laws of thermodynamics explanation",
+    "q": "grade 10 physics laws of thermodynamics curriculum syllabus",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "10-sinf",
@@ -5368,7 +5368,7 @@
   },
   {
     "id": "gen-450",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates difference between",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -5452,7 +5452,7 @@
   },
   {
     "id": "gen-457",
-    "q": "6 класс ona tili части речи объяснение",
+    "q": "6 класс узбекский язык части речи определение и формула",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "6-sinf",
@@ -5464,7 +5464,7 @@
   },
   {
     "id": "gen-458",
-    "q": "7 класс adabiyot исторические произведения план урока",
+    "q": "7 класс литература исторические произведения поурочные разработки",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "7-sinf",
@@ -5476,7 +5476,7 @@
   },
   {
     "id": "gen-459",
-    "q": "grade 8 fizika electric circuit and Ohm's law slides",
+    "q": "grade 8 physics electric circuit and Ohm's law presentation slides",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "8-sinf",
@@ -5488,7 +5488,7 @@
   },
   {
     "id": "gen-460",
-    "q": "grade 11 kimyo proteins lipids carbohydrates quiz",
+    "q": "grade 11 chemistry proteins lipids carbohydrates quiz",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -5572,7 +5572,7 @@
   },
   {
     "id": "gen-467",
-    "q": "5 класс ona tili фонетика и графика объяснение",
+    "q": "5 класс узбекский язык фонетика и графика подготовка к экзаменам",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "5-sinf",
@@ -5584,7 +5584,7 @@
   },
   {
     "id": "gen-468",
-    "q": "10 класс adabiyot узбекская проза XX века объяснение",
+    "q": "10 класс литература узбекская проза XX века обзор темы",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "10-sinf",
@@ -5596,7 +5596,7 @@
   },
   {
     "id": "gen-469",
-    "q": "grade 6 fizika mass and density explanation",
+    "q": "grade 6 physics mass and density explanation",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "6-sinf",
@@ -5608,7 +5608,7 @@
   },
   {
     "id": "gen-470",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates what is",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -5692,7 +5692,7 @@
   },
   {
     "id": "gen-477",
-    "q": "4 класс ona tili существительное и прилагательное объяснение",
+    "q": "4 класс узбекский язык существительное и прилагательное примеры с решением",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "4-sinf",
@@ -5704,7 +5704,7 @@
   },
   {
     "id": "gen-478",
-    "q": "6 класс adabiyot рубаи Навои и Бабура объяснение",
+    "q": "6 класс литература рубаи Навои и Бабура самостоятельная работа",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "6-sinf",
@@ -5716,7 +5716,7 @@
   },
   {
     "id": "gen-479",
-    "q": "grade 10 fizika laws of thermodynamics explanation",
+    "q": "grade 10 physics laws of thermodynamics classroom activity",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "10-sinf",
@@ -5728,7 +5728,7 @@
   },
   {
     "id": "gen-480",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates olympiad problems",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -5812,7 +5812,7 @@
   },
   {
     "id": "gen-487",
-    "q": "3 класс ona tili корень и суффиксы объяснение",
+    "q": "3 класс узбекский язык корень и суффиксы упражнения",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "3-sinf",
@@ -5824,7 +5824,7 @@
   },
   {
     "id": "gen-488",
-    "q": "9 класс adabiyot мировая классическая литература объяснение",
+    "q": "9 класс литература мировая классическая литература распределение часов",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "9-sinf",
@@ -5836,7 +5836,7 @@
   },
   {
     "id": "gen-489",
-    "q": "grade 8 fizika electric circuit and Ohm's law explanation",
+    "q": "grade 8 physics electric circuit and Ohm's law comparison and differences",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "8-sinf",
@@ -5848,7 +5848,7 @@
   },
   {
     "id": "gen-490",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates worked examples",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",
@@ -5932,7 +5932,7 @@
   },
   {
     "id": "gen-497",
-    "q": "2 класс ona tili слова и предложения план урока",
+    "q": "2 класс узбекский язык слова и предложения поурочные разработки",
     "expectedLanguage": "RU",
     "expectedSubject": "Ona tili",
     "expectedGrade": "2-sinf",
@@ -5944,7 +5944,7 @@
   },
   {
     "id": "gen-498",
-    "q": "5 класс adabiyot сказки и пословицы презентация",
+    "q": "5 класс литература сказки и пословицы слайды",
     "expectedLanguage": "RU",
     "expectedSubject": "Adabiyot",
     "expectedGrade": "5-sinf",
@@ -5956,7 +5956,7 @@
   },
   {
     "id": "gen-499",
-    "q": "grade 6 fizika mass and density quiz",
+    "q": "grade 6 physics mass and density quiz test questions",
     "expectedLanguage": "EN",
     "expectedSubject": "Fizika",
     "expectedGrade": "6-sinf",
@@ -5968,7 +5968,7 @@
   },
   {
     "id": "gen-500",
-    "q": "grade 11 kimyo proteins lipids carbohydrates explanation",
+    "q": "grade 11 chemistry proteins lipids carbohydrates worksheet",
     "expectedLanguage": "EN",
     "expectedSubject": "Kimyo",
     "expectedGrade": "11-sinf",

@@ -64,7 +64,7 @@ export async function rerankCandidates(
       detectedGrade && cand.grade.toLowerCase() !== detectedGrade.toLowerCase(),
     );
 
-    // 1. Exact Match (0..1)
+    // 1. Exact & Subphrase Match (0..1)
     const norm = (s: string) => s.toUpperCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
     const candTitle = norm(cand.topicName);
     const qTitle = norm(queryTopic);
@@ -73,29 +73,46 @@ export async function rerankCandidates(
     if (candTitle === qTitle) {
       exactScore = 1.0;
     } else if (candTitle.includes(qTitle) || qTitle.includes(candTitle)) {
-      exactScore = 0.85;
+      exactScore = 0.90;
     } else {
-      const qTokens = keywords.map(stemUzbekWord);
-      let matchCount = 0;
-      for (const t of qTokens) {
-        if (t.length >= 3 && candTitle.toLowerCase().includes(t)) {
-          matchCount++;
+      // Subphrase check (e.g., "MUSBAT VA MANFIY SONLAR. BUTUN SONLAR" contains "BUTUN SONLAR")
+      const candSubphrases = candTitle
+        .split(/[.,:;\-\/]/)
+        .map((p) => p.trim())
+        .filter((p) => p.length >= 4);
+
+      if (candSubphrases.some((p) => qTitle.includes(p) || (p.length >= 6 && candTitle.includes(p)))) {
+        exactScore = 0.85;
+      } else {
+        const qTokens = keywords.map(stemUzbekWord);
+        let matchCount = 0;
+        for (const t of qTokens) {
+          if (t.length >= 3 && candTitle.toLowerCase().includes(t)) {
+            matchCount++;
+          }
         }
+        exactScore = qTokens.length > 0 ? Math.min(0.75, matchCount / qTokens.length) : 0;
       }
-      exactScore = qTokens.length > 0 ? Math.min(0.8, matchCount / qTokens.length) : 0;
     }
 
     // 2. Lexical Overlap (0..1)
     const candDesc = cand.description.toLowerCase();
     const stemmedKeywords = keywords.map(stemUzbekWord);
+    const topicTokens = queryTopic
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((w) => w.length >= 3)
+      .map(stemUzbekWord);
+    const allQueryTokens = Array.from(new Set([...stemmedKeywords, ...topicTokens]));
+
     let descMatches = 0;
-    for (const kw of stemmedKeywords) {
-      if (kw.length >= 3 && candDesc.includes(kw)) {
+    for (const kw of allQueryTokens) {
+      if (kw.length >= 3 && (candDesc.includes(kw) || candTitle.toLowerCase().includes(kw))) {
         descMatches++;
       }
     }
-    const lexicalScore = stemmedKeywords.length > 0
-      ? Math.min(1.0, descMatches / Math.max(1, stemmedKeywords.length))
+    const lexicalScore = allQueryTokens.length > 0
+      ? Math.min(1.0, descMatches / Math.max(1, allQueryTokens.length))
       : 0;
 
     // 3. Semantic Similarity (0..1)
@@ -140,6 +157,25 @@ export async function rerankCandidates(
       0.10 * gradeSubjectScore +
       0.05 * outcomeScore +
       0.05 * intentScore;
+
+    // Generic Title Penalty (Takrorlash / Kirish should not shadow specific topics)
+    const lowerQ = queryTopic.toLowerCase();
+    if (candTitle.includes("TAKRORLASH") && !lowerQ.includes("takrorlash")) {
+      hybridScore = Math.max(0, hybridScore - 0.08);
+    }
+    if (candTitle.includes("KIRISH") && !lowerQ.includes("kirish")) {
+      hybridScore = Math.max(0, hybridScore - 0.05);
+    }
+
+    // Specificity Bonus: If candidate title contains distinctive query tokens
+    const qDistinctTokens = allQueryTokens.filter(
+      (t) => t.length >= 4 && !["dars", "sinf", "reja", "mavzu", "haqida", "bilan"].includes(t),
+    );
+    for (const dt of qDistinctTokens) {
+      if (candTitle.toLowerCase().includes(dt)) {
+        hybridScore += 0.04;
+      }
+    }
 
     // Grade Distance Penalty (Phase 7 Cross-Grade Intelligence)
     if (detectedGrade && isCrossGrade) {

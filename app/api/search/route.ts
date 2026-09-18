@@ -49,6 +49,12 @@ export const POST = withErrorHandling(async (request) => {
     curriculumMatches: result.curriculumMatches,
     grounding: result.grounding,
     suggestedActions: result.suggestedActions,
+    explanation: result.explanation,
+    adaptiveStrategy: result.adaptiveStrategy,
+    costMetrics: result.costMetrics,
+    cached: result.cached,
+    durationMs: result.durationMs,
+    latencyBreakdown: result.latencyBreakdown,
   });
 });
 

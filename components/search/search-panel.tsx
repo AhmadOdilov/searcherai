@@ -8,11 +8,13 @@ import {
   CheckCircle2,
   FileSpreadsheet,
   FileText,
+  Info,
   Lightbulb,
   ListChecks,
   Presentation,
   Search,
   Sparkles,
+  Zap,
 } from "lucide-react";
 import { ApiClientError, apiRequest } from "@/lib/api-client";
 import { GENERATION_LANGUAGES } from "@/lib/ui/options";
@@ -25,6 +27,9 @@ import type { QueryUnderstanding } from "@/lib/search/understanding";
 import type { RankedCurriculumMatch } from "@/lib/search/curriculum-matcher";
 import type { GroundingValidationResult } from "@/lib/search/validator";
 import type { OrchestrationAction } from "@/lib/search/orchestration";
+import type { AdaptiveSearchStrategy } from "@/lib/search/adaptive";
+import type { SearchCostMetrics } from "@/lib/search/cost";
+import type { SearchLatencyBreakdown } from "@/lib/search/service";
 
 interface SearchResponse {
   answer: SearchAnswer;
@@ -32,6 +37,12 @@ interface SearchResponse {
   curriculumMatches?: RankedCurriculumMatch[];
   grounding?: GroundingValidationResult;
   suggestedActions?: OrchestrationAction[];
+  explanation?: string;
+  adaptiveStrategy?: AdaptiveSearchStrategy;
+  costMetrics?: SearchCostMetrics;
+  cached?: boolean;
+  durationMs?: number;
+  latencyBreakdown?: SearchLatencyBreakdown;
 }
 
 export function SearchPanel() {
@@ -44,6 +55,7 @@ export function SearchPanel() {
   const [result, setResult] = useState<SearchResponse | null>(null);
   /** Javob qaysi savolga berilganini ko'rsatish uchun. */
   const [askedQuestion, setAskedQuestion] = useState<string>("");
+  const [questionText, setQuestionText] = useState<string>("");
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -52,7 +64,7 @@ export function SearchPanel() {
     setFieldErrors({});
 
     const formData = new FormData(event.currentTarget);
-    const question = String(formData.get("question") ?? "");
+    const question = questionText.trim() || String(formData.get("question") ?? "");
 
     const body: Record<string, unknown> = {
       question,
@@ -94,6 +106,8 @@ export function SearchPanel() {
               name="question"
               required
               rows={3}
+              value={questionText}
+              onChange={(e) => setQuestionText(e.target.value)}
               placeholder={t("fields.questionPlaceholder")}
               hint={t("fields.questionHint")}
               help={t("fields.questionHelp")}
@@ -175,7 +189,14 @@ export function SearchPanel() {
           />
         )
       ) : (
-        <AnswerView result={result} question={askedQuestion} />
+        <AnswerView
+          result={result}
+          question={askedQuestion}
+          onSelectClarification={(opt) => {
+            setQuestionText(opt);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+        />
       )}
     </>
   );
@@ -187,12 +208,16 @@ const EXAMPLE_KEYS = ["first", "second", "third"] as const;
 function AnswerView({
   result,
   question,
+  onSelectClarification,
 }: {
   result: SearchResponse;
   question: string;
+  onSelectClarification?: (text: string) => void;
 }) {
   const t = useTranslations("search");
   const { answer, curriculumMatches, suggestedActions, understanding } = result;
+
+  const crossGradeMatch = curriculumMatches?.find((m) => m.isCrossGrade);
 
   return (
     <section className="mt-8 space-y-6">
@@ -219,6 +244,66 @@ function AnswerView({
             </span>
           </div>
         )}
+
+        {/* ── Grounding Explanation & Performance/Cost Badge (Phase 19 & 24) ── */}
+        {result.explanation && (
+          <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 rounded-lg border border-emerald-200 bg-emerald-50/80 p-3.5 text-sm text-emerald-900">
+            <div className="flex items-start sm:items-center gap-2">
+              <CheckCircle2 className="mt-0.5 sm:mt-0 size-4 shrink-0 text-emerald-600" />
+              <div>
+                <span className="font-semibold">O&apos;quv dasturi asosliligi: </span>
+                <span>{result.explanation}</span>
+              </div>
+            </div>
+            {result.costMetrics && (
+              <span className="inline-flex items-center gap-1 self-start sm:self-auto rounded bg-white px-2 py-1 text-xs font-mono text-emerald-800 border border-emerald-200 shrink-0">
+                <Zap className="size-3 text-amber-500" />
+                {result.cached ? "Keshdan (0ms)" : `${result.costMetrics.totalMs.toFixed(1)}ms | ~$${result.costMetrics.estimatedCostUsd.toFixed(4)}`}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* ── Cross-Grade Alert (Phase 7) ─────────────────────────────────── */}
+        {crossGradeMatch && (
+          <div className="mt-3 flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50 p-3.5 text-sm text-amber-900">
+            <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600" />
+            <div>
+              <span className="font-semibold">Sinf tafovuti aniqlandi: </span>
+              <span>
+                Ushbu mavzu so&apos;ralgan sinf dasturida emas,{" "}
+                <strong>{crossGradeMatch.availableGrade}</strong> o&apos;quv dasturida o&apos;qitiladi.
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* ── Clarification Options (Phase 21) ────────────────────────────── */}
+        {result.adaptiveStrategy?.needsClarification &&
+          result.adaptiveStrategy.clarification?.options &&
+          result.adaptiveStrategy.clarification.options.length > 0 && (
+            <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-3.5 text-sm text-blue-900">
+              <div className="flex items-center gap-2 font-medium">
+                <Info className="size-4 text-blue-600" />
+                <span>
+                  {result.adaptiveStrategy.clarification.question ||
+                    "So'rov noaniq bo'lishi mumkin. Qaysi fanni nazarda tutyapsiz?"}
+                </span>
+              </div>
+              <div className="mt-2.5 flex flex-wrap gap-2">
+                {result.adaptiveStrategy.clarification.options.map((opt, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => onSelectClarification?.(`${opt.subject} ${question}`)}
+                    className="rounded-md border border-blue-300 bg-white px-3 py-1.5 text-xs font-semibold text-blue-700 shadow-sm transition hover:bg-blue-100 hover:border-blue-400 cursor-pointer"
+                  >
+                    {opt.label} ({opt.subject}) →
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
       </div>
 
       {/* ── Asosiy javob ────────────────────────────────────────────────── */}
