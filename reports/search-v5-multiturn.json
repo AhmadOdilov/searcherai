@@ -1,0 +1,39 @@
+{
+  "timestamp": "2026-09-18T13:31:58.960Z",
+  "conversations": 50,
+  "turns": 180,
+  "subjectRetention": {
+    "ok": 180,
+    "total": 180,
+    "rate": 100
+  },
+  "gradeRetention": {
+    "ok": 180,
+    "total": 180,
+    "rate": 100
+  },
+  "topicRetention": {
+    "ok": 180,
+    "total": 180,
+    "rate": 100
+  },
+  "intentUpdate": {
+    "ok": 40,
+    "total": 40,
+    "rate": 100
+  },
+  "audienceUpdate": {
+    "ok": 20,
+    "total": 20,
+    "rate": 100
+  },
+  "boundedMemoryAt1000Turns": true,
+  "retainedTurnsAt1000": 50,
+  "productionWiring": {
+    "apiRouteUsesConversationContext": false,
+    "searchConversationTablesUsed": false,
+    "note": "MultiTurnService hech qaysi API yo'nalishiga ulanmagan. Bu o'lchovlar kutubxona qatlamiga tegishli, mahsulotdagi ishlayotgan xususiyatga emas."
+  },
+  "failures": [],
+  "totalFailures": 0
+}

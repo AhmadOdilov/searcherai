@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-18T13:19:46.551Z",
+  "timestamp": "2026-09-18T13:32:17.612Z",
   "datasetComposition": {
     "total": 950,
     "bySuite": {
@@ -35,7 +35,7 @@
     "recall20": 98.15,
     "recall50": 98.61,
     "recall100": 98.61,
-    "avgLatencyMs": 12.19
+    "avgLatencyMs": 10.51
   },
   "reranker": {
     "evaluatedQueries": 216,
@@ -46,7 +46,7 @@
     "mrr": 0.9111,
     "ndcg5": 0.9261,
     "ndcg10": 0.9276,
-    "avgLatencyMs": 1.31
+    "avgLatencyMs": 1.22
   },
   "abstention": {
     "shouldAbstainTotal": 516,
@@ -88,13 +88,13 @@
   },
   "latencyLocalPipelineMs": {
     "note": "Tashqi LLM generatsiyasi KIRMAGAN — faqat mahalliy quvur.",
-    "understandingAvg": 1.656,
-    "retrievalAvg": 12.19,
-    "rerankAvg": 1.31,
-    "validationAvg": 0.026,
-    "p50": 14.22,
-    "p95": 25.13,
-    "p99": 43.01
+    "understandingAvg": 1.439,
+    "retrievalAvg": 10.51,
+    "rerankAvg": 1.22,
+    "validationAvg": 0.024,
+    "p50": 12.14,
+    "p95": 21.33,
+    "p99": 38.37
   },
   "failureBuckets": {
     "typo": 0,

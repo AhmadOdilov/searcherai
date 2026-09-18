@@ -378,7 +378,8 @@ const INTENT_PATTERNS: Array<{ intent: SearchIntent; confidence: number; pattern
     intent: "example",
     confidence: 0.90,
     patterns: [
-      /(?:^|[^\p{L}\p{N}])(?:misol keltir|misollar|misollar bilan|namuna|namunalar|hayotiy misollar|yechimi bilan|yechimlari bilan|masalalar yechish|примеры|приведи пример|задачи с решениями|с решением|examples|sample|real world|worked examples?)(?=$|[^\p{L}\p{N}])/giu,
+      // «misol ber» / «misol keltir» — V4 da bular «explain» deb tasniflanardi.
+      /(?:^|[^\p{L}\p{N}])(?:misol ber|misol bering|misol keltir|misol|misollar|misollar bilan|namuna|namunalar|hayotiy misollar|yechimi bilan|yechimlari bilan|masalalar yechish|примеры|приведи пример|задачи с решениями|с решением|examples|sample|real world|worked examples?)(?=$|[^\p{L}\p{N}])/giu,
     ],
   },
   {
@@ -740,9 +741,26 @@ export function extractTopic(
     cleaned = cleaned.replace(pattern, " ");
   }
 
-  // 3. Umumiy savol va intent so'zlarini tozalash
+  /*
+    3. Umumiy savol va intent so'zlarini tozalash.
+
+    DIQQAT — so'z chegarasi APOSTROFNI ham hisobga oladi.
+
+    V4 da chegara `(?=$|[^\p{L}\p{N}])` edi. Apostrof harf ham, raqam ham
+    emas, shuning uchun ro'yxatdagi inglizcha «to» bo'lagi o'zbekcha
+    «to'…» so'zlarining boshini kesib tashlardi:
+
+      to'rtburchaklar -> 'rtburchaklar
+      to'g'ri         -> 'g'ri
+      to'plam         -> 'plam
+
+    Bu real o'quv dasturi bo'limlariga tegadi: «TO'RTBURCHAKLAR» (8-sinf),
+    «TO'G'RI BURCHAKLI UCHBURCHAKNING...» (8-sinf), «FAZODA TO'G'RI
+    CHIZIQLAR...» (10-sinf) — ya'ni mavzu buzilib, qidiruv ularni
+    topa olmasdi.
+  */
   cleaned = cleaned.replace(
-    /(?:^|[^\p{L}\p{N}])(?:uchun|haqida|nima|nima degani|qanday|qanday ishlaydi|tushuntir|tushuntirish|tushuntirib ber|ber|kerak|qilish|qil|qilib|tuz|tuzib|tayyorla|tayyorlab|yoz|yozib|ko['‘`ʻ]rsat|endi|yana|dars|ishlanma|dars ishlanma|dars ishlanmasi|dars reja|reja|slayd|slaydlar|prezentatsiya|taqdimot|test|testlar|savol|savollar|metod|metodika|mavzusi|mavzusini|mavzuda|qoidasi|ta['‘`ʻ]rifi|konspekt|turi|turlari|qisqa|yechib ber|masalani yech|yech|yechimi|uyga vazifa|uy vazifam|baholash|misol|misollar|namuna|xulosa|для|как|план|урока|поурочный|слайды|тест|вопросы|упражнения|конспект|задания|еще|сделай|напиши|по|на|в|из|с|со|к|реши|решить|домашнее|задание|примеры|lesson|plan|slides|presentation|quiz|worksheet|explain|how to|solve|homework|assessment|for|and|the|with|of|to|in|at|on|questions?|exercises?|summary|sheet)(?=$|[^\p{L}\p{N}])/giu,
+    /(?:^|[^\p{L}\p{N}'‘`ʻʼ])(?:uchun|haqida|nima|nima degani|qanday|qanday ishlaydi|tushuntir|tushuntirish|tushuntirib ber|ber|kerak|qilish|qil|qilib|tuz|tuzib|tayyorla|tayyorlab|yoz|yozib|ko['‘`ʻ]rsat|endi|yana|dars|ishlanma|dars ishlanma|dars ishlanmasi|dars reja|reja|slayd|slaydlar|prezentatsiya|taqdimot|test|testlar|savol|savollar|metod|metodika|mavzusi|mavzusini|mavzuda|qoidasi|ta['‘`ʻ]rifi|konspekt|turi|turlari|qisqa|yechib ber|masalani yech|yech|yechimi|uyga vazifa|uy vazifam|baholash|misol|misollar|namuna|xulosa|для|как|план|урока|поурочный|слайды|тест|вопросы|упражнения|конспект|задания|еще|сделай|напиши|по|на|в|из|с|со|к|реши|решить|домашнее|задание|примеры|lesson|plan|slides|presentation|quiz|worksheet|explain|how to|solve|homework|assessment|for|and|the|with|of|to|in|at|on|questions?|exercises?|summary|sheet)(?=$|[^\p{L}\p{N}'‘`ʻʼ])/giu,
     " ",
   );
 
@@ -805,6 +823,17 @@ export function understandQuery(
 
   // Multi-turn topic inheritance (Phase 14):
   // Agar joriy so'rovda faqat sinf, intent yoki bog'lovchi so'zlar bo'lsa (yangi mavzu bo'lmasa)
+  /*
+    Modifikator so'zlar — ular MAVZU EMAS.
+
+    §5 talabi: «qisqartir», «batafsilroq», «oddiy qilib», «misol ber»,
+    «prezentatsiya qil» kabi so'rovlar mavjud kontekstni BUZMASLIGI kerak.
+
+    V4 da ro'yxat to'liq emasdi va oqibati jiddiy edi: «qisqartir» so'rovida
+    mavzu «qisqartir» ning o'ziga aylanib qolardi, ya'ni keyingi qidiruv
+    oldingi mavzuni butunlay yo'qotardi. 50 suhbatli V5 to'plamida mavzu
+    saqlanishi atigi 43.33% edi.
+  */
   const FOLLOWUP_MODIFIER_WORDS = new Set([
     "sinf", "uchun", "test", "testlar", "qil", "qilib", "ber", "bering", "endi",
     "dars", "reja", "rejasi", "ishlanma", "ishlanmasi", "javob", "javobi", "javoblari",
@@ -812,7 +841,15 @@ export function understandQuery(
     "qisqacha", "qayta", "savol", "savollar", "savollari", "topshiriq", "topshiriqlar",
     "mashq", "mashqlar", "slayd", "slaydlar", "slaydlari", "taqdimot", "keltir",
     "tushuntir", "ayt", "korsat", "ko'rsat", "qosh", "qo'sh", "oqituvchi", "o'qituvchi",
-    "oquvchi", "o'quvchi", "haqida", "boyicha", "bo'yicha", "va", "hamda"
+    "oquvchi", "o'quvchi", "haqida", "boyicha", "bo'yicha", "va", "hamda",
+    // V5 da qo'shilganlar (§5 dagi modifikatorlar ro'yxati bo'yicha)
+    "qisqartir", "qisqartirib", "qisqaroq", "batafsilroq", "batafsilrog",
+    "oddiy", "oddiyroq", "sodda", "soddaroq", "tushunarli", "tushuntirib",
+    "misol", "misollar", "misollarni", "namuna", "namunalar",
+    "prezentatsiya", "prezentatsiyasi", "prezentatsiyani",
+    "to'plami", "toplami", "to'plam", "toplam", "ro'yxat", "royxat",
+    "bola", "bolaga", "bolalar", "bolalarga", "ustoz", "ustozga",
+    "yozib", "yoz", "tuz", "tuzib", "chiqar", "davom", "ettir",
   ]);
 
   const isAllFollowupKeywords =

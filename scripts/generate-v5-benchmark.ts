@@ -65,6 +65,18 @@ function slugify(value: string): string {
     .slice(0, 40);
 }
 
+/**
+ * Mavzu saqlanishini tekshirish uchun "langar" so'z.
+ *
+ * Apostrof variantlari birxillashtiriladi: bazadagi sarlavhalarda U+02BB
+ * (oʻ) ishlatiladi, normalizatsiyadan keyin esa U+0027 (o') qoladi.
+ * Ularni bayt darajasida solishtirish soxta nosozlik beradi.
+ */
+function topicAnchor(topicName: string): string {
+  const first = topicPhrase(topicName).split(/\s+/)[0];
+  return first.replace(/['\u2018\u2019\u02BB\u02BC\u0060]/g, "'");
+}
+
 /** Bo'lim sarlavhasidan qidiruvga yaroqli qisqa mavzu iborasi. */
 function topicPhrase(topicName: string): string {
   const firstSegment = topicName.split(/[.,:;]/)[0].trim();
@@ -305,9 +317,34 @@ async function main() {
   ];
   for (let i = 0; multiTurn.length < 50 && i < topics.length * 5; i++) {
     const topic = topics[i % topics.length];
-    const script = pick(modifierScripts, Math.floor(i / topics.length));
+    // `pick(..., i)` — skriptlar aylanib turishi uchun. `Math.floor(i / topics.length)`
+    // 50 ta element uchun har doim 0 berardi va bitta skript takrorlanardi.
+    const script = pick(modifierScripts, i);
     const opening = `${topic.grade} ${topic.subject.toLowerCase()} ${topicPhrase(topic.topicName)} nima`;
     if (!isNew(opening)) continue;
+
+    /*
+      Sinf kutilmasi ENG OXIRGI aniq ko'rsatilgan qiymatdan yuriladi.
+
+      Avvalgi variantda har bir bosqich uchun `step.grade ?? topic.grade`
+      yozilgandi. Ya'ni foydalanuvchi 2-bosqichda «5-sinf uchun» desa ham,
+      3-bosqichda kutilma yana boshlang'ich sinfga qaytardi va to'g'ri
+      ishlayotgan kontekst merosi "xato" deb belgilanardi. Bu benchmark
+      xatosi edi, dvigatel xatosi emas.
+    */
+    let currentGrade = topic.grade;
+    const scriptTurns = script.map((step) => {
+      if (step.grade) currentGrade = step.grade;
+      return {
+        q: step.q,
+        // Kontekst merosi: fan HAR DOIM saqlanishi shart.
+        expectedSubject: topic.subject,
+        expectedGrade: currentGrade,
+        expectedIntent: step.intent,
+        expectedAudience: step.audience,
+        expectedTopicContains: topicAnchor(topic.topicName),
+      };
+    });
 
     multiTurn.push({
       id: `v5-mt-${String(multiTurn.length + 1).padStart(3, "0")}`,
@@ -321,17 +358,9 @@ async function main() {
           q: opening,
           expectedSubject: topic.subject,
           expectedGrade: topic.grade,
-          expectedTopicContains: topicPhrase(topic.topicName).split(/\s+/)[0],
+          expectedTopicContains: topicAnchor(topic.topicName),
         },
-        ...script.map((step) => ({
-          q: step.q,
-          // Kontekst merosi: fan HAR DOIM saqlanishi shart.
-          expectedSubject: topic.subject,
-          expectedGrade: step.grade ?? topic.grade,
-          expectedIntent: step.intent,
-          expectedAudience: step.audience,
-          expectedTopicContains: topicPhrase(topic.topicName).split(/\s+/)[0],
-        })),
+        ...scriptTurns,
       ],
     });
   }

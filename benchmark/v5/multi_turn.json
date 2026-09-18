@@ -22,14 +22,14 @@
       {
         "q": "endi 10 ta test qil",
         "expectedSubject": "Matematika",
-        "expectedGrade": "10-sinf",
+        "expectedGrade": "5-sinf",
         "expectedIntent": "quiz_test",
         "expectedTopicContains": "ehtimollik"
       },
       {
         "q": "javoblarini ham ber",
         "expectedSubject": "Matematika",
-        "expectedGrade": "10-sinf",
+        "expectedGrade": "5-sinf",
         "expectedTopicContains": "ehtimollik"
       }
     ]
@@ -49,22 +49,17 @@
         "expectedTopicContains": "elementar"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "oddiy qilib tushuntir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "10-sinf",
         "expectedTopicContains": "elementar"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "o'qituvchi uchun dars reja qil",
         "expectedSubject": "Matematika",
         "expectedGrade": "10-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "elementar"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "10-sinf",
+        "expectedIntent": "lesson_plan",
+        "expectedAudience": "teacher",
         "expectedTopicContains": "elementar"
       }
     ]
@@ -84,20 +79,20 @@
         "expectedTopicContains": "fazoda"
       },
       {
-        "q": "5-sinf uchun",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
-        "expectedTopicContains": "fazoda"
-      },
-      {
-        "q": "endi 10 ta test qil",
+        "q": "batafsilroq",
         "expectedSubject": "Matematika",
         "expectedGrade": "10-sinf",
-        "expectedIntent": "quiz_test",
         "expectedTopicContains": "fazoda"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "prezentatsiya qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedIntent": "presentation",
+        "expectedTopicContains": "fazoda"
+      },
+      {
+        "q": "yana 5 ta slayd",
         "expectedSubject": "Matematika",
         "expectedGrade": "10-sinf",
         "expectedTopicContains": "fazoda"
@@ -119,22 +114,17 @@
         "expectedTopicContains": "fazoda"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "bolaga tushuntir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "10-sinf",
+        "expectedAudience": "student",
         "expectedTopicContains": "fazoda"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "misol ber",
         "expectedSubject": "Matematika",
         "expectedGrade": "10-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "fazoda"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "10-sinf",
+        "expectedIntent": "example",
         "expectedTopicContains": "fazoda"
       }
     ]
@@ -151,26 +141,25 @@
         "q": "10-sinf matematika koʻrsatkichli va logarifmik funksiyalar nima",
         "expectedSubject": "Matematika",
         "expectedGrade": "10-sinf",
-        "expectedTopicContains": "koʻrsatkichli"
+        "expectedTopicContains": "ko'rsatkichli"
       },
       {
-        "q": "5-sinf uchun",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
-        "expectedTopicContains": "koʻrsatkichli"
-      },
-      {
-        "q": "endi 10 ta test qil",
+        "q": "qisqartir",
         "expectedSubject": "Matematika",
         "expectedGrade": "10-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "koʻrsatkichli"
+        "expectedTopicContains": "ko'rsatkichli"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "8-sinf uchun",
         "expectedSubject": "Matematika",
-        "expectedGrade": "10-sinf",
-        "expectedTopicContains": "koʻrsatkichli"
+        "expectedGrade": "8-sinf",
+        "expectedTopicContains": "ko'rsatkichli"
+      },
+      {
+        "q": "mashqlar to'plami",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "8-sinf",
+        "expectedTopicContains": "ko'rsatkichli"
       }
     ]
   },
@@ -197,14 +186,14 @@
       {
         "q": "endi 10 ta test qil",
         "expectedSubject": "Matematika",
-        "expectedGrade": "10-sinf",
+        "expectedGrade": "5-sinf",
         "expectedIntent": "quiz_test",
         "expectedTopicContains": "planimetriyani"
       },
       {
         "q": "javoblarini ham ber",
         "expectedSubject": "Matematika",
-        "expectedGrade": "10-sinf",
+        "expectedGrade": "5-sinf",
         "expectedTopicContains": "planimetriyani"
       }
     ]
@@ -224,22 +213,17 @@
         "expectedTopicContains": "ratsional"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "oddiy qilib tushuntir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "10-sinf",
         "expectedTopicContains": "ratsional"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "o'qituvchi uchun dars reja qil",
         "expectedSubject": "Matematika",
         "expectedGrade": "10-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "ratsional"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "10-sinf",
+        "expectedIntent": "lesson_plan",
+        "expectedAudience": "teacher",
         "expectedTopicContains": "ratsional"
       }
     ]
@@ -259,20 +243,20 @@
         "expectedTopicContains": "stereometriyaga"
       },
       {
-        "q": "5-sinf uchun",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
-        "expectedTopicContains": "stereometriyaga"
-      },
-      {
-        "q": "endi 10 ta test qil",
+        "q": "batafsilroq",
         "expectedSubject": "Matematika",
         "expectedGrade": "10-sinf",
-        "expectedIntent": "quiz_test",
         "expectedTopicContains": "stereometriyaga"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "prezentatsiya qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "10-sinf",
+        "expectedIntent": "presentation",
+        "expectedTopicContains": "stereometriyaga"
+      },
+      {
+        "q": "yana 5 ta slayd",
         "expectedSubject": "Matematika",
         "expectedGrade": "10-sinf",
         "expectedTopicContains": "stereometriyaga"
@@ -294,22 +278,17 @@
         "expectedTopicContains": "trigonometrik"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "bolaga tushuntir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "10-sinf",
+        "expectedAudience": "student",
         "expectedTopicContains": "trigonometrik"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "misol ber",
         "expectedSubject": "Matematika",
         "expectedGrade": "10-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "trigonometrik"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "10-sinf",
+        "expectedIntent": "example",
         "expectedTopicContains": "trigonometrik"
       }
     ]
@@ -329,22 +308,21 @@
         "expectedTopicContains": "trigonometrik"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "qisqartir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "10-sinf",
         "expectedTopicContains": "trigonometrik"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "8-sinf uchun",
         "expectedSubject": "Matematika",
-        "expectedGrade": "10-sinf",
-        "expectedIntent": "quiz_test",
+        "expectedGrade": "8-sinf",
         "expectedTopicContains": "trigonometrik"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "mashqlar to'plami",
         "expectedSubject": "Matematika",
-        "expectedGrade": "10-sinf",
+        "expectedGrade": "8-sinf",
         "expectedTopicContains": "trigonometrik"
       }
     ]
@@ -372,14 +350,14 @@
       {
         "q": "endi 10 ta test qil",
         "expectedSubject": "Matematika",
-        "expectedGrade": "11-sinf",
+        "expectedGrade": "5-sinf",
         "expectedIntent": "quiz_test",
         "expectedTopicContains": "algebra"
       },
       {
         "q": "javoblarini ham ber",
         "expectedSubject": "Matematika",
-        "expectedGrade": "11-sinf",
+        "expectedGrade": "5-sinf",
         "expectedTopicContains": "algebra"
       }
     ]
@@ -399,22 +377,17 @@
         "expectedTopicContains": "fazoda"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "oddiy qilib tushuntir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "11-sinf",
         "expectedTopicContains": "fazoda"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "o'qituvchi uchun dars reja qil",
         "expectedSubject": "Matematika",
         "expectedGrade": "11-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "fazoda"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "11-sinf",
+        "expectedIntent": "lesson_plan",
+        "expectedAudience": "teacher",
         "expectedTopicContains": "fazoda"
       }
     ]
@@ -434,20 +407,20 @@
         "expectedTopicContains": "hosila"
       },
       {
-        "q": "5-sinf uchun",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
-        "expectedTopicContains": "hosila"
-      },
-      {
-        "q": "endi 10 ta test qil",
+        "q": "batafsilroq",
         "expectedSubject": "Matematika",
         "expectedGrade": "11-sinf",
-        "expectedIntent": "quiz_test",
         "expectedTopicContains": "hosila"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "prezentatsiya qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedIntent": "presentation",
+        "expectedTopicContains": "hosila"
+      },
+      {
+        "q": "yana 5 ta slayd",
         "expectedSubject": "Matematika",
         "expectedGrade": "11-sinf",
         "expectedTopicContains": "hosila"
@@ -469,22 +442,17 @@
         "expectedTopicContains": "integral"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "bolaga tushuntir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "11-sinf",
+        "expectedAudience": "student",
         "expectedTopicContains": "integral"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "misol ber",
         "expectedSubject": "Matematika",
         "expectedGrade": "11-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "integral"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "11-sinf",
+        "expectedIntent": "example",
         "expectedTopicContains": "integral"
       }
     ]
@@ -501,26 +469,25 @@
         "q": "11-sinf matematika ma’lumotlar tahlili nima",
         "expectedSubject": "Matematika",
         "expectedGrade": "11-sinf",
-        "expectedTopicContains": "ma’lumotlar"
+        "expectedTopicContains": "ma'lumotlar"
       },
       {
-        "q": "5-sinf uchun",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
-        "expectedTopicContains": "ma’lumotlar"
-      },
-      {
-        "q": "endi 10 ta test qil",
+        "q": "qisqartir",
         "expectedSubject": "Matematika",
         "expectedGrade": "11-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "ma’lumotlar"
+        "expectedTopicContains": "ma'lumotlar"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "8-sinf uchun",
         "expectedSubject": "Matematika",
-        "expectedGrade": "11-sinf",
-        "expectedTopicContains": "ma’lumotlar"
+        "expectedGrade": "8-sinf",
+        "expectedTopicContains": "ma'lumotlar"
+      },
+      {
+        "q": "mashqlar to'plami",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "8-sinf",
+        "expectedTopicContains": "ma'lumotlar"
       }
     ]
   },
@@ -547,14 +514,14 @@
       {
         "q": "endi 10 ta test qil",
         "expectedSubject": "Matematika",
-        "expectedGrade": "11-sinf",
+        "expectedGrade": "5-sinf",
         "expectedIntent": "quiz_test",
         "expectedTopicContains": "piramida"
       },
       {
         "q": "javoblarini ham ber",
         "expectedSubject": "Matematika",
-        "expectedGrade": "11-sinf",
+        "expectedGrade": "5-sinf",
         "expectedTopicContains": "piramida"
       }
     ]
@@ -574,22 +541,17 @@
         "expectedTopicContains": "prizma"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "oddiy qilib tushuntir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "11-sinf",
         "expectedTopicContains": "prizma"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "o'qituvchi uchun dars reja qil",
         "expectedSubject": "Matematika",
         "expectedGrade": "11-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "prizma"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "11-sinf",
+        "expectedIntent": "lesson_plan",
+        "expectedAudience": "teacher",
         "expectedTopicContains": "prizma"
       }
     ]
@@ -609,20 +571,20 @@
         "expectedTopicContains": "sfera"
       },
       {
-        "q": "5-sinf uchun",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
-        "expectedTopicContains": "sfera"
-      },
-      {
-        "q": "endi 10 ta test qil",
+        "q": "batafsilroq",
         "expectedSubject": "Matematika",
         "expectedGrade": "11-sinf",
-        "expectedIntent": "quiz_test",
         "expectedTopicContains": "sfera"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "prezentatsiya qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "11-sinf",
+        "expectedIntent": "presentation",
+        "expectedTopicContains": "sfera"
+      },
+      {
+        "q": "yana 5 ta slayd",
         "expectedSubject": "Matematika",
         "expectedGrade": "11-sinf",
         "expectedTopicContains": "sfera"
@@ -644,22 +606,17 @@
         "expectedTopicContains": "takrorlash"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "bolaga tushuntir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "11-sinf",
+        "expectedAudience": "student",
         "expectedTopicContains": "takrorlash"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "misol ber",
         "expectedSubject": "Matematika",
         "expectedGrade": "11-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "takrorlash"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "11-sinf",
+        "expectedIntent": "example",
         "expectedTopicContains": "takrorlash"
       }
     ]
@@ -679,22 +636,21 @@
         "expectedTopicContains": "fazoviy"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "qisqartir",
         "expectedSubject": "Matematika",
         "expectedGrade": "5-sinf",
         "expectedTopicContains": "fazoviy"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "8-sinf uchun",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
-        "expectedIntent": "quiz_test",
+        "expectedGrade": "8-sinf",
         "expectedTopicContains": "fazoviy"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "mashqlar to'plami",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "8-sinf",
         "expectedTopicContains": "fazoviy"
       }
     ]
@@ -749,22 +705,17 @@
         "expectedTopicContains": "matnli"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "oddiy qilib tushuntir",
         "expectedSubject": "Matematika",
         "expectedGrade": "5-sinf",
         "expectedTopicContains": "matnli"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "o'qituvchi uchun dars reja qil",
         "expectedSubject": "Matematika",
         "expectedGrade": "5-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "matnli"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedIntent": "lesson_plan",
+        "expectedAudience": "teacher",
         "expectedTopicContains": "matnli"
       }
     ]
@@ -781,26 +732,26 @@
         "q": "5-sinf matematika ma’lumotlar tahlili nima",
         "expectedSubject": "Matematika",
         "expectedGrade": "5-sinf",
-        "expectedTopicContains": "ma’lumotlar"
+        "expectedTopicContains": "ma'lumotlar"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "batafsilroq",
         "expectedSubject": "Matematika",
         "expectedGrade": "5-sinf",
-        "expectedTopicContains": "ma’lumotlar"
+        "expectedTopicContains": "ma'lumotlar"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "prezentatsiya qil",
         "expectedSubject": "Matematika",
         "expectedGrade": "5-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "ma’lumotlar"
+        "expectedIntent": "presentation",
+        "expectedTopicContains": "ma'lumotlar"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "yana 5 ta slayd",
         "expectedSubject": "Matematika",
         "expectedGrade": "5-sinf",
-        "expectedTopicContains": "ma’lumotlar"
+        "expectedTopicContains": "ma'lumotlar"
       }
     ]
   },
@@ -819,22 +770,17 @@
         "expectedTopicContains": "natural"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "bolaga tushuntir",
         "expectedSubject": "Matematika",
         "expectedGrade": "5-sinf",
+        "expectedAudience": "student",
         "expectedTopicContains": "natural"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "misol ber",
         "expectedSubject": "Matematika",
         "expectedGrade": "5-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "natural"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedIntent": "example",
         "expectedTopicContains": "natural"
       }
     ]
@@ -854,22 +800,21 @@
         "expectedTopicContains": "natural"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "qisqartir",
         "expectedSubject": "Matematika",
         "expectedGrade": "5-sinf",
         "expectedTopicContains": "natural"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "8-sinf uchun",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
-        "expectedIntent": "quiz_test",
+        "expectedGrade": "8-sinf",
         "expectedTopicContains": "natural"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "mashqlar to'plami",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "8-sinf",
         "expectedTopicContains": "natural"
       }
     ]
@@ -921,26 +866,21 @@
         "q": "5-sinf matematika o‘nli kasrlar nima",
         "expectedSubject": "Matematika",
         "expectedGrade": "5-sinf",
-        "expectedTopicContains": "o‘nli"
+        "expectedTopicContains": "o'nli"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "oddiy qilib tushuntir",
         "expectedSubject": "Matematika",
         "expectedGrade": "5-sinf",
-        "expectedTopicContains": "o‘nli"
+        "expectedTopicContains": "o'nli"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "o'qituvchi uchun dars reja qil",
         "expectedSubject": "Matematika",
         "expectedGrade": "5-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "o‘nli"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
-        "expectedTopicContains": "o‘nli"
+        "expectedIntent": "lesson_plan",
+        "expectedAudience": "teacher",
+        "expectedTopicContains": "o'nli"
       }
     ]
   },
@@ -959,20 +899,20 @@
         "expectedTopicContains": "geometrik"
       },
       {
-        "q": "5-sinf uchun",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
-        "expectedTopicContains": "geometrik"
-      },
-      {
-        "q": "endi 10 ta test qil",
+        "q": "batafsilroq",
         "expectedSubject": "Matematika",
         "expectedGrade": "6-sinf",
-        "expectedIntent": "quiz_test",
         "expectedTopicContains": "geometrik"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "prezentatsiya qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedIntent": "presentation",
+        "expectedTopicContains": "geometrik"
+      },
+      {
+        "q": "yana 5 ta slayd",
         "expectedSubject": "Matematika",
         "expectedGrade": "6-sinf",
         "expectedTopicContains": "geometrik"
@@ -994,22 +934,17 @@
         "expectedTopicContains": "har"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "bolaga tushuntir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "6-sinf",
+        "expectedAudience": "student",
         "expectedTopicContains": "har"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "misol ber",
         "expectedSubject": "Matematika",
         "expectedGrade": "6-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "har"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "6-sinf",
+        "expectedIntent": "example",
         "expectedTopicContains": "har"
       }
     ]
@@ -1026,26 +961,25 @@
         "q": "6-sinf matematika ma’lumotlar nima",
         "expectedSubject": "Matematika",
         "expectedGrade": "6-sinf",
-        "expectedTopicContains": "ma’lumotlar"
+        "expectedTopicContains": "ma'lumotlar"
       },
       {
-        "q": "5-sinf uchun",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
-        "expectedTopicContains": "ma’lumotlar"
-      },
-      {
-        "q": "endi 10 ta test qil",
+        "q": "qisqartir",
         "expectedSubject": "Matematika",
         "expectedGrade": "6-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "ma’lumotlar"
+        "expectedTopicContains": "ma'lumotlar"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "8-sinf uchun",
         "expectedSubject": "Matematika",
-        "expectedGrade": "6-sinf",
-        "expectedTopicContains": "ma’lumotlar"
+        "expectedGrade": "8-sinf",
+        "expectedTopicContains": "ma'lumotlar"
+      },
+      {
+        "q": "mashqlar to'plami",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "8-sinf",
+        "expectedTopicContains": "ma'lumotlar"
       }
     ]
   },
@@ -1072,14 +1006,14 @@
       {
         "q": "endi 10 ta test qil",
         "expectedSubject": "Matematika",
-        "expectedGrade": "6-sinf",
+        "expectedGrade": "5-sinf",
         "expectedIntent": "quiz_test",
         "expectedTopicContains": "musbat"
       },
       {
         "q": "javoblarini ham ber",
         "expectedSubject": "Matematika",
-        "expectedGrade": "6-sinf",
+        "expectedGrade": "5-sinf",
         "expectedTopicContains": "musbat"
       }
     ]
@@ -1099,22 +1033,17 @@
         "expectedTopicContains": "musbat"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "oddiy qilib tushuntir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "6-sinf",
         "expectedTopicContains": "musbat"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "o'qituvchi uchun dars reja qil",
         "expectedSubject": "Matematika",
         "expectedGrade": "6-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "musbat"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "6-sinf",
+        "expectedIntent": "lesson_plan",
+        "expectedAudience": "teacher",
         "expectedTopicContains": "musbat"
       }
     ]
@@ -1134,20 +1063,20 @@
         "expectedTopicContains": "musbat"
       },
       {
-        "q": "5-sinf uchun",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
-        "expectedTopicContains": "musbat"
-      },
-      {
-        "q": "endi 10 ta test qil",
+        "q": "batafsilroq",
         "expectedSubject": "Matematika",
         "expectedGrade": "6-sinf",
-        "expectedIntent": "quiz_test",
         "expectedTopicContains": "musbat"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "prezentatsiya qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "6-sinf",
+        "expectedIntent": "presentation",
+        "expectedTopicContains": "musbat"
+      },
+      {
+        "q": "yana 5 ta slayd",
         "expectedSubject": "Matematika",
         "expectedGrade": "6-sinf",
         "expectedTopicContains": "musbat"
@@ -1169,22 +1098,17 @@
         "expectedTopicContains": "nisbat"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "bolaga tushuntir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "6-sinf",
+        "expectedAudience": "student",
         "expectedTopicContains": "nisbat"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "misol ber",
         "expectedSubject": "Matematika",
         "expectedGrade": "6-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "nisbat"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "6-sinf",
+        "expectedIntent": "example",
         "expectedTopicContains": "nisbat"
       }
     ]
@@ -1204,22 +1128,21 @@
         "expectedTopicContains": "oddiy"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "qisqartir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "6-sinf",
         "expectedTopicContains": "oddiy"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "8-sinf uchun",
         "expectedSubject": "Matematika",
-        "expectedGrade": "6-sinf",
-        "expectedIntent": "quiz_test",
+        "expectedGrade": "8-sinf",
         "expectedTopicContains": "oddiy"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "mashqlar to'plami",
         "expectedSubject": "Matematika",
-        "expectedGrade": "6-sinf",
+        "expectedGrade": "8-sinf",
         "expectedTopicContains": "oddiy"
       }
     ]
@@ -1247,14 +1170,14 @@
       {
         "q": "endi 10 ta test qil",
         "expectedSubject": "Matematika",
-        "expectedGrade": "6-sinf",
+        "expectedGrade": "5-sinf",
         "expectedIntent": "quiz_test",
         "expectedTopicContains": "sonlarning"
       },
       {
         "q": "javoblarini ham ber",
         "expectedSubject": "Matematika",
-        "expectedGrade": "6-sinf",
+        "expectedGrade": "5-sinf",
         "expectedTopicContains": "sonlarning"
       }
     ]
@@ -1274,22 +1197,17 @@
         "expectedTopicContains": "tenglamalarni"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "oddiy qilib tushuntir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "6-sinf",
         "expectedTopicContains": "tenglamalarni"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "o'qituvchi uchun dars reja qil",
         "expectedSubject": "Matematika",
         "expectedGrade": "6-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "tenglamalarni"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "6-sinf",
+        "expectedIntent": "lesson_plan",
+        "expectedAudience": "teacher",
         "expectedTopicContains": "tenglamalarni"
       }
     ]
@@ -1309,20 +1227,20 @@
         "expectedTopicContains": "algebraik"
       },
       {
-        "q": "5-sinf uchun",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
-        "expectedTopicContains": "algebraik"
-      },
-      {
-        "q": "endi 10 ta test qil",
+        "q": "batafsilroq",
         "expectedSubject": "Matematika",
         "expectedGrade": "7-sinf",
-        "expectedIntent": "quiz_test",
         "expectedTopicContains": "algebraik"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "prezentatsiya qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedIntent": "presentation",
+        "expectedTopicContains": "algebraik"
+      },
+      {
+        "q": "yana 5 ta slayd",
         "expectedSubject": "Matematika",
         "expectedGrade": "7-sinf",
         "expectedTopicContains": "algebraik"
@@ -1344,22 +1262,17 @@
         "expectedTopicContains": "algebraik"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "bolaga tushuntir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "7-sinf",
+        "expectedAudience": "student",
         "expectedTopicContains": "algebraik"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "misol ber",
         "expectedSubject": "Matematika",
         "expectedGrade": "7-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "algebraik"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "7-sinf",
+        "expectedIntent": "example",
         "expectedTopicContains": "algebraik"
       }
     ]
@@ -1379,22 +1292,21 @@
         "expectedTopicContains": "bir"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "qisqartir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "7-sinf",
         "expectedTopicContains": "bir"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "8-sinf uchun",
         "expectedSubject": "Matematika",
-        "expectedGrade": "7-sinf",
-        "expectedIntent": "quiz_test",
+        "expectedGrade": "8-sinf",
         "expectedTopicContains": "bir"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "mashqlar to'plami",
         "expectedSubject": "Matematika",
-        "expectedGrade": "7-sinf",
+        "expectedGrade": "8-sinf",
         "expectedTopicContains": "bir"
       }
     ]
@@ -1422,14 +1334,14 @@
       {
         "q": "endi 10 ta test qil",
         "expectedSubject": "Matematika",
-        "expectedGrade": "7-sinf",
+        "expectedGrade": "5-sinf",
         "expectedIntent": "quiz_test",
         "expectedTopicContains": "birhadlar"
       },
       {
         "q": "javoblarini ham ber",
         "expectedSubject": "Matematika",
-        "expectedGrade": "7-sinf",
+        "expectedGrade": "5-sinf",
         "expectedTopicContains": "birhadlar"
       }
     ]
@@ -1449,22 +1361,17 @@
         "expectedTopicContains": "geometriyaning"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "oddiy qilib tushuntir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "7-sinf",
         "expectedTopicContains": "geometriyaning"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "o'qituvchi uchun dars reja qil",
         "expectedSubject": "Matematika",
         "expectedGrade": "7-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "geometriyaning"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "7-sinf",
+        "expectedIntent": "lesson_plan",
+        "expectedAudience": "teacher",
         "expectedTopicContains": "geometriyaning"
       }
     ]
@@ -1484,20 +1391,20 @@
         "expectedTopicContains": "kombinatorika"
       },
       {
-        "q": "5-sinf uchun",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
-        "expectedTopicContains": "kombinatorika"
-      },
-      {
-        "q": "endi 10 ta test qil",
+        "q": "batafsilroq",
         "expectedSubject": "Matematika",
         "expectedGrade": "7-sinf",
-        "expectedIntent": "quiz_test",
         "expectedTopicContains": "kombinatorika"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "prezentatsiya qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedIntent": "presentation",
+        "expectedTopicContains": "kombinatorika"
+      },
+      {
+        "q": "yana 5 ta slayd",
         "expectedSubject": "Matematika",
         "expectedGrade": "7-sinf",
         "expectedTopicContains": "kombinatorika"
@@ -1516,26 +1423,21 @@
         "q": "7-sinf matematika ko‘phadni ko‘paytuvchilarga ajratish nima",
         "expectedSubject": "Matematika",
         "expectedGrade": "7-sinf",
-        "expectedTopicContains": "ko‘phadni"
+        "expectedTopicContains": "ko'phadni"
       },
       {
-        "q": "5-sinf uchun",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
-        "expectedTopicContains": "ko‘phadni"
-      },
-      {
-        "q": "endi 10 ta test qil",
+        "q": "bolaga tushuntir",
         "expectedSubject": "Matematika",
         "expectedGrade": "7-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "ko‘phadni"
+        "expectedAudience": "student",
+        "expectedTopicContains": "ko'phadni"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "misol ber",
         "expectedSubject": "Matematika",
         "expectedGrade": "7-sinf",
-        "expectedTopicContains": "ko‘phadni"
+        "expectedIntent": "example",
+        "expectedTopicContains": "ko'phadni"
       }
     ]
   },
@@ -1554,22 +1456,21 @@
         "expectedTopicContains": "parallel"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "qisqartir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "7-sinf",
         "expectedTopicContains": "parallel"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "8-sinf uchun",
         "expectedSubject": "Matematika",
-        "expectedGrade": "7-sinf",
-        "expectedIntent": "quiz_test",
+        "expectedGrade": "8-sinf",
         "expectedTopicContains": "parallel"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "mashqlar to'plami",
         "expectedSubject": "Matematika",
-        "expectedGrade": "7-sinf",
+        "expectedGrade": "8-sinf",
         "expectedTopicContains": "parallel"
       }
     ]
@@ -1597,14 +1498,14 @@
       {
         "q": "endi 10 ta test qil",
         "expectedSubject": "Matematika",
-        "expectedGrade": "7-sinf",
+        "expectedGrade": "5-sinf",
         "expectedIntent": "quiz_test",
         "expectedTopicContains": "uchburchaklar"
       },
       {
         "q": "javoblarini ham ber",
         "expectedSubject": "Matematika",
-        "expectedGrade": "7-sinf",
+        "expectedGrade": "5-sinf",
         "expectedTopicContains": "uchburchaklar"
       }
     ]
@@ -1624,22 +1525,17 @@
         "expectedTopicContains": "uchburchakning"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "oddiy qilib tushuntir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "7-sinf",
         "expectedTopicContains": "uchburchakning"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "o'qituvchi uchun dars reja qil",
         "expectedSubject": "Matematika",
         "expectedGrade": "7-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "uchburchakning"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "7-sinf",
+        "expectedIntent": "lesson_plan",
+        "expectedAudience": "teacher",
         "expectedTopicContains": "uchburchakning"
       }
     ]
@@ -1659,20 +1555,20 @@
         "expectedTopicContains": "yasashga"
       },
       {
-        "q": "5-sinf uchun",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
-        "expectedTopicContains": "yasashga"
-      },
-      {
-        "q": "endi 10 ta test qil",
+        "q": "batafsilroq",
         "expectedSubject": "Matematika",
         "expectedGrade": "7-sinf",
-        "expectedIntent": "quiz_test",
         "expectedTopicContains": "yasashga"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "prezentatsiya qil",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "7-sinf",
+        "expectedIntent": "presentation",
+        "expectedTopicContains": "yasashga"
+      },
+      {
+        "q": "yana 5 ta slayd",
         "expectedSubject": "Matematika",
         "expectedGrade": "7-sinf",
         "expectedTopicContains": "yasashga"
@@ -1694,22 +1590,17 @@
         "expectedTopicContains": "algebraik"
       },
       {
-        "q": "5-sinf uchun",
+        "q": "bolaga tushuntir",
         "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
+        "expectedGrade": "8-sinf",
+        "expectedAudience": "student",
         "expectedTopicContains": "algebraik"
       },
       {
-        "q": "endi 10 ta test qil",
+        "q": "misol ber",
         "expectedSubject": "Matematika",
         "expectedGrade": "8-sinf",
-        "expectedIntent": "quiz_test",
-        "expectedTopicContains": "algebraik"
-      },
-      {
-        "q": "javoblarini ham ber",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "8-sinf",
+        "expectedIntent": "example",
         "expectedTopicContains": "algebraik"
       }
     ]
@@ -1729,20 +1620,19 @@
         "expectedTopicContains": "aylana"
       },
       {
-        "q": "5-sinf uchun",
-        "expectedSubject": "Matematika",
-        "expectedGrade": "5-sinf",
-        "expectedTopicContains": "aylana"
-      },
-      {
-        "q": "endi 10 ta test qil",
+        "q": "qisqartir",
         "expectedSubject": "Matematika",
         "expectedGrade": "8-sinf",
-        "expectedIntent": "quiz_test",
         "expectedTopicContains": "aylana"
       },
       {
-        "q": "javoblarini ham ber",
+        "q": "8-sinf uchun",
+        "expectedSubject": "Matematika",
+        "expectedGrade": "8-sinf",
+        "expectedTopicContains": "aylana"
+      },
+      {
+        "q": "mashqlar to'plami",
         "expectedSubject": "Matematika",
         "expectedGrade": "8-sinf",
         "expectedTopicContains": "aylana"
