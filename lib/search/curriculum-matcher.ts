@@ -4,7 +4,7 @@ import { searchTerms } from "@/lib/curriculum/terms";
 import type { QueryUnderstanding } from "./understanding";
 import type { CurriculumMatch } from "@/lib/curriculum/service";
 import { stemUzbekWord, getApostropheVariants } from "./normalization";
-import { expandQueryConcepts } from "./concept-map";
+import { expandRetrievalTerms } from "./concept-map";
 import { rewriteQueryForRetrieval } from "./rewrite";
 import { rerankCandidates, type RerankerCandidate } from "./reranker";
 
@@ -32,55 +32,6 @@ export interface RankedCurriculumMatch extends CurriculumMatch {
   };
 }
 
-/**
- * Rus va ingliz tilidagi ta'limiy tushunchalarni o'zbek DTS atamalariga o'tkazish xaritasi.
- * Cross-lingual retrieval (Phase 3 & 4) uchun xizmat qiladi.
- */
-const CROSS_LINGUAL_CONCEPT_MAP: Record<string, string[]> = {
-  drob: ["kasr", "oddiy kasr"],
-  drobi: ["kasr", "oddiy kasr"],
-  droblar: ["kasr", "oddiy kasr"],
-  fractions: ["kasr", "oddiy kasr"],
-  fraction: ["kasr", "oddiy kasr"],
-  chisla: ["sonlar", "natural sonlar", "butun sonlar"],
-  numbers: ["sonlar", "natural sonlar"],
-  tselie: ["butun sonlar", "butun"],
-  integers: ["butun sonlar"],
-  uravneni: ["tenglama", "tenglamalar"],
-  uravneniya: ["tenglama", "tenglamalar"],
-  equations: ["tenglama", "tenglamalar"],
-  equation: ["tenglama"],
-  figuri: ["shakllar", "geometrik shakllar"],
-  shapes: ["shakllar", "geometrik shakllar"],
-  funktsi: ["funksiya"],
-  funktsii: ["funksiya"],
-  functions: ["funksiya"],
-  progressi: ["progressiya", "arifmetik va geometrik"],
-  progressiya: ["progressiya", "arifmetik va geometrik"],
-  progressions: ["progressiya"],
-  proizvodnaya: ["hosila", "hosilasi"],
-  derivatives: ["hosila"],
-  derivative: ["hosila"],
-  integral: ["integral"],
-  integrals: ["integral"],
-  pervoobraznaya: ["integral", "boshlang'ich funksiya"],
-  koren: ["ildiz", "kvadrat ildiz"],
-  korni: ["ildiz", "kvadrat ildiz"],
-  roots: ["ildiz", "kvadrat ildiz"],
-  kvadratnie: ["kvadrat", "kvadratik"],
-  quadratic: ["kvadrat", "kvadratik"],
-  trigonometr: ["trigonometrik", "trigonometriya"],
-  trigonometry: ["trigonometrik", "trigonometriya"],
-  logarifm: ["logarifmik", "logarifm"],
-  logarithm: ["logarifmik", "logarifm"],
-  umnojeni: ["ko'paytirish", "qisqa ko'paytirish"],
-  multiplication: ["ko'paytirish"],
-  slozheni: ["qo'shish"],
-  addition: ["qo'shish"],
-  sokrashennogo: ["qisqa ko'paytirish"],
-  pifagor: ["pifagor"],
-  pythagorean: ["pifagor"],
-};
 
 /**
  * O'quv dasturi bazasidan birlamchi nomzodlarni qidirib topish (Retrieval Candidate Generation bosqichi).
@@ -103,26 +54,12 @@ export async function retrieveCurriculumCandidates(
     ...rewrites.retrievalRepresentations.flatMap((r) => r.split(/\s+/)).filter((w) => w.length >= 3),
   ]);
 
-  // Cross-lingual tushunchalar kengaytmasi
-  const conceptExpansion = expandQueryConcepts(extractedTopic, detectedSubject, detectedGrade);
+  // Cross-lingual tushunchalar kengaytmasi — reranker ham AYNAN shu manbadan foydalanadi.
+  const conceptExpansion = expandRetrievalTerms(extractedTopic, keywords, detectedSubject, detectedGrade);
   for (const term of conceptExpansion.expandedTerms) {
     expandedTerms.add(term);
     for (const t of term.split(/\s+/)) {
       if (t.length >= 3) expandedTerms.add(t);
-    }
-  }
-
-  for (const word of keywords) {
-    const cleanWord = word.toLowerCase().replace(/[^a-z0-9]/gi, "");
-    for (const [key, synonyms] of Object.entries(CROSS_LINGUAL_CONCEPT_MAP)) {
-      if (cleanWord.includes(key) || key.includes(cleanWord)) {
-        for (const syn of synonyms) {
-          expandedTerms.add(syn);
-          for (const t of syn.split(/\s+/)) {
-            if (t.length >= 3) expandedTerms.add(t);
-          }
-        }
-      }
     }
   }
 
@@ -166,6 +103,30 @@ export async function retrieveCurriculumCandidates(
   const primaryKeywords = Array.from(primaryVariants).slice(0, 10);
   const searchKeywords = Array.from(finalVariants).slice(0, 16);
 
+  /*
+    Nomzodlar tartibi DETERMINISTIK bo'lishi shart.
+
+    `findMany` + `take` `orderBy`siz ishlatilganda PostgreSQL qatorlarni
+    ixtiyoriy tartibda qaytaradi. Shunda Recall@20 / Recall@50 o'lchovlari
+    bazadagi fizik tartibga bog'lanib qoladi va benchmark takrorlanmaydi.
+  */
+  const CANDIDATE_ORDER = [
+    { grade: "asc" as const },
+    { topicName: "asc" as const },
+    { id: "asc" as const },
+  ];
+
+  const CANDIDATE_SELECT = {
+    id: true,
+    topicName: true,
+    description: true,
+    expectedHours: true,
+    expectedOutcomes: true,
+    source: true,
+    subject: true,
+    grade: true,
+  } as const;
+
   const primaryClauses = primaryKeywords.flatMap((term) => [
     { topicName: { contains: term, mode: "insensitive" as const } },
     { description: { contains: term, mode: "insensitive" as const } },
@@ -179,6 +140,9 @@ export async function retrieveCurriculumCandidates(
   // 2. Birinchi bosqich — so'ralgan sinf va fandan qidirish
   let candidates: RerankerCandidate[] = [];
 
+  /** Sarlavha darajasida mos kelgan boshqa sinf dalillari — sinf filtri ularni saqlab qoladi. */
+  const protectedCrossGradeIds = new Set<string>();
+
   if (detectedSubject && detectedGrade) {
     // 2.1 Avval so'ralgan sinfda birlamchi mavzu atamalariga (primaryClauses) mos keluvchi mavzularni qidiramiz
     const firstClauses = primaryClauses.length > 0 ? primaryClauses : orClauses;
@@ -190,42 +154,73 @@ export async function retrieveCurriculumCandidates(
           OR: firstClauses,
         },
         take: maxCandidates,
-        select: {
-          id: true,
-          topicName: true,
-          description: true,
-          expectedHours: true,
-          expectedOutcomes: true,
-          source: true,
-          subject: true,
-          grade: true,
-        },
+        orderBy: CANDIDATE_ORDER,
+        select: CANDIDATE_SELECT,
       });
     }
 
-    // 2.2 Agar so'ralgan sinfda mavzu topilmasa, lekin boshqa sinflarda birlamchi mavzu bo'lsa (Cross-Grade Retrieval)
-    if (candidates.length === 0 && firstClauses.length > 0) {
-      const crossGradeCandidates = await prisma.curriculumTopic.findMany({
+    /*
+      2.2 CROSS-GRADE RETRIEVAL (V5).
+
+      V4 xatosi: cross-grade qidiruv FAQAT so'ralgan sinfda umuman hech narsa
+      topilmagan holatda ishga tushardi. Amalda esa so'ralgan sinfda mavzu
+      TAVSIFIDA tasodifiy bitta so'z uchrashi kifoya edi — va o'sha zaif
+      moslik boshqa sinfdagi HAQIQIY rasmiy mavzuni butunlay to'sib qo'yardi.
+
+      Reproduksiya: «5-sinf matematika kvadrat tenglama».
+      «KVADRAT TENGLAMALAR» 8-sinfda. V4 esa 5-sinfning «NATURAL SONLARNI
+      KO'PAYTIRISH VA BO'LISH» bo'limini (tavsifida «kvadrat» so'zi bor)
+      0.76 ball bilan qaytarib, uni RASMIY DTS dalili sifatida ko'rsatgan.
+
+      V5 qoidasi: so'ralgan sinfdagi nomzodlarning birortasi ham SARLAVHA
+      darajasida mos kelmasa, boshqa sinflardagi sarlavha darajasida mos
+      keluvchi nomzodlar ham qo'shiladi. Yakuniy qarorni reranker qabul
+      qiladi — undagi sinf masofasi jazosi (-0.10 / -0.25) o'z kuchida qoladi.
+    */
+    /*
+      Cross-grade nomzodlari HAR DOIM yig'iladi.
+
+      Avvalgi variantda ular faqat "so'ralgan sinfda sarlavha mosligi yo'q"
+      bo'lganda qo'shilardi. Lekin bitta umumiy so'z ham (masalan
+      «tenglamalar») so'ralgan sinfda mos kelib, boshqa sinfdagi ANIQ
+      bo'limni to'sib qo'yardi: «9-sinf tenglamalarni yechish» so'rovida
+      9-sinfning «TENGLAMALAR VA TENGSIZLIKLAR SISTEMALARI» bo'limi
+      6-sinfdagi aynan «TENGLAMALARNI YECHISH» bo'limini yashirardi.
+
+      Qaror rerankerga topshiriladi: undagi sinf masofasi jazosi (-0.10 /
+      -0.25) so'ralgan sinfni baribir ustun qo'yadi, faqat boshqa sinfdagi
+      moslik SEZILARLI kuchli bo'lsagina u yuqoriga chiqadi.
+    */
+    if (primaryKeywords.length > 0) {
+      const titleClauses = primaryKeywords.map((term) => ({
+        topicName: { contains: term, mode: "insensitive" as const },
+      }));
+
+      // DIQQAT: sinfni bu yerda `not` bilan chiqarib tashlab bo'lmaydi —
+      // Prisma `not: { equals }` ichida `mode: "insensitive"` ni qo'llamaydi.
+      // Shuning uchun sinf bo'yicha ajratish JS tomonida bajariladi.
+      const crossGradeRows = await prisma.curriculumTopic.findMany({
         where: {
           subject: { equals: detectedSubject, mode: "insensitive" },
-          OR: firstClauses,
+          OR: titleClauses,
         },
         take: Math.min(maxCandidates, 20),
-        select: {
-          id: true,
-          topicName: true,
-          description: true,
-          expectedHours: true,
-          expectedOutcomes: true,
-          source: true,
-          subject: true,
-          grade: true,
-        },
+        orderBy: CANDIDATE_ORDER,
+        select: CANDIDATE_SELECT,
       });
 
-      if (crossGradeCandidates.length > 0) {
-        candidates = crossGradeCandidates;
+      const crossGradeCandidates = crossGradeRows.filter(
+        (c) => c.grade.toLowerCase() !== detectedGrade.toLowerCase(),
+      );
+
+      // Sarlavha darajasidagi cross-grade dalillar "himoyalangan" hisoblanadi:
+      // 3-bosqichdagi sinf filtri ularni olib tashlamasligi kerak.
+      for (const c of crossGradeCandidates) {
+        protectedCrossGradeIds.add(c.id);
       }
+
+      const seen = new Set(candidates.map((c) => c.id));
+      candidates = [...candidates, ...crossGradeCandidates.filter((c) => !seen.has(c.id))];
     }
 
     // 2.3 Agar umumiy so'rov bo'lsa (kalit so'zlar bo'yicha cheklov yo'q), shu sinf/fanning barcha mavzulari olinadi
@@ -236,16 +231,8 @@ export async function retrieveCurriculumCandidates(
           grade: { equals: detectedGrade, mode: "insensitive" },
         },
         take: maxCandidates,
-        select: {
-          id: true,
-          topicName: true,
-          description: true,
-          expectedHours: true,
-          expectedOutcomes: true,
-          source: true,
-          subject: true,
-          grade: true,
-        },
+        orderBy: CANDIDATE_ORDER,
+        select: CANDIDATE_SELECT,
       });
     }
   }
@@ -266,27 +253,27 @@ export async function retrieveCurriculumCandidates(
     candidates = await prisma.curriculumTopic.findMany({
       where: primaryWhere,
       take: maxCandidates,
-      select: {
-        id: true,
-        topicName: true,
-        description: true,
-        expectedHours: true,
-        expectedOutcomes: true,
-        source: true,
-        subject: true,
-        grade: true,
-      },
+      orderBy: CANDIDATE_ORDER,
+      select: CANDIDATE_SELECT,
     });
   }
 
-  // 3. Obvious wrong grade filter: faqat cross-grade holati bo'lmasa filtrlaymiz
+  /*
+    3. Noto'g'ri sinf filtri.
+
+    So'ralgan sinfda nomzod bo'lsa, boshqa sinflardagilar olib tashlanadi —
+    LEKIN 2.2 da sarlavha darajasida topilgan cross-grade dalillar bundan
+    mustasno, aks holda ular yana to'silib qolardi.
+  */
   let effectiveCandidates = candidates;
   if (detectedGrade) {
-    const exactGradeCandidates = candidates.filter(
-      (c) => c.grade.toLowerCase() === detectedGrade.toLowerCase(),
+    const keep = candidates.filter(
+      (c) =>
+        c.grade.toLowerCase() === detectedGrade.toLowerCase() ||
+        protectedCrossGradeIds.has(c.id),
     );
-    if (exactGradeCandidates.length > 0) {
-      effectiveCandidates = exactGradeCandidates;
+    if (keep.some((c) => c.grade.toLowerCase() === detectedGrade.toLowerCase())) {
+      effectiveCandidates = keep;
     }
   }
 
