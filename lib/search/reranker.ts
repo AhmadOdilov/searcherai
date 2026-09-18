@@ -23,6 +23,7 @@ import type { QueryUnderstanding } from "./understanding";
 import { defaultSemanticProvider } from "./semantic";
 import { stemUzbekWord } from "./normalization";
 import { expandRetrievalTerms } from "./concept-map";
+import { deriveCurriculumProvenance } from "../curriculum/provenance";
 
 export interface RerankerCandidate {
   id: string;
@@ -256,8 +257,9 @@ export async function rerankCandidates(
 
     scored.push({
       sourceId: cand.id,
-      sourceVersion: "DTS-UZBMB-2025-v1",
-      curriculumYear: 2025,
+      // Provenans MANBADAN aniqlanadi — konstanta yozilmaydi (9-sinf
+      // matematika dasturi qabul2026 hujjatidan olingan, 2025 emas).
+      ...deriveCurriculumProvenance(cand.source),
       topicName: cand.topicName,
       subject: cand.subject,
       grade: cand.grade,
