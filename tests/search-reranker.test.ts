@@ -102,3 +102,66 @@ describe("reranker — exact/subphrase skoring (V5 regressiya)", () => {
     );
   });
 });
+
+describe("reranker — ketma-ket ibora mosligi (V6 regressiya)", () => {
+  it("so'rovning asosiy iborasi bilan BOSHLANGAN sarlavha moslik oladi", async () => {
+    /*
+      V5 REGRESSIYASI: bo'lak mosligi faqat TINISH BELGISI chegarasida
+      tekshirilardi. «NUTQ USLUBLARI VA USLUBIYAT. TAKRORLASH» sarlavhasi
+      so'rovning asosiy iborasi bilan boshlanishiga qaramay, moslik
+      hisobga olinmasdi.
+    */
+    const u = understandQuery("10-sinf ona tili nutq uslublari rasmiy publitsistik badiiy");
+    const [m] = await rerankCandidates(
+      [
+        candidate({
+          id: "gold",
+          topicName: "NUTQ USLUBLARI VA USLUBIYAT. TAKRORLASH",
+          subject: "Ona tili",
+          grade: "9-sinf",
+        }),
+      ],
+      u,
+      1,
+    );
+
+    assert.ok(
+      m.scoreBreakdown.exactMatch >= 0.85,
+      `ibora mosligi kutilgan edi, olindi: ${m.scoreBreakdown.exactMatch}`,
+    );
+  });
+
+  it("ibora mos kelgan nomzod aloqasiz nomzoddan YUQORI turadi", async () => {
+    const u = understandQuery("10-sinf ona tili nutq uslublari rasmiy publitsistik badiiy");
+    const ranked = await rerankCandidates(
+      [
+        candidate({ id: "other", topicName: "Nutqning aniqligi", subject: "Ona tili", grade: "11-sinf" }),
+        candidate({
+          id: "gold",
+          topicName: "NUTQ USLUBLARI VA USLUBIYAT. TAKRORLASH",
+          subject: "Ona tili",
+          grade: "9-sinf",
+        }),
+      ],
+      u,
+      2,
+    );
+
+    assert.equal(ranked[0].sourceId, "gold");
+  });
+
+  it("bitta umumiy so'z moslik uchun YETARLI EMAS", async () => {
+    // Faqat ikki va undan ortiq ketma-ket so'z hisobga olinadi.
+    const u = understandQuery("8-sinf matematika kvadrat tenglama");
+    const [m] = await rerankCandidates(
+      [candidate({ id: "weak", topicName: "CHIZIQLI TENGLAMA SISTEMALARI" })],
+      u,
+      1,
+    );
+
+    assert.ok(
+      m.scoreBreakdown.exactMatch < 0.85,
+      `yakka so'z mosligi 0.85 bermasligi kerak, olindi: ${m.scoreBreakdown.exactMatch}`,
+    );
+  });
+});

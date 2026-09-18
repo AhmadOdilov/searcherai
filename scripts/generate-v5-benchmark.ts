@@ -17,6 +17,7 @@ import fs from "fs";
 import path from "path";
 import { prisma } from "../lib/db";
 import { CURRICULUM_SUBJECT_REGISTRY } from "../lib/curriculum/ingestion/registry";
+import { getCurriculumCoverage } from "../lib/curriculum/coverage";
 import type { LanguageCode } from "../lib/validations/common";
 import type { SearchIntent, AudienceMode } from "../lib/search/understanding";
 
@@ -168,11 +169,20 @@ async function main() {
     if (Number.isNaN(realGradeNum)) continue;
     if (!isGradeUnique(topic)) continue;
 
-    // So'ralgan sinf — haqiqiysidan kamida 2 pog'ona uzoq (aniq cross-grade).
+    /*
+      So'ralgan sinf — haqiqiysidan kamida 2 pog'ona uzoq, LEKIN u ham
+      rasmiy dasturda MAVJUD bo'lishi shart (V6).
+
+      Sabab: agar so'ralgan sinf (masalan 3-sinf) umuman raqamlashtirilmagan
+      bo'lsa, to'g'ri javob "sinf tafovuti" emas, "rasmiy dastur mavjud emas".
+      Bunday so'rovlar `uncovered_grade` to'plamiga ajratildi — ular
+      o'chirilmadi, faqat kutilma to'g'rilandi.
+    */
     const offsets = [-4, -3, 3, 4, -2, 2];
     const offset = pick(offsets, i + crossGrade.length);
     const askedGrade = realGradeNum + offset;
     if (askedGrade < 1 || askedGrade > 11 || askedGrade === realGradeNum) continue;
+    if (getCurriculumCoverage(topic.subject, `${askedGrade}-sinf`).status !== "COVERED") continue;
 
     const cgQuery = `${askedGrade}-sinf ${topic.subject.toLowerCase()} ${topicPhrase(topic.topicName)}`;
     if (!isNew(cgQuery)) continue;
@@ -389,6 +399,37 @@ async function main() {
     });
   }
   suites.multi_turn = multiTurn;
+
+  /*
+    ── G. QAMROVSIZ SINF (50) ─────────────────────────────────────────────
+
+    Boshlang'ich sinflar (1-4) rasmiy dasturda umuman yo'q. To'g'ri javob —
+    ehtiyotkorlik va "bu sinf raqamlashtirilmagan" deb ochiq aytish.
+    Eng yaqin sinfning bo'limini "sinf tafovuti" ogohlantirishi bilan
+    taqdim etish MAN ETILADI.
+
+    Bu to'plam V6 da cross_grade dan AJRATILDI: u yerdagi 13 ta so'rov
+    aynan shu taqiqlangan xatti-harakatni kutardi. So'rovlar o'chirilmadi —
+    kutilma o'quv dasturi haqiqatiga moslashtirildi.
+  */
+  const uncovered: BenchmarkItemV5[] = [];
+  for (let i = 0; uncovered.length < 50 && i < topics.length * 6; i++) {
+    const topic = topics[i % topics.length];
+    const askedGrade = 1 + (i % 4);
+    const q = `${askedGrade}-sinf ${topic.subject.toLowerCase()} ${topicPhrase(topic.topicName)}`;
+    if (!isNew(q)) continue;
+
+    uncovered.push({
+      id: `v5-ug-${String(uncovered.length + 1).padStart(3, "0")}`,
+      suite: "uncovered_grade",
+      q,
+      expectedLanguage: "UZ",
+      expectedSubject: topic.subject,
+      expectedGrade: `${askedGrade}-sinf`,
+      expectAbstention: true,
+    });
+  }
+  suites.uncovered_grade = uncovered;
 
   // ── Yozish va yaxlitlik tekshiruvi ─────────────────────────────────────
   const core = JSON.parse(

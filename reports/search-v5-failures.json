@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-09-18T14:22:15.363Z",
-  "total": 90,
+  "timestamp": "2026-09-18T14:31:03.742Z",
+  "total": 79,
   "failures": [
     {
       "id": "math-015",
@@ -17,53 +17,11 @@
       "detail": "intent: explain != lesson_plan"
     },
     {
-      "id": "math-035",
-      "suite": "golden_core",
-      "q": "производная функции 10 класс объяснение простыми словами",
-      "bucket": "synonym_gap",
-      "detail": "nomzodlar orasida yo'q (10 ta nomzod)"
-    },
-    {
-      "id": "math-035",
-      "suite": "golden_core",
-      "q": "производная функции 10 класс объяснение простыми словами",
-      "bucket": "cross_grade_false_negative",
-      "detail": "sinf tafovuti ogohlantirishi chiqmadi"
-    },
-    {
-      "id": "math-038",
-      "suite": "golden_core",
-      "q": "pythagorean theorem grade 8 geometry proof step by step",
-      "bucket": "synonym_gap",
-      "detail": "nomzodlar orasida yo'q (8 ta nomzod)"
-    },
-    {
-      "id": "math-038",
-      "suite": "golden_core",
-      "q": "pythagorean theorem grade 8 geometry proof step by step",
-      "bucket": "false_abstention",
-      "detail": "rasmiy dalil mavjud, lekin tizim ehtiyot rejimiga o'tdi"
-    },
-    {
       "id": "math-041",
       "suite": "golden_core",
       "q": "9-синф алгебра геометрик прогрессия формулалари тушунтир",
       "bucket": "intent_boundary",
       "detail": "intent: definition != explain"
-    },
-    {
-      "id": "math-042",
-      "suite": "golden_core",
-      "q": "1-sinf matematika 10 ichida sonlarni qo'shish va ayirish",
-      "bucket": "curriculum_out_of_scope",
-      "detail": "rasmiy dalil yo'q, lekin tizim ehtiyot rejimiga o'tmadi"
-    },
-    {
-      "id": "math-044",
-      "suite": "golden_core",
-      "q": "3-sinf matematika ko'p xonali sonlar ustida amallar",
-      "bucket": "curriculum_out_of_scope",
-      "detail": "rasmiy dalil yo'q, lekin tizim ehtiyot rejimiga o'tmadi"
     },
     {
       "id": "math-046",
@@ -78,13 +36,6 @@
       "q": "ildiz nima kvadrat tenglamalarda",
       "bucket": "intent_boundary",
       "detail": "intent: explain != definition"
-    },
-    {
-      "id": "lang-015",
-      "suite": "golden_core",
-      "q": "10-sinf ona tili nutq uslublari rasmiy publitsistik badiiy",
-      "bucket": "cross_grade_false_negative",
-      "detail": "noto'g'ri sinf ko'rsatildi: 11-sinf != 9-sinf"
     },
     {
       "id": "lang-016",
@@ -106,20 +57,6 @@
       "q": "11-sinf ona tili matn tahlili va esse yozish metodikasi",
       "bucket": "cross_grade_false_negative",
       "detail": "noto'g'ri sinf ko'rsatildi: 5-sinf != 6-sinf"
-    },
-    {
-      "id": "lang-020",
-      "suite": "golden_core",
-      "q": "7-синф она тили феъл нисбатлари дарс ишланмаси",
-      "bucket": "synonym_gap",
-      "detail": "nomzodlar orasida yo'q (1 ta nomzod)"
-    },
-    {
-      "id": "lang-020",
-      "suite": "golden_core",
-      "q": "7-синф она тили феъл нисбатлари дарс ишланмаси",
-      "bucket": "false_abstention",
-      "detail": "rasmiy dalil mavjud, lekin tizim ehtiyot rejimiga o'tdi"
     },
     {
       "id": "lang-024",
@@ -367,13 +304,6 @@
       "detail": "auditoriya: teacher != student"
     },
     {
-      "id": "gen-166",
-      "suite": "golden_core",
-      "q": "1-sinf matematika sonlar va sanash mustaqil ish topshiriqlari",
-      "bucket": "curriculum_out_of_scope",
-      "detail": "rasmiy dalil yo'q, lekin tizim ehtiyot rejimiga o'tmadi"
-    },
-    {
       "id": "gen-181",
       "suite": "golden_core",
       "q": "7-sinf biologiya umurtqali va umurtqasiz hayvonlar tushuntir",
@@ -470,13 +400,6 @@
       "q": "10-sinf informatika tarmoq protokollari va xavfsizlik mazmuni nima",
       "bucket": "intent_boundary",
       "detail": "intent: definition != explain"
-    },
-    {
-      "id": "gen-346",
-      "suite": "golden_core",
-      "q": "1-sinf matematika sonlar va sanash ish varag'i",
-      "bucket": "curriculum_out_of_scope",
-      "detail": "rasmiy dalil yo'q, lekin tizim ehtiyot rejimiga o'tmadi"
     },
     {
       "id": "gen-354",

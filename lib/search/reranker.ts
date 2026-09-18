@@ -130,8 +130,42 @@ export async function rerankCandidates(
       // Cross-lingual: o'zbekcha kanonik ibora nomzod sarlavhasida uchradimi?
       const canonicalHit = canonicalPhrases.some((p) => candTitle.includes(p));
 
-      if (subphraseHit || canonicalHit) {
-        exactScore = subphraseHit ? 0.85 : 0.80;
+      /*
+        KETMA-KET IBORA MOSLIGI.
+
+        Yuqoridagi subphrase tekshiruvi bo'laklarni faqat TINISH BELGISI
+        chegarasida ajratadi. Shu sababli sarlavha so'rovning asosiy
+        iborasi bilan BOSHLANSA ham, agar u punktuatsiya bilan ajralmagan
+        bo'lsa, moslik umuman hisobga olinmasdi.
+
+        Reproduksiya: «10-sinf ona tili nutq uslublari rasmiy publitsistik
+        badiiy» so'rovi. Rasmiy bo'lim — 9-sinf «NUTQ USLUBLARI VA
+        USLUBIYAT. TAKRORLASH», ya'ni u AYNAN so'rovning asosiy iborasi
+        bilan boshlanadi. Lekin «NUTQ USLUBLARI VA USLUBIYAT» butunligicha
+        so'rovda yo'q, shuning uchun bo'lak mosligi ishlamasdi va bo'lim
+        11-sinfning «Nutqning aniqligi» bo'limidan pastda qolardi.
+
+        Endi ikki yoki undan ortiq KETMA-KET so'zning mosligi ham bo'lak
+        mosligi bilan bir xil darajada baholanadi — bu o'sha qoidaning
+        punktuatsiyaga bog'liq bo'lmagan umumlashmasi.
+      */
+      const wordsOf = (value: string) => value.split(/\s+/).filter((w) => w.length >= 3);
+      const qWords = wordsOf(qTitle);
+      const candWords = wordsOf(candTitle);
+
+      let phraseHit = false;
+      for (let i = 0; i + 1 < qWords.length && !phraseHit; i++) {
+        const bigram = `${qWords[i]} ${qWords[i + 1]}`;
+        for (let j = 0; j + 1 < candWords.length; j++) {
+          if (`${candWords[j]} ${candWords[j + 1]}` === bigram) {
+            phraseHit = true;
+            break;
+          }
+        }
+      }
+
+      if (subphraseHit || phraseHit || canonicalHit) {
+        exactScore = subphraseHit || phraseHit ? 0.85 : 0.80;
       } else {
         const qTokens = keywords.map(stemUzbekWord);
         let matchCount = 0;

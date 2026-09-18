@@ -1,20 +1,21 @@
 {
-  "timestamp": "2026-09-18T14:22:15.363Z",
+  "timestamp": "2026-09-18T14:31:03.742Z",
   "datasetComposition": {
-    "total": 950,
+    "total": 1000,
     "bySuite": {
       "golden_core": 500,
       "adversarial": 100,
       "cross_grade": 50,
       "multilingual": 100,
       "synonym": 100,
+      "uncovered_grade": 50,
       "unsupported": 100
     },
     "withGoldEvidence": 216
   },
   "understanding": {
-    "languageAccuracy": 98.59,
-    "subjectAccuracy": 99.88,
+    "languageAccuracy": 98.67,
+    "subjectAccuracy": 99.89,
     "gradeAccuracy": 100,
     "intentAccuracy": 91.8,
     "audienceAccuracy": 96,
@@ -48,9 +49,9 @@
       }
     },
     "evaluated": {
-      "langTotal": 850,
-      "subjTotal": 840,
-      "gradeTotal": 831,
+      "langTotal": 900,
+      "subjTotal": 890,
+      "gradeTotal": 881,
       "intentTotal": 500,
       "audTotal": 500,
       "audExplicitTotal": 52,
@@ -59,57 +60,57 @@
   },
   "candidateRetrieval": {
     "evaluatedQueries": 216,
-    "recall20": 98.15,
-    "recall50": 98.61,
-    "recall100": 98.61,
-    "avgLatencyMs": 7.88
+    "recall20": 99.54,
+    "recall50": 100,
+    "recall100": 100,
+    "avgLatencyMs": 3.87
   },
   "reranker": {
     "evaluatedQueries": 216,
-    "recall1": 88.89,
-    "recall3": 96.76,
-    "recall5": 97.22,
-    "precision5": 19.44,
-    "mrr": 0.9294,
-    "ndcg5": 0.9399,
-    "ndcg10": 0.9416,
+    "recall1": 90.28,
+    "recall3": 98.15,
+    "recall5": 98.61,
+    "precision5": 19.72,
+    "mrr": 0.9433,
+    "ndcg5": 0.9538,
+    "ndcg10": 0.9555,
     "avgLatencyMs": 0.75
   },
   "abstention": {
-    "shouldAbstainTotal": 516,
-    "correctlyAbstained": 512,
+    "shouldAbstainTotal": 566,
+    "correctlyAbstained": 566,
     "shouldGroundTotal": 216,
-    "wronglyAbstained": 2,
-    "precision": 99.61,
-    "recall": 99.22,
+    "wronglyAbstained": 0,
+    "precision": 100,
+    "recall": 100,
     "falseGrounding": 0
   },
   "crossGrade": {
     "total": 58,
-    "correct": 55,
-    "wrongGradeReported": 2,
-    "accuracy": 94.83,
+    "correct": 57,
+    "wrongGradeReported": 1,
+    "accuracy": 98.28,
     "nonCrossGradeTotal": 159,
     "falsePositives": 2,
     "falsePositiveRate": 1.26
   },
   "grounding": {
-    "totalClaims": 2818,
-    "supportedClaimRate": 64.09,
-    "contradictionRate": 4.08,
+    "totalClaims": 2716,
+    "supportedClaimRate": 63.37,
+    "contradictionRate": 2.91,
     "contradictionsByType": {
-      "GRADE_CONFLICT": 115
+      "GRADE_CONFLICT": 79
     },
     "factualContradictionRate": 0,
     "sourceConflictRate": 0,
-    "gradeConflictRate": 4.08,
+    "gradeConflictRate": 2.91,
     "answerEvidenceConflictRate": 0,
-    "unsupportedClaimRate": 31.83,
-    "totalCitations": 2172,
+    "unsupportedClaimRate": 33.73,
+    "totalCitations": 1994,
     "fakeDtsCitations": 0,
     "hoursProbe": {
-      "probed": 192,
-      "contradictionsDetected": 192,
+      "probed": 195,
+      "contradictionsDetected": 195,
       "detectionRate": 100,
       "falsePositives": 0
     }
@@ -122,17 +123,17 @@
   },
   "latencyLocalPipelineMs": {
     "note": "Tashqi LLM generatsiyasi KIRMAGAN — faqat mahalliy quvur.",
-    "understandingAvg": 0.859,
-    "retrievalAvg": 7.88,
+    "understandingAvg": 0.844,
+    "retrievalAvg": 3.87,
     "rerankAvg": 0.75,
-    "validationAvg": 0.013,
-    "p50": 8.57,
-    "p95": 13.9,
-    "p99": 28.35
+    "validationAvg": 0.015,
+    "p50": 0.44,
+    "p95": 16,
+    "p99": 25.79
   },
   "failureBuckets": {
     "typo": 0,
-    "synonym_gap": 3,
+    "synonym_gap": 0,
     "grade_mismatch": 0,
     "subject_mismatch": 0,
     "intent_misclassification": 0,
@@ -142,11 +143,11 @@
     "ocr_phonetic_noise": 0,
     "conversational_vague_query": 0,
     "over_filtering": 0,
-    "curriculum_out_of_scope": 4,
+    "curriculum_out_of_scope": 0,
     "reranker_demotion": 2,
     "truncation_embedding_dimension_limit": 0,
     "false_grounding": 0,
-    "false_abstention": 2,
+    "false_abstention": 0,
     "unsupported_claim": 0,
     "contradiction": 0,
     "subject_boundary": 1,
@@ -157,7 +158,7 @@
     "prompt_injection": 0,
     "evidence_mismatch": 0,
     "cross_grade_false_positive": 2,
-    "cross_grade_false_negative": 3,
+    "cross_grade_false_negative": 1,
     "UI_grounding_mismatch": 0,
     "malformed_llm_output": 0,
     "stale_curriculum": 0

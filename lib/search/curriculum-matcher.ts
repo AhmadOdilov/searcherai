@@ -7,6 +7,7 @@ import { stemUzbekWord, getApostropheVariants } from "./normalization";
 import { expandRetrievalTerms } from "./concept-map";
 import { rewriteQueryForRetrieval } from "./rewrite";
 import { rerankCandidates, type RerankerCandidate } from "./reranker";
+import { getCurriculumCoverage, canProvideOfficialEvidence } from "@/lib/curriculum/coverage";
 
 /**
  * Darajalangan o'quv dasturi bo'limi natijasi va to'liq manba provenansi (Phase 12).
@@ -41,6 +42,31 @@ export async function retrieveCurriculumCandidates(
   maxCandidates: number = 50,
 ): Promise<RerankerCandidate[]> {
   const { detectedSubject, detectedGrade, extractedTopic, keywords } = understanding;
+
+  /*
+    0. QAMROV TEKSHIRUVI (V6) — hamma narsadan OLDIN.
+
+    So'ralgan sinf bo'yicha rasmiy dastur umuman raqamlashtirilmagan bo'lsa,
+    hech qanday nomzod qaytarilmaydi. Eng yaqin sinfga tushib ketish
+    (nearest-grade fallback) MAN ETILADI.
+
+    Reproduksiya (V5 xatti-harakati):
+      «1-sinf matematika 10 ichida sonlarni qo'shish va ayirish»
+        -> 5-sinf «NATURAL SONLARNI QO'SHISH VA AYIRISH», ball 0.6602
+      «4-sinf matematika oddiy kasrlar»
+        -> 5-sinf «ODDIY KASRLAR», ball 0.8227
+
+    Bazada 1-4 sinf dasturi YO'Q. Tizim esa eng yaqin sinf bo'limini topib,
+    uni "sinf tafovuti" ogohlantirishi bilan taqdim etardi — ya'ni noto'g'ri
+    dalilni qonuniylashtirardi.
+
+    DIQQAT: bu 5-11 sinflar orasidagi HAQIQIY cross-grade xatti-harakatiga
+    tegmaydi — u yerda ikkala sinf ham dasturda mavjud.
+  */
+  const coverage = getCurriculumCoverage(detectedSubject, detectedGrade);
+  if (!canProvideOfficialEvidence(coverage)) {
+    return [];
+  }
 
   // 1. Qidiruv so'zlarini shakllantirish va Query Rewrite
   const rewrites = rewriteQueryForRetrieval(understanding);
@@ -77,17 +103,61 @@ export async function retrieveCurriculumCandidates(
     return false;
   };
 
-  // Asosiy qidiruv so'zlari (so'rovdan to'g'ridan-to'g'ri olingan atamalar)
-  const primaryVariants = new Set<string>();
-  const rawPrimary = [...baseTerms, ...stemmedKeywords, extractedTopic];
-  for (const term of rawPrimary) {
-    if (term.length < 3 || isStopTerm(term)) continue;
-    for (const variant of getApostropheVariants(term)) {
-      if (!isStopTerm(variant)) {
-        primaryVariants.add(variant);
+  /*
+    Asosiy qidiruv so'zlari.
+
+    ── V6 TUZATISHI: XOM VA KANONIK ATAMALAR UCHUN KAFOLATLANGAN KVOTA ─────
+
+    Ilgari birlamchi ro'yxatga faqat so'rovdan TO'G'RIDAN-TO'G'RI olingan
+    atamalar kirardi. Konsept kengaytmasi («производная» -> «hosila») esa
+    faqat `orClauses` ga tushardi, u esa birlamchi qidiruv hech narsa
+    topmagan holatdagina ishlatilardi.
+
+    Oqibati: rus/ingliz so'rovlarida transliteratsiya qilingan tokenlar
+    ("proizvodnaya", "geometry") bir nechta aloqasiz qatorga mos kelib,
+    kengaytma yo'lini butunlay to'sib qo'yardi.
+      «pythagorean theorem grade 8» -> gold 8-sinf bo'limi topilmasdi;
+      «7-синф она тили феъл нисбатлари» -> atigi 1 ta nomzod.
+
+    Lekin kengaytmani shunchaki ro'yxat BOSHIGA qo'yish ham yaramadi:
+    u xom atamalarni chegaradan siqib chiqarib, o'zbekcha so'rovlarni
+    buzardi («10-sinf trigonometrik funksiyalar» -> 1 ta nomzod).
+
+    Shuning uchun ikkala manbaga ham KVOTA beriladi: har biridan mustaqil
+    ravishda eng ko'pi bilan yarmi olinadi va keyin birlashtiriladi.
+  */
+  const MAX_PRIMARY_KEYWORDS = 18;
+  const QUOTA_PER_SOURCE = MAX_PRIMARY_KEYWORDS / 2;
+
+  const collectVariants = (terms: string[], limit: number): string[] => {
+    const collected: string[] = [];
+    const seen = new Set<string>();
+    for (const term of terms) {
+      if (collected.length >= limit) break;
+      if (term.length < 3 || isStopTerm(term)) continue;
+      for (const variant of getApostropheVariants(term)) {
+        if (collected.length >= limit) break;
+        if (isStopTerm(variant) || seen.has(variant)) continue;
+        seen.add(variant);
+        collected.push(variant);
       }
     }
-  }
+    return collected;
+  };
+
+  // So'rovdan to'g'ridan-to'g'ri olingan atamalar.
+  const rawPrimaryTerms = collectVariants(
+    [...baseTerms, ...stemmedKeywords, extractedTopic],
+    QUOTA_PER_SOURCE,
+  );
+
+  // Konsept xaritasidan olingan kanonik DTS atamalari (yuqori aniqlikda).
+  const canonicalPrimaryTerms = collectVariants(
+    conceptExpansion.expandedTerms,
+    QUOTA_PER_SOURCE,
+  );
+
+  const primaryVariants = new Set<string>([...rawPrimaryTerms, ...canonicalPrimaryTerms]);
 
   // Barcha kengaytirilgan apostrof variantlarini generatsiya qilish
   const finalVariants = new Set<string>(primaryVariants);
@@ -100,7 +170,7 @@ export async function retrieveCurriculumCandidates(
     }
   }
 
-  const primaryKeywords = Array.from(primaryVariants).slice(0, 10);
+  const primaryKeywords = Array.from(primaryVariants).slice(0, MAX_PRIMARY_KEYWORDS);
   const searchKeywords = Array.from(finalVariants).slice(0, 16);
 
   /*

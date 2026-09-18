@@ -1,0 +1,452 @@
+[
+  {
+    "id": "v5-ug-001",
+    "suite": "uncovered_grade",
+    "q": "1-sinf matematika ehtimollik nazariyasi",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "1-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-002",
+    "suite": "uncovered_grade",
+    "q": "2-sinf matematika elementar funksiyalar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "2-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-003",
+    "suite": "uncovered_grade",
+    "q": "3-sinf matematika fazoda toʻgʻri chiziq va tekislikning perpendikulyarligi",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "3-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-004",
+    "suite": "uncovered_grade",
+    "q": "4-sinf matematika fazoda toʻgʻri chiziqlar va tekisliklarning parallelligi",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "4-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-005",
+    "suite": "uncovered_grade",
+    "q": "1-sinf matematika koʻrsatkichli va logarifmik funksiyalar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "1-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-006",
+    "suite": "uncovered_grade",
+    "q": "2-sinf matematika planimetriyani tizimli takrorlash",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "2-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-007",
+    "suite": "uncovered_grade",
+    "q": "3-sinf matematika ratsional tenglamalar va tengsizliklar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "3-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-008",
+    "suite": "uncovered_grade",
+    "q": "4-sinf matematika stereometriyaga kirish",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "4-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-009",
+    "suite": "uncovered_grade",
+    "q": "1-sinf matematika trigonometrik funksiyalar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "1-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-010",
+    "suite": "uncovered_grade",
+    "q": "2-sinf matematika trigonometrik tenglamalar va tengsizliklar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "2-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-011",
+    "suite": "uncovered_grade",
+    "q": "3-sinf matematika algebra va analiz asoslari kursini",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "3-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-012",
+    "suite": "uncovered_grade",
+    "q": "4-sinf matematika fazoda dekart koordinatalari va vektorlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "4-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-013",
+    "suite": "uncovered_grade",
+    "q": "1-sinf matematika hosila va uning tatbiqlari",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "1-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-014",
+    "suite": "uncovered_grade",
+    "q": "2-sinf matematika integral va uning tatbiqlari",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "2-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-015",
+    "suite": "uncovered_grade",
+    "q": "3-sinf matematika ma’lumotlar tahlili",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "3-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-016",
+    "suite": "uncovered_grade",
+    "q": "4-sinf matematika piramida va konus",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "4-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-017",
+    "suite": "uncovered_grade",
+    "q": "1-sinf matematika prizma va silindr",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "1-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-018",
+    "suite": "uncovered_grade",
+    "q": "2-sinf matematika sfera va shar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "2-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-019",
+    "suite": "uncovered_grade",
+    "q": "3-sinf matematika takrorlash",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "3-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-020",
+    "suite": "uncovered_grade",
+    "q": "4-sinf matematika fazoviy geometrik shakllar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "4-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-021",
+    "suite": "uncovered_grade",
+    "q": "1-sinf matematika geometrik shakllar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "1-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-022",
+    "suite": "uncovered_grade",
+    "q": "2-sinf matematika matnli masalalarni yechish",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "2-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-023",
+    "suite": "uncovered_grade",
+    "q": "4-sinf matematika natural sonlarni ko‘paytirish va bo‘lish",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "4-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-024",
+    "suite": "uncovered_grade",
+    "q": "1-sinf matematika natural sonlarni qo‘shish va ayirish",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "1-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-025",
+    "suite": "uncovered_grade",
+    "q": "2-sinf matematika oddiy kasrlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "2-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-026",
+    "suite": "uncovered_grade",
+    "q": "3-sinf matematika o‘nli kasrlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "3-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-027",
+    "suite": "uncovered_grade",
+    "q": "4-sinf matematika geometrik material",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "4-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-028",
+    "suite": "uncovered_grade",
+    "q": "1-sinf matematika har xil maxrajli kasrlarni qo‘shish va ayirish",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "1-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-029",
+    "suite": "uncovered_grade",
+    "q": "2-sinf matematika ma’lumotlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "2-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-030",
+    "suite": "uncovered_grade",
+    "q": "3-sinf matematika musbat va manfiy sonlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "3-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-031",
+    "suite": "uncovered_grade",
+    "q": "4-sinf matematika musbat va manfiy sonlarni ko‘paytirish va",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "4-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-032",
+    "suite": "uncovered_grade",
+    "q": "1-sinf matematika musbat va manfiy sonlarni qo‘shish va ayirish",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "1-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-033",
+    "suite": "uncovered_grade",
+    "q": "2-sinf matematika nisbat va proporsiya",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "2-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-034",
+    "suite": "uncovered_grade",
+    "q": "3-sinf matematika oddiy kasrlarni ko‘paytirish va bo‘lish",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "3-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-035",
+    "suite": "uncovered_grade",
+    "q": "4-sinf matematika sonlarning bo‘linish belgilari",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "4-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-036",
+    "suite": "uncovered_grade",
+    "q": "1-sinf matematika tenglamalarni yechish",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "1-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-037",
+    "suite": "uncovered_grade",
+    "q": "2-sinf matematika algebraik ifodalar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "2-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-038",
+    "suite": "uncovered_grade",
+    "q": "3-sinf matematika algebraik kasrlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "3-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-039",
+    "suite": "uncovered_grade",
+    "q": "4-sinf matematika bir noma’lumli birinchi darajali tenglamalar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "4-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-040",
+    "suite": "uncovered_grade",
+    "q": "1-sinf matematika birhadlar va ko‘phadlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "1-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-041",
+    "suite": "uncovered_grade",
+    "q": "2-sinf matematika geometriyaning boshlang‘ich tushunchalari",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "2-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-042",
+    "suite": "uncovered_grade",
+    "q": "3-sinf matematika kombinatorika elementlari",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "3-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-043",
+    "suite": "uncovered_grade",
+    "q": "4-sinf matematika ko‘phadni ko‘paytuvchilarga ajratish",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "4-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-044",
+    "suite": "uncovered_grade",
+    "q": "1-sinf matematika parallel to‘g‘ri chiziqlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "1-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-045",
+    "suite": "uncovered_grade",
+    "q": "2-sinf matematika uchburchaklar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "2-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-046",
+    "suite": "uncovered_grade",
+    "q": "3-sinf matematika uchburchakning tomonlari va burchaklari",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "3-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-047",
+    "suite": "uncovered_grade",
+    "q": "4-sinf matematika yasashga doir masalalar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "4-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-048",
+    "suite": "uncovered_grade",
+    "q": "1-sinf matematika algebraik kasrlar va ular ustida amallar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "1-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-049",
+    "suite": "uncovered_grade",
+    "q": "2-sinf matematika aylana",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "2-sinf",
+    "expectAbstention": true
+  },
+  {
+    "id": "v5-ug-050",
+    "suite": "uncovered_grade",
+    "q": "3-sinf matematika koordinatalar usuli va vektorlar",
+    "expectedLanguage": "UZ",
+    "expectedSubject": "Matematika",
+    "expectedGrade": "3-sinf",
+    "expectAbstention": true
+  }
+]

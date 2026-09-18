@@ -27,6 +27,7 @@ import fs from "fs";
 import path from "path";
 import { prisma } from "../lib/db";
 import { CURRICULUM_SUBJECT_REGISTRY } from "../lib/curriculum/ingestion/registry";
+import { getCurriculumCoverage } from "../lib/curriculum/coverage";
 
 interface Item {
   id: string;
@@ -71,6 +72,50 @@ async function main() {
   const topicById = new Map(dbTopics.map((t) => [t.id, t]));
 
   const problems: string[] = [];
+
+  /*
+    REYESTR <-> BAZA DREYFI (V6).
+
+    `CURRICULUM_SUBJECT_REGISTRY.gradesAvailable` endi qamrov tekshiruvining
+    MANBASI: so'ralgan sinf ro'yxatda bo'lmasa, tizim rasmiy dalil
+    qaytarmaydi. Shuning uchun ro'yxat bazadan ajralib qolsa, oqibat
+    jiddiy bo'ladi — mavjud dastur "yo'q" deb e'lon qilinadi yoki aksincha.
+  */
+  const dbGrades = new Map<string, Set<string>>();
+  for (const t of dbTopics) {
+    const key = t.subject.toLowerCase();
+    if (!dbGrades.has(key)) dbGrades.set(key, new Set());
+    dbGrades.get(key)!.add(t.grade.toLowerCase());
+  }
+
+  for (const entry of Object.values(CURRICULUM_SUBJECT_REGISTRY)) {
+    const actual = dbGrades.get(entry.subject.toLowerCase()) ?? new Set<string>();
+    const declared = new Set(entry.gradesAvailable.map((g) => g.toLowerCase()));
+
+    for (const g of declared) {
+      if (!actual.has(g)) {
+        problems.push(`[registry_grade_missing_in_db] ${entry.subject}: reyestr «${g}» deydi, bazada yo'q`);
+      }
+    }
+    for (const g of actual) {
+      if (!declared.has(g)) {
+        problems.push(`[db_grade_missing_in_registry] ${entry.subject}: bazada «${g}» bor, reyestrda yo'q`);
+      }
+    }
+    if (entry.status !== "OFFICIAL" && actual.size > 0) {
+      problems.push(`[registry_status_drift] ${entry.subject}: status ${entry.status}, lekin bazada ${actual.size} sinf bor`);
+    }
+  }
+
+  // Qamrov mantiqi reyestr bilan mos ishlayotganini tasdiqlash.
+  for (const entry of Object.values(CURRICULUM_SUBJECT_REGISTRY)) {
+    for (const g of entry.gradesAvailable) {
+      if (getCurriculumCoverage(entry.subject, g).status !== "COVERED") {
+        problems.push(`[coverage_logic_drift] ${entry.subject} ${g}: COVERED kutilgandi`);
+      }
+    }
+  }
+
   const seenIds = new Map<string, string>();
   const seenQueries = new Map<string, string>();
   let total = 0;

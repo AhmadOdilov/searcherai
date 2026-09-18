@@ -15,6 +15,7 @@ import type { QueryUnderstanding } from "./understanding";
 import type { RankedCurriculumMatch } from "./curriculum-matcher";
 import type { SearchAnswer } from "@/lib/validations/search";
 import { getSubjectCurriculumStatus } from "../curriculum/ingestion/registry";
+import { getCurriculumCoverage } from "../curriculum/coverage";
 
 export type ClaimStatus = "supported" | "contradicted" | "unsupported";
 
@@ -138,9 +139,27 @@ export function validateAndGroundAnswer(
     const registryInfo = understanding.detectedSubject ? getSubjectCurriculumStatus(understanding.detectedSubject) : null;
     const isUnseededSubject = registryInfo?.status === "NOT_AVAILABLE";
 
+    /*
+      Sabab ANIQ aytiladi (V6).
+
+      «Fan bo'yicha dastur yo'q» bilan «fan bor, lekin bu SINF
+      raqamlashtirilmagan» — bular foydalanuvchi uchun boshqa-boshqa
+      ma'no. Ikkinchi holatda qaysi sinflar mavjudligini aytish
+      foydalanuvchiga to'g'ridan-to'g'ri yordam beradi.
+    */
+    const coverage = getCurriculumCoverage(understanding.detectedSubject, understanding.detectedGrade);
+
     let ungroundedCaution = "";
 
-    if (isUnseededSubject) {
+    if (coverage.status === "GRADE_NOT_AVAILABLE") {
+      const grades = coverage.availableGrades.join(", ");
+      ungroundedCaution =
+        understanding.detectedLanguage === "RU"
+          ? `Примечание: официальная учебная программа по предмету «${coverage.subject}» оцифрована только для классов ${grades}. Для ${coverage.requestedGrade} официальных данных нет, поэтому ответ основан на общих методических рекомендациях.`
+          : understanding.detectedLanguage === "EN"
+          ? `Note: the official curriculum for ${coverage.subject} is digitised only for grades ${grades}. No official data exists for ${coverage.requestedGrade}, so this answer is based on general pedagogical guidance.`
+          : `Eslatma: «${coverage.subject}» fani bo'yicha rasmiy o'quv dasturi faqat ${grades} uchun bazaga kiritilgan. ${coverage.requestedGrade} bo'yicha rasmiy ma'lumot yo'q, shuning uchun javob umumiy metodik tavsiyalar asosida tayyorlandi.`;
+    } else if (isUnseededSubject) {
       ungroundedCaution =
         understanding.detectedLanguage === "RU"
           ? `Примечание: Точное соответствие в официальной учебной программе не найдено (база по предмету «${understanding.detectedSubject}» пока не загружена). Ответ составлен на основе общих методических стандартов.`
