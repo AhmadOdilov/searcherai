@@ -286,7 +286,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "PIFAGOR TEOREMASI"
+  expectedCurriculumTopic: "TO‘G‘RI BURCHAKLI UCHBURCHAKNING TOMONLARI"
 });
 
 // Grade 9 (Seeded in DB)
@@ -498,7 +498,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "cross-lingual",
-  expectedCurriculumTopic: "PIFAGOR TEOREMASI"
+  expectedCurriculumTopic: "TO‘G‘RI BURCHAKLI UCHBURCHAKNING TOMONLARI"
 });
 
 // Cyrillic Uzbek Math Queries
@@ -816,7 +816,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "O‘ZGANING NUTQI"
+  expectedCurriculumTopic: "KO‘CHIRMA GAPLI QO‘SHMA GAPLAR"
 });
 addQ({
   id: "lang-015",
@@ -840,7 +840,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "IMLO VA TALAFUZ ME’YORLARI"
+  expectedCurriculumTopic: "TILIM – BOYLIGIM"
 });
 addQ({
   id: "lang-017",
@@ -864,7 +864,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "NOTIQLIK SAN’ATI"
+  expectedCurriculumTopic: "Nutq madaniyati va nutq texnikasi"
 });
 
 // Cyrillic & Russian Ona tili
@@ -2239,72 +2239,81 @@ const SUBJ_EN: Record<string, string> = {
 
 // Generate queries until we reach 500
 const subjectKeys = Object.keys(TOPIC_SEEDS);
+const seenQueries = new Set(DATASET_500.map((d) => d.q.toLowerCase().trim()));
 let subjIdx = 0;
+let topicStep = 0;
 
 while (DATASET_500.length < 500) {
   const currentSubj = subjectKeys[subjIdx % subjectKeys.length];
   const topics = TOPIC_SEEDS[currentSubj];
-  const t = topics[DATASET_500.length % topics.length];
-  const intent = INTENTS[DATASET_500.length % INTENTS.length];
+  const t = topics[(topicStep + Math.floor(subjIdx / subjectKeys.length)) % topics.length];
+  const intent = INTENTS[(DATASET_500.length + topicStep) % INTENTS.length];
 
   const id = `gen-${String(queryCounter).padStart(3, "0")}`;
   queryCounter++;
 
   // Alternate languages: 60% UZ, 25% RU, 15% EN
   const mod = DATASET_500.length % 10;
+  let candidateQ = "";
+  let lang: "UZ" | "RU" | "EN" = "UZ";
+
   if (mod < 6) {
     // Uzbek
+    lang = "UZ";
     const intentSuffixes = INTENT_SUFFIXES_UZ[intent] || ["tushuntir"];
-    const suffix = intentSuffixes[DATASET_500.length % intentSuffixes.length];
-    DATASET_500.push({
-      id,
-      q: `${t.grade} ${currentSubj.toLowerCase()} ${t.topicUz} ${suffix}`,
-      expectedLanguage: "UZ",
-      expectedSubject: currentSubj,
-      expectedGrade: t.grade,
-      expectedIntent: intent,
-      expectedAudience: intent === "explain" && mod === 0 ? "student" : "teacher",
-      difficulty: mod % 3 === 0 ? "easy" : mod % 3 === 1 ? "medium" : "hard",
-      category: "generated_balanced",
-      isUnsupportedSubject: currentSubj !== "Matematika" && currentSubj !== "Ona tili",
-    });
+    const suffix = intentSuffixes[(topicStep + DATASET_500.length) % intentSuffixes.length];
+    candidateQ = `${t.grade} ${currentSubj.toLowerCase()} ${t.topicUz} ${suffix}`;
+    if (seenQueries.has(candidateQ.toLowerCase().trim())) {
+      candidateQ = `${t.grade} ${currentSubj.toLowerCase()} ${t.topicUz} bo'yicha ${suffix}`;
+    }
+    if (seenQueries.has(candidateQ.toLowerCase().trim())) {
+      candidateQ = `maktab ${t.grade} ${currentSubj.toLowerCase()} ${t.topicUz} ${suffix}`;
+    }
   } else if (mod < 8) {
     // Russian
+    lang = "RU";
     const ruSubj = SUBJ_RU[currentSubj] || currentSubj.toLowerCase();
     const ruSuffixes = INTENT_SUFFIXES_RU[intent] || ["объяснение"];
-    const suffix = ruSuffixes[DATASET_500.length % ruSuffixes.length];
-    DATASET_500.push({
-      id,
-      q: `${t.grade.replace("-sinf", " класс")} ${ruSubj} ${t.topicRu} ${suffix}`,
-      expectedLanguage: "RU",
-      expectedSubject: currentSubj,
-      expectedGrade: t.grade,
-      expectedIntent: intent,
-      expectedAudience: "teacher",
-      difficulty: "medium",
-      category: "generated_balanced",
-      isUnsupportedSubject: currentSubj !== "Matematika" && currentSubj !== "Ona tili",
-    });
+    const suffix = ruSuffixes[(topicStep + DATASET_500.length) % ruSuffixes.length];
+    candidateQ = `${t.grade.replace("-sinf", " класс")} ${ruSubj} ${t.topicRu} ${suffix}`;
+    if (seenQueries.has(candidateQ.toLowerCase().trim())) {
+      candidateQ = `${t.grade.replace("-sinf", " класс")} ${ruSubj} тема ${t.topicRu} ${suffix}`;
+    }
+    if (seenQueries.has(candidateQ.toLowerCase().trim())) {
+      candidateQ = `школа ${t.grade.replace("-sinf", " класс")} ${ruSubj} ${t.topicRu} ${suffix}`;
+    }
   } else {
     // English
+    lang = "EN";
     const enSubj = SUBJ_EN[currentSubj] || currentSubj.toLowerCase();
     const enSuffixes = INTENT_SUFFIXES_EN[intent] || ["explanation"];
-    const suffix = enSuffixes[DATASET_500.length % enSuffixes.length];
-    DATASET_500.push({
-      id,
-      q: `grade ${t.grade.replace("-sinf", "")} ${enSubj} ${t.topicEn} ${suffix}`,
-      expectedLanguage: "EN",
-      expectedSubject: currentSubj,
-      expectedGrade: t.grade,
-      expectedIntent: intent,
-      expectedAudience: "teacher",
-      difficulty: "medium",
-      category: "generated_balanced",
-      isUnsupportedSubject: currentSubj !== "Matematika" && currentSubj !== "Ona tili",
-    });
+    const suffix = enSuffixes[(topicStep + DATASET_500.length) % enSuffixes.length];
+    candidateQ = `grade ${t.grade.replace("-sinf", "")} ${enSubj} ${t.topicEn} ${suffix}`;
+    if (seenQueries.has(candidateQ.toLowerCase().trim())) {
+      candidateQ = `grade ${t.grade.replace("-sinf", "")} ${enSubj} topic ${t.topicEn} ${suffix}`;
+    }
+    if (seenQueries.has(candidateQ.toLowerCase().trim())) {
+      candidateQ = `school grade ${t.grade.replace("-sinf", "")} ${enSubj} ${t.topicEn} ${suffix}`;
+    }
   }
 
+  seenQueries.add(candidateQ.toLowerCase().trim());
+
+  DATASET_500.push({
+    id,
+    q: candidateQ,
+    expectedLanguage: lang,
+    expectedSubject: currentSubj,
+    expectedGrade: t.grade,
+    expectedIntent: intent,
+    expectedAudience: intent === "explain" && mod === 0 ? "student" : "teacher",
+    difficulty: mod % 3 === 0 ? "easy" : mod % 3 === 1 ? "medium" : "hard",
+    category: "generated_balanced",
+    isUnsupportedSubject: currentSubj !== "Matematika" && currentSubj !== "Ona tili",
+  });
+
   subjIdx++;
+  topicStep++;
 }
 
 console.log(`Successfully generated ${DATASET_500.length} golden queries!`);

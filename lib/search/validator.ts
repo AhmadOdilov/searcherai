@@ -108,7 +108,7 @@ export function validateAndGroundAnswer(
 
     return {
       isGrounded: false,
-      groundingScore: 0.3,
+      groundingScore: 0.0,
       isAbstained: true,
       caution: answer.caution ? `${answer.caution} | ${ungroundedCaution}` : ungroundedCaution,
       sourceCitations: [],

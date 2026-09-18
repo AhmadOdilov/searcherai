@@ -39,6 +39,43 @@ describe("search multi-turn context resolution (Phase 14)", () => {
     assert.equal(turn3.detectedGrade, "5-sinf", "Sinf (5-sinf) avvalgi kontekstdan saqlanishi shart");
     assert.equal(turn3.detectedSubject, "Biologiya", "Fan (Biologiya) avvalgi kontekstdan saqlanishi shart");
     assert.equal(turn3.extractedTopic, turn1.extractedTopic, "Mavzu (Fotosintez) saqlanishi shart");
+
+    const contextAfterTurn3: ConversationTurnContext = {
+      previousTopic: turn3.extractedTopic,
+      previousSubject: turn3.detectedSubject,
+      previousGrade: turn3.detectedGrade,
+      previousLanguage: turn3.detectedLanguage,
+      previousIntent: turn3.detectedIntent,
+    };
+
+    // 4-qadam: "Javoblarini ham ber"
+    const turn4 = understandQuery("Javoblarini ham ber", undefined, undefined, undefined, contextAfterTurn3);
+    assert.equal(turn4.detectedGrade, "5-sinf", "Sinf 4-qadamda saqlanishi shart");
+    assert.equal(turn4.detectedSubject, "Biologiya", "Fan 4-qadamda saqlanishi shart");
+    assert.equal(turn4.extractedTopic, turn1.extractedTopic, "Mavzu 4-qadamda saqlanishi shart");
+
+    const contextAfterTurn4: ConversationTurnContext = {
+      previousTopic: turn4.extractedTopic,
+      previousSubject: turn4.detectedSubject,
+      previousGrade: turn4.detectedGrade,
+      previousLanguage: turn4.detectedLanguage,
+      previousIntent: turn4.detectedIntent,
+    };
+
+    // 5-qadam: "Endi o'qituvchi uchun dars reja qil"
+    const turn5 = understandQuery("Endi o'qituvchi uchun dars reja qil", undefined, undefined, undefined, contextAfterTurn4);
+    assert.equal(turn5.detectedIntent, "lesson_plan", "Intent lesson_plan ga o'tishi kerak");
+    assert.equal(turn5.audience, "teacher", "Auditoriya teacher bo'lishi kerak");
+    assert.equal(turn5.detectedGrade, "5-sinf", "Sinf 5-qadamda saqlanishi shart");
+    assert.equal(turn5.detectedSubject, "Biologiya", "Fan 5-qadamda saqlanishi shart");
+    assert.equal(turn5.extractedTopic, turn1.extractedTopic, "Mavzu 5-qadamda saqlanishi shart");
+  });
+
+  it("seans qayta ishga tushganda (session reset/restart) eski kontekst tozalanadi", () => {
+    // Tozalangan yangi seans (context yo'q)
+    const freshTurn = understandQuery("Ona tili fe'l so'z turkumi");
+    assert.equal(freshTurn.detectedSubject, "Ona tili");
+    assert.equal(freshTurn.extractedTopic.toLowerCase().includes("fe'l"), true);
   });
 
   it("agar foydalanuvchi yangi mavzuni aniq bersa, eski kontekst ustiga yoziladi", () => {

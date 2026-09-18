@@ -1,0 +1,107 @@
+{
+  "timestamp": "2026-09-18T12:36:06.623Z",
+  "totalQueries": 500,
+  "understanding": {
+    "languageAccuracy": 100,
+    "subjectAccuracy": 94.28571428571428,
+    "gradeAccuracy": 100,
+    "intentAccuracy": 91.8,
+    "audienceAccuracy": 89.4,
+    "byDifficulty": {
+      "easy": {
+        "total": 150,
+        "correct": 125,
+        "accuracy": 83.33333333333334
+      },
+      "medium": {
+        "total": 188,
+        "correct": 157,
+        "accuracy": 83.51063829787235
+      },
+      "hard": {
+        "total": 147,
+        "correct": 124,
+        "accuracy": 84.35374149659864
+      },
+      "adversarial": {
+        "total": 15,
+        "correct": 5,
+        "accuracy": 33.33333333333333
+      }
+    },
+    "byLanguage": {
+      "UZ": {
+        "total": 341,
+        "correct": 273,
+        "accuracy": 80.05865102639295
+      },
+      "RU": {
+        "total": 81,
+        "correct": 71,
+        "accuracy": 87.65432098765432
+      },
+      "EN": {
+        "total": 78,
+        "correct": 67,
+        "accuracy": 85.8974358974359
+      }
+    }
+  },
+  "candidateRetrievalStage": {
+    "evaluatedQueries": 66,
+    "recall20": 80.3,
+    "recall50": 81.82,
+    "recall100": 81.82,
+    "avgLatencyMs": 9.81
+  },
+  "rerankerStage": {
+    "evaluatedQueries": 66,
+    "recall1": 51.52,
+    "recall3": 74.24,
+    "recall5": 80.3,
+    "precision5": 16.06,
+    "precision10": 8.03,
+    "mrr": 0.6323,
+    "ndcg5": 0.6754,
+    "ndcg10": 0.6754,
+    "avgLatencyMs": 1.12
+  },
+  "failureBuckets": {
+    "typo": 0,
+    "synonym_gap": 12,
+    "grade_mismatch": 0,
+    "subject_mismatch": 0,
+    "intent_misclassification": 0,
+    "polysemy": 0,
+    "cross_lingual_mismatch": 0,
+    "complex_multi_concept": 0,
+    "ocr_phonetic_noise": 0,
+    "conversational_vague_query": 0,
+    "over_filtering": 0,
+    "curriculum_out_of_scope": 0,
+    "reranker_demotion": 1,
+    "truncation_embedding_dimension_limit": 0
+  },
+  "abstentionQuality": {
+    "totalUnseededQueries": 434,
+    "correctlyAbstained": 363,
+    "precision": 100,
+    "recall": 83.64,
+    "f1": 91.09
+  },
+  "crossGradeWarnings": {
+    "totalCrossGradeQueries": 1,
+    "correctlyDetectedWarnings": 0,
+    "accuracy": 0
+  },
+  "latencyPercentiles": {
+    "understandingAvgMs": 2.08,
+    "retrievalAvgMs": 9.81,
+    "rerankerAvgMs": 1.12,
+    "totalColdAvgMs": 17.29,
+    "p50Ms": 16.84,
+    "p95Ms": 27.54,
+    "p99Ms": 57.07,
+    "cacheHitAvgMs": 0.00095
+  }
+}

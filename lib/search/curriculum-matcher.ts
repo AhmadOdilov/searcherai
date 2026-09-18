@@ -83,15 +83,15 @@ const CROSS_LINGUAL_CONCEPT_MAP: Record<string, string[]> = {
 };
 
 /**
- * O'quv dasturidan gibrid qidiruv, cross-lingual moslashtirish va ko'p mezonli reyting hisoblash.
+ * O'quv dasturi bazasidan birlamchi nomzodlarni qidirib topish (Retrieval Candidate Generation bosqichi).
  */
-export async function matchCurriculumTopics(
+export async function retrieveCurriculumCandidates(
   understanding: QueryUnderstanding,
-  limit: number = 3,
-): Promise<RankedCurriculumMatch[]> {
+  maxCandidates: number = 50,
+): Promise<RerankerCandidate[]> {
   const { detectedSubject, detectedGrade, extractedTopic, keywords } = understanding;
 
-  // 1. Qidiruv so'zlarini shakllantirish va Query Rewrite (Phase 3 & 4)
+  // 1. Qidiruv so'zlarini shakllantirish va Query Rewrite
   const rewrites = rewriteQueryForRetrieval(understanding);
   const baseTerms = searchTerms(extractedTopic);
   const stemmedKeywords = keywords.map(stemUzbekWord);
@@ -103,7 +103,7 @@ export async function matchCurriculumTopics(
     ...rewrites.retrievalRepresentations.flatMap((r) => r.split(/\s+/)).filter((w) => w.length >= 3),
   ]);
 
-  // Cross-lingual tushunchalar kengaytmasi (Phase 6 & 7)
+  // Cross-lingual tushunchalar kengaytmasi
   const conceptExpansion = expandQueryConcepts(extractedTopic, detectedSubject, detectedGrade);
   for (const term of conceptExpansion.expandedTerms) {
     expandedTerms.add(term);
@@ -126,16 +126,50 @@ export async function matchCurriculumTopics(
     }
   }
 
-  // Barcha apostrof variantlarini generatsiya qilish (Phase 3 & 4)
-  const finalVariants = new Set<string>();
-  for (const term of expandedTerms) {
-    if (term.length < 3) continue;
+  const STOP_CLAUSE_TERMS = new Set([
+    "sinf", "класс", "grade", "class",
+    "matematika", "ona tili", "adabiyot", "fizika", "kimyo", "biologiya",
+    "tarix", "geografiya", "informatika", "ingliz tili", "english", "math", "physics", "chemistry",
+    "dars", "reja", "mavzu", "haqida", "uchun", "asosiy", "umumiy"
+  ]);
+
+  const isStopTerm = (term: string) => {
+    const clean = term.toLowerCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
+    if (STOP_CLAUSE_TERMS.has(clean)) return true;
+    if (/^\d+-?(?:sinf|klass|grade)?$/i.test(clean)) return true;
+    return false;
+  };
+
+  // Asosiy qidiruv so'zlari (so'rovdan to'g'ridan-to'g'ri olingan atamalar)
+  const primaryVariants = new Set<string>();
+  const rawPrimary = [...baseTerms, ...stemmedKeywords, extractedTopic];
+  for (const term of rawPrimary) {
+    if (term.length < 3 || isStopTerm(term)) continue;
     for (const variant of getApostropheVariants(term)) {
-      finalVariants.add(variant);
+      if (!isStopTerm(variant)) {
+        primaryVariants.add(variant);
+      }
     }
   }
 
+  // Barcha kengaytirilgan apostrof variantlarini generatsiya qilish
+  const finalVariants = new Set<string>(primaryVariants);
+  for (const term of expandedTerms) {
+    if (term.length < 3 || isStopTerm(term)) continue;
+    for (const variant of getApostropheVariants(term)) {
+      if (!isStopTerm(variant)) {
+        finalVariants.add(variant);
+      }
+    }
+  }
+
+  const primaryKeywords = Array.from(primaryVariants).slice(0, 10);
   const searchKeywords = Array.from(finalVariants).slice(0, 16);
+
+  const primaryClauses = primaryKeywords.flatMap((term) => [
+    { topicName: { contains: term, mode: "insensitive" as const } },
+    { description: { contains: term, mode: "insensitive" as const } },
+  ]);
 
   const orClauses = searchKeywords.flatMap((term) => [
     { topicName: { contains: term, mode: "insensitive" as const } },
@@ -146,26 +180,74 @@ export async function matchCurriculumTopics(
   let candidates: RerankerCandidate[] = [];
 
   if (detectedSubject && detectedGrade) {
-    // Agar fan va sinf ma'lum bo'lsa, shu sinf/fanning barcha mavzulari (odatda 10-30 ta)
-    // to'liq olinadi. Bu SQL LIKE dagi nozikliklar (masalan xatolar vs xatoliklar)
-    // sababli haqiqiy mavzular tushib qolishini butkul yo'qotadi.
-    candidates = await prisma.curriculumTopic.findMany({
-      where: {
-        subject: { equals: detectedSubject, mode: "insensitive" },
-        grade: { equals: detectedGrade, mode: "insensitive" },
-      },
-      take: 50,
-      select: {
-        id: true,
-        topicName: true,
-        description: true,
-        expectedHours: true,
-        expectedOutcomes: true,
-        source: true,
-        subject: true,
-        grade: true,
-      },
-    });
+    // 2.1 Avval so'ralgan sinfda birlamchi mavzu atamalariga (primaryClauses) mos keluvchi mavzularni qidiramiz
+    const firstClauses = primaryClauses.length > 0 ? primaryClauses : orClauses;
+    if (firstClauses.length > 0) {
+      candidates = await prisma.curriculumTopic.findMany({
+        where: {
+          subject: { equals: detectedSubject, mode: "insensitive" },
+          grade: { equals: detectedGrade, mode: "insensitive" },
+          OR: firstClauses,
+        },
+        take: maxCandidates,
+        select: {
+          id: true,
+          topicName: true,
+          description: true,
+          expectedHours: true,
+          expectedOutcomes: true,
+          source: true,
+          subject: true,
+          grade: true,
+        },
+      });
+    }
+
+    // 2.2 Agar so'ralgan sinfda mavzu topilmasa, lekin boshqa sinflarda birlamchi mavzu bo'lsa (Cross-Grade Retrieval)
+    if (candidates.length === 0 && firstClauses.length > 0) {
+      const crossGradeCandidates = await prisma.curriculumTopic.findMany({
+        where: {
+          subject: { equals: detectedSubject, mode: "insensitive" },
+          OR: firstClauses,
+        },
+        take: Math.min(maxCandidates, 20),
+        select: {
+          id: true,
+          topicName: true,
+          description: true,
+          expectedHours: true,
+          expectedOutcomes: true,
+          source: true,
+          subject: true,
+          grade: true,
+        },
+      });
+
+      if (crossGradeCandidates.length > 0) {
+        candidates = crossGradeCandidates;
+      }
+    }
+
+    // 2.3 Agar umumiy so'rov bo'lsa (kalit so'zlar bo'yicha cheklov yo'q), shu sinf/fanning barcha mavzulari olinadi
+    if (candidates.length === 0) {
+      candidates = await prisma.curriculumTopic.findMany({
+        where: {
+          subject: { equals: detectedSubject, mode: "insensitive" },
+          grade: { equals: detectedGrade, mode: "insensitive" },
+        },
+        take: maxCandidates,
+        select: {
+          id: true,
+          topicName: true,
+          description: true,
+          expectedHours: true,
+          expectedOutcomes: true,
+          source: true,
+          subject: true,
+          grade: true,
+        },
+      });
+    }
   }
 
   // Agar aniq fan/sinf bo'yicha topilmasa yoki fan/sinf noaniq bo'lsa:
@@ -183,7 +265,7 @@ export async function matchCurriculumTopics(
 
     candidates = await prisma.curriculumTopic.findMany({
       where: primaryWhere,
-      take: 40,
+      take: maxCandidates,
       select: {
         id: true,
         topicName: true,
@@ -197,7 +279,7 @@ export async function matchCurriculumTopics(
     });
   }
 
-  // 3. Hard Filtering (Phase 7): Obvious wrong candidatesni chiqarish
+  // 3. Obvious wrong grade filter: faqat cross-grade holati bo'lmasa filtrlaymiz
   let effectiveCandidates = candidates;
   if (detectedGrade) {
     const exactGradeCandidates = candidates.filter(
@@ -208,30 +290,16 @@ export async function matchCurriculumTopics(
     }
   }
 
-  // 4. Cross-Grade Fallback (Phase 7 & 8):
-  // Faqat so'ralgan sinfda UMUMAN nomzod topilmasa, boshqa sinflardan qidiramiz
-  if (effectiveCandidates.length === 0 && detectedSubject && orClauses.length > 0) {
-    const crossGradeCandidates = await prisma.curriculumTopic.findMany({
-      where: {
-        subject: { equals: detectedSubject, mode: "insensitive" },
-        OR: orClauses,
-      },
-      take: 10,
-      select: {
-        id: true,
-        topicName: true,
-        description: true,
-        expectedHours: true,
-        expectedOutcomes: true,
-        source: true,
-        subject: true,
-        grade: true,
-      },
-    });
+  return effectiveCandidates;
+}
 
-    effectiveCandidates = crossGradeCandidates;
-  }
-
-  // 5. Deterministik Mahalliy Reranker va Multi-Source Rank Fusion (Phase 5 & 6)
-  return rerankCandidates(effectiveCandidates, understanding, limit);
+/**
+ * O'quv dasturidan gibrid qidiruv, cross-lingual moslashtirish va ko'p mezonli reyting hisoblash.
+ */
+export async function matchCurriculumTopics(
+  understanding: QueryUnderstanding,
+  limit: number = 3,
+): Promise<RankedCurriculumMatch[]> {
+  const candidates = await retrieveCurriculumCandidates(understanding, 50);
+  return rerankCandidates(candidates, understanding, limit);
 }

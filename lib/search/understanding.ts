@@ -639,14 +639,24 @@ export function extractTopic(
   }
   cleaned = cleaned.replace(/\b([1-9]|1[0-1])\s*[-_]?\s*(?:sinf|синф|class|grade|класс)(?:[a-z'\p{L}]*)?\b/giu, "");
 
-  // 2. Fan nomlarini olib tashlash
+  // 2. Faqat asosiy fan nomlarini olib tashlash (mavzu va bo'lim so'zlarini saqlab qolish)
   if (subject) {
-    cleaned = cleaned.replace(new RegExp(`\\b${subject}\\b`, "gi"), "");
+    cleaned = cleaned.replace(new RegExp(`\\b${subject}\\b`, "gi"), " ");
   }
-  for (const def of SUBJECT_DEFINITIONS) {
-    for (const pattern of def.strongPatterns) {
-      cleaned = cleaned.replace(pattern, " ");
-    }
+  const CANONICAL_SUBJECT_NAMES = [
+    /\b(?:matematika|математика|mathematics|math)\b/gi,
+    /\b(?:ona\s+tili|узбекский\s+язык|uzbek\s+language)\b/gi,
+    /\b(?:adabiyot|литература|literature)\b/gi,
+    /\b(?:fizika|физика|physics)\b/gi,
+    /\b(?:kimyo|химия|chemistry)\b/gi,
+    /\b(?:biologiya|биология|biology)\b/gi,
+    /\b(?:tarix|история|history)\b/gi,
+    /\b(?:geografiya|география|geography)\b/gi,
+    /\b(?:informatika|информатика|computer\s+science)\b/gi,
+    /\b(?:ingliz\s+tili|английский\s+язык|english)\b/gi,
+  ];
+  for (const pattern of CANONICAL_SUBJECT_NAMES) {
+    cleaned = cleaned.replace(pattern, " ");
   }
 
   // 3. Umumiy savol va intent so'zlarini tozalash
@@ -713,9 +723,31 @@ export function understandQuery(
 
   // Multi-turn topic inheritance (Phase 14):
   // Agar joriy so'rovda faqat sinf, intent yoki bog'lovchi so'zlar bo'lsa (yangi mavzu bo'lmasa)
+  const FOLLOWUP_MODIFIER_WORDS = new Set([
+    "sinf", "uchun", "test", "testlar", "qil", "qilib", "ber", "bering", "endi",
+    "dars", "reja", "rejasi", "ishlanma", "ishlanmasi", "javob", "javobi", "javoblari",
+    "javoblarini", "ham", "bilan", "yechim", "yechimi", "yechimlarini", "yana", "batafsil",
+    "qisqacha", "qayta", "savol", "savollar", "savollari", "topshiriq", "topshiriqlar",
+    "mashq", "mashqlar", "slayd", "slaydlar", "slaydlari", "taqdimot", "keltir",
+    "tushuntir", "ayt", "korsat", "ko'rsat", "qosh", "qo'sh", "oqituvchi", "o'qituvchi",
+    "oquvchi", "o'quvchi", "haqida", "boyicha", "bo'yicha", "va", "hamda"
+  ]);
+
+  const isAllFollowupKeywords =
+    keywords.length > 0 &&
+    keywords.every((w) => {
+      const cleanW = w.toLowerCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
+      return (
+        FOLLOWUP_MODIFIER_WORDS.has(cleanW) ||
+        FOLLOWUP_MODIFIER_WORDS.has(cleanW.replace(/'/g, "")) ||
+        /^\d+(?:-[a-z]+)?$/i.test(cleanW)
+      );
+    });
+
   const isOnlyFollowupModifiers =
     keywords.length === 0 ||
     extractedTopic.length < 3 ||
+    isAllFollowupKeywords ||
     /^(?:sinf|uchun|test|qil|ber|endi|dars|reja|\d+-[a-z]+)$/i.test(extractedTopic);
 
   if (isOnlyFollowupModifiers && conversationContext?.previousTopic) {

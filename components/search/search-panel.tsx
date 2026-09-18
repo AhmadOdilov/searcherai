@@ -247,16 +247,36 @@ function AnswerView({
 
         {/* ── Grounding Explanation & Performance/Cost Badge (Phase 19 & 24) ── */}
         {result.explanation && (
-          <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 rounded-lg border border-emerald-200 bg-emerald-50/80 p-3.5 text-sm text-emerald-900">
+          <div
+            className={`mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 rounded-lg border p-3.5 text-sm ${
+              result.grounding?.isGrounded && !result.grounding?.isAbstained && result.curriculumMatches && result.curriculumMatches.length > 0
+                ? "border-emerald-200 bg-emerald-50/80 text-emerald-900"
+                : "border-sky-200 bg-sky-50/80 text-sky-950"
+            }`}
+          >
             <div className="flex items-start sm:items-center gap-2">
-              <CheckCircle2 className="mt-0.5 sm:mt-0 size-4 shrink-0 text-emerald-600" />
+              {result.grounding?.isGrounded && !result.grounding?.isAbstained && result.curriculumMatches && result.curriculumMatches.length > 0 ? (
+                <CheckCircle2 className="mt-0.5 sm:mt-0 size-4 shrink-0 text-emerald-600" />
+              ) : (
+                <Info className="mt-0.5 sm:mt-0 size-4 shrink-0 text-sky-600" />
+              )}
               <div>
-                <span className="font-semibold">O&apos;quv dasturi asosliligi: </span>
+                <span className="font-semibold">
+                  {result.grounding?.isGrounded && !result.grounding?.isAbstained && result.curriculumMatches && result.curriculumMatches.length > 0
+                    ? "O'quv dasturi asosliligi: "
+                    : "Umumiy pedagogik qo'llanma: "}
+                </span>
                 <span>{result.explanation}</span>
               </div>
             </div>
             {result.costMetrics && (
-              <span className="inline-flex items-center gap-1 self-start sm:self-auto rounded bg-white px-2 py-1 text-xs font-mono text-emerald-800 border border-emerald-200 shrink-0">
+              <span
+                className={`inline-flex items-center gap-1 self-start sm:self-auto rounded bg-white px-2 py-1 text-xs font-mono border shrink-0 ${
+                  result.grounding?.isGrounded && !result.grounding?.isAbstained && result.curriculumMatches && result.curriculumMatches.length > 0
+                    ? "text-emerald-800 border-emerald-200"
+                    : "text-sky-800 border-sky-200"
+                }`}
+              >
                 <Zap className="size-3 text-amber-500" />
                 {result.cached ? "Keshdan (0ms)" : `${result.costMetrics.totalMs.toFixed(1)}ms | ~$${result.costMetrics.estimatedCostUsd.toFixed(4)}`}
               </span>

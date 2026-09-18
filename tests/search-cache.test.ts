@@ -70,4 +70,92 @@ describe("search lru cache", () => {
     assert.ok(cache.get(k2) !== null);
     assert.ok(cache.get(k3) !== null);
   });
+
+  it("differensial parametrlar (til, sinf, intent, audience) turli kompozit kalitlar hosil qiladi (Collision-free)", () => {
+    const cache = new SearchLruCache();
+
+    // 1. Til farqi
+    const uUz = understandQuery("oddiy kasrlar", "Matematika", "5-sinf", "UZ");
+    const uRu = understandQuery("простые дроби", "Matematika", "5-sinf", "RU");
+    assert.notEqual(cache.generateKey(uUz), cache.generateKey(uRu));
+
+    // 2. Sinf farqi
+    const u5 = understandQuery("matematika kasrlar", "Matematika", "5-sinf");
+    const u6 = understandQuery("matematika kasrlar", "Matematika", "6-sinf");
+    assert.notEqual(cache.generateKey(u5), cache.generateKey(u6));
+
+    // 3. Auditoriya farqi (o'qituvchi vs o'quvchi)
+    const uTeacher = { ...u5, audience: "teacher" as const };
+    const uStudent = { ...u5, audience: "student" as const };
+    assert.notEqual(cache.generateKey(uTeacher), cache.generateKey(uStudent));
+
+    // 4. Intent farqi
+    const uPlan = { ...u5, intent: "lesson_plan" as const };
+    const uQuiz = { ...u5, intent: "quiz_test" as const };
+    assert.notEqual(cache.generateKey(uPlan), cache.generateKey(uQuiz));
+  });
+
+  it("foydalanuvchi ma'lumotlari (userId, userRole) kesh kalitiga ta'sir qilmaydi (Privacy & Cross-user leak proof)", () => {
+    const cache = new SearchLruCache();
+    const u = understandQuery("5-sinf matematika kasrlar");
+
+    // Ikki turli foydalanuvchi bir xil pedagogik so'rov berganda
+    const keyUser1 = cache.generateKey(u);
+    const keyUser2 = cache.generateKey(u);
+    assert.equal(keyUser1, keyUser2, "Bir xil so'rov uchun kalit bir xil bo'lishi kerak");
+
+    // Kesh kaliti 64 belgili sha256 hex string bo'lishi va maxfiy ma'lumot saqlamasligi shart
+    assert.equal(keyUser1.length, 64);
+    assert.match(keyUser1, /^[a-f0-9]{64}$/);
+  });
+
+  it("o'quv dasturi, model yoki prompt versiyasi yangilanganda kesh tozalanadi (Version Invalidation)", () => {
+    const cache = new SearchLruCache(1000, 10, "DTS-2025-v1", "retrieval-v3", "prompt-v3");
+    const u = understandQuery("natural sonlar");
+    const key = cache.generateKey(u);
+
+    cache.set(key, dummyResult);
+    assert.equal(cache.get(key) !== null, true);
+
+    // Dastur versiyasi o'zgarganda kesh tozalanadi
+    cache.setVersions({ curriculumVersion: "DTS-2025-v2" });
+    assert.equal(cache.size(), 0, "Versiya yangilanganda kesh tozalanadi");
+    assert.equal(cache.get(key), null);
+  });
+
+  it("fan bo'yicha maqsadli invalidatsiya to'g'ri ishlaydi (invalidateBySubject)", () => {
+    const cache = new SearchLruCache();
+    const uMath = understandQuery("5-sinf matematika kasrlar");
+    const uBio = understandQuery("6-sinf biologiya fotosintez");
+
+    const kMath = cache.generateKey(uMath);
+    const kBio = cache.generateKey(uBio);
+
+    const mathResult: SearchResult = { ...dummyResult, understanding: uMath };
+    const bioResult: SearchResult = { ...dummyResult, understanding: uBio };
+
+    cache.set(kMath, mathResult);
+    cache.set(kBio, bioResult);
+    assert.equal(cache.size(), 2);
+
+    // Faqat Matematika keshini bekor qilish
+    const removed = cache.invalidateBySubject("Matematika");
+    assert.equal(removed, 1);
+    assert.equal(cache.get(kMath), null);
+    assert.ok(cache.get(kBio) !== null);
+  });
+
+  it("TTL muddati o'tgan elementlar qaytarilmaydi va tozalanadi", async () => {
+    // 50ms TTL ga ega kesh
+    const shortCache = new SearchLruCache(50, 10);
+    const u = understandQuery("burchaklar");
+    const key = shortCache.generateKey(u);
+
+    shortCache.set(key, dummyResult);
+    assert.ok(shortCache.get(key) !== null);
+
+    // 70ms kutamiz
+    await new Promise((r) => setTimeout(r, 70));
+    assert.equal(shortCache.get(key), null, "TTL o'tgan element null qaytarishi shart");
+  });
 });

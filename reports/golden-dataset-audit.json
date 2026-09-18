@@ -1,0 +1,137 @@
+{
+  "timestamp": "2026-09-18T12:26:55.174Z",
+  "totalQueries": 500,
+  "exactDuplicatesCount": 0,
+  "exactDuplicates": [],
+  "nearDuplicatesCount": 26,
+  "nearDuplicatesSample": [
+    {
+      "id1": "gen-166",
+      "id2": "gen-296",
+      "q1": "1-sinf matematika sonlar va sanash mustaqil ish topshiriqlari",
+      "q2": "1-sinf matematika sonlar va sanash bo'yicha mustaqil ish topshiriqlari",
+      "sim": 0.8888888888888888
+    },
+    {
+      "id1": "gen-166",
+      "id2": "gen-426",
+      "q1": "1-sinf matematika sonlar va sanash mustaqil ish topshiriqlari",
+      "q2": "maktab 1-sinf matematika sonlar va sanash mustaqil ish topshiriqlari",
+      "sim": 0.8888888888888888
+    },
+    {
+      "id1": "gen-167",
+      "id2": "gen-297",
+      "q1": "2 класс узбекский язык слова и предложения олимпиадные задачи",
+      "q2": "2 класс узбекский язык тема слова и предложения олимпиадные задачи",
+      "sim": 0.8888888888888888
+    },
+    {
+      "id1": "gen-167",
+      "id2": "gen-427",
+      "q1": "2 класс узбекский язык слова и предложения олимпиадные задачи",
+      "q2": "школа 2 класс узбекский язык слова и предложения олимпиадные задачи",
+      "sim": 0.8888888888888888
+    },
+    {
+      "id1": "gen-177",
+      "id2": "gen-307",
+      "q1": "2 класс узбекский язык слова и предложения раздаточный материал",
+      "q2": "2 класс узбекский язык тема слова и предложения раздаточный материал",
+      "sim": 0.8888888888888888
+    },
+    {
+      "id1": "gen-177",
+      "id2": "gen-437",
+      "q1": "2 класс узбекский язык слова и предложения раздаточный материал",
+      "q2": "школа 2 класс узбекский язык слова и предложения раздаточный материал",
+      "sim": 0.8888888888888888
+    },
+    {
+      "id1": "gen-187",
+      "id2": "gen-317",
+      "q1": "2 класс узбекский язык слова и предложения обзор темы",
+      "q2": "2 класс узбекский язык тема слова и предложения обзор темы",
+      "sim": 0.8888888888888888
+    },
+    {
+      "id1": "gen-187",
+      "id2": "gen-447",
+      "q1": "2 класс узбекский язык слова и предложения обзор темы",
+      "q2": "школа 2 класс узбекский язык слова и предложения обзор темы",
+      "sim": 0.8888888888888888
+    },
+    {
+      "id1": "gen-197",
+      "id2": "gen-327",
+      "q1": "2 класс узбекский язык слова и предложения распределение часов",
+      "q2": "2 класс узбекский язык тема слова и предложения распределение часов",
+      "sim": 0.8888888888888888
+    },
+    {
+      "id1": "gen-197",
+      "id2": "gen-457",
+      "q1": "2 класс узбекский язык слова и предложения распределение часов",
+      "q2": "школа 2 класс узбекский язык слова и предложения распределение часов",
+      "sim": 0.8888888888888888
+    }
+  ],
+  "linkedGoldEvidenceCount": 66,
+  "unlinkedCurriculumExpected": 0,
+  "abstentionExpectedCount": 434,
+  "distributions": {
+    "subjects": {
+      "Matematika": 86,
+      "Ona tili": 60,
+      "Adabiyot": 42,
+      "Fizika": 48,
+      "Kimyo": 45,
+      "Biologiya": 46,
+      "Tarix": 41,
+      "Geografiya": 40,
+      "Informatika": 41,
+      "Ingliz tili": 41,
+      "Unknown": 10
+    },
+    "grades": {
+      "5-sinf": 46,
+      "6-sinf": 49,
+      "7-sinf": 65,
+      "8-sinf": 68,
+      "9-sinf": 53,
+      "10-sinf": 81,
+      "11-sinf": 47,
+      "1-sinf": 35,
+      "2-sinf": 35,
+      "3-sinf": 1,
+      "4-sinf": 1,
+      "General": 19
+    },
+    "languages": {
+      "UZ": 341,
+      "RU": 81,
+      "EN": 78
+    },
+    "intents": {
+      "lesson_plan": 58,
+      "definition": 39,
+      "presentation": 52,
+      "quiz_test": 34,
+      "classroom_activity": 35,
+      "explain": 81,
+      "example": 33,
+      "worksheet": 29,
+      "topic_search": 27,
+      "homework": 27,
+      "compare": 32,
+      "curriculum": 27,
+      "exam_prep": 26
+    },
+    "difficulties": {
+      "medium": 188,
+      "easy": 150,
+      "hard": 147,
+      "adversarial": 15
+    }
+  }
+}
