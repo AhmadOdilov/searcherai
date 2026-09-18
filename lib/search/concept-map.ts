@@ -257,3 +257,88 @@ export function expandQueryConcepts(
     expandedTerms: Array.from(expanded),
   };
 }
+
+/**
+ * Rus va ingliz tilidagi ta'limiy tushunchalarni o'zbek DTS atamalariga o'tkazish xaritasi.
+ * Cross-lingual retrieval (Phase 3 & 4) uchun xizmat qiladi.
+ */
+const CROSS_LINGUAL_CONCEPT_MAP: Record<string, string[]> = {
+  drob: ["kasr", "oddiy kasr"],
+  drobi: ["kasr", "oddiy kasr"],
+  droblar: ["kasr", "oddiy kasr"],
+  fractions: ["kasr", "oddiy kasr"],
+  fraction: ["kasr", "oddiy kasr"],
+  chisla: ["sonlar", "natural sonlar", "butun sonlar"],
+  numbers: ["sonlar", "natural sonlar"],
+  tselie: ["butun sonlar", "butun"],
+  integers: ["butun sonlar"],
+  uravneni: ["tenglama", "tenglamalar"],
+  uravneniya: ["tenglama", "tenglamalar"],
+  equations: ["tenglama", "tenglamalar"],
+  equation: ["tenglama"],
+  figuri: ["shakllar", "geometrik shakllar"],
+  shapes: ["shakllar", "geometrik shakllar"],
+  funktsi: ["funksiya"],
+  funktsii: ["funksiya"],
+  functions: ["funksiya"],
+  progressi: ["progressiya", "arifmetik va geometrik"],
+  progressiya: ["progressiya", "arifmetik va geometrik"],
+  progressions: ["progressiya"],
+  proizvodnaya: ["hosila", "hosilasi"],
+  derivatives: ["hosila"],
+  derivative: ["hosila"],
+  integral: ["integral"],
+  integrals: ["integral"],
+  pervoobraznaya: ["integral", "boshlang'ich funksiya"],
+  koren: ["ildiz", "kvadrat ildiz"],
+  korni: ["ildiz", "kvadrat ildiz"],
+  roots: ["ildiz", "kvadrat ildiz"],
+  kvadratnie: ["kvadrat", "kvadratik"],
+  quadratic: ["kvadrat", "kvadratik"],
+  trigonometr: ["trigonometrik", "trigonometriya"],
+  trigonometry: ["trigonometrik", "trigonometriya"],
+  logarifm: ["logarifmik", "logarifm"],
+  logarithm: ["logarifmik", "logarifm"],
+  umnojeni: ["ko'paytirish", "qisqa ko'paytirish"],
+  multiplication: ["ko'paytirish"],
+  slozheni: ["qo'shish"],
+  addition: ["qo'shish"],
+  sokrashennogo: ["qisqa ko'paytirish"],
+  pifagor: ["pifagor"],
+  pythagorean: ["pifagor"],
+};
+
+/**
+ * Retrieval VA reranking uchun yagona kengaytirilgan atamalar to'plami.
+ *
+ * ── Nega ikkalasiga bir xil manba kerak ───────────────────────────────────
+ * V4 da kengaytma faqat RETRIEVAL bosqichida ishlatilardi. Ya'ni ruscha
+ * «квадратные уравнения» so'rovi «KVADRAT TENGLAMALAR» bo'limini TOPARDI,
+ * lekin reranker uni transliteratsiya qilingan «kvadratnie uravneniya»
+ * tokenlari bilan solishtirib, past ball (0.23) berardi. Natijada to'g'ri
+ * topilgan rasmiy dalil abstention chegarasidan (0.35) pastda qolib,
+ * tizim "dalil topilmadi" deb javob berardi — yolg'on ehtiyotkorlik.
+ *
+ * Endi reranker ham aynan shu o'zbekcha kanonik atamalarni ko'radi.
+ */
+export function expandRetrievalTerms(
+  topic: string,
+  keywords: string[],
+  subject?: string,
+  grade?: string,
+): { matchedConcepts: string[]; expandedTerms: string[] } {
+  const { matchedConcepts, expandedTerms } = expandQueryConcepts(topic, subject, grade);
+  const terms = new Set(expandedTerms);
+
+  for (const word of keywords) {
+    const cleanWord = word.toLowerCase().replace(/[^a-z0-9]/gi, "");
+    if (cleanWord.length < 3) continue;
+    for (const [key, synonyms] of Object.entries(CROSS_LINGUAL_CONCEPT_MAP)) {
+      if (cleanWord.includes(key) || key.includes(cleanWord)) {
+        for (const syn of synonyms) terms.add(syn);
+      }
+    }
+  }
+
+  return { matchedConcepts, expandedTerms: Array.from(terms) };
+}

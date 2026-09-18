@@ -22,6 +22,7 @@ import type { RankedCurriculumMatch } from "./curriculum-matcher";
 import type { QueryUnderstanding } from "./understanding";
 import { defaultSemanticProvider } from "./semantic";
 import { stemUzbekWord } from "./normalization";
+import { expandRetrievalTerms } from "./concept-map";
 
 export interface RerankerCandidate {
   id: string;
@@ -57,6 +58,30 @@ export async function rerankCandidates(
   // Semantik qidiruv uchun so'rov vektorini hisoblaymiz
   const queryVec = await defaultSemanticProvider.embedText(`${queryTopic} ${detectedSubject ?? ""}`);
 
+  /*
+    CROSS-LINGUAL KANONIK ATAMALAR.
+
+    Retrieval bosqichi ruscha/inglizcha so'rovni o'zbekcha DTS atamalariga
+    kengaytiradi va to'g'ri bo'limni TOPADI. Ammo V4 reranker'i baholashda
+    faqat transliteratsiya qilingan asl tokenlarni ko'rardi
+    («kvadratnie uravneniya» vs «KVADRAT TENGLAMALAR») va past ball berardi —
+    topilgan rasmiy dalil abstention chegarasidan pastda qolardi.
+
+    Shuning uchun reranker ham aynan o'sha kengaytmani oladi.
+  */
+  const { expandedTerms } = expandRetrievalTerms(queryTopic, keywords, detectedSubject, detectedGrade);
+  const canonicalPhrases = expandedTerms
+    .map((t) => t.toUpperCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'"))
+    .filter((t) => t.length >= 5);
+  const canonicalTokens = Array.from(
+    new Set(
+      expandedTerms
+        .flatMap((t) => t.toLowerCase().split(/\s+/))
+        .filter((t) => t.length >= 3)
+        .map(stemUzbekWord),
+    ),
+  );
+
   const scored: RankedCurriculumMatch[] = [];
 
   for (const cand of candidates) {
@@ -75,14 +100,37 @@ export async function rerankCandidates(
     } else if (candTitle.includes(qTitle) || qTitle.includes(candTitle)) {
       exactScore = 0.90;
     } else {
-      // Subphrase check (e.g., "MUSBAT VA MANFIY SONLAR. BUTUN SONLAR" contains "BUTUN SONLAR")
-      const candSubphrases = candTitle
-        .split(/[.,:;\-\/]/)
-        .map((p) => p.trim())
-        .filter((p) => p.length >= 4);
+      /*
+        Subphrase check — IKKI YO'NALISHLI.
 
-      if (candSubphrases.some((p) => qTitle.includes(p) || (p.length >= 6 && candTitle.includes(p)))) {
-        exactScore = 0.85;
+        a) Nomzod sarlavhasining bo'lagi so'rovda uchraydi:
+           "MUSBAT VA MANFIY SONLAR. BUTUN SONLAR" -> "butun sonlar".
+        b) So'rovning bo'lagi nomzod sarlavhasida uchraydi:
+           "kvadrat tenglama" -> "KVADRAT TENGLAMALAR VA TENGSIZLIKLAR".
+
+        DIQQAT: (b) shartini `candTitle.includes(p)` ko'rinishida yozish MUMKIN EMAS,
+        chunki u yerda `p` ning o'zi candTitle'dan kesib olingan bo'lsa, shart
+        HAR DOIM rost bo'ladi va butunlay aloqasiz har qanday mavzu 0.85 ball oladi.
+        Aynan shu tautologiya V4'da barcha nomzodlarga exactScore=0.85 bergan.
+      */
+      const splitPhrases = (value: string) =>
+        value
+          .split(/[.,:;\-\/]/)
+          .map((p) => p.trim())
+          .filter((p) => p.length >= 4);
+
+      const candSubphrases = splitPhrases(candTitle);
+      const querySubphrases = splitPhrases(qTitle);
+
+      const subphraseHit =
+        candSubphrases.some((p) => qTitle.includes(p)) ||
+        querySubphrases.some((p) => p.length >= 6 && candTitle.includes(p));
+
+      // Cross-lingual: o'zbekcha kanonik ibora nomzod sarlavhasida uchradimi?
+      const canonicalHit = canonicalPhrases.some((p) => candTitle.includes(p));
+
+      if (subphraseHit || canonicalHit) {
+        exactScore = subphraseHit ? 0.85 : 0.80;
       } else {
         const qTokens = keywords.map(stemUzbekWord);
         let matchCount = 0;
@@ -111,9 +159,22 @@ export async function rerankCandidates(
         descMatches++;
       }
     }
-    const lexicalScore = allQueryTokens.length > 0
+    const rawLexicalScore = allQueryTokens.length > 0
       ? Math.min(1.0, descMatches / Math.max(1, allQueryTokens.length))
       : 0;
+
+    // Kanonik (o'zbekchalashtirilgan) tokenlar bo'yicha muqobil leksik o'lchov.
+    let canonicalMatches = 0;
+    for (const token of canonicalTokens) {
+      if (candDesc.includes(token) || candTitle.toLowerCase().includes(token)) {
+        canonicalMatches++;
+      }
+    }
+    const canonicalLexical = canonicalTokens.length > 0
+      ? Math.min(1.0, canonicalMatches / canonicalTokens.length)
+      : 0;
+
+    const lexicalScore = Math.max(rawLexicalScore, canonicalLexical);
 
     // 3. Semantic Similarity (0..1)
     const candVec = await defaultSemanticProvider.embedText(`${cand.topicName} ${cand.description}`);
