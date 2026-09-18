@@ -1,6 +1,25 @@
 /**
- * O'quv dasturi va qidiruv natijalari uchun ko'p mezonli reyting va matn o'xshashlik hisoblagichlari.
- * Sof funksiyalar — ma'lumotlar bazasi yoki .env talab qilmaydi.
+ * Matn o'xshashligi va ma'lumotnoma (reference) reyting hisoblagichlari.
+ *
+ * ── DIQQAT: `calculateHybridScore` ISHLAB CHIQARISH QUVURIDA ISHLATILMAYDI ──
+ *
+ * Qidiruv reytingi TO'LIQ `lib/search/reranker.ts` ichida hisoblanadi.
+ * Ushbu fayldagi `calculateHybridScore` esa mustaqil ma'lumotnoma
+ * implementatsiya bo'lib, uni faqat testlar va `scripts/ab-test-reranking.ts`
+ * chaqiradi.
+ *
+ * Nega bu muhim: V4 gacha `tests/search-scoring.test.ts` reyting sifatini
+ * tekshiryapmiz deb o'ylanardi, aslida esa u quvurda umuman chaqirilmaydigan
+ * funksiyani tekshirardi. Production reranker'ning o'zi test bilan
+ * qoplanmagan edi — aynan shu sabab reranker'dagi tautologik shart
+ * (har qanday nomzodga exact=0.85) uzoq vaqt sezilmay qolgan.
+ *
+ * Production reranker testlari: `tests/search-reranker.test.ts`.
+ * Ushbu fayl ishlab chiqarish modullariga IMPORT QILINMASLIGI
+ * `tests/search-scoring-isolation.test.ts` da tekshiriladi.
+ *
+ * `calculateJaccardSimilarity` esa haqiqiy iste'molchiga ega
+ * (`scripts/ab-test-reranking.ts`) va bu yerda qoladi.
  */
 
 export interface ScoringInput {

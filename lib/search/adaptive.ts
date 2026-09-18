@@ -23,13 +23,45 @@ export interface ClarificationOption {
 
 export interface AdaptiveSearchStrategy {
   complexity: QueryComplexity;
+
+  /**
+   * TAVSIYAVIY nomzodlar chuqurligi — quvurda MAJBURIY EMAS.
+   *
+   * ── Nega ulanmagan (o'lchangan qaror, V6) ───────────────────────────────
+   * `matchCurriculumTopics` nomzodlar sonini 50 ga qat'iy belgilaydi.
+   * Bu qiymatni quvurga ulash sinab ko'rildi va 216 ta gold dalilli
+   * so'rovda o'lchandi:
+   *
+   *   qat'iy 50     Recall@1 90.28%  Recall@5 98.61%  o'rtacha nomzod 10.33
+   *   adaptiv       Recall@1 90.28%  Recall@5 98.15%  o'rtacha nomzod 10.07
+   *
+   * Ya'ni u Recall@5 ni pasaytiradi va deyarli hech narsa tejamaydi
+   * (bazada 121 bo'lim bor, `take` amalda kamdan-kam ishlaydi).
+   * Shuning uchun u ATAYLAB ulanmagan va kuzatuv/diagnostika uchun
+   * qoldirilgan. Baza sezilarli kattalashsa, qaror qayta o'lchanishi kerak.
+   */
   candidateDepth: number;
+
   finalLimit: number;
   needsClarification: boolean;
   clarification?: {
     question: string;
     options: ClarificationOption[];
   };
+
+  /**
+   * TAVSIYAVIY ehtiyotkorlik ishorasi — quvurda MAJBURIY EMAS.
+   *
+   * Haqiqiy ehtiyotkorlik `lib/curriculum/coverage.ts` da amalga oshiriladi:
+   * `retrieveCurriculumCandidates` qamrov bo'lmaganda BO'SH ro'yxat
+   * qaytaradi va validator "rasmiy dalil yo'q" holatiga o'tadi. Bu qatlam
+   * fan darajasini ham, SINF darajasini ham qamraydi, bu maydon esa faqat
+   * fan darajasini bilardi.
+   *
+   * Maydon kuzatuv uchun qoldirilgan; u bilan haqiqiy xatti-harakat
+   * o'rtasidagi moslik `tests/search-adaptive-advisory.test.ts` da
+   * tekshiriladi, ya'ni jimgina ajralib keta olmaydi.
+   */
   shouldAbstain: boolean;
   abstainReason?: string;
 }
