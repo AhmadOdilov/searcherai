@@ -529,6 +529,21 @@ export async function startMockAiServer(
     requestCount: 0,
     lastPrompts: null as MockAiServer["lastPrompts"],
     prompts: [] as AiPromptRecord[],
+    /*
+      Keyingi RASM so'roviga server xatosi qaytariladi (bir martalik).
+
+      Nega alohida tugma, MARKER_SERVER_ERROR emas: belgilar PROMPT
+      ichida uzatiladi, rasm tahlilining promptida esa foydalanuvchi
+      yozadigan erkin matn YO'Q — unga faqat fan va sinf tushadi,
+      ikkalasi ham enum (lib/vision/prompt.ts → buildVisionUserPrompt).
+      Ya'ni bu yo'lni belgi bilan sinab bo'lmaydi.
+
+      Nega faqat RASM so'roviga: boshqa modullar generatsiyani fonda
+      davom ettiradi va o'sha paytda kelib qolgan so'rov bayroqni
+      o'g'irlab ketishi mumkin edi. Rasm tahlili esa sinxron va faqat
+      shu faylda ishlatiladi.
+    */
+    failNextVision: false,
   };
 
   const server: Server = createServer((req, res) => {
@@ -543,6 +558,13 @@ export async function startMockAiServer(
       `${process.env.AI_BASE_URL}/__prompts` ni o'qib, AI'ga nima
       yuborilganini tekshiradi.
     */
+    /* Keyingi rasm so'rovini yiqitish — yuqoridagi `failNextVision` ga qara. */
+    if (req.url === "/__vision-fail" && req.method === "POST") {
+      state.failNextVision = true;
+      res.writeHead(204).end();
+      return;
+    }
+
     if (req.url === "/__prompts") {
       if (req.method === "DELETE") {
         state.prompts.length = 0;
@@ -617,6 +639,13 @@ export async function startMockAiServer(
       const calendarPlan = isCalendarPlanRequest(system);
       const search = isSearchRequest(combined);
       const vision = isVisionRequest(combined);
+
+      if (vision && state.failNextVision) {
+        state.failNextVision = false;
+        res.writeHead(500, { "content-type": "application/json" });
+        res.end(JSON.stringify({ error: { message: "mock: rasm tahlili xatosi" } }));
+        return;
+      }
 
       let content: string;
       if (combined.includes(MARKER_BAD_SHAPE)) {

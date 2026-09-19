@@ -1,6 +1,6 @@
 import { ok, parseJsonBody, withErrorHandling } from "@/lib/api/with-error-handling";
 import { requireUser } from "@/lib/auth/session";
-import { consumeAiQuota, recordAiUsage } from "@/lib/ai/rate-limit";
+import { consumeAiQuota, recordAiUsage, releaseAiQuota } from "@/lib/ai/rate-limit";
 import { analyzeImage } from "@/lib/vision/service";
 import { visionInputSchema } from "@/lib/validations/vision";
 
@@ -28,7 +28,27 @@ export const POST = withErrorHandling(async (request) => {
   */
   const reservation = await consumeAiQuota(user.id, "vision");
 
-  const result = await analyzeImage(input);
+  /*
+    Tahlil yiqilsa — bandlikni QAYTARAMIZ.
+
+    `consumeAiQuota()` AI chaqiruvidan OLDIN yozadi (parallel himoya
+    uchun), lekin `analyzeImage()` AI'ga umuman yetib bormasdan ham
+    yiqilishi mumkin: rasm 5 MB dan katta, baytlar PNG/JPEG emas, data
+    URI buzuq yoki `VISION_AI_MODEL` sozlanmagan. Qaytarilmasa, shunday
+    rad etilgan so'rov o'qituvchining daqiqalik uchta so'rovidan
+    bittasini bekorga yeb qo'yardi — provayder uzilganda esa u uch
+    marta urinib, o'z aybisiz bir daqiqaga bloklanardi.
+
+    Bu generatsiya modullaridagi bilan AYNI shartnoma
+    (lib/lesson-plans/service.ts, .../[id]/regenerate/route.ts).
+    `releaseAiQuota` faqat `model` BO'SH yozuvni o'chiradi, ya'ni
+    muvaffaqiyatli chaqiruvdan keyin (`recordAiUsage` modelni yozgach)
+    u hech narsani qaytarmaydi.
+  */
+  const result = await analyzeImage(input).catch(async (caught: unknown) => {
+    await releaseAiQuota(reservation);
+    throw caught;
+  });
 
   /*
     Tokenlar kvota yozuviga.
