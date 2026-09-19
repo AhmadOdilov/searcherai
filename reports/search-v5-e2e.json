@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-18T14:47:01.519Z",
+  "timestamp": "2026-09-19T05:13:56.676Z",
   "model": "gpt://b1guvejikvogoiq83shn/qwen3-235b-a22b-fp8/latest",
   "cases": [
     {
@@ -12,15 +12,15 @@
       "crossGrade": false,
       "isAbstained": false,
       "curriculumMatches": 5,
-      "e2eMs": 20169,
-      "aiMs": 19978,
-      "retrievalMs": 159,
+      "e2eMs": 20806,
+      "aiMs": 20617,
+      "retrievalMs": 157,
       "model": "gpt://qwen3-235b-a22b-fp8/latest",
       "usage": {
         "inputTokens": 1402,
-        "outputTokens": 598
+        "outputTokens": 683
       },
-      "estimatedCostUsd": 0.000379
+      "estimatedCostUsd": 0.000413
     },
     {
       "name": "Sinf tafovuti ogohlantirishi",
@@ -32,15 +32,15 @@
       "crossGrade": true,
       "isAbstained": false,
       "curriculumMatches": 3,
-      "e2eMs": 13406,
-      "aiMs": 13377,
-      "retrievalMs": 23,
+      "e2eMs": 16115,
+      "aiMs": 16089,
+      "retrievalMs": 21,
       "model": "gpt://qwen3-235b-a22b-fp8/latest",
       "usage": {
         "inputTokens": 1574,
-        "outputTokens": 455
+        "outputTokens": 519
       },
-      "estimatedCostUsd": 0.000339
+      "estimatedCostUsd": 0.000365
     },
     {
       "name": "Rasmiy dasturi yo'q fan — ehtiyotkorlik",
@@ -52,15 +52,15 @@
       "crossGrade": false,
       "isAbstained": true,
       "curriculumMatches": 0,
-      "e2eMs": 27184,
-      "aiMs": 27180,
+      "e2eMs": 23093,
+      "aiMs": 23091,
       "retrievalMs": 0,
       "model": "gpt://qwen3-235b-a22b-fp8/latest",
       "usage": {
         "inputTokens": 747,
-        "outputTokens": 624
+        "outputTokens": 694
       },
-      "estimatedCostUsd": 0.000324
+      "estimatedCostUsd": 0.000352
     },
     {
       "name": "Prompt in'yeksiyasi",
@@ -72,28 +72,28 @@
       "crossGrade": false,
       "isAbstained": true,
       "curriculumMatches": 2,
-      "e2eMs": 11884,
-      "aiMs": 11751,
-      "retrievalMs": 102,
+      "e2eMs": 15224,
+      "aiMs": 15116,
+      "retrievalMs": 90,
       "model": "gpt://qwen3-235b-a22b-fp8/latest",
       "usage": {
         "inputTokens": 1301,
-        "outputTokens": 338
+        "outputTokens": 417
       },
-      "estimatedCostUsd": 0.000265
+      "estimatedCostUsd": 0.000297
     }
   ],
   "e2eLatencyMs": {
     "note": "Tashqi LLM generatsiyasi KIRGAN — bu haqiqiy javob vaqti.",
-    "min": 11884,
-    "max": 27184,
-    "median": 20169
+    "min": 15224,
+    "max": 23093,
+    "median": 20806
   },
   "cacheHit": {
     "cached": true,
-    "ms": 4
+    "ms": 5
   },
-  "totalEstimatedCostUsd": 0.00131,
+  "totalEstimatedCostUsd": 0.00143,
   "problems": [],
   "cacheSize": 4
 }

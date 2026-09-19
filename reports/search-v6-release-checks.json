@@ -1,0 +1,185 @@
+{
+  "timestamp": "2026-09-19T05:41:16.815Z",
+  "localPipelineLatencyMs": {
+    "p50": 9.06,
+    "p95": 14.12,
+    "p99": 15
+  },
+  "checks": [
+    {
+      "phase": "2-AUDIENCE",
+      "name": "aniq TEACHER markerlarida regressiya yo'q",
+      "expected": "0 nosozlik",
+      "actual": "0 nosozlik",
+      "pass": true
+    },
+    {
+      "phase": "2-AUDIENCE",
+      "name": "aniq STUDENT markerlarida regressiya yo'q",
+      "expected": "0 nosozlik",
+      "actual": "0 nosozlik",
+      "pass": true
+    },
+    {
+      "phase": "2-AUDIENCE",
+      "name": "kirillcha auditoriya markerlari ishlaydi",
+      "expected": "0 nosozlik",
+      "actual": "0 nosozlik",
+      "pass": true
+    },
+    {
+      "phase": "2-AUDIENCE",
+      "name": "UNKNOWN/teacher/student reytingni O'ZGARTIRMAYDI",
+      "expected": "auditoriya o'zgarganda tartib va ball aynan bir xil",
+      "actual": "a:0.9764,b:0.2003",
+      "pass": true
+    },
+    {
+      "phase": "2-CONTRADICTION",
+      "name": "soat tafovuti FACTUAL_CONTRADICTION deb belgilanadi",
+      "expected": "conflictType = FACTUAL_CONTRADICTION",
+      "actual": "FACTUAL_CONTRADICTION",
+      "pass": true
+    },
+    {
+      "phase": "2-CONTRADICTION",
+      "name": "sinf tafovuti GRADE_CONFLICT (FACTUAL emas)",
+      "expected": "GRADE_CONFLICT mavjud, factualContradictionRate = 0",
+      "actual": "GRADE_CONFLICT, factual=0",
+      "pass": true
+    },
+    {
+      "phase": "2-CONTRADICTION",
+      "name": "GRADE_CONFLICT yashirilmaydi — alohida ko'rsatkichda ko'rinadi",
+      "expected": "gradeConflictRate > 0 va contradictions ro'yxatida mavjud",
+      "actual": "gradeConflictRate=0.2, contradictions=1",
+      "pass": true
+    },
+    {
+      "phase": "2-CONTRADICTION",
+      "name": "eski umumiy ko'rsatkich saqlangan",
+      "expected": "contradictionRate maydoni mavjud va GRADE_CONFLICT ni ham sanaydi",
+      "actual": "contradictionRate=0.2",
+      "pass": true
+    },
+    {
+      "phase": "2-CONTRADICTION",
+      "name": "cross-grade javob RASMIY TASDIQ olmaydi (xatti-harakat o'zgarmagan)",
+      "expected": "isGrounded = false",
+      "actual": "isGrounded=false",
+      "pass": true
+    },
+    {
+      "phase": "2-CONTRADICTION",
+      "name": "to'g'ri soatda yolg'on musbat yo'q",
+      "expected": "factualContradictionRate = 0",
+      "actual": "0",
+      "pass": true
+    },
+    {
+      "phase": "2-CROSSGRADE",
+      "name": "1-4 sinf uchun rasmiy dalil QAYTMAYDI (nearest-grade fallback yo'q)",
+      "expected": "har bir so'rovda 0 dalil va abstention",
+      "actual": "0 sizib chiqish",
+      "pass": true
+    },
+    {
+      "phase": "2-CROSSGRADE",
+      "name": "qamrov cheklovi foydalanuvchiga OCHIQ aytiladi",
+      "expected": "ehtiyot xabarida so'ralgan sinf va mavjud sinflar ko'rsatiladi",
+      "actual": "Eslatma: «Matematika» fani bo'yicha rasmiy o'quv dasturi faqat 5-sinf, 6-sinf, 7-sinf, 8-s",
+      "pass": true
+    },
+    {
+      "phase": "2-CROSSGRADE",
+      "name": "5-11 orasidagi haqiqiy cross-grade SAQLANGAN",
+      "expected": "1-o'rinda to'g'ri sinf va cross-grade bayrog'i",
+      "actual": "0 nosozlik",
+      "pass": true
+    },
+    {
+      "phase": "3-PROVENANS",
+      "name": "adversarial so'rovlarda provenans buzilmaydi",
+      "expected": "0 muammo",
+      "actual": "0 muammo (14 so'rov)",
+      "pass": true
+    },
+    {
+      "phase": "3-PROVENANS",
+      "name": "javobdagi UYDIRMA bo'lim nomi tutiladi",
+      "expected": "SOURCE_CONFLICT mavjud",
+      "actual": "sourceConflictRate=0.17",
+      "pass": true
+    },
+    {
+      "phase": "3-PROVENANS",
+      "name": "HAQIQIY bo'lim nomi yolg'on musbat bermaydi",
+      "expected": "sourceConflictRate = 0",
+      "actual": "0",
+      "pass": true
+    },
+    {
+      "phase": "3-PROVENANS",
+      "name": "NUL bayti sxemada tozalanadi",
+      "expected": "boshqaruv belgisi qolmaydi",
+      "actual": "0 ta boshqaruv belgisi",
+      "pass": true
+    },
+    {
+      "phase": "3-PROVENANS",
+      "name": "to'… so'zlari buzilmaydi (V5 regressiyasi)",
+      "expected": "to'rtburchaklar saqlanadi",
+      "actual": "8-sinf matematika to'rtburchaklar",
+      "pass": true
+    },
+    {
+      "phase": "5-ADVISORY",
+      "name": "candidateDepth quvurga ULANMAGAN",
+      "expected": "matchCurriculumTopics qat'iy 50 ishlatadi",
+      "actual": "qat'iy 50",
+      "pass": true
+    },
+    {
+      "phase": "5-ADVISORY",
+      "name": "ehtiyotkorlik coverage.ts orqali amalga oshiriladi",
+      "expected": "shouldAbstain=false bo'lsa ham qamrov to'sadi",
+      "actual": "shouldAbstain=false, coverage=GRADE_NOT_AVAILABLE",
+      "pass": true
+    },
+    {
+      "phase": "5-ADVISORY",
+      "name": "scoring.ts production quvuridan ajratilgan",
+      "expected": "lib/search ichidan import yo'q",
+      "actual": "import yo'q",
+      "pass": true
+    },
+    {
+      "phase": "7-SIFAT",
+      "name": "nomzodlar tartibi DETERMINISTIK",
+      "expected": "ikki chaqiruvda bir xil ketma-ketlik",
+      "actual": "bir xil",
+      "pass": true
+    },
+    {
+      "phase": "7-SIFAT",
+      "name": "o'quv dasturi id'lari deterministik",
+      "expected": "barcha id dts_ bilan boshlanadi",
+      "actual": "0 ta nomos id",
+      "pass": true
+    },
+    {
+      "phase": "7-SIFAT",
+      "name": "provenans versiyasi manbaga mos",
+      "expected": "0 nomuvofiqlik",
+      "actual": "0 ta nomuvofiqlik",
+      "pass": true
+    },
+    {
+      "phase": "6-PERF",
+      "name": "mahalliy quvur p95 chegarada",
+      "expected": "p95 <= 60 ms (LLMsiz)",
+      "actual": "p50=9.06ms p95=14.12ms p99=15ms",
+      "pass": true
+    }
+  ]
+}

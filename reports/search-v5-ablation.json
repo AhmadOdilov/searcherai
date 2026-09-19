@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-18T14:45:48.366Z",
+  "timestamp": "2026-09-19T05:41:21.650Z",
   "queries": 216,
   "results": [
     {
@@ -10,7 +10,7 @@
       "recall5": 96.3,
       "mrr": 0.8757,
       "ndcg5": 0.8953,
-      "avgLatencyMs": 0.129
+      "avgLatencyMs": 0.149
     },
     {
       "variant": "B. Lexical",
@@ -20,7 +20,7 @@
       "recall5": 93.52,
       "mrr": 0.733,
       "ndcg5": 0.7782,
-      "avgLatencyMs": 0.184
+      "avgLatencyMs": 0.195
     },
     {
       "variant": "C. Semantic",
@@ -30,7 +30,7 @@
       "recall5": 87.96,
       "mrr": 0.6761,
       "ndcg5": 0.7146,
-      "avgLatencyMs": 0.777
+      "avgLatencyMs": 0.79
     },
     {
       "variant": "D. Hybrid (A+B+C)",
@@ -40,7 +40,7 @@
       "recall5": 97.69,
       "mrr": 0.8663,
       "ndcg5": 0.8925,
-      "avgLatencyMs": 0.877
+      "avgLatencyMs": 0.888
     },
     {
       "variant": "E. Hybrid + Metadata",
@@ -50,7 +50,7 @@
       "recall5": 98.15,
       "mrr": 0.9163,
       "ndcg5": 0.9316,
-      "avgLatencyMs": 0.869
+      "avgLatencyMs": 0.885
     },
     {
       "variant": "F. Full V5 (production)",
@@ -60,7 +60,7 @@
       "recall5": 98.61,
       "mrr": 0.9433,
       "ndcg5": 0.9538,
-      "avgLatencyMs": 1.007
+      "avgLatencyMs": 1.019
     },
     {
       "variant": "G. F - sinf jazosisiz",
@@ -70,7 +70,7 @@
       "recall5": 97.69,
       "mrr": 0.9109,
       "ndcg5": 0.9259,
-      "avgLatencyMs": 0.873
+      "avgLatencyMs": 0.89
     },
     {
       "variant": "H. F - semantik ballsiz",
@@ -80,7 +80,7 @@
       "recall5": 98.15,
       "mrr": 0.905,
       "ndcg5": 0.9226,
-      "avgLatencyMs": 0.185
+      "avgLatencyMs": 0.206
     },
     {
       "variant": "I. F - cross-lingual kengaytmasiz",
@@ -90,7 +90,7 @@
       "recall5": 97.69,
       "mrr": 0.8854,
       "ndcg5": 0.9064,
-      "avgLatencyMs": 0.839
+      "avgLatencyMs": 0.848
     },
     {
       "variant": "J. F - metadata mosligisiz",
@@ -100,7 +100,7 @@
       "recall5": 98.15,
       "mrr": 0.9101,
       "ndcg5": 0.9266,
-      "avgLatencyMs": 0.883
+      "avgLatencyMs": 0.889
     }
   ]
 }

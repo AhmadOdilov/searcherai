@@ -94,6 +94,49 @@ describe("multi-turn API holati (V6 — hozirgi cheklov qayd etiladi)", () => {
     );
   });
 
+  it("V6 audit: barcha modifikator turlari kontekstni meros olmaydi", async () => {
+    /*
+      Talab qilingan to'rt modifikator: «oddiyroq tushuntir», «misol ber»,
+      «rus tilida ayt», «qisqartir». Har biri oldingi so'rovdan keyin
+      yuboriladi va hech biri mavzuni meros olmasligi qayd etiladi.
+    */
+    /*
+      Har bir modifikator ALOHIDA foydalanuvchi bilan yuboriladi.
+      Sabab: AI kvotasi foydalanuvchi bo'yicha daqiqalik oynada
+      cheklangan va bitta hisobdan ketma-ket 5 so'rov 429 beradi —
+      bu chegara to'g'ri ishlayotganining belgisi, testning maqsadi emas.
+    */
+    const modifiers = ["oddiyroq tushuntir", "misol ber", "rus tilida ayt", "qisqartir"];
+    const inherited: string[] = [];
+
+    for (const [index, modifier] of modifiers.entries()) {
+      const client = await signedInClient(`mt-api-mod-${index}`);
+
+      const opening = await client.request<SearchPayload>("/api/search", {
+        method: "POST",
+        body: { question: "8-sinf matematika kvadrat tenglamalar nima?", language: "UZ" },
+      });
+      assert.equal(opening.status, 200, `ochilish (${modifier})`);
+      assert.match(opening.data!.understanding?.extractedTopic ?? "", /kvadrat|tenglama/i);
+
+      const res = await client.request<SearchPayload>("/api/search", {
+        method: "POST",
+        body: { question: modifier, language: "UZ" },
+      });
+      assert.equal(res.status, 200, modifier);
+      const topic = res.data!.understanding?.extractedTopic ?? "";
+      if (/kvadrat tenglama/i.test(topic)) inherited.push(`${modifier} -> ${topic}`);
+    }
+
+    assert.deepEqual(
+      inherited,
+      [],
+      "HOZIRGI HOLAT: /api/search kontekstni uzatmaydi, shuning uchun hech bir " +
+        "modifikator oldingi mavzuni meros olmaydi. Bu tasdiq yiqilsa — " +
+        "multi-turn ulangan, testni va hisobotdagi cheklovni yangilang.",
+    );
+  });
+
   it("fan ham saqlanmaydi — har bir so'rov mustaqil ishlanadi", async () => {
     const client = await signedInClient("mt-api-subject");
 

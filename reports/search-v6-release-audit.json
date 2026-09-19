@@ -1,0 +1,431 @@
+{
+  "timestamp": "2026-09-19T05:41:59.601Z",
+  "executiveStatus": {
+    "decision": "PRODUCTION FREEZE PASSED",
+    "scopeNote": "«PRODUCTION READY» aynan quyidagi audit qilingan qamrovga tegishli, kelajakdagi to'liq feature setga emas.",
+    "totalIndependentChecks": 25,
+    "passed": 25,
+    "failed": 0,
+    "issuesFoundDuringAudit": 2
+  },
+  "scope": {
+    "productionReady": [
+      "search / retrieval core",
+      "grounding va claim validatsiyasi",
+      "provenance (manba, versiya, yil)",
+      "curriculum coverage (fan + sinf)",
+      "adversarial handling va input sanitatsiya",
+      "V6 quality gate (27 chegara)"
+    ],
+    "notIncluded": [
+      "Multi-turn API integratsiyasi",
+      "1-4 sinf rasmiy DTS qamrovi",
+      "to'liq inglizcha UI",
+      "adaptive candidate depth",
+      "scoring.ts production quvuriga qaytarilishi"
+    ]
+  },
+  "phase1_commandVerification": [
+    {
+      "command": "npm run search:gate-v5",
+      "expected": "barcha chegaralar PASS",
+      "actual": "27/27 PASS, 0 FAIL",
+      "pass": true
+    },
+    {
+      "command": "npm run search:eval-v5",
+      "expected": "V6 hisobotidagi sonlar",
+      "actual": "mos keldi (quyida jadval)",
+      "pass": true
+    },
+    {
+      "command": "npm run search:ablation-v5",
+      "expected": "barcha komponentlar foydali",
+      "actual": "4/4 FOYDALI, F MRR 0.9433",
+      "pass": true
+    },
+    {
+      "command": "npm run search:e2e-live",
+      "expected": "real AI bilan 4 holat PASS",
+      "actual": "median 20806 ms, muammo yo'q",
+      "pass": true
+    },
+    {
+      "command": "npm run search:eval-multiturn",
+      "expected": "kutubxona darajasida 100%",
+      "actual": "fan/sinf/mavzu/intent/auditoriya 100%",
+      "pass": true
+    },
+    {
+      "command": "npm test",
+      "expected": "0 fail, 0 skip",
+      "actual": "635/635 PASS, 131 suite",
+      "pass": true
+    },
+    {
+      "command": "npm run test:e2e",
+      "expected": "0 fail, 0 skip",
+      "actual": "297/297 PASS",
+      "pass": true
+    },
+    {
+      "command": "npm run typecheck",
+      "expected": "0 xato",
+      "actual": "0 xato",
+      "pass": true
+    },
+    {
+      "command": "npm run lint",
+      "expected": "0 xato / 0 ogohlantirish",
+      "actual": "0 / 0",
+      "pass": true
+    },
+    {
+      "command": "npm run build",
+      "expected": "PASS",
+      "actual": "Compiled successfully",
+      "pass": true
+    },
+    {
+      "command": "npm run search:audit-benchmark",
+      "expected": "PASS",
+      "actual": "yaxlitlik muammosi yo'q (1050 so'rov, 216 gold)",
+      "pass": true
+    }
+  ],
+  "phase2_gateVerification": {
+    "actualGateCount": 27,
+    "reportedInV6Final": 24,
+    "mismatch": "NOMUVOFIQLIK (hujjat): reports/search-v6-final.json da '24/24' yozilgan, amalda gate'da 27 ta chegara bor va 27 tasi ham PASS. Raqam Phase 2/3 da uchta chegara qo'shilgandan keyin yangilanmay qolgan. Bu KAM ko'rsatish (under-report), o'lchov manipulyatsiyasi emas. Gate kodi o'zgartirilmadi.",
+    "audience": {
+      "threshold": ">=92%",
+      "actual": 96,
+      "explicitTeacher": {
+        "total": 48,
+        "correct": 48,
+        "accuracy": 100
+      },
+      "explicitStudent": {
+        "total": 4,
+        "correct": 4,
+        "accuracy": 100
+      },
+      "rankingNeutrality": "PASS — auditoriya izolyatsiya qilinganda ball va tartib aynan bir xil",
+      "pass": true
+    },
+    "contradiction": {
+      "gateMetric": "FACTUAL_CONTRADICTION + SOURCE_CONFLICT",
+      "threshold": "<=2%",
+      "actual": 0,
+      "factual": 0,
+      "sourceConflict": 0,
+      "gradeConflictShownSeparately": 2.91,
+      "oldGeneralMetricPreserved": 2.91,
+      "detectionProbe": {
+        "probed": 195,
+        "contradictionsDetected": 195,
+        "detectionRate": 100,
+        "falsePositives": 0
+      },
+      "pass": true
+    },
+    "crossGrade": {
+      "threshold": ">=98%",
+      "actual": 98.28,
+      "falsePositiveRate": 1.26,
+      "grades1to4NoOfficialEvidence": "PASS — 5 ta so'rovda 0 dalil, abstention",
+      "noNearestGradeFallback": "PASS",
+      "grades5to11Preserved": "PASS",
+      "coverageLimitationDisclosed": "PASS — ehtiyot xabarida so'ralgan va mavjud sinflar ko'rsatiladi",
+      "pass": true
+    }
+  },
+  "phase3_metricsV5toV6": {
+    "basis500": {
+      "note": "Bir xil 500 so'rovli golden dataset, bir xil (V4) metodika.",
+      "rows": [
+        [
+          "Language",
+          100,
+          100
+        ],
+        [
+          "Subject",
+          99.79591836734694,
+          99.79591836734694
+        ],
+        [
+          "Grade",
+          100,
+          100
+        ],
+        [
+          "Intent",
+          91.8,
+          91.8
+        ],
+        [
+          "Audience",
+          89.60000000000001,
+          96
+        ],
+        [
+          "Recall@20",
+          93.94,
+          98.48
+        ],
+        [
+          "Recall@50",
+          95.45,
+          100
+        ],
+        [
+          "Recall@1",
+          65.15,
+          69.7
+        ],
+        [
+          "Recall@3",
+          90.91,
+          95.45
+        ],
+        [
+          "Recall@5",
+          92.42,
+          96.97
+        ],
+        [
+          "MRR",
+          0.7841,
+          0.8295
+        ],
+        [
+          "nDCG@5",
+          0.8186,
+          0.864
+        ]
+      ]
+    },
+    "fullBenchmark1050": {
+      "recall20": 99.54,
+      "recall50": 100,
+      "recall1": 90.28,
+      "recall3": 98.15,
+      "recall5": 98.61,
+      "mrr": 0.9433,
+      "ndcg5": 0.9538,
+      "abstention": {
+        "precision": 100,
+        "recall": 100
+      },
+      "falseGrounding": 0,
+      "fakeDtsCitations": "0/1994",
+      "adversarial": "100/100"
+    }
+  },
+  "phase7_provenanceVerification": [
+    {
+      "phase": "3-PROVENANS",
+      "name": "adversarial so'rovlarda provenans buzilmaydi",
+      "expected": "0 muammo",
+      "actual": "0 muammo (14 so'rov)",
+      "pass": true
+    },
+    {
+      "phase": "3-PROVENANS",
+      "name": "javobdagi UYDIRMA bo'lim nomi tutiladi",
+      "expected": "SOURCE_CONFLICT mavjud",
+      "actual": "sourceConflictRate=0.17",
+      "pass": true
+    },
+    {
+      "phase": "3-PROVENANS",
+      "name": "HAQIQIY bo'lim nomi yolg'on musbat bermaydi",
+      "expected": "sourceConflictRate = 0",
+      "actual": "0",
+      "pass": true
+    },
+    {
+      "phase": "3-PROVENANS",
+      "name": "NUL bayti sxemada tozalanadi",
+      "expected": "boshqaruv belgisi qolmaydi",
+      "actual": "0 ta boshqaruv belgisi",
+      "pass": true
+    },
+    {
+      "phase": "3-PROVENANS",
+      "name": "to'… so'zlari buzilmaydi (V5 regressiyasi)",
+      "expected": "to'rtburchaklar saqlanadi",
+      "actual": "8-sinf matematika to'rtburchaklar",
+      "pass": true
+    }
+  ],
+  "phase8_adversarialVerification": {
+    "benchmarkSuite": "100 so'rov, 0 sizib chiqish",
+    "independentProbe": "14 ta maqsadli hujum (fake DTS, noto'g'ri fan/sinf/yil, uydirma sarlavha, SQL, XSS, path traversal, env leak, SSRF, NUL bayti, apostrof, cross-language, modifier-only, buzuq matn) — provenans buzilmadi, sir chiqmadi.",
+    "pass": true
+  },
+  "phase9_multiTurn": {
+    "status": "LIMITATION — NOT CONNECTED",
+    "evidence": "tests/e2e/search-multiturn-api.e2e.ts (4 test, real HTTP): conversationId jimgina tashlab yuboriladi; «oddiyroq tushuntir», «misol ber», «rus tilida ayt», «qisqartir» modifikatorlarining HECH BIRI oldingi mavzuni meros olmaydi; fan ham saqlanmaydi.",
+    "libraryLevelOnly": {
+      "subjectRetention": 100,
+      "topicRetention": 100,
+      "note": "Bu MultiTurnService kutubxonasiga tegishli, mahsulot xatti-harakatiga emas."
+    }
+  },
+  "phase10_deadAdvisoryLogic": [
+    {
+      "phase": "5-ADVISORY",
+      "name": "candidateDepth quvurga ULANMAGAN",
+      "expected": "matchCurriculumTopics qat'iy 50 ishlatadi",
+      "actual": "qat'iy 50",
+      "pass": true
+    },
+    {
+      "phase": "5-ADVISORY",
+      "name": "ehtiyotkorlik coverage.ts orqali amalga oshiriladi",
+      "expected": "shouldAbstain=false bo'lsa ham qamrov to'sadi",
+      "actual": "shouldAbstain=false, coverage=GRADE_NOT_AVAILABLE",
+      "pass": true
+    },
+    {
+      "phase": "5-ADVISORY",
+      "name": "scoring.ts production quvuridan ajratilgan",
+      "expected": "lib/search ichidan import yo'q",
+      "actual": "import yo'q",
+      "pass": true
+    }
+  ],
+  "phase11_performance": {
+    "localPipelineMs": {
+      "p50": 0.46,
+      "p95": 18.11,
+      "p99": 29.29,
+      "note": "LLM generatsiyasi KIRMAGAN."
+    },
+    "independentProbeMs": {
+      "p50": 9.06,
+      "p95": 14.12,
+      "p99": 15
+    },
+    "cacheHitMs": 5,
+    "realE2eWithLlmMs": {
+      "note": "Tashqi LLM generatsiyasi KIRGAN — bu haqiqiy javob vaqti.",
+      "min": 15224,
+      "max": 23093,
+      "median": 20806
+    },
+    "warning": "LLM latency (~20 s) va mahalliy qidiruv yadrosi latency (~18 ms p95) HECH QACHON aralashtirilmasligi kerak."
+  },
+  "phase12_securityCodeQuality": {
+    "verified": [
+      {
+        "phase": "7-SIFAT",
+        "name": "nomzodlar tartibi DETERMINISTIK",
+        "expected": "ikki chaqiruvda bir xil ketma-ketlik",
+        "actual": "bir xil",
+        "pass": true
+      },
+      {
+        "phase": "7-SIFAT",
+        "name": "o'quv dasturi id'lari deterministik",
+        "expected": "barcha id dts_ bilan boshlanadi",
+        "actual": "0 ta nomos id",
+        "pass": true
+      },
+      {
+        "phase": "7-SIFAT",
+        "name": "provenans versiyasi manbaga mos",
+        "expected": "0 nomuvofiqlik",
+        "actual": "0 ta nomuvofiqlik",
+        "pass": true
+      }
+    ],
+    "correctionToV5Report": {
+      "claim": "V5 hisobotida: «Ilova kodida raw SQL yo'q (faqat Prisma)»",
+      "actual": "NOTO'G'RI. Ikki joyda raw SQL bor: lib/ai/rate-limit.ts:135 ($executeRaw, pg_advisory_xact_lock, userId PARAMETRLANGAN) va app/api/health/route.ts:82 ($queryRaw `SELECT 1`, foydalanuvchi kiritmasi yo'q).",
+      "securityImpact": "YO'Q. $executeRawUnsafe / $queryRawUnsafe umuman ishlatilmagan, interpolyatsiya Prisma tagged template orqali parametrlanadi. SQL injection xulosasi kuchida qoladi, faqat bayonot noaniq edi."
+    },
+    "scans": {
+      "rawUnsafe": "yo'q",
+      "dangerouslySetInnerHTML": "yo'q",
+      "evalOrNewFunction": "yo'q",
+      "skippedOrOnlyTests": "yo'q",
+      "consoleLogOrDebuggerInChangedSource": "yo'q"
+    }
+  },
+  "phase13_gitAudit": {
+    "branch": "kuchaytirish",
+    "commitsSinceV5": 7,
+    "secretsOrEnvCommitted": "yo'q (.env* gitignore'da)",
+    "generatedArtifactsCommitted": "yo'q (.next, node_modules, lib/generated, test-results)",
+    "unrelatedFilesChanged": "yo'q — barcha o'zgarishlar qidiruv auditi doirasida",
+    "benchmarkDatasetChangedInThisPhase": "yo'q",
+    "debugCodeOrTestBypass": "yo'q"
+  },
+  "issuesFound": [
+    {
+      "id": "AUDIT-1",
+      "severity": "MEDIUM",
+      "type": "product regression",
+      "title": "To'liq sarlavha mosligi sinf yaqinligi tufayli ikkinchi o'ringa tushardi",
+      "reproduction": "«9-sinf matematika parallel to'g'ri chiziqlar» -> 10-sinf «FAZODA TO'G'RI CHIZIQLAR VA TEKISLIKLARNING PARALLELLIGI» (exact=0.85) 0.8166 bilan 1-o'rin; 7-sinf «PARALLEL TO'G'RI CHIZIQLAR» (exact=1.00) 0.7911 bilan 2-o'rin.",
+      "rootCause": "V6 da qo'shilgan bigram ibora mosligi uzun sarlavhaga ham 0.85 beradi; sinf masofasi pog'onalari orasidagi farq (0.25 vs 0.10) to'liq moslikning ustunligidan (0.045) kattaroq edi. V5 da 7-sinf birinchi edi — demak V6 regressiyasi.",
+      "fix": "lib/search/reranker.ts — exactScore === 1.0 uchun jazo yumshatilishi 0.6 -> 0.75.",
+      "regressionTest": "tests/search-reranker.test.ts (+2 test)",
+      "benchmarkImpact": "BIRORTA ko'rsatkich o'zgarmadi (1050 so'rov).",
+      "status": "FIXED",
+      "commit": "3c615f5"
+    },
+    {
+      "id": "AUDIT-2",
+      "severity": "LOW",
+      "type": "documentation mismatch",
+      "title": "V6 hisobotida gate soni 24 deb yozilgan, amalda 27",
+      "reproduction": "npm run search:gate-v5 | grep -cE '^(✅|❌) .+\\\\(talab' -> 27",
+      "rootCause": "Phase 2/3 da uchta chegara qo'shilgandan keyin hisobotdagi raqam yangilanmagan.",
+      "fix": "Kod o'zgartirilmadi. Haqiqiy son shu hisobotda qayd etildi (27/27 PASS).",
+      "status": "REPORTED"
+    },
+    {
+      "id": "AUDIT-3",
+      "severity": "LOW",
+      "type": "documentation inaccuracy",
+      "title": "V5 hisobotida «raw SQL yo'q» degan noto'g'ri bayonot",
+      "reproduction": "grep -rn '\\\\$executeRaw|\\\\$queryRaw' lib app scripts",
+      "rootCause": "Ikki parametrlangan raw chaqiruv e'tibordan chetda qolgan.",
+      "fix": "Kod o'zgartirilmadi (ikkalasi ham xavfsiz). Bayonot shu hisobotda to'g'rilandi.",
+      "status": "REPORTED"
+    }
+  ],
+  "auditProcessIssues": [
+    {
+      "note": "Audit skriptining o'zida ikkita noto'g'ri tasdiq bor edi va ular tuzatildi: (a) auditoriya neytralligi turli MATNLI so'rovlarni solishtirardi — endi bitta understanding obyektida faqat auditoriya maydoni almashtiriladi; (b) multi-turn E2E testi bitta foydalanuvchidan 5 so'rov yuborib AI kvotasiga (daqiqasiga 3) urilardi — endi har modifikator alohida foydalanuvchi bilan."
+    }
+  ],
+  "remainingLimitations": [
+    "Rasmiy DTS bazasida faqat Matematika va Ona tili (5-11 sinf, 121 bo'lim). Qolgan 7 fan NOT_AVAILABLE — tizim ular uchun rasmiy dalil bermaydi va buni ochiq aytadi.",
+    "1-4 sinf DTS mavjud emas. V6 dan boshlab tizim bu holatda dalil BERMAYDI va sababni aytadi (ilgari 5-sinf dalilini qaytarardi).",
+    "Multi-turn mahsulot darajasida ULANMAGAN: /api/search suhbat kontekstini qabul qilmaydi, SearchConversation/SearchMessage jadvallari ishlatilmaydi. E2E test bilan qayd etilgan.",
+    "AdaptiveSearchStrategy.candidateDepth va shouldAbstain tavsiyaviy — quvurda majburiy emas (o'lchangan qaror, kodda hujjatlashtirilgan, dreyf testlari bilan qulflangan).",
+    "lib/search/scoring.ts ishlab chiqarish quvurida chaqirilmaydi; izolyatsiya testi bilan qulflangan.",
+    "EN interfeys tarjimasi yo'q (uz/ru bor). Javob tili EN bo'lishi mumkin.",
+    "Intent aniqligi 91.8% — chegaradan (>=90%) yuqori, lekin eng past ko'rsatkich. Asosiy chalkashlik: definition <-> explain.",
+    "Audience UNKNOWN holatida 94.19% — bu aniqlash xatosi emas, markersiz so'rovda mahsulot standarti bilan dataset yorlig'i o'rtasidagi farq.",
+    "Haqiqiy E2E javob vaqti ~20 s (LLM generatsiyasi). Mahalliy quvur p95 ~18 ms. Bu ikkisi hech qachon aralashtirilmasligi kerak."
+  ],
+  "productionFreezeDecision": {
+    "verdict": "PRODUCTION FREEZE PASSED",
+    "conditions": [
+      "27/27 quality gate PASS",
+      "25/25 mustaqil audit tekshiruvi PASS",
+      "635 unit + 297 E2E test PASS, 0 skip",
+      "TypeScript 0, ESLint 0/0, build PASS, dataset integrity PASS",
+      "audit davomida topilgan 1 ta regressiya tuzatildi va test bilan qulflandi",
+      "2 ta hujjat nomuvofiqligi qayd etildi (kodga ta'siri yo'q)"
+    ],
+    "safeToPush": true,
+    "pushCommand": "git push origin kuchaytirish"
+  }
+}
