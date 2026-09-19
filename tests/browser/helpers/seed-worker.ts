@@ -192,7 +192,30 @@ async function cleanupBrowserUsers(): Promise<void> {
 }
 
 /**
- * CLI: `seed <baseUrl> <suffix>` yoki `cleanup`.
+ * Yozuv holatini O'ZGARTIRISH — polling sinovi uchun.
+ *
+ * ── Nega kerak ────────────────────────────────────────────────────────────
+ * Polling mexanizmini tekshirish uchun yozuv PENDING dan READY ga o'tishi
+ * kerak. Buni haqiqiy AI generatsiyasi bilan qilish sinovni sekin (20-90
+ * soniya), qimmat va beqaror qilardi. Bu yerda o'tish BEVOSITA bazada
+ * bajariladi — shunda sinov faqat polling mexanizmini o'lchaydi.
+ */
+async function setStatus(model: string, id: string, status: string): Promise<void> {
+  const data = { status: status as "PENDING" | "READY" | "FAILED" };
+  if (model === "presentation") {
+    await prisma.presentation.update({ where: { id }, data });
+  } else if (model === "calendarPlan") {
+    await prisma.calendarPlan.update({ where: { id }, data });
+  } else if (model === "lessonPlan") {
+    await prisma.lessonPlan.update({ where: { id }, data });
+  } else {
+    throw new Error(`noma'lum model: ${model}`);
+  }
+}
+
+/**
+ * CLI: `seed <baseUrl> <suffix>`, `cleanup` yoki
+ * `set-status <model> <id> <status>`.
  *
  * Natija STDOUT ga JSON bo'lib chiqadi — chaqiruvchi shuni o'qiydi.
  */
@@ -205,6 +228,10 @@ async function main(): Promise<void> {
     process.stdout.write(JSON.stringify(workspace));
   } else if (command === "cleanup") {
     await cleanupBrowserUsers();
+    process.stdout.write("{}");
+  } else if (command === "set-status") {
+    const [model, id, status] = rest;
+    await setStatus(model, id, status);
     process.stdout.write("{}");
   } else {
     throw new Error(`noma'lum buyruq: ${command}`);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Sparkles } from "lucide-react";
@@ -61,7 +61,7 @@ export function GenerationProgress({
   const tRoot = useTranslations();
   const tStages = useTranslations("common.stages");
 
-  const { status, stage, elapsedSeconds, start } = useGenerationPolling({
+  const { status, stage, elapsedSeconds, start, stop } = useGenerationPolling({
     resource,
     payloadKey,
   });
@@ -91,14 +91,36 @@ export function GenerationProgress({
   */
   const percent = Math.min(95, Math.round((elapsedSeconds / typicalSeconds) * 100));
 
-  // `start` faqat BIR MARTA chaqirilishi kerak — aks holda har renderda
-  // yangi kuzatuv boshlanardi.
-  const startedRef = useRef(false);
+  /*
+    Kuzatuvni BOSHLASH va TO'XTATISH bitta effektda, simmetrik.
+
+    ── Nega ilgari `startedRef` qo'riqchisi bor edi va nega u ZARARLI ──────
+    Maqsad "har renderda yangi kuzatuv boshlanmasin" edi. Lekin `start`
+    barqaror `useCallback` (uning barcha bog'liqliklari ham barqaror),
+    shuning uchun effekt renderda qayta ishlamasdi — qo'riqchi ortiqcha edi.
+
+    Zarari esa jiddiy bo'lib chiqdi. React StrictMode (Next dev'da standart)
+    effektlarni ikki marta bajaradi: mount -> cleanup -> mount.
+
+      1) 1-effekt:  startedRef = true, start() -> taymerlar va so'rov
+      2) cleanup:   hookdagi `useEffect(() => stop)` -> stop():
+                    ikkala interval o'chadi, so'rov abort qilinadi
+      3) 2-effekt:  startedRef allaqachon true (ref remount'da saqlanadi)
+                    -> ERTA QAYTISH, start() boshqa CHAQIRILMAYDI
+
+    Natija: kuzatuv butunlay o'lik. Brauzerda aynan shu ko'rindi —
+    bitta `net::ERR_ABORTED` so'rov, hisoblagich "0 soniya" da qotgan,
+    holat hech qachon yangilanmagan. Nuqson uchala modulda ham bir xil,
+    chunki ular shu bitta komponentni ishlatadi.
+
+    Endi effekt simmetrik: har mountda start, har unmountda stop.
+    StrictMode sikli to'g'ri yakunlanadi. `start()` o'zi ham ichida
+    avval `stop()` chaqiradi, shuning uchun ikki marta boshlash xavfsiz.
+  */
   useEffect(() => {
-    if (startedRef.current) return;
-    startedRef.current = true;
     start(recordId);
-  }, [recordId, start]);
+    return stop;
+  }, [recordId, start, stop]);
 
   // Tugagach sahifani yangilaymiz — natija Server Component'dan keladi.
   useEffect(() => {

@@ -44,6 +44,20 @@ export async function seedWorkspace(
   return JSON.parse(output) as SeededWorkspace;
 }
 
+/**
+ * Yozuv holatini bevosita bazada o'zgartirish — polling sinovi uchun.
+ *
+ * Haqiqiy generatsiya o'rniga ishlatiladi: sinov faqat polling
+ * mexanizmini o'lchashi kerak, AI tezligini emas.
+ */
+export async function setRecordStatus(
+  model: "presentation" | "calendarPlan" | "lessonPlan",
+  id: string,
+  status: "PENDING" | "READY" | "FAILED",
+): Promise<void> {
+  runWorker(["set-status", model, id, status]);
+}
+
 export async function cleanupBrowserUsers(): Promise<void> {
   runWorker(["cleanup"]);
 }
