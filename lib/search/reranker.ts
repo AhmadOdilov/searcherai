@@ -296,9 +296,24 @@ export async function rerankCandidates(
         ? (Math.abs(numReq - numCand) === 1 ? 0.10 : 0.25)
         : 0.20;
 
-      // exactScore 1.0 -> jazo 40% ga tushadi; 0 -> to'liq jazo.
+      /*
+        Jazo dalil kuchiga qarab yumshatiladi.
+
+        TO'LIQ sarlavha mosligi (exactScore = 1.0) sifat jihatdan boshqa
+        daraja: bo'lim nomi so'rovning o'zi. V6 auditida aniqlanganki,
+        qisman moslik (0.85) faqat sinfga yaqinligi tufayli TO'LIQ
+        moslikdan yuqori chiqib ketishi mumkin edi:
+
+          «9-sinf matematika parallel to'g'ri chiziqlar»
+            7-sinf  «PARALLEL TO'G'RI CHIZIQLAR»            exact=1.00 -> 0.7911
+            10-sinf «FAZODA TO'G'RI CHIZIQLAR VA ...»        exact=0.85 -> 0.8166
+
+        Ya'ni aynan shu nomli rasmiy bo'lim ikkinchi o'ringa tushib,
+        o'rniga stereometriya bo'limi taklif qilinardi.
+      */
       const evidenceStrength = Math.min(1, Math.max(0, exactScore));
-      hybridScore = Math.max(0, hybridScore - basePenalty * (1 - 0.6 * evidenceStrength));
+      const discount = exactScore >= 1 ? 0.75 : 0.6;
+      hybridScore = Math.max(0, hybridScore - basePenalty * (1 - discount * evidenceStrength));
     }
 
     scored.push({

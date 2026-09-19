@@ -165,3 +165,69 @@ describe("reranker — ketma-ket ibora mosligi (V6 regressiya)", () => {
     );
   });
 });
+
+describe("reranker — TO'LIQ sarlavha mosligi sinf yaqinligidan ustun (V6 audit)", () => {
+  it("aynan shu nomli bo'lim qisman mosликdan yuqori turadi", async () => {
+    /*
+      V6 AUDITIDA TOPILGAN REGRESSIYA.
+
+      Bigram ibora mosligi qo'shilgandan keyin uzun sarlavhali nomzod
+      («FAZODA TO'G'RI CHIZIQLAR VA TEKISLIKLARNING PARALLELLIGI»)
+      «to'g'ri chiziqlar» bigrammasi tufayli 0.85 ball oldi va so'ralgan
+      sinfga 1 pog'ona yaqinligi tufayli AYNAN shu nomli bo'limdan
+      («PARALLEL TO'G'RI CHIZIQLAR», exact = 1.0) yuqori chiqib ketdi.
+
+      V5 da 7-sinf birinchi edi (0.7911 vs 0.7806) — ya'ni bu V6
+      o'zgarishlari keltirib chiqargan regressiya.
+    */
+    const u = understandQuery("9-sinf matematika parallel to'g'ri chiziqlar");
+    const ranked = await rerankCandidates(
+      [
+        candidate({
+          id: "far-exact",
+          topicName: "PARALLEL TO‘G‘RI CHIZIQLAR",
+          description: "Parallel to‘g‘ri chiziqlar va ularning xossalari.",
+          grade: "7-sinf",
+        }),
+        candidate({
+          id: "near-partial",
+          topicName: "FAZODA TOʻGʻRI CHIZIQLAR VA TEKISLIKLARNING PARALLELLIGI",
+          description: "Fazoda to‘g‘ri chiziqlar va tekisliklarning o‘zaro joylashuvi.",
+          grade: "10-sinf",
+        }),
+      ],
+      u,
+      2,
+    );
+
+    assert.equal(ranked[0].scoreBreakdown.exactMatch, 1, "1-o'rin to'liq moslik bo'lishi kerak");
+    assert.equal(ranked[0].sourceId, "far-exact");
+    assert.equal(ranked[0].isCrossGrade, true, "sinf tafovuti bayrog'i saqlanadi");
+  });
+
+  it("so'ralgan sinfdagi TO'LIQ moslik baribir eng yuqori qoladi", async () => {
+    // Jazo yumshatilishi so'ralgan sinfdagi nomzodni pastga tushirmasligi shart.
+    const u = understandQuery("7-sinf matematika parallel to'g'ri chiziqlar");
+    const ranked = await rerankCandidates(
+      [
+        candidate({
+          id: "in-grade",
+          topicName: "PARALLEL TO‘G‘RI CHIZIQLAR",
+          description: "Parallel to‘g‘ri chiziqlar va ularning xossalari.",
+          grade: "7-sinf",
+        }),
+        candidate({
+          id: "cross",
+          topicName: "FAZODA TOʻGʻRI CHIZIQLAR VA TEKISLIKLARNING PARALLELLIGI",
+          description: "Fazoda to‘g‘ri chiziqlar.",
+          grade: "10-sinf",
+        }),
+      ],
+      u,
+      2,
+    );
+
+    assert.equal(ranked[0].sourceId, "in-grade");
+    assert.equal(ranked[0].isCrossGrade, false);
+  });
+});
