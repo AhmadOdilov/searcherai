@@ -130,7 +130,11 @@ export type SlideLayout = z.infer<typeof slideLayoutSchema>;
 
 /** Bitta karta — uch/to'rt ustunli maketlar uchun. */
 const cardSchema = z.object({
-  title: z.string().trim().min(1, "Karta sarlavhasi bo'sh").max(60, "Karta sarlavhasi uzun"),
+  title: z
+    .string()
+    .trim()
+    .min(1, "Karta sarlavhasi bo'sh")
+    .max(60, "Karta sarlavhasi uzun"),
   body: z.string().trim().max(160, "Karta matni uzun").optional(),
 });
 
@@ -277,9 +281,20 @@ export type Slide = z.infer<typeof slideSchema>;
  * DIQQAT: bu chegara FAQAT AI javobiga tegishli. O'qituvchi keyin
  * tahrirlab slayd qo'shishi yoki o'chirishi mumkin — pastdagi
  * `EDIT_MIN_SLIDES` / `EDIT_MAX_SLIDES` ga qarang.
+ *
+ * ── Nega oraliq kengaytirildi (6-10 → 5-15) ──────────────────────────────
+ * Ilgari har bir prezentatsiya 6-10 slayd olardi, mavzu nimadan iborat
+ * bo'lishidan qat'i nazar. Amalda bu ikki tomondan ham noto'g'ri edi:
+ * bitta tushunchani ("fotosintez nima") ochish uchun 6 slayd ko'p, to'rt
+ * yo'nalishli keng mavzuni esa 10 slaydga siqish mazmunni yo'qotardi.
+ *
+ * Endi son mavzu KENGLIGIDAN yoki foydalanuvchining aniq talabidan
+ * ("10 ta slayd") kelib chiqadi — `lib/presentations/brief.ts`. Bu
+ * yerdagi chegara esa texnik himoya bo'lib qoladi: undan tashqaridagi
+ * javob sxemadan o'tmaydi.
  */
-export const MIN_SLIDES = 6;
-export const MAX_SLIDES = 10;
+export const MIN_SLIDES = 5;
+export const MAX_SLIDES = 15;
 
 /**
  * Tahrirlashdagi chegara — ancha keng.

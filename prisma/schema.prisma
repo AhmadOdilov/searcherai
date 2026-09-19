@@ -339,6 +339,21 @@ model Presentation {
   /// lib/validations/presentation.ts
   content Json?
 
+  /// SLAYD SHARTNOMASI — ko'p bosqichli generatsiyaning rejasi.
+  ///
+  /// Har bir slaydning nima uchun borligi, hikoyadagi o'rni, mazmun
+  /// shakli va vizual topshirig'i. Shakli:
+  /// lib/validations/presentation-plan.ts → presentationPlanSchema
+  ///
+  /// Nega `content` ichida emas, ALOHIDA ustun:
+  ///   · `content` ni o'qituvchi tahrirlaydi, reja esa generatsiya
+  ///     qarori — ikkisining umri va o'zgarish sababi har xil;
+  ///   · eski yozuvlarda reja yo'q va ular baribir ochilishi kerak.
+  ///
+  /// Tahrirlashda reja TEGILMAYDI: u generatsiya paytidagi qarorni
+  /// yozib qo'yadi, keyingi bosqichlar (tasvir generatsiyasi) uchun.
+  plan Json?
+
   /// Generatsiya qilingan .pptx faylning saqlagichdagi yo'li.
   ///
   /// DIQQAT: fayllar `public/` papkasida SAQLANMAYDI. Aks holda Next.js

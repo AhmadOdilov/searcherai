@@ -181,33 +181,60 @@ async function pptxSlideXml(client: TestClient, id: string): Promise<string[]> {
 // ════════════════════════════════════════════════════════════════════════════
 
 describe("AUDIT: AI chaqiruvi bosqichma-bosqich", () => {
-  it("prezentatsiya: generatsiya=1, tahrir=0, yana tahrir=0, yuklab olish=0", async () => {
+  /*
+    Prezentatsiya quvuri IKKI marta AI'ga boradi — skelet (har slaydning
+    vazifasi) va mazmun (matn), `lib/presentations/pipeline.ts`. Ilgari
+    bitta chaqiruv edi va shu test uni 1 deb qulflagandi.
+
+    Testning ASOSIY sharti o'zgarmadi: generatsiyadan KEYIN AI boshqa
+    umuman chaqirilmaydi — tahrir ham, yuklab olish ham mavjud mazmun
+    bilan ishlaydi.
+  */
+  const PRESENTATION_AI_CALLS = 2;
+
+  it("prezentatsiya: generatsiya=2 (skelet+mazmun), tahrir=0, yana tahrir=0, yuklab olish=0", async () => {
     const client = await signedInClient("audit-ai-pr");
 
     await clearAiPrompts();
     const created = await createPresentation(client, "AI sanog'i");
 
     const afterGenerate = (await readAiPrompts()).length;
-    assert.equal(afterGenerate, 1, `generatsiyada ${afterGenerate} ta so'rov ketdi`);
+    assert.equal(
+      afterGenerate,
+      PRESENTATION_AI_CALLS,
+      `generatsiyada ${afterGenerate} ta so'rov ketdi`,
+    );
 
     // ── Tahrir 1 ──
     await client.request(`/api/presentations/${created.id}`, {
       method: "PATCH",
       body: { content: { ...created.content!, title: "Birinchi tahrir" } },
     });
-    assert.equal((await readAiPrompts()).length, 1, "tahrirda AI chaqirildi");
+    assert.equal(
+      (await readAiPrompts()).length,
+      PRESENTATION_AI_CALLS,
+      "tahrirda AI chaqirildi",
+    );
 
     // ── Tahrir 2 ──
     await client.request(`/api/presentations/${created.id}`, {
       method: "PATCH",
       body: { content: { ...created.content!, title: "Ikkinchi tahrir" } },
     });
-    assert.equal((await readAiPrompts()).length, 1, "ikkinchi tahrirda AI chaqirildi");
+    assert.equal(
+      (await readAiPrompts()).length,
+      PRESENTATION_AI_CALLS,
+      "ikkinchi tahrirda AI chaqirildi",
+    );
 
     // ── Yuklab olish ──
     const download = await client.fetchRaw(`/api/presentations/${created.id}/download`);
     assert.equal(download.status, 200);
-    assert.equal((await readAiPrompts()).length, 1, "yuklab olishda AI chaqirildi");
+    assert.equal(
+      (await readAiPrompts()).length,
+      PRESENTATION_AI_CALLS,
+      "yuklab olishda AI chaqirildi",
+    );
   });
 
   it("kalendar reja: generatsiya=1, tahrir=0, yana tahrir=0, yuklab olish=0", async () => {

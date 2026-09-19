@@ -145,6 +145,22 @@ function isPresentationRequest(systemPrompt: string): boolean {
   return systemPrompt.includes('"slides"');
 }
 
+/**
+ * So'rov prezentatsiya SKELETI uchunmi.
+ *
+ * ── Nega alohida tekshiruv ────────────────────────────────────────────────
+ * Prezentatsiya endi IKKI bosqichda yaratiladi (lib/presentations/pipeline.ts):
+ * avval skelet, keyin matn. Ikkala bosqichning system prompti ham
+ * `"slides"` kalitini o'z ichiga oladi, shuning uchun eski tekshiruv
+ * skeletga MATN javobini qaytarib yuborardi va generatsiya yiqilardi.
+ *
+ * Skelet promptining farqlovchi belgisi — `"beatKey"` maydoni.
+ * Tekshiruv TARTIBI muhim: skelet oldin tekshiriladi.
+ */
+function isOutlineRequest(systemPrompt: string): boolean {
+  return systemPrompt.includes('"beatKey"');
+}
+
 /** So'rov kalendar reja uchunmi. */
 function isCalendarPlanRequest(systemPrompt: string): boolean {
   return systemPrompt.includes('"weekNumber"');
@@ -284,6 +300,171 @@ function buildCalendarPlan(prompt: string) {
         },
       ],
     })),
+  };
+}
+
+/**
+ * Skelet promptidan hikoya bosqichlarini o'qiydi.
+ *
+ * Soxta model ham HAQIQIY model kabi ishlashi kerak: unga berilgan
+ * beatlar ro'yxatiga AYNAN rioya qilishi shart. Aks holda sinov
+ * quvurning eng muhim shartini (slaydlar soni) tekshirmay qolardi.
+ */
+function extractBeats(prompt: string): Array<{ key: string; purpose: string }> {
+  const beats: Array<{ key: string; purpose: string }> = [];
+  for (const line of prompt.split("\n")) {
+    const match = line.match(/^\d+\.\s+beatKey="([^"]+)"[^—]*—\s*(.+)$/);
+    if (match) beats.push({ key: match[1], purpose: match[2].trim() });
+  }
+  return beats;
+}
+
+/** Promptda ruxsat etilgan mazmun shakllari. */
+function extractAllowedTypes(prompt: string): string[] {
+  const types: string[] = [];
+  for (const line of prompt.split("\n")) {
+    const match = line.match(/^- "([a-zA-Z]+)" —/);
+    if (match) types.push(match[1]);
+  }
+  return types;
+}
+
+/** Sxemadan o'tadigan SKELET — beatlar promptdan ko'chiriladi. */
+function buildOutline(prompt: string) {
+  const beats = extractBeats(prompt);
+  const allowed = extractAllowedTypes(prompt);
+  const archetype =
+    prompt.match(/\b(educational|investor|business|report)\b/)?.[1] ?? "educational";
+
+  // Muqovadan keyin navbat bilan almashtiramiz — natija bir xil
+  // shakldagi slaydlar ketma-ketligi bo'lib qolmasin.
+  const rotation = allowed.filter((type) => type !== "statement");
+  const pick = (index: number) =>
+    index === 0 || rotation.length === 0
+      ? "statement"
+      : rotation[(index - 1) % rotation.length];
+
+  return {
+    title: "Soxta AI skeleti — sinov prezentatsiyasi",
+    archetype,
+    slides: beats.map((beat, index) => ({
+      beatKey: beat.key,
+      heading: `${index + 1}. ${beat.purpose}`.slice(0, 120),
+      keyMessage: `${beat.purpose} — shu slaydning asosiy fikri.`.slice(0, 200),
+      contentType: pick(index),
+    })),
+  };
+}
+
+/**
+ * Mazmun promptidan slayd rejasini o'qiydi.
+ *
+ * Har bir slayd bloki shunday ko'rinadi:
+ *   SLAYD 3 [type=content]
+ *     heading: ...
+ *     mazmun shakli: cards → ...
+ */
+function extractPlannedSlides(
+  prompt: string,
+): Array<{ type: string; heading: string; shape: string }> {
+  const slides: Array<{ type: string; heading: string; shape: string }> = [];
+  const lines = prompt.split("\n");
+
+  for (let index = 0; index < lines.length; index++) {
+    const header = lines[index].match(/^SLAYD \d+ \[type=(title|content|summary)\]$/);
+    if (!header) continue;
+
+    const heading = lines[index + 1]?.match(/^\s+heading:\s*(.+)$/)?.[1] ?? "Slayd";
+    let shape = "bullets";
+    for (let offset = 2; offset <= 5; offset++) {
+      const match = lines[index + offset]?.match(/shakli:\s*([a-zA-Z]+)\s*→/);
+      if (match) {
+        shape = match[1];
+        break;
+      }
+    }
+    slides.push({ type: header[1], heading: heading.trim(), shape });
+  }
+
+  return slides;
+}
+
+/** Rejadagi shaklga mos slayd mazmuni. */
+function buildPlannedSlide(planned: { type: string; heading: string; shape: string }) {
+  const base = {
+    type: planned.type,
+    heading: planned.heading.slice(0, 120),
+    bullets: [] as string[],
+    keyMessage: "Soxta AI javobi: shu slaydning asosiy fikri.",
+    speakerNotes: "Soxta AI: o'qituvchi uchun izoh.",
+  };
+
+  switch (planned.shape) {
+    case "cards":
+      return {
+        ...base,
+        cards: [
+          { title: "Birinchi", body: "Soxta tavsif" },
+          { title: "Ikkinchi", body: "Soxta tavsif" },
+          { title: "Uchinchi", body: "Soxta tavsif" },
+        ],
+      };
+    case "steps":
+      return {
+        ...base,
+        steps: [
+          { label: "Bosqich 1", body: "Soxta tavsif" },
+          { label: "Bosqich 2", body: "Soxta tavsif" },
+          { label: "Bosqich 3", body: "Soxta tavsif" },
+        ],
+      };
+    case "comparison":
+      return {
+        ...base,
+        comparison: {
+          leftTitle: "Chap",
+          leftItems: ["Birinchi"],
+          rightTitle: "O'ng",
+          rightItems: ["Ikkinchi"],
+        },
+      };
+    case "quote":
+      return {
+        ...base,
+        quote: { text: "Bu yetarlicha uzun soxta iqtibos matni.", author: "Muallif" },
+      };
+    case "statistic":
+      return { ...base, statistic: { value: "35%", caption: "Soxta ko'rsatkich" } };
+    case "chart":
+      return {
+        ...base,
+        chart: {
+          kind: "bar",
+          categories: ["A", "B"],
+          series: [{ name: "Qator", values: [1, 2] }],
+        },
+      };
+    case "statement":
+      return base;
+    default:
+      return {
+        ...base,
+        bullets: ["Birinchi fikr", "Ikkinchi fikr", "Uchinchi fikr"],
+      };
+  }
+}
+
+/** Rejaga MOS prezentatsiya mazmuni — slaydlar soni promptdan olinadi. */
+function buildPlannedPresentation(prompt: string, topic: string) {
+  const planned = extractPlannedSlides(prompt);
+
+  // Reja o'qilmasa eski xatti-harakatga qaytamiz — sinov "javob yo'q"
+  // o'rniga aniq sxema xatosini ko'rsin.
+  if (planned.length === 0) return buildPresentation(topic);
+
+  return {
+    title: prompt.match(/^title:\s*(.+)$/m)?.[1]?.slice(0, 150) ?? topic.slice(0, 150),
+    slides: planned.map(buildPlannedSlide),
   };
 }
 
@@ -430,7 +611,9 @@ export async function startMockAiServer(
 
       const slow = combined.includes(MARKER_SLOW);
 
-      const presentation = isPresentationRequest(system);
+      // Tartib MUHIM: skelet prompti ham `"slides"` ni o'z ichiga oladi.
+      const outline = isOutlineRequest(system);
+      const presentation = !outline && isPresentationRequest(system);
       const calendarPlan = isCalendarPlanRequest(system);
       const search = isSearchRequest(combined);
       const vision = isVisionRequest(combined);
@@ -438,7 +621,7 @@ export async function startMockAiServer(
       let content: string;
       if (combined.includes(MARKER_BAD_SHAPE)) {
         // Sxemaga mos kelmaydigan javob — har uch modul uchun.
-        if (presentation) {
+        if (outline || presentation) {
           content = JSON.stringify({ title: "x", slides: [] });
         } else if (calendarPlan) {
           content = JSON.stringify({ title: "x", weeks: [] });
@@ -453,8 +636,10 @@ export async function startMockAiServer(
         content = JSON.stringify(buildVisionAnalysis());
       } else if (search) {
         content = JSON.stringify(buildSearchAnswer(user));
+      } else if (outline) {
+        content = JSON.stringify(buildOutline(user));
       } else if (presentation) {
-        content = JSON.stringify(buildPresentation(extractTopic(user)));
+        content = JSON.stringify(buildPlannedPresentation(user, extractTopic(user)));
       } else if (calendarPlan) {
         content = JSON.stringify(buildCalendarPlan(user));
       } else {

@@ -231,24 +231,41 @@ export function buildUserPrompt(context: PresentationPromptContext): string {
   }
   lines.push(`- ${labels.topic}: ${context.topic}`);
 
-  if (context.lessonPlan) {
-    const plan = context.lessonPlan;
-    lines.push("", labels.planIntro, "");
-    lines.push(`${labels.objective}: ${plan.objective}`, "");
-    lines.push(`${labels.outcomes}:`);
-    for (const outcome of plan.outcomes) {
-      lines.push(`- ${outcome}`);
-    }
-    lines.push("", `${labels.stages}:`);
-    for (const [index, stage] of plan.stages.entries()) {
-      lines.push(
-        `${index + 1}. ${stage.name} (${stage.durationMinutes} min) — ${stage.description}`,
-      );
-    }
-    lines.push("", labels.stageNote);
-  } else {
-    lines.push("", labels.standaloneNote);
+  lines.push("", buildLessonContextBlock(context));
+
+  return lines.join("\n");
+}
+
+/**
+ * Dars ishlanmasi bo'limi — mavzu satrlarisiz.
+ *
+ * ── Nega alohida funksiya ─────────────────────────────────────────────────
+ * Ko'p bosqichli generatsiyada bu blok IKKI martta kerak bo'ladi:
+ * skelet bosqichida (slaydlar dars bosqichlariga mos tushishi uchun) va
+ * mazmun bosqichida (matn darsning o'z tilidan chiqishi uchun). Ikkala
+ * joyda ham mavzu/fan/sinf satrlari boshqacha yoziladi, shuning uchun
+ * faqat MAZMUN qismi ajratildi.
+ */
+export function buildLessonContextBlock(context: PresentationPromptContext): string {
+  const labels = CONTEXT_LABELS[context.language];
+
+  if (!context.lessonPlan) return labels.standaloneNote;
+
+  const plan = context.lessonPlan;
+  const lines: string[] = [labels.planIntro, ""];
+
+  lines.push(`${labels.objective}: ${plan.objective}`, "");
+  lines.push(`${labels.outcomes}:`);
+  for (const outcome of plan.outcomes) {
+    lines.push(`- ${outcome}`);
   }
+  lines.push("", `${labels.stages}:`);
+  for (const [index, stage] of plan.stages.entries()) {
+    lines.push(
+      `${index + 1}. ${stage.name} (${stage.durationMinutes} min) — ${stage.description}`,
+    );
+  }
+  lines.push("", labels.stageNote);
 
   return lines.join("\n");
 }

@@ -1,4 +1,5 @@
-import type { Slide, SlideLayout } from "@/lib/validations/presentation";
+import type { Slide, SlideLayout, SlideType } from "@/lib/validations/presentation";
+import type { ContentType } from "@/lib/presentations/storyline";
 
 /**
  * MAKET DVIGATELI — slayd mazmuniga qarab maket tanlaydi.
@@ -111,7 +112,11 @@ function layoutIsRenderable(slide: Slide, layout: SlideLayout): boolean {
  * Faqat MAZMUN ruxsat bergan almashtirish qilinadi — maket mazmunsiz
  * qolib, bo'sh slayd chiqib ketmasligi kerak.
  */
-function breakMonotony(slide: Slide, current: SlideLayout, previous: SlideLayout | null): SlideLayout {
+function breakMonotony(
+  slide: Slide,
+  current: SlideLayout,
+  previous: SlideLayout | null,
+): SlideLayout {
   if (current !== previous) return current;
 
   // Muqova va xulosa takrorlanmaydi, ularga tegmaymiz.
@@ -160,6 +165,56 @@ export function planLayouts(slides: Slide[]): SlideLayout[] {
   }
 
   return planned;
+}
+
+/**
+ * MAZMUN SHAKLIDAN maket — Phase 2 rejalashtiruvchisi uchun ko'prik.
+ *
+ * ── Nega alohida yo'l ─────────────────────────────────────────────────────
+ * `inferLayout` maketni TAYYOR mazmundan keltirib chiqaradi va bu
+ * o'qituvchi qo'lda tahrirlagan yozuvlar uchun to'g'ri. Phase 2 da esa
+ * qaror ERTAROQ qabul qilinadi: mazmun shakli ("uchta tushuncha")
+ * matn yozilishidan OLDIN ma'lum bo'ladi va AI unga qarab yozadi.
+ *
+ * Shuning uchun bu yerda mazmun shakli → maket moslashuvi bor. Natija
+ * baribir mazmunga qarshi TEKSHIRILADI: model kartalar so'ralgan
+ * slaydda kartalarni qaytarmasa, maket mazmunga mos zaxiraga tushadi
+ * va bo'sh slayd chiqmaydi.
+ */
+export function layoutForContentType(
+  contentType: ContentType,
+  slideType: SlideType,
+  slide: Slide,
+): SlideLayout {
+  // Muqova va yakun — hikoyadagi o'rni bilan belgilanadi.
+  if (slideType === "title") return "cover";
+  if (slideType === "summary") return "conclusion";
+
+  const candidate = ((): SlideLayout => {
+    switch (contentType) {
+      case "statement":
+        return "statement";
+      case "bullets":
+        return "bullets";
+      case "cards":
+        return (slide.cards?.length ?? 0) >= 4 ? "fourCards" : "threeCards";
+      case "steps":
+        return slide.steps?.some((step) => (step.body ?? "").length > 0)
+          ? "process"
+          : "timeline";
+      case "comparison":
+        return "comparison";
+      case "statistic":
+        return "statistic";
+      case "chart":
+        return "chart";
+      case "quote":
+        return "quote";
+    }
+  })();
+
+  // Reja mazmun bilan mos kelmasa — Phase 1 mantiqiga qaytamiz.
+  return layoutIsRenderable(slide, candidate) ? candidate : inferLayout(slide, 0, 1);
 }
 
 /** Prezentatsiyadagi maket xilma-xilligi (0..1) — QA uchun. */

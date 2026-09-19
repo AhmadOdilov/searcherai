@@ -350,7 +350,14 @@ describe("prezentatsiya — muvaffaqiyatli natija", () => {
       presentation.fileSize !== null && presentation.fileSize > 10_000,
       `fayl hajmi mantiqiy bo'lishi kerak (${presentation.fileSize})`,
     );
-    assert.equal(presentation.slideCount, 6);
+    /*
+      Slaydlar soni endi AI'dan emas, BRIFDAN keladi —
+      `lib/presentations/brief.ts`. "Fotosintez" — tor, ta'limiy mavzu:
+      arxetip `educational`, kenglik signali yo'q, shuning uchun
+      zinapoyadan 8 tanlanadi. Mock nechta slayd qaytarishidan qat'i
+      nazar quvur rejadagi songa keltiradi.
+    */
+    assert.equal(presentation.slideCount, 8);
     assert.equal(presentation.aiModel, "mock-lesson-model");
     assert.ok(
       presentation.aiDurationMs !== null && presentation.aiDurationMs > 0,
@@ -360,7 +367,7 @@ describe("prezentatsiya — muvaffaqiyatli natija", () => {
 
     // Slaydlar strukturasi
     const content = presentation.content!;
-    assert.equal(content.slides.length, 6);
+    assert.equal(content.slides.length, 8);
     assert.equal(content.slides[0].type, "title");
     assert.equal(content.slides.at(-1)!.type, "summary");
   });

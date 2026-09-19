@@ -1,6 +1,6 @@
 import "server-only";
 import { prisma } from "@/lib/db";
-import { generateJson } from "@/lib/ai/provider";
+import { Prisma } from "@/lib/generated/prisma/client";
 import { AiError } from "@/lib/ai/types";
 import { apiErrors } from "@/lib/api/errors";
 import {
@@ -12,15 +12,11 @@ import { markStaleAsFailed } from "@/lib/generation/stale";
 import { setStage } from "@/lib/generation/stages";
 import { generatePptx } from "@/lib/pptx/generate";
 import { DEFAULT_TEMPLATE } from "@/lib/pptx/theme";
-import {
-  buildSystemPrompt,
-  buildUserPrompt,
-  type PresentationPromptContext,
-} from "@/lib/presentations/prompt";
+import { generatePresentationContent } from "@/lib/presentations/pipeline";
+import type { PresentationPromptContext } from "@/lib/presentations/prompt";
 import { deleteFile, saveFile } from "@/lib/storage/files";
 import { parseLessonPlanContent } from "@/lib/validations/lesson-plan";
 import {
-  generatedPresentationContentSchema,
   type PresentationContent,
   type PresentationInput,
   type PresentationListQuery,
@@ -298,6 +294,14 @@ export async function regeneratePresentation(
       filePath: null,
       fileSize: null,
       slideCount: null,
+      /*
+        Eski reja yangi generatsiyaga tegishli emas.
+
+        `Prisma.DbNull` — ustunga SQL NULL yozadi. `Prisma.JsonNull`
+        bo'lsa JSON'ning o'zida `null` qiymati saqlanardi va "reja yo'q"
+        bilan "reja null" bir-biridan farq qilmay qolardi.
+      */
+      plan: Prisma.DbNull,
     },
   });
 
@@ -330,13 +334,23 @@ async function runGeneration(
 ): Promise<void> {
   try {
     await setStage("presentation", id, "GENERATING");
-    const { data, meta } = await generateJson({
-      // Generatsiya sxemasi — asos + slaydlar soni chegarasi (6-10).
-      // Tahrirlashda chegara kengroq: lib/validations/presentation.ts
-      schema: generatedPresentationContentSchema,
-      systemPrompt: buildSystemPrompt(promptContext.language),
-      prompt: buildUserPrompt(promptContext),
-    });
+
+    /*
+      KO'P BOSQICHLI GENERATSIYA — lib/presentations/pipeline.ts
+
+      Ilgari bu yerda bitta `generateJson` chaqiruvi bor edi va u butun
+      deckni bir zarbda so'rardi. Natijada slaydlar mavzuga oid, lekin
+      bir-biriga bog'lanmagan bo'lib chiqardi.
+
+      Endi quvur avval SKELETNI (har slaydning vazifasi va asosiy fikri),
+      keyin MATNNI so'raydi. Slaydlar soni, maket va zichlik esa umuman
+      AI'ga berilmaydi — ular deterministik hisoblanadi.
+    */
+    const {
+      content: data,
+      plan,
+      meta,
+    } = await generatePresentationContent(promptContext);
 
     // Shablon yozuvda turadi — qayta generatsiyada ham o'sha ko'rinish
     // chiqsin. Yozuv topilmasa (poyga holati) standart shablon.
@@ -346,10 +360,11 @@ async function runGeneration(
     });
 
     // AI o'lchovi kvota yozuviga — xarajat emas, faqat tokenlar.
+    // Ikkala bosqichning tokenlari QO'SHILGAN holda keladi.
     await recordAiUsage(reservation, {
       model: meta.model,
-      inputTokens: meta.usage.inputTokens,
-      outputTokens: meta.usage.outputTokens,
+      inputTokens: meta.inputTokens,
+      outputTokens: meta.outputTokens,
     });
 
     // Fayl AI javobidan KEYIN yasaladi — shu tartib muhim: AI yiqilsa
@@ -368,6 +383,9 @@ async function runGeneration(
         status: "READY",
         title: data.title,
         content: data,
+        // Slayd shartnomasi — keyingi bosqichlar (tasvir generatsiyasi)
+        // uchun. Tahrirlashda tegilmaydi.
+        plan,
         filePath,
         fileSize,
         slideCount,
