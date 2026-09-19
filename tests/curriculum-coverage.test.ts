@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { getCurriculumCoverage, canProvideOfficialEvidence } from "../lib/curriculum/coverage";
+import {
+  getCurriculumCoverage,
+  canProvideOfficialEvidence,
+} from "../lib/curriculum/coverage";
 import { CURRICULUM_SUBJECT_REGISTRY } from "../lib/curriculum/ingestion/registry";
 
 /*
@@ -36,7 +39,10 @@ describe("o'quv dasturi qamrovi", () => {
 
   it("sinf berilmasa qamrov FAN darajasida baholanadi", () => {
     assert.equal(getCurriculumCoverage("Matematika", undefined).status, "COVERED");
-    assert.equal(getCurriculumCoverage("Fizika", undefined).status, "SUBJECT_NOT_AVAILABLE");
+    assert.equal(
+      getCurriculumCoverage("Fizika", undefined).status,
+      "SUBJECT_NOT_AVAILABLE",
+    );
   });
 
   it("fan aniqlanmagan bo'lsa qidiruv bloklanmaydi", () => {

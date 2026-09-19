@@ -96,7 +96,10 @@ for (const target of MODULES) {
       expect(second, `hisoblagich qotib qolgan: "${first}"`).not.toBe(first);
     });
 
-    test("holat READY ga o'tsa sahifa QAYTA YUKLASHSIZ yangilanadi", async ({ page, baseURL }) => {
+    test("holat READY ga o'tsa sahifa QAYTA YUKLASHSIZ yangilanadi", async ({
+      page,
+      baseURL,
+    }) => {
       await signIn(page, baseURL!);
       await setRecordStatus(target.model, target.id(workspace), "PENDING");
       await page.goto(target.path(workspace));
@@ -125,7 +128,10 @@ for (const target of MODULES) {
       await expect(page.getByRole("progressbar")).toBeHidden({ timeout: 20_000 });
     });
 
-    test("kuzatuv bitta so'rov oqimida ishlaydi (dublikat yo'q)", async ({ page, baseURL }) => {
+    test("kuzatuv bitta so'rov oqimida ishlaydi (dublikat yo'q)", async ({
+      page,
+      baseURL,
+    }) => {
       await signIn(page, baseURL!);
       await setRecordStatus(target.model, target.id(workspace), "PENDING");
 
@@ -141,7 +147,10 @@ for (const target of MODULES) {
 
       // 2 soniyalik oraliqda 5 soniyada ~3 ta so'rov kutiladi.
       expect(polls.length, "polling so'rovlari umuman yuborilmadi").toBeGreaterThan(0);
-      expect(polls.length, `juda ko'p so'rov — parallel oqim bormi? ${polls.length}`).toBeLessThan(8);
+      expect(
+        polls.length,
+        `juda ko'p so'rov — parallel oqim bormi? ${polls.length}`,
+      ).toBeLessThan(8);
 
       await setRecordStatus(target.model, target.id(workspace), "READY");
     });
@@ -164,7 +173,9 @@ test.describe("kuzatuv tozalanishi", () => {
     });
     await page.waitForTimeout(5000);
 
-    expect(after, `sahifa yopilgach ham so'rov ketmoqda: ${after.length}`).toHaveLength(0);
+    expect(after, `sahifa yopilgach ham so'rov ketmoqda: ${after.length}`).toHaveLength(
+      0,
+    );
     await setRecordStatus("presentation", workspace.presentationId, "READY");
   });
 });

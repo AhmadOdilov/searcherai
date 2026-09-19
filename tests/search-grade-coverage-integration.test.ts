@@ -14,7 +14,8 @@ import type { SearchAnswer } from "../lib/validations/search";
 */
 
 const ANSWER: SearchAnswer = {
-  answer: "Mavzu bosqichma-bosqich tushuntiriladi va amaliy mashqlar bilan mustahkamlanadi.",
+  answer:
+    "Mavzu bosqichma-bosqich tushuntiriladi va amaliy mashqlar bilan mustahkamlanadi.",
   keyPoints: ["Asosiy tushuncha", "Amaliy misol", "Tipik xatolar"],
   classroomIdeas: ["Guruhda mashq bajarish", "Doskada birgalikda yechish"],
 };
@@ -31,7 +32,11 @@ describe("qamrovsiz sinf — ehtiyot va sabab", () => {
     assert.equal(isOfficiallyVerified(g, NO_MATCHES.length), false);
     assert.match(g.caution ?? "", /1-sinf/);
     assert.match(g.caution ?? "", /5-sinf/, "mavjud sinflar ko'rsatilishi kerak");
-    assert.doesNotMatch(g.caution ?? "", /kiritilmagan\)/, "fan yo'q xabari bo'lmasligi kerak");
+    assert.doesNotMatch(
+      g.caution ?? "",
+      /kiritilmagan\)/,
+      "fan yo'q xabari bo'lmasligi kerak",
+    );
   });
 
   it("ruscha so'rovda ham sabab ruscha ko'rsatiladi", () => {

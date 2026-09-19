@@ -12,8 +12,15 @@
 import fs from "fs";
 import path from "path";
 import { performance } from "perf_hooks";
-import { understandQuery, type SearchIntent, type AudienceMode } from "../lib/search/understanding";
-import { matchCurriculumTopics, type RankedCurriculumMatch } from "../lib/search/curriculum-matcher";
+import {
+  understandQuery,
+  type SearchIntent,
+  type AudienceMode,
+} from "../lib/search/understanding";
+import {
+  matchCurriculumTopics,
+  type RankedCurriculumMatch,
+} from "../lib/search/curriculum-matcher";
 import { validateAndGroundAnswer } from "../lib/search/validator";
 import { searchCache } from "../lib/search/cache";
 import { prisma } from "../lib/db";
@@ -231,8 +238,12 @@ export async function run500Evaluation(): Promise<SearchV3FinalReport> {
       const gRes = validateAndGroundAnswer(dummyAnswer, u, matches);
       totalClaimsCount += gRes.claims.length;
       supportedClaimsCount += gRes.claims.filter((c) => c.status === "supported").length;
-      contradictedClaimsCount += gRes.claims.filter((c) => c.status === "contradicted").length;
-      unsupportedClaimsCount += gRes.claims.filter((c) => c.status === "unsupported").length;
+      contradictedClaimsCount += gRes.claims.filter(
+        (c) => c.status === "contradicted",
+      ).length;
+      unsupportedClaimsCount += gRes.claims.filter(
+        (c) => c.status === "unsupported",
+      ).length;
     }
   }
 
@@ -258,7 +269,13 @@ export async function run500Evaluation(): Promise<SearchV3FinalReport> {
     },
     suggestedActions: [],
     durationMs: 1,
-    latencyBreakdown: { understandingMs: 0, retrievalMs: 0, aiMs: 0, validationMs: 0, totalMs: 1 },
+    latencyBreakdown: {
+      understandingMs: 0,
+      retrievalMs: 0,
+      aiMs: 0,
+      validationMs: 0,
+      totalMs: 1,
+    },
     model: "mock",
     usage: { inputTokens: 5, outputTokens: 5 },
   });
@@ -279,26 +296,64 @@ export async function run500Evaluation(): Promise<SearchV3FinalReport> {
   const gradeAcc = Number(((gradeCorrect / gradeEvaluated) * 100).toFixed(2));
   const intentAcc = Number(((intentCorrect / total) * 100).toFixed(2));
   const audAcc = Number(((audCorrect / total) * 100).toFixed(2));
-  const ambiguityAcc = ambEvaluated > 0 ? Number(((ambCorrect / ambEvaluated) * 100).toFixed(2)) : 100;
+  const ambiguityAcc =
+    ambEvaluated > 0 ? Number(((ambCorrect / ambEvaluated) * 100).toFixed(2)) : 100;
 
-  const recall1 = retrievalEvaluated > 0 ? Number(((r1Count / retrievalEvaluated) * 100).toFixed(2)) : 0;
-  const recall3 = retrievalEvaluated > 0 ? Number(((r3Count / retrievalEvaluated) * 100).toFixed(2)) : 0;
-  const recall5 = retrievalEvaluated > 0 ? Number(((r5Count / retrievalEvaluated) * 100).toFixed(2)) : 0;
-  const mrr = retrievalEvaluated > 0 ? Number((mrrSum / retrievalEvaluated).toFixed(4)) : 0;
-  const ndcg5 = retrievalEvaluated > 0 ? Number((ndcg5Sum / retrievalEvaluated).toFixed(4)) : 0;
+  const recall1 =
+    retrievalEvaluated > 0
+      ? Number(((r1Count / retrievalEvaluated) * 100).toFixed(2))
+      : 0;
+  const recall3 =
+    retrievalEvaluated > 0
+      ? Number(((r3Count / retrievalEvaluated) * 100).toFixed(2))
+      : 0;
+  const recall5 =
+    retrievalEvaluated > 0
+      ? Number(((r5Count / retrievalEvaluated) * 100).toFixed(2))
+      : 0;
+  const mrr =
+    retrievalEvaluated > 0 ? Number((mrrSum / retrievalEvaluated).toFixed(4)) : 0;
+  const ndcg5 =
+    retrievalEvaluated > 0 ? Number((ndcg5Sum / retrievalEvaluated).toFixed(4)) : 0;
 
   const claimTotal = Math.max(1, totalClaimsCount);
-  const supportedClaimRate = Number(((supportedClaimsCount / claimTotal) * 100).toFixed(2));
-  const contradictionRate = Number(((contradictedClaimsCount / claimTotal) * 100).toFixed(2));
-  const unsupportedClaimRate = Number(((unsupportedClaimsCount / claimTotal) * 100).toFixed(2));
+  const supportedClaimRate = Number(
+    ((supportedClaimsCount / claimTotal) * 100).toFixed(2),
+  );
+  const contradictionRate = Number(
+    ((contradictedClaimsCount / claimTotal) * 100).toFixed(2),
+  );
+  const unsupportedClaimRate = Number(
+    ((unsupportedClaimsCount / claimTotal) * 100).toFixed(2),
+  );
 
-  const avgDbLatency = dbLatencies.length > 0 ? Number((dbLatencies.reduce((a, b) => a + b, 0) / dbLatencies.length).toFixed(2)) : 0;
-  const p50Latency = dbLatencies.length > 0 ? Number(dbLatencies[Math.floor(dbLatencies.length * 0.5)].toFixed(2)) : 0;
-  const p95Latency = dbLatencies.length > 0 ? Number(dbLatencies[Math.floor(dbLatencies.length * 0.95)].toFixed(2)) : 0;
-  const p99Latency = dbLatencies.length > 0 ? Number(dbLatencies[Math.floor(dbLatencies.length * 0.99)].toFixed(2)) : 0;
-  const cacheLatency = cacheLatencies.length > 0 ? Number((cacheLatencies.reduce((a, b) => a + b, 0) / cacheLatencies.length).toFixed(4)) : 0;
+  const avgDbLatency =
+    dbLatencies.length > 0
+      ? Number((dbLatencies.reduce((a, b) => a + b, 0) / dbLatencies.length).toFixed(2))
+      : 0;
+  const p50Latency =
+    dbLatencies.length > 0
+      ? Number(dbLatencies[Math.floor(dbLatencies.length * 0.5)].toFixed(2))
+      : 0;
+  const p95Latency =
+    dbLatencies.length > 0
+      ? Number(dbLatencies[Math.floor(dbLatencies.length * 0.95)].toFixed(2))
+      : 0;
+  const p99Latency =
+    dbLatencies.length > 0
+      ? Number(dbLatencies[Math.floor(dbLatencies.length * 0.99)].toFixed(2))
+      : 0;
+  const cacheLatency =
+    cacheLatencies.length > 0
+      ? Number(
+          (cacheLatencies.reduce((a, b) => a + b, 0) / cacheLatencies.length).toFixed(4),
+        )
+      : 0;
 
-  const byDifficulty: Record<string, { total: number; correct: number; accuracy: number }> = {};
+  const byDifficulty: Record<
+    string,
+    { total: number; correct: number; accuracy: number }
+  > = {};
   for (const [diff, s] of Object.entries(diffStats)) {
     byDifficulty[diff] = {
       total: s.total,
@@ -307,7 +362,8 @@ export async function run500Evaluation(): Promise<SearchV3FinalReport> {
     };
   }
 
-  const byLanguage: Record<string, { total: number; correct: number; accuracy: number }> = {};
+  const byLanguage: Record<string, { total: number; correct: number; accuracy: number }> =
+    {};
   for (const [lang, s] of Object.entries(langStats)) {
     byLanguage[lang] = {
       total: s.total,
@@ -355,8 +411,14 @@ export async function run500Evaluation(): Promise<SearchV3FinalReport> {
     { config: "Config B", description: "Lexical Only (BM25-style keyword overlap)" },
     { config: "Config C", description: "Semantic Only (Subword vector embeddings)" },
     { config: "Config D", description: "Hybrid (Exact + Lexical + Semantic)" },
-    { config: "Config E", description: "Hybrid + Reranker (Rank Fusion without Expansion)" },
-    { config: "Config F", description: "Hybrid + Reranker + Query Expansion (Full V3 Pipeline)" },
+    {
+      config: "Config E",
+      description: "Hybrid + Reranker (Rank Fusion without Expansion)",
+    },
+    {
+      config: "Config F",
+      description: "Hybrid + Reranker + Query Expansion (Full V3 Pipeline)",
+    },
   ];
 
   const ablationResults: AblationMetrics[] = [];
@@ -397,7 +459,13 @@ export async function run500Evaluation(): Promise<SearchV3FinalReport> {
           exactMatch: true,
           crossGradeMatch: false,
           isCrossGrade: false,
-          scoreBreakdown: { exactMatch: 1, semanticSimilarity: 1, outcomeMatch: 1, gradeSubjectMatch: 1, intentMatch: 1 },
+          scoreBreakdown: {
+            exactMatch: 1,
+            semanticSimilarity: 1,
+            outcomeMatch: 1,
+            gradeSubjectMatch: 1,
+            intentMatch: 1,
+          },
         }));
       } else if (cfg.config === "Config B") {
         // Lexical only
@@ -423,15 +491,25 @@ export async function run500Evaluation(): Promise<SearchV3FinalReport> {
           exactMatch: false,
           crossGradeMatch: false,
           isCrossGrade: false,
-          scoreBreakdown: { exactMatch: 0.8, semanticSimilarity: 0.8, outcomeMatch: 0.8, gradeSubjectMatch: 0.8, intentMatch: 0.8 },
+          scoreBreakdown: {
+            exactMatch: 0.8,
+            semanticSimilarity: 0.8,
+            outcomeMatch: 0.8,
+            gradeSubjectMatch: 0.8,
+            intentMatch: 0.8,
+          },
         }));
       } else if (cfg.config === "Config C") {
         // Semantic only
-        const qVec = await defaultSemanticProvider.embedText(`${u.extractedTopic} ${u.detectedSubject ?? ""}`);
+        const qVec = await defaultSemanticProvider.embedText(
+          `${u.extractedTopic} ${u.detectedSubject ?? ""}`,
+        );
         const allCandidates = await prisma.curriculumTopic.findMany({ take: 30 });
         const scored = await Promise.all(
           allCandidates.map(async (c) => {
-            const cVec = await defaultSemanticProvider.embedText(`${c.topicName} ${c.description}`);
+            const cVec = await defaultSemanticProvider.embedText(
+              `${c.topicName} ${c.description}`,
+            );
             const sim = defaultSemanticProvider.computeSimilarity(qVec, cVec);
             return { c, sim };
           }),
@@ -452,14 +530,24 @@ export async function run500Evaluation(): Promise<SearchV3FinalReport> {
           exactMatch: false,
           crossGradeMatch: false,
           isCrossGrade: false,
-          scoreBreakdown: { exactMatch: sim, semanticSimilarity: sim, outcomeMatch: sim, gradeSubjectMatch: sim, intentMatch: sim },
+          scoreBreakdown: {
+            exactMatch: sim,
+            semanticSimilarity: sim,
+            outcomeMatch: sim,
+            gradeSubjectMatch: sim,
+            intentMatch: sim,
+          },
         }));
       } else if (cfg.config === "Config D") {
         // Hybrid (without deep reranker)
         const candidates = await prisma.curriculumTopic.findMany({
           where: {
-            subject: u.detectedSubject ? { equals: u.detectedSubject, mode: "insensitive" } : undefined,
-            grade: u.detectedGrade ? { equals: u.detectedGrade, mode: "insensitive" } : undefined,
+            subject: u.detectedSubject
+              ? { equals: u.detectedSubject, mode: "insensitive" }
+              : undefined,
+            grade: u.detectedGrade
+              ? { equals: u.detectedGrade, mode: "insensitive" }
+              : undefined,
           },
           take: 5,
         });
@@ -478,7 +566,13 @@ export async function run500Evaluation(): Promise<SearchV3FinalReport> {
           exactMatch: true,
           crossGradeMatch: false,
           isCrossGrade: false,
-          scoreBreakdown: { exactMatch: 0.7, semanticSimilarity: 0.7, outcomeMatch: 0.7, gradeSubjectMatch: 0.7, intentMatch: 0.7 },
+          scoreBreakdown: {
+            exactMatch: 0.7,
+            semanticSimilarity: 0.7,
+            outcomeMatch: 0.7,
+            gradeSubjectMatch: 0.7,
+            intentMatch: 0.7,
+          },
         }));
       } else {
         // Config E & F (Full pipeline with reranker)
@@ -512,10 +606,14 @@ export async function run500Evaluation(): Promise<SearchV3FinalReport> {
     const r5 = Number(((cfgR5 / totalCurric) * 100).toFixed(2));
     const mrrVal = Number((cfgMrr / totalCurric).toFixed(4));
     const ndcgVal = Number((cfgNdcg / totalCurric).toFixed(4));
-    const avgLat = Number((latencies.reduce((a, b) => a + b, 0) / latencies.length).toFixed(2));
+    const avgLat = Number(
+      (latencies.reduce((a, b) => a + b, 0) / latencies.length).toFixed(2),
+    );
 
     console.log(`[${cfg.config}] ${cfg.description}`);
-    console.log(`  Recall@1: ${r1}% | Recall@3: ${r3}% | Recall@5: ${r5}% | MRR: ${mrrVal} | nDCG@5: ${ndcgVal} | Latency: ${avgLat} ms`);
+    console.log(
+      `  Recall@1: ${r1}% | Recall@3: ${r3}% | Recall@5: ${r5}% | MRR: ${mrrVal} | nDCG@5: ${ndcgVal} | Latency: ${avgLat} ms`,
+    );
 
     ablationResults.push({
       config: cfg.config,

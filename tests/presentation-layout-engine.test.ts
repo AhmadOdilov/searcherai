@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { planLayouts, inferLayout, layoutVariety } from "../lib/presentations/layout-engine";
+import {
+  planLayouts,
+  inferLayout,
+  layoutVariety,
+} from "../lib/presentations/layout-engine";
 import type { Slide } from "../lib/validations/presentation";
 
 /*
@@ -16,14 +20,59 @@ function slide(partial: Partial<Slide> = {}): Slide {
 
 describe("maket mazmun shakliga qarab tanlanadi", () => {
   const cases: Array<[string, Slide, string]> = [
-    ["chart bo'lsa", slide({ chart: { kind: "bar", categories: ["a", "b"], series: [{ name: "s", values: [1, 2] }] } }), "chart"],
-    ["statistika bo'lsa", slide({ statistic: { value: "78%", caption: "izoh" } }), "statistic"],
-    ["taqqoslash bo'lsa", slide({ comparison: { leftTitle: "A", leftItems: ["1"], rightTitle: "B", rightItems: ["2"] } }), "comparison"],
-    ["uchta karta bo'lsa", slide({ cards: [{ title: "1" }, { title: "2" }, { title: "3" }] }), "threeCards"],
-    ["to'rtta karta bo'lsa", slide({ cards: [{ title: "1" }, { title: "2" }, { title: "3" }, { title: "4" }] }), "fourCards"],
-    ["bosqichlar tavsifi bilan", slide({ steps: [{ label: "a", body: "x" }, { label: "b" }, { label: "c" }] }), "process"],
-    ["bosqichlar tavsifsiz", slide({ steps: [{ label: "a" }, { label: "b" }, { label: "c" }] }), "timeline"],
-    ["iqtibos bo'lsa", slide({ quote: { text: "Yetarlicha uzun iqtibos matni." } }), "quote"],
+    [
+      "chart bo'lsa",
+      slide({
+        chart: {
+          kind: "bar",
+          categories: ["a", "b"],
+          series: [{ name: "s", values: [1, 2] }],
+        },
+      }),
+      "chart",
+    ],
+    [
+      "statistika bo'lsa",
+      slide({ statistic: { value: "78%", caption: "izoh" } }),
+      "statistic",
+    ],
+    [
+      "taqqoslash bo'lsa",
+      slide({
+        comparison: {
+          leftTitle: "A",
+          leftItems: ["1"],
+          rightTitle: "B",
+          rightItems: ["2"],
+        },
+      }),
+      "comparison",
+    ],
+    [
+      "uchta karta bo'lsa",
+      slide({ cards: [{ title: "1" }, { title: "2" }, { title: "3" }] }),
+      "threeCards",
+    ],
+    [
+      "to'rtta karta bo'lsa",
+      slide({ cards: [{ title: "1" }, { title: "2" }, { title: "3" }, { title: "4" }] }),
+      "fourCards",
+    ],
+    [
+      "bosqichlar tavsifi bilan",
+      slide({ steps: [{ label: "a", body: "x" }, { label: "b" }, { label: "c" }] }),
+      "process",
+    ],
+    [
+      "bosqichlar tavsifsiz",
+      slide({ steps: [{ label: "a" }, { label: "b" }, { label: "c" }] }),
+      "timeline",
+    ],
+    [
+      "iqtibos bo'lsa",
+      slide({ quote: { text: "Yetarlicha uzun iqtibos matni." } }),
+      "quote",
+    ],
     ["faqat asosiy fikr", slide({ keyMessage: "Bitta kuchli fikr" }), "statement"],
     ["oddiy bandlar", slide({ bullets: ["a", "b"] }), "bullets"],
   ];
@@ -46,7 +95,10 @@ describe("maket mazmun shakliga qarab tanlanadi", () => {
   });
 
   it("type=summary xulosa beradi", () => {
-    assert.equal(inferLayout(slide({ type: "summary", bullets: ["a"] }), 1, 5), "conclusion");
+    assert.equal(
+      inferLayout(slide({ type: "summary", bullets: ["a"] }), 1, 5),
+      "conclusion",
+    );
   });
 
   it("birinchi o'rindagi MAZMUN slaydi muqovaga AYLANMAYDI", () => {
@@ -70,7 +122,10 @@ describe("maket mazmunga mos kelmasa xavfsiz zaxiraga tushadi", () => {
   });
 
   it("kartalar maketi so'ralgan, lekin kartalar yo'q", () => {
-    const layouts = planLayouts([slide({ type: "title" }), slide({ layout: "fourCards", keyMessage: "fikr" })]);
+    const layouts = planLayouts([
+      slide({ type: "title" }),
+      slide({ layout: "fourCards", keyMessage: "fikr" }),
+    ]);
     assert.notEqual(layouts[1], "fourCards");
   });
 });
@@ -79,11 +134,21 @@ describe("vizual ritm — ketma-ket bir xil maketlar kamaytiriladi", () => {
   it("uchta ketma-ket bandli slayd bir xil qolmaydi", () => {
     const layouts = planLayouts([
       slide({ type: "title" }),
-      slide({ bullets: ["a", "b"], cards: [{ title: "1" }, { title: "2" }, { title: "3" }] }),
-      slide({ bullets: ["c", "d"], cards: [{ title: "1" }, { title: "2" }, { title: "3" }] }),
+      slide({
+        bullets: ["a", "b"],
+        cards: [{ title: "1" }, { title: "2" }, { title: "3" }],
+      }),
+      slide({
+        bullets: ["c", "d"],
+        cards: [{ title: "1" }, { title: "2" }, { title: "3" }],
+      }),
       slide({ type: "summary", bullets: ["e"] }),
     ]);
-    assert.notEqual(layouts[1], layouts[2], "qo'shni slaydlar bir xil maket olmasligi kerak");
+    assert.notEqual(
+      layouts[1],
+      layouts[2],
+      "qo'shni slaydlar bir xil maket olmasligi kerak",
+    );
   });
 
   it("muqova va xulosa almashtirilmaydi", () => {
@@ -108,12 +173,28 @@ describe("xilma-xillik o'lchovi", () => {
       slide({ type: "title" }),
       slide({ statistic: { value: "78%", caption: "izoh" } }),
       slide({ cards: [{ title: "1" }, { title: "2" }, { title: "3" }] }),
-      slide({ comparison: { leftTitle: "A", leftItems: ["1"], rightTitle: "B", rightItems: ["2"] } }),
+      slide({
+        comparison: {
+          leftTitle: "A",
+          leftItems: ["1"],
+          rightTitle: "B",
+          rightItems: ["2"],
+        },
+      }),
       slide({ steps: [{ label: "a", body: "x" }, { label: "b" }, { label: "c" }] }),
-      slide({ chart: { kind: "bar", categories: ["a", "b"], series: [{ name: "s", values: [1, 2] }] } }),
+      slide({
+        chart: {
+          kind: "bar",
+          categories: ["a", "b"],
+          series: [{ name: "s", values: [1, 2] }],
+        },
+      }),
       slide({ type: "summary", bullets: ["xulosa"] }),
     ]);
-    assert.ok(layoutVariety(layouts) >= 0.9, `xilma-xillik past: ${layoutVariety(layouts)}`);
+    assert.ok(
+      layoutVariety(layouts) >= 0.9,
+      `xilma-xillik past: ${layoutVariety(layouts)}`,
+    );
     const consecutive = layouts.filter((l, i) => i > 0 && l === layouts[i - 1]).length;
     assert.equal(consecutive, 0);
   });

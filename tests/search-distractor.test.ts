@@ -103,7 +103,8 @@ describe("PHASE 13 — Distractor Testing (1 correct + 9 distractors)", () => {
       {
         id: "cand-correct-target",
         topicName: "ODDIY KASRLAR",
-        description: "Oddiy kasr tushunchasi, to'g'ri va noto'g'ri kasrlar, aralash sonlar",
+        description:
+          "Oddiy kasr tushunchasi, to'g'ri va noto'g'ri kasrlar, aralash sonlar",
         expectedHours: 8,
         expectedOutcomes: ["Oddiy kasrlarni o'qish va yozish", "Kasrlarni taqqoslash"],
         source: "https://uzbmb.uz/matematika",
@@ -115,7 +116,11 @@ describe("PHASE 13 — Distractor Testing (1 correct + 9 distractors)", () => {
     const results = await rerankCandidates(candidates, understanding, 5);
 
     assert.equal(results.length > 0, true);
-    assert.equal(results[0].sourceId, "cand-correct-target", "5-sinf to'g'ri hujjati Top 1 ga chiqishi shart");
+    assert.equal(
+      results[0].sourceId,
+      "cand-correct-target",
+      "5-sinf to'g'ri hujjati Top 1 ga chiqishi shart",
+    );
     assert.equal(results[0].grade, "5-sinf");
     assert.equal(results[0].exactMatch, true);
   });
@@ -231,7 +236,11 @@ describe("PHASE 13 — Distractor Testing (1 correct + 9 distractors)", () => {
     const results = await rerankCandidates(candidates, understanding, 5);
 
     assert.equal(results.length > 0, true);
-    assert.equal(results[0].sourceId, "cand-phys-target", "Fizika hujjati Kimyo/Geografiya chalg'ituvchilaridan ustun chiqishi shart");
+    assert.equal(
+      results[0].sourceId,
+      "cand-phys-target",
+      "Fizika hujjati Kimyo/Geografiya chalg'ituvchilaridan ustun chiqishi shart",
+    );
     assert.equal(results[0].subject, "Fizika");
   });
 

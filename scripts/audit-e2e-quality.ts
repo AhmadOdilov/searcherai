@@ -81,7 +81,9 @@ async function main() {
   console.log("==========================================================");
   console.log(`   SEARCHER AI — E2E ANSWER QUALITY AUDIT (100 QUERIES)`);
   console.log("==========================================================");
-  console.log(`- Selected: ${selectedUz.length} UZ, ${selectedRu.length} RU, ${selectedEn.length} EN`);
+  console.log(
+    `- Selected: ${selectedUz.length} UZ, ${selectedRu.length} RU, ${selectedEn.length} EN`,
+  );
 
   let totalClaims = 0;
   let supportedClaims = 0;
@@ -103,7 +105,11 @@ async function main() {
 
     const dummyAnswer = {
       answer: `«${u.extractedTopic || item.q}» mavzusining ta'limiy mazmuni va metodik tavsiyalari bayon etilgan.`,
-      keyPoints: ["Asosiy konseptual tushuncha", "Darslikdagi qoidalar va formulalar", "Mustahkamlash uchun mashqlar"],
+      keyPoints: [
+        "Asosiy konseptual tushuncha",
+        "Darslikdagi qoidalar va formulalar",
+        "Mustahkamlash uchun mashqlar",
+      ],
       classroomIdeas: ["Doskada interaktiv yechish", "Kichik guruhlarda tahlil qilish"],
     };
 
@@ -119,7 +125,9 @@ async function main() {
     unsupportedClaims += unsup;
 
     // Abstention audit
-    const isUnseeded = item.isUnsupportedSubject || (u.detectedSubject !== "Matematika" && u.detectedSubject !== "Ona tili");
+    const isUnseeded =
+      item.isUnsupportedSubject ||
+      (u.detectedSubject !== "Matematika" && u.detectedSubject !== "Ona tili");
     if (isUnseeded) {
       unseededCount++;
       if (gRes.isAbstained) {
@@ -157,15 +165,28 @@ async function main() {
     }
   }
 
-  const supportedClaimRate = Number(((supportedClaims / (totalClaims || 1)) * 100).toFixed(2));
-  const contradictionRate = Number(((contradictedClaims / (totalClaims || 1)) * 100).toFixed(2));
-  const unsupportedClaimRate = Number(((unsupportedClaims / (totalClaims || 1)) * 100).toFixed(2));
+  const supportedClaimRate = Number(
+    ((supportedClaims / (totalClaims || 1)) * 100).toFixed(2),
+  );
+  const contradictionRate = Number(
+    ((contradictedClaims / (totalClaims || 1)) * 100).toFixed(2),
+  );
+  const unsupportedClaimRate = Number(
+    ((unsupportedClaims / (totalClaims || 1)) * 100).toFixed(2),
+  );
 
-  const abstentionPrecision = Number(((abstainedCount / (unseededCount || 1)) * 100).toFixed(2));
+  const abstentionPrecision = Number(
+    ((abstainedCount / (unseededCount || 1)) * 100).toFixed(2),
+  );
   const abstentionRecall = abstentionPrecision;
-  const zeroHallucinatedCitationsRate = Number(((cleanCitationsOnAbstain / (abstainedCount || 1)) * 100).toFixed(2));
+  const zeroHallucinatedCitationsRate = Number(
+    ((cleanCitationsOnAbstain / (abstainedCount || 1)) * 100).toFixed(2),
+  );
 
-  const crossGradeAccuracy = crossGradeCount > 0 ? Number(((crossGradeWarnings / crossGradeCount) * 100).toFixed(2)) : 100;
+  const crossGradeAccuracy =
+    crossGradeCount > 0
+      ? Number(((crossGradeWarnings / crossGradeCount) * 100).toFixed(2))
+      : 100;
 
   const report: E2EQualityReport = {
     timestamp: new Date().toISOString(),
@@ -222,7 +243,7 @@ async function main() {
   fs.writeFileSync(
     path.join(reportDir, "search-e2e-quality.json"),
     JSON.stringify(report, null, 2),
-    "utf8"
+    "utf8",
   );
   console.log("\n✅ E2E Quality Report saved to reports/search-e2e-quality.json");
 }

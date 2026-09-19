@@ -29,13 +29,20 @@ function match(partial: Partial<RankedCurriculumMatch> = {}): RankedCurriculumMa
     exactMatch: true,
     crossGradeMatch: false,
     isCrossGrade: false,
-    scoreBreakdown: { exactMatch: 1, semanticSimilarity: 0.8, outcomeMatch: 1, gradeSubjectMatch: 1, intentMatch: 0.8 },
+    scoreBreakdown: {
+      exactMatch: 1,
+      semanticSimilarity: 0.8,
+      outcomeMatch: 1,
+      gradeSubjectMatch: 1,
+      intentMatch: 0.8,
+    },
     ...partial,
   };
 }
 
 const baseAnswer: SearchAnswer = {
-  answer: "Kvadrat tenglama ax kvadrat + bx + c = 0 ko'rinishidagi tenglamadir va diskriminant orqali yechiladi.",
+  answer:
+    "Kvadrat tenglama ax kvadrat + bx + c = 0 ko'rinishidagi tenglamadir va diskriminant orqali yechiladi.",
   keyPoints: ["Ta'rif", "Diskriminant", "Viet teoremasi"],
   classroomIdeas: ["Doskada birgalikda yechish", "Juftlikda mashq bajarish"],
 };
@@ -46,7 +53,8 @@ describe("ziddiyat toifalari (V6)", () => {
   it("soatlar tafovuti FACTUAL_CONTRADICTION deb belgilanadi", () => {
     const answer: SearchAnswer = {
       ...baseAnswer,
-      answer: "Rasmiy o'quv dasturida ushbu bo'lim uchun 60 soat ajratilgan va u chuqur o'rganiladi.",
+      answer:
+        "Rasmiy o'quv dasturida ushbu bo'lim uchun 60 soat ajratilgan va u chuqur o'rganiladi.",
     };
     const result = validateAndGroundAnswer(answer, u, [match()]);
     const conflict = result.claims.find((c) => c.status === "contradicted");
@@ -66,7 +74,11 @@ describe("ziddiyat toifalari (V6)", () => {
 
     assert.ok(conflict);
     assert.equal(conflict.conflictType, "GRADE_CONFLICT");
-    assert.equal(result.factualContradictionRate, 0, "sinf tafovuti FAKTIK ziddiyat emas");
+    assert.equal(
+      result.factualContradictionRate,
+      0,
+      "sinf tafovuti FAKTIK ziddiyat emas",
+    );
     assert.ok(result.gradeConflictRate > 0);
   });
 
@@ -81,7 +93,8 @@ describe("ziddiyat toifalari (V6)", () => {
   it("to'g'ri soat ko'rsatilganda ziddiyat YO'Q", () => {
     const answer: SearchAnswer = {
       ...baseAnswer,
-      answer: "Rasmiy o'quv dasturida ushbu bo'lim uchun 20 soat ajratilgan va u bosqichma-bosqich o'rganiladi.",
+      answer:
+        "Rasmiy o'quv dasturida ushbu bo'lim uchun 20 soat ajratilgan va u bosqichma-bosqich o'rganiladi.",
     };
     const result = validateAndGroundAnswer(answer, u, [match()]);
     assert.equal(result.factualContradictionRate, 0);

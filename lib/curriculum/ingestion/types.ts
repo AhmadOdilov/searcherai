@@ -74,7 +74,8 @@ export interface PipelineSummary {
   issues: DataQualityIssue[];
 }
 
-export type SourceTrustLevel = "official" | "verified" | "secondary" | "generated" | "unknown";
+export type SourceTrustLevel =
+  "official" | "verified" | "secondary" | "generated" | "unknown";
 
 export interface CurriculumTopicRecordV3 {
   subject: string;

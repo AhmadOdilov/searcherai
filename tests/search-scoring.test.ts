@@ -4,7 +4,10 @@ import { calculateJaccardSimilarity, calculateHybridScore } from "../lib/search/
 
 describe("search scoring & hybrid ranker", () => {
   it("matnlar o'xshashligini to'g'ri hisoblaydi", () => {
-    const sim1 = calculateJaccardSimilarity("oddiy kasrlar", "oddiy kasrlar va aralash sonlar");
+    const sim1 = calculateJaccardSimilarity(
+      "oddiy kasrlar",
+      "oddiy kasrlar va aralash sonlar",
+    );
     assert.ok(sim1 > 0.4);
 
     const sim2 = calculateJaccardSimilarity("fotosintez", "Nyuton qonunlari mexanika");
@@ -19,11 +22,14 @@ describe("search scoring & hybrid ranker", () => {
       detectedGrade: "5-sinf",
       detectedIntent: "lesson_plan",
       candidateTopicName: "ODDIY KASRLARNI QO'SHISH VA AYIRISH",
-      candidateDescription: "Bir xil maxrajli oddiy kasrlarni qo'shish va ayirish amallari.",
+      candidateDescription:
+        "Bir xil maxrajli oddiy kasrlarni qo'shish va ayirish amallari.",
       candidateSubject: "Matematika",
       candidateGrade: "5-sinf",
       candidateExpectedHours: 18,
-      candidateExpectedOutcomes: ["oddiy kasrlarni qo'shish va ayirish amallarini bajaradi"],
+      candidateExpectedOutcomes: [
+        "oddiy kasrlarni qo'shish va ayirish amallarini bajaradi",
+      ],
     });
 
     assert.ok(res.totalScore > 0.7, `Kutilgan ball > 0.7, olindi: ${res.totalScore}`);

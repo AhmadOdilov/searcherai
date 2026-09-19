@@ -20,7 +20,11 @@
 
 import fs from "fs";
 import path from "path";
-import { understandQuery, type SearchIntent, type AudienceMode } from "../lib/search/understanding";
+import {
+  understandQuery,
+  type SearchIntent,
+  type AudienceMode,
+} from "../lib/search/understanding";
 import { MultiTurnService } from "../lib/search/multi-turn-service";
 
 interface MultiTurnItem {
@@ -67,11 +71,16 @@ function main() {
   );
 
   let turnsTotal = 0;
-  let subjectKept = 0, subjectTotal = 0;
-  let gradeKept = 0, gradeTotal = 0;
-  let intentOk = 0, intentTotal = 0;
-  let audienceOk = 0, audienceTotal = 0;
-  let topicKept = 0, topicTotal = 0;
+  let subjectKept = 0,
+    subjectTotal = 0;
+  let gradeKept = 0,
+    gradeTotal = 0;
+  let intentOk = 0,
+    intentTotal = 0;
+  let audienceOk = 0,
+    audienceTotal = 0;
+  let topicKept = 0,
+    topicTotal = 0;
   const failures: Array<{ id: string; turn: number; q: string; detail: string }> = [];
 
   for (const item of items) {
@@ -85,16 +94,20 @@ function main() {
       const u = understandQuery(turn.q, undefined, undefined, undefined, context);
       MultiTurnService.addTurn(thread.id, userId, turn.q, u);
 
-      const fail = (detail: string) => failures.push({ id: item.id, turn: index + 1, q: turn.q, detail });
+      const fail = (detail: string) =>
+        failures.push({ id: item.id, turn: index + 1, q: turn.q, detail });
 
       if (turn.expectedSubject) {
         subjectTotal++;
-        if (u.detectedSubject?.toLowerCase() === turn.expectedSubject.toLowerCase()) subjectKept++;
-        else fail(`fan yo'qoldi: ${u.detectedSubject ?? "yo'q"} != ${turn.expectedSubject}`);
+        if (u.detectedSubject?.toLowerCase() === turn.expectedSubject.toLowerCase())
+          subjectKept++;
+        else
+          fail(`fan yo'qoldi: ${u.detectedSubject ?? "yo'q"} != ${turn.expectedSubject}`);
       }
       if (turn.expectedGrade) {
         gradeTotal++;
-        if (u.detectedGrade?.toLowerCase() === turn.expectedGrade.toLowerCase()) gradeKept++;
+        if (u.detectedGrade?.toLowerCase() === turn.expectedGrade.toLowerCase())
+          gradeKept++;
         else fail(`sinf yo'qoldi: ${u.detectedGrade ?? "yo'q"} != ${turn.expectedGrade}`);
       }
       if (turn.expectedIntent) {
@@ -109,8 +122,16 @@ function main() {
       }
       if (turn.expectedTopicContains) {
         topicTotal++;
-        if (normalizeApostrophes(u.extractedTopic).includes(topicStem(turn.expectedTopicContains))) topicKept++;
-        else fail(`mavzu yo'qoldi: «${u.extractedTopic}» ichida «${turn.expectedTopicContains}» yo'q`);
+        if (
+          normalizeApostrophes(u.extractedTopic).includes(
+            topicStem(turn.expectedTopicContains),
+          )
+        )
+          topicKept++;
+        else
+          fail(
+            `mavzu yo'qoldi: «${u.extractedTopic}» ichida «${turn.expectedTopicContains}» yo'q`,
+          );
       }
     });
   }
@@ -118,9 +139,17 @@ function main() {
   // Chegaralangan xotira tekshiruvi (§5): 1000 bosqich.
   MultiTurnService._clearAll();
   const stressUser = "eval-stress";
-  const stressThread = MultiTurnService.createThread(stressUser, "Chegaralangan xotira testi");
+  const stressThread = MultiTurnService.createThread(
+    stressUser,
+    "Chegaralangan xotira testi",
+  );
   for (let i = 0; i < 1000; i++) {
-    MultiTurnService.addTurn(stressThread.id, stressUser, `Savol ${i}`, understandQuery(`savol ${i} matematika`));
+    MultiTurnService.addTurn(
+      stressThread.id,
+      stressUser,
+      `Savol ${i}`,
+      understandQuery(`savol ${i} matematika`),
+    );
   }
   const afterStress = MultiTurnService.getThread(stressThread.id, stressUser);
   const boundedMemory = (afterStress?.turns.length ?? 0) <= 50;
@@ -130,11 +159,27 @@ function main() {
     timestamp: new Date().toISOString(),
     conversations: items.length,
     turns: turnsTotal,
-    subjectRetention: { ok: subjectKept, total: subjectTotal, rate: pct(subjectKept, subjectTotal) },
-    gradeRetention: { ok: gradeKept, total: gradeTotal, rate: pct(gradeKept, gradeTotal) },
-    topicRetention: { ok: topicKept, total: topicTotal, rate: pct(topicKept, topicTotal) },
+    subjectRetention: {
+      ok: subjectKept,
+      total: subjectTotal,
+      rate: pct(subjectKept, subjectTotal),
+    },
+    gradeRetention: {
+      ok: gradeKept,
+      total: gradeTotal,
+      rate: pct(gradeKept, gradeTotal),
+    },
+    topicRetention: {
+      ok: topicKept,
+      total: topicTotal,
+      rate: pct(topicKept, topicTotal),
+    },
     intentUpdate: { ok: intentOk, total: intentTotal, rate: pct(intentOk, intentTotal) },
-    audienceUpdate: { ok: audienceOk, total: audienceTotal, rate: pct(audienceOk, audienceTotal) },
+    audienceUpdate: {
+      ok: audienceOk,
+      total: audienceTotal,
+      rate: pct(audienceOk, audienceTotal),
+    },
     boundedMemoryAt1000Turns: boundedMemory,
     retainedTurnsAt1000: afterStress?.turns.length ?? 0,
     productionWiring: {
@@ -157,12 +202,24 @@ function main() {
   console.log("==========================================================");
   console.log(`   V5 MULTI-TURN (${items.length} suhbat, ${turnsTotal} bosqich)`);
   console.log("==========================================================");
-  console.log(`- Fan saqlanishi:      ${report.subjectRetention.rate}% (${subjectKept}/${subjectTotal})`);
-  console.log(`- Sinf saqlanishi:     ${report.gradeRetention.rate}% (${gradeKept}/${gradeTotal})`);
-  console.log(`- Mavzu saqlanishi:    ${report.topicRetention.rate}% (${topicKept}/${topicTotal})`);
-  console.log(`- Intent yangilanishi: ${report.intentUpdate.rate}% (${intentOk}/${intentTotal})`);
-  console.log(`- Auditoriya:          ${report.audienceUpdate.rate}% (${audienceOk}/${audienceTotal})`);
-  console.log(`- 1000 bosqichda chegaralangan xotira: ${boundedMemory ? "HA" : "YO'Q"} (${report.retainedTurnsAt1000} bosqich saqlangan)`);
+  console.log(
+    `- Fan saqlanishi:      ${report.subjectRetention.rate}% (${subjectKept}/${subjectTotal})`,
+  );
+  console.log(
+    `- Sinf saqlanishi:     ${report.gradeRetention.rate}% (${gradeKept}/${gradeTotal})`,
+  );
+  console.log(
+    `- Mavzu saqlanishi:    ${report.topicRetention.rate}% (${topicKept}/${topicTotal})`,
+  );
+  console.log(
+    `- Intent yangilanishi: ${report.intentUpdate.rate}% (${intentOk}/${intentTotal})`,
+  );
+  console.log(
+    `- Auditoriya:          ${report.audienceUpdate.rate}% (${audienceOk}/${audienceTotal})`,
+  );
+  console.log(
+    `- 1000 bosqichda chegaralangan xotira: ${boundedMemory ? "HA" : "YO'Q"} (${report.retainedTurnsAt1000} bosqich saqlangan)`,
+  );
   console.log(`\n⚠  Ishlab chiqarishda ulanmagan: /api/search kontekstni UZATMAYDI.`);
 
   if (failures.length > 0) {

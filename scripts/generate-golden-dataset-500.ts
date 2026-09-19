@@ -42,7 +42,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "NATURAL SONLARNI QO"
+  expectedCurriculumTopic: "NATURAL SONLARNI QO",
 });
 addQ({
   id: "math-002",
@@ -54,7 +54,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "easy",
   category: "canonical",
-  expectedCurriculumTopic: "ODDIY KASRLAR"
+  expectedCurriculumTopic: "ODDIY KASRLAR",
 });
 addQ({
   id: "math-003",
@@ -66,7 +66,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "GEOMETRIK SHAKLLAR"
+  expectedCurriculumTopic: "GEOMETRIK SHAKLLAR",
 });
 addQ({
   id: "math-004",
@@ -78,7 +78,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "O‘NLI KASRLAR"
+  expectedCurriculumTopic: "O‘NLI KASRLAR",
 });
 addQ({
   id: "math-005",
@@ -90,7 +90,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "MATNLI MASALALARNI YECHISH"
+  expectedCurriculumTopic: "MATNLI MASALALARNI YECHISH",
 });
 addQ({
   id: "math-006",
@@ -102,7 +102,7 @@ addQ({
   expectedAudience: "student",
   difficulty: "medium",
   category: "natural_language",
-  expectedCurriculumTopic: "ODDIY KASRLAR"
+  expectedCurriculumTopic: "ODDIY KASRLAR",
 });
 
 // Grade 6 (Seeded in DB)
@@ -116,7 +116,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "easy",
   category: "canonical",
-  expectedCurriculumTopic: "BUTUN SONLAR"
+  expectedCurriculumTopic: "BUTUN SONLAR",
 });
 addQ({
   id: "math-008",
@@ -128,7 +128,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "MUSBAT VA MANFIY SONLAR"
+  expectedCurriculumTopic: "MUSBAT VA MANFIY SONLAR",
 });
 addQ({
   id: "math-009",
@@ -140,7 +140,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "easy",
   category: "canonical",
-  expectedCurriculumTopic: "NISBAT VA PROPORSIYA"
+  expectedCurriculumTopic: "NISBAT VA PROPORSIYA",
 });
 addQ({
   id: "math-010",
@@ -151,7 +151,7 @@ addQ({
   expectedIntent: "lesson_plan",
   expectedAudience: "teacher",
   difficulty: "medium",
-  category: "canonical"
+  category: "canonical",
 });
 addQ({
   id: "math-011",
@@ -162,7 +162,7 @@ addQ({
   expectedIntent: "classroom_activity",
   expectedAudience: "teacher",
   difficulty: "hard",
-  category: "canonical"
+  category: "canonical",
 });
 
 // Grade 7 (Seeded in DB)
@@ -176,7 +176,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "BIRHADLAR VA KO‘PHADLAR"
+  expectedCurriculumTopic: "BIRHADLAR VA KO‘PHADLAR",
 });
 addQ({
   id: "math-013",
@@ -188,7 +188,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "KO‘PHADNI KO‘PAYTUVCHILARGA AJRATISH"
+  expectedCurriculumTopic: "KO‘PHADNI KO‘PAYTUVCHILARGA AJRATISH",
 });
 addQ({
   id: "math-014",
@@ -200,7 +200,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "BIR NOMA’LUMLI BIRINCHI DARAJALI TENGLAMALAR"
+  expectedCurriculumTopic: "BIR NOMA’LUMLI BIRINCHI DARAJALI TENGLAMALAR",
 });
 addQ({
   id: "math-015",
@@ -212,7 +212,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "ALGEBRAIK KASRLAR"
+  expectedCurriculumTopic: "ALGEBRAIK KASRLAR",
 });
 addQ({
   id: "math-016",
@@ -224,7 +224,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "UCHBURCHAKLAR"
+  expectedCurriculumTopic: "UCHBURCHAKLAR",
 });
 
 // Grade 8 (Seeded in DB)
@@ -238,7 +238,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "KVADRAT TENGLAMALAR"
+  expectedCurriculumTopic: "KVADRAT TENGLAMALAR",
 });
 addQ({
   id: "math-018",
@@ -250,7 +250,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "KVADRAT TENGLAMALAR"
+  expectedCurriculumTopic: "KVADRAT TENGLAMALAR",
 });
 addQ({
   id: "math-019",
@@ -262,7 +262,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "easy",
   category: "canonical",
-  expectedCurriculumTopic: "TENGSIZLIKLAR"
+  expectedCurriculumTopic: "TENGSIZLIKLAR",
 });
 addQ({
   id: "math-020",
@@ -274,7 +274,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "TO‘RTBURCHAKLAR"
+  expectedCurriculumTopic: "TO‘RTBURCHAKLAR",
 });
 addQ({
   id: "math-021",
@@ -286,7 +286,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "TO‘G‘RI BURCHAKLI UCHBURCHAKNING TOMONLARI"
+  expectedCurriculumTopic: "TO‘G‘RI BURCHAKLI UCHBURCHAKNING TOMONLARI",
 });
 
 // Grade 9 (Seeded in DB)
@@ -300,7 +300,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "KVADRATIK FUNKSIYA"
+  expectedCurriculumTopic: "KVADRATIK FUNKSIYA",
 });
 addQ({
   id: "math-023",
@@ -312,7 +312,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "SONLI KETMA-KETLIKLAR"
+  expectedCurriculumTopic: "SONLI KETMA-KETLIKLAR",
 });
 addQ({
   id: "math-024",
@@ -324,7 +324,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "TRIGONOMETRIYA ELEMENTLARI"
+  expectedCurriculumTopic: "TRIGONOMETRIYA ELEMENTLARI",
 });
 addQ({
   id: "math-025",
@@ -336,7 +336,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "AYLANA VA DOIRA"
+  expectedCurriculumTopic: "AYLANA VA DOIRA",
 });
 
 // Grade 10 (Seeded in DB)
@@ -350,7 +350,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "KO‘RSATKICHLI VA LOGARIFMIK"
+  expectedCurriculumTopic: "KO‘RSATKICHLI VA LOGARIFMIK",
 });
 addQ({
   id: "math-027",
@@ -362,7 +362,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "HOSILA"
+  expectedCurriculumTopic: "HOSILA",
 });
 addQ({
   id: "math-028",
@@ -374,7 +374,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "FAZODA TO‘G‘RI CHIZIQLAR"
+  expectedCurriculumTopic: "FAZODA TO‘G‘RI CHIZIQLAR",
 });
 
 // Grade 11 (Seeded in DB)
@@ -388,7 +388,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "INTEGRAL"
+  expectedCurriculumTopic: "INTEGRAL",
 });
 addQ({
   id: "math-030",
@@ -400,7 +400,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "KOMBINATORIKA"
+  expectedCurriculumTopic: "KOMBINATORIKA",
 });
 addQ({
   id: "math-031",
@@ -412,7 +412,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "AYLANMA JISMLAR"
+  expectedCurriculumTopic: "AYLANMA JISMLAR",
 });
 
 // Russian & English Math Queries
@@ -426,7 +426,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cross-lingual",
-  expectedCurriculumTopic: "KVADRAT TENGLAMALAR"
+  expectedCurriculumTopic: "KVADRAT TENGLAMALAR",
 });
 addQ({
   id: "math-033",
@@ -438,7 +438,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cross-lingual",
-  expectedCurriculumTopic: "ODDIY KASRLAR"
+  expectedCurriculumTopic: "ODDIY KASRLAR",
 });
 addQ({
   id: "math-034",
@@ -450,7 +450,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cross-lingual",
-  expectedCurriculumTopic: "SONLI KETMA-KETLIKLAR"
+  expectedCurriculumTopic: "SONLI KETMA-KETLIKLAR",
 });
 addQ({
   id: "math-035",
@@ -462,7 +462,7 @@ addQ({
   expectedAudience: "student",
   difficulty: "medium",
   category: "cross-lingual",
-  expectedCurriculumTopic: "HOSILA"
+  expectedCurriculumTopic: "HOSILA",
 });
 addQ({
   id: "math-036",
@@ -474,7 +474,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cross-lingual",
-  expectedCurriculumTopic: "KVADRAT TENGLAMALAR"
+  expectedCurriculumTopic: "KVADRAT TENGLAMALAR",
 });
 addQ({
   id: "math-037",
@@ -486,7 +486,7 @@ addQ({
   expectedAudience: "student",
   difficulty: "medium",
   category: "cross-lingual",
-  expectedCurriculumTopic: "ODDIY KASRLAR"
+  expectedCurriculumTopic: "ODDIY KASRLAR",
 });
 addQ({
   id: "math-038",
@@ -498,7 +498,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "cross-lingual",
-  expectedCurriculumTopic: "TO‘G‘RI BURCHAKLI UCHBURCHAKNING TOMONLARI"
+  expectedCurriculumTopic: "TO‘G‘RI BURCHAKLI UCHBURCHAKNING TOMONLARI",
 });
 
 // Cyrillic Uzbek Math Queries
@@ -513,7 +513,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cyrillic",
-  expectedCurriculumTopic: "ODDIY KASRLAR"
+  expectedCurriculumTopic: "ODDIY KASRLAR",
 });
 addQ({
   id: "math-040",
@@ -526,7 +526,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cyrillic",
-  expectedCurriculumTopic: "KVADRAT TENGLAMALAR"
+  expectedCurriculumTopic: "KVADRAT TENGLAMALAR",
 });
 addQ({
   id: "math-041",
@@ -539,7 +539,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cyrillic",
-  expectedCurriculumTopic: "SONLI KETMA-KETLIKLAR"
+  expectedCurriculumTopic: "SONLI KETMA-KETLIKLAR",
 });
 
 // Primary School (Grades 1-4)
@@ -552,7 +552,7 @@ addQ({
   expectedIntent: "explain",
   expectedAudience: "teacher",
   difficulty: "easy",
-  category: "primary_school"
+  category: "primary_school",
 });
 addQ({
   id: "math-043",
@@ -563,7 +563,7 @@ addQ({
   expectedIntent: "classroom_activity",
   expectedAudience: "teacher",
   difficulty: "medium",
-  category: "primary_school"
+  category: "primary_school",
 });
 addQ({
   id: "math-044",
@@ -574,7 +574,7 @@ addQ({
   expectedIntent: "explain",
   expectedAudience: "teacher",
   difficulty: "easy",
-  category: "primary_school"
+  category: "primary_school",
 });
 addQ({
   id: "math-045",
@@ -585,7 +585,7 @@ addQ({
   expectedIntent: "lesson_plan",
   expectedAudience: "teacher",
   difficulty: "medium",
-  category: "primary_school"
+  category: "primary_school",
 });
 
 // Adversarial / Typos / Cross-Grade
@@ -599,7 +599,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "adversarial",
   category: "typo",
-  expectedCurriculumTopic: "ODDIY KASRLAR"
+  expectedCurriculumTopic: "ODDIY KASRLAR",
 });
 addQ({
   id: "math-047",
@@ -612,7 +612,7 @@ addQ({
   difficulty: "adversarial",
   category: "cross_grade",
   isCrossGrade: true,
-  expectedAvailableGrade: "9-sinf"
+  expectedAvailableGrade: "9-sinf",
 });
 addQ({
   id: "math-048",
@@ -622,7 +622,7 @@ addQ({
   expectedIntent: "definition",
   expectedAudience: "teacher",
   difficulty: "adversarial",
-  category: "polysemic_contextual"
+  category: "polysemic_contextual",
 });
 addQ({
   id: "math-049",
@@ -632,7 +632,7 @@ addQ({
   expectedIntent: "homework",
   expectedAudience: "student",
   difficulty: "medium",
-  category: "intent_natural"
+  category: "intent_natural",
 });
 addQ({
   id: "math-050",
@@ -644,7 +644,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "KVADRAT TENGLAMALAR"
+  expectedCurriculumTopic: "KVADRAT TENGLAMALAR",
 });
 
 // -------------------------------------------------------------
@@ -660,7 +660,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "SINTAKSIS VA PUNKTUATSIYA"
+  expectedCurriculumTopic: "SINTAKSIS VA PUNKTUATSIYA",
 });
 addQ({
   id: "lang-002",
@@ -672,7 +672,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "FONETIKA"
+  expectedCurriculumTopic: "FONETIKA",
 });
 addQ({
   id: "lang-003",
@@ -684,7 +684,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "easy",
   category: "canonical",
-  expectedCurriculumTopic: "MORFOLOGIYA"
+  expectedCurriculumTopic: "MORFOLOGIYA",
 });
 addQ({
   id: "lang-004",
@@ -696,7 +696,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "easy",
   category: "canonical",
-  expectedCurriculumTopic: "SO‘Z TURKUMLARI"
+  expectedCurriculumTopic: "SO‘Z TURKUMLARI",
 });
 addQ({
   id: "lang-005",
@@ -708,7 +708,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "SO‘Z TURKUMLARI"
+  expectedCurriculumTopic: "SO‘Z TURKUMLARI",
 });
 addQ({
   id: "lang-006",
@@ -720,7 +720,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "SO‘Z TURKUMLARI"
+  expectedCurriculumTopic: "SO‘Z TURKUMLARI",
 });
 addQ({
   id: "lang-007",
@@ -732,7 +732,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "MUSTAQIL SO‘Z TURKUMLARI"
+  expectedCurriculumTopic: "MUSTAQIL SO‘Z TURKUMLARI",
 });
 addQ({
   id: "lang-008",
@@ -744,7 +744,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "easy",
   category: "canonical",
-  expectedCurriculumTopic: "MUSTAQIL SO‘Z TURKUMLARI"
+  expectedCurriculumTopic: "MUSTAQIL SO‘Z TURKUMLARI",
 });
 addQ({
   id: "lang-009",
@@ -756,7 +756,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "YORDAMCHI SO‘Z"
+  expectedCurriculumTopic: "YORDAMCHI SO‘Z",
 });
 addQ({
   id: "lang-010",
@@ -768,7 +768,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "SINTAKSIS"
+  expectedCurriculumTopic: "SINTAKSIS",
 });
 addQ({
   id: "lang-011",
@@ -780,7 +780,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "easy",
   category: "canonical",
-  expectedCurriculumTopic: "SODDA GAP SINTAKSISI"
+  expectedCurriculumTopic: "SODDA GAP SINTAKSISI",
 });
 addQ({
   id: "lang-012",
@@ -792,7 +792,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "IKKINCHI DARAJALI BO‘LAKLAR"
+  expectedCurriculumTopic: "IKKINCHI DARAJALI BO‘LAKLAR",
 });
 addQ({
   id: "lang-013",
@@ -804,7 +804,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "QO‘SHMA GAP"
+  expectedCurriculumTopic: "QO‘SHMA GAP",
 });
 addQ({
   id: "lang-014",
@@ -816,7 +816,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "KO‘CHIRMA GAPLI QO‘SHMA GAPLAR"
+  expectedCurriculumTopic: "KO‘CHIRMA GAPLI QO‘SHMA GAPLAR",
 });
 addQ({
   id: "lang-015",
@@ -828,7 +828,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "canonical",
-  expectedCurriculumTopic: "NUTQ USLUBLARI"
+  expectedCurriculumTopic: "NUTQ USLUBLARI",
 });
 addQ({
   id: "lang-016",
@@ -840,7 +840,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "TILIM – BOYLIGIM"
+  expectedCurriculumTopic: "TILIM – BOYLIGIM",
 });
 addQ({
   id: "lang-017",
@@ -852,7 +852,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "MATN LINGVISTIKASI"
+  expectedCurriculumTopic: "MATN LINGVISTIKASI",
 });
 addQ({
   id: "lang-018",
@@ -864,7 +864,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "canonical",
-  expectedCurriculumTopic: "Nutq madaniyati va nutq texnikasi"
+  expectedCurriculumTopic: "Nutq madaniyati va nutq texnikasi",
 });
 
 // Cyrillic & Russian Ona tili
@@ -879,7 +879,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cyrillic",
-  expectedCurriculumTopic: "FONETIKA"
+  expectedCurriculumTopic: "FONETIKA",
 });
 addQ({
   id: "lang-020",
@@ -892,7 +892,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cyrillic",
-  expectedCurriculumTopic: "MUSTAQIL SO‘Z TURKUMLARI"
+  expectedCurriculumTopic: "MUSTAQIL SO‘Z TURKUMLARI",
 });
 addQ({
   id: "lang-021",
@@ -904,7 +904,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cross-lingual",
-  expectedCurriculumTopic: "SO‘Z TURKUMLARI"
+  expectedCurriculumTopic: "SO‘Z TURKUMLARI",
 });
 addQ({
   id: "lang-022",
@@ -916,7 +916,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cross-lingual",
-  expectedCurriculumTopic: "SO‘Z TURKUMLARI"
+  expectedCurriculumTopic: "SO‘Z TURKUMLARI",
 });
 addQ({
   id: "lang-023",
@@ -926,7 +926,7 @@ addQ({
   expectedIntent: "worksheet",
   expectedAudience: "teacher",
   difficulty: "medium",
-  category: "apostrophe_typo"
+  category: "apostrophe_typo",
 });
 addQ({
   id: "lang-024",
@@ -936,7 +936,7 @@ addQ({
   expectedIntent: "explain",
   expectedAudience: "student",
   difficulty: "easy",
-  category: "intent_natural"
+  category: "intent_natural",
 });
 addQ({
   id: "lang-025",
@@ -947,7 +947,7 @@ addQ({
   expectedIntent: "quiz_test",
   expectedAudience: "teacher",
   difficulty: "easy",
-  category: "canonical"
+  category: "canonical",
 });
 
 // -------------------------------------------------------------
@@ -963,7 +963,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "lit-002",
@@ -975,7 +975,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "lit-003",
@@ -987,7 +987,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "lit-004",
@@ -999,7 +999,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "lit-005",
@@ -1011,7 +1011,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "lit-006",
@@ -1023,7 +1023,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "lit-007",
@@ -1035,7 +1035,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "lit-008",
@@ -1047,7 +1047,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cross-lingual",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 
 // -------------------------------------------------------------
@@ -1063,7 +1063,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "phys-002",
@@ -1075,7 +1075,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "easy",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "phys-003",
@@ -1087,7 +1087,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "phys-004",
@@ -1099,7 +1099,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "phys-005",
@@ -1111,7 +1111,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "easy",
   category: "polysemic_contextual",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "phys-006",
@@ -1123,7 +1123,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "phys-007",
@@ -1135,7 +1135,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "phys-008",
@@ -1147,7 +1147,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "phys-009",
@@ -1159,7 +1159,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "phys-010",
@@ -1171,7 +1171,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cross-lingual",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "phys-011",
@@ -1183,7 +1183,7 @@ addQ({
   expectedAudience: "student",
   difficulty: "medium",
   category: "cross-lingual",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "phys-012",
@@ -1195,7 +1195,7 @@ addQ({
   expectedAudience: "student",
   difficulty: "easy",
   category: "polysemic_contextual",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 
 // -------------------------------------------------------------
@@ -1211,7 +1211,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "chem-002",
@@ -1223,7 +1223,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "chem-003",
@@ -1235,7 +1235,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "chem-004",
@@ -1247,7 +1247,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "chem-005",
@@ -1259,7 +1259,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "polysemic_contextual",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "chem-006",
@@ -1271,7 +1271,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "chem-007",
@@ -1283,7 +1283,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "chem-008",
@@ -1295,7 +1295,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "chem-009",
@@ -1307,7 +1307,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cross-lingual",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "chem-010",
@@ -1319,7 +1319,7 @@ addQ({
   expectedAudience: "student",
   difficulty: "medium",
   category: "cross-lingual",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 
 // -------------------------------------------------------------
@@ -1334,7 +1334,7 @@ addQ({
   expectedAudience: "student",
   difficulty: "easy",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "bio-002",
@@ -1346,7 +1346,7 @@ addQ({
   expectedAudience: "student",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "bio-003",
@@ -1358,7 +1358,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "bio-004",
@@ -1370,7 +1370,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "polysemic_contextual",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "bio-005",
@@ -1382,7 +1382,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "polysemic_contextual",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "bio-006",
@@ -1394,7 +1394,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "bio-007",
@@ -1406,7 +1406,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "bio-008",
@@ -1418,7 +1418,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "bio-009",
@@ -1430,7 +1430,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "bio-010",
@@ -1442,7 +1442,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "bio-011",
@@ -1454,7 +1454,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cross-lingual",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "bio-012",
@@ -1466,7 +1466,7 @@ addQ({
   expectedAudience: "student",
   difficulty: "medium",
   category: "cross-lingual",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 
 // -------------------------------------------------------------
@@ -1482,7 +1482,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "hist-002",
@@ -1494,7 +1494,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "hist-003",
@@ -1506,7 +1506,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "hist-004",
@@ -1518,7 +1518,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "hist-005",
@@ -1530,7 +1530,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "hist-006",
@@ -1542,7 +1542,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "hist-007",
@@ -1554,7 +1554,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "hist-008",
@@ -1566,7 +1566,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cross-lingual",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 
 // -------------------------------------------------------------
@@ -1582,7 +1582,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "geo-002",
@@ -1594,7 +1594,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "geo-003",
@@ -1606,7 +1606,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "geo-004",
@@ -1618,7 +1618,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "geo-005",
@@ -1630,7 +1630,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "geo-006",
@@ -1642,7 +1642,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "geo-007",
@@ -1654,7 +1654,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cross-lingual",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 
 // -------------------------------------------------------------
@@ -1670,7 +1670,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "info-002",
@@ -1682,7 +1682,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "info-003",
@@ -1694,7 +1694,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "info-004",
@@ -1706,7 +1706,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "info-005",
@@ -1718,7 +1718,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "info-006",
@@ -1730,7 +1730,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "info-007",
@@ -1742,7 +1742,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "info-008",
@@ -1754,7 +1754,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cross-lingual",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 
 // -------------------------------------------------------------
@@ -1770,7 +1770,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "eng-002",
@@ -1782,7 +1782,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "eng-003",
@@ -1794,7 +1794,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "eng-004",
@@ -1806,7 +1806,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "eng-005",
@@ -1818,7 +1818,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "eng-006",
@@ -1830,7 +1830,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "hard",
   category: "unseeded_official_subject",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "eng-007",
@@ -1842,7 +1842,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cross-lingual",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 addQ({
   id: "eng-008",
@@ -1854,7 +1854,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "cross-lingual",
-  isUnsupportedSubject: true
+  isUnsupportedSubject: true,
 });
 
 // -------------------------------------------------------------
@@ -1870,7 +1870,7 @@ addQ({
   difficulty: "adversarial",
   category: "polysemic_ambiguous",
   isAmbiguous: true,
-  ambiguityCandidates: ["Fizika", "Kimyo", "Matematika"]
+  ambiguityCandidates: ["Fizika", "Kimyo", "Matematika"],
 });
 addQ({
   id: "adv-002",
@@ -1881,7 +1881,7 @@ addQ({
   difficulty: "adversarial",
   category: "polysemic_ambiguous",
   isAmbiguous: true,
-  ambiguityCandidates: ["Matematika", "Biologiya", "Ona tili"]
+  ambiguityCandidates: ["Matematika", "Biologiya", "Ona tili"],
 });
 addQ({
   id: "adv-003",
@@ -1892,7 +1892,7 @@ addQ({
   difficulty: "adversarial",
   category: "polysemic_ambiguous",
   isAmbiguous: true,
-  ambiguityCandidates: ["Fizika", "Biologiya"]
+  ambiguityCandidates: ["Fizika", "Biologiya"],
 });
 addQ({
   id: "adv-004",
@@ -1903,7 +1903,7 @@ addQ({
   difficulty: "adversarial",
   category: "polysemic_ambiguous",
   isAmbiguous: true,
-  ambiguityCandidates: ["Fizika", "Geografiya"]
+  ambiguityCandidates: ["Fizika", "Geografiya"],
 });
 addQ({
   id: "adv-005",
@@ -1914,7 +1914,7 @@ addQ({
   difficulty: "adversarial",
   category: "polysemic_ambiguous",
   isAmbiguous: true,
-  ambiguityCandidates: ["Biologiya", "Informatika"]
+  ambiguityCandidates: ["Biologiya", "Informatika"],
 });
 
 // Polysemic queries with clear disambiguating context
@@ -1926,7 +1926,7 @@ addQ({
   expectedIntent: "explain",
   expectedAudience: "student",
   difficulty: "medium",
-  category: "polysemic_contextual"
+  category: "polysemic_contextual",
 });
 addQ({
   id: "adv-007",
@@ -1936,7 +1936,7 @@ addQ({
   expectedIntent: "definition",
   expectedAudience: "student",
   difficulty: "medium",
-  category: "polysemic_contextual"
+  category: "polysemic_contextual",
 });
 addQ({
   id: "adv-008",
@@ -1947,7 +1947,7 @@ addQ({
   expectedAudience: "student",
   difficulty: "medium",
   category: "polysemic_contextual",
-  expectedCurriculumTopic: "KVADRAT TENGLAMALAR"
+  expectedCurriculumTopic: "KVADRAT TENGLAMALAR",
 });
 addQ({
   id: "adv-009",
@@ -1957,7 +1957,7 @@ addQ({
   expectedIntent: "explain",
   expectedAudience: "student",
   difficulty: "medium",
-  category: "polysemic_contextual"
+  category: "polysemic_contextual",
 });
 addQ({
   id: "adv-010",
@@ -1968,7 +1968,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "medium",
   category: "polysemic_contextual",
-  expectedCurriculumTopic: "MORFOLOGIYA"
+  expectedCurriculumTopic: "MORFOLOGIYA",
 });
 
 // Prompt injections & adversarial security queries
@@ -1979,7 +1979,7 @@ addQ({
   expectedIntent: "explain",
   expectedAudience: "student",
   difficulty: "adversarial",
-  category: "prompt_injection"
+  category: "prompt_injection",
 });
 addQ({
   id: "adv-012",
@@ -1988,7 +1988,7 @@ addQ({
   expectedIntent: "explain",
   expectedAudience: "student",
   difficulty: "adversarial",
-  category: "prompt_injection"
+  category: "prompt_injection",
 });
 addQ({
   id: "adv-013",
@@ -1997,7 +1997,7 @@ addQ({
   expectedIntent: "explain",
   expectedAudience: "student",
   difficulty: "adversarial",
-  category: "sql_injection"
+  category: "sql_injection",
 });
 addQ({
   id: "adv-014",
@@ -2009,7 +2009,7 @@ addQ({
   expectedAudience: "teacher",
   difficulty: "adversarial",
   category: "xss_sanitization",
-  expectedCurriculumTopic: "ODDIY KASRLAR"
+  expectedCurriculumTopic: "ODDIY KASRLAR",
 });
 addQ({
   id: "adv-015",
@@ -2018,7 +2018,7 @@ addQ({
   expectedIntent: "lesson_plan",
   expectedAudience: "teacher",
   difficulty: "adversarial",
-  category: "env_leak"
+  category: "env_leak",
 });
 
 // Unsupported topics (Hallucination / Abstention checks)
@@ -2031,7 +2031,7 @@ addQ({
   expectedIntent: "curriculum",
   expectedAudience: "teacher",
   difficulty: "adversarial",
-  category: "unsupported_hallucination"
+  category: "unsupported_hallucination",
 });
 addQ({
   id: "adv-017",
@@ -2041,120 +2041,528 @@ addQ({
   expectedIntent: "explain",
   expectedAudience: "teacher",
   difficulty: "adversarial",
-  category: "unsupported_hallucination"
+  category: "unsupported_hallucination",
 });
 
 // Fill up systematically to reach 500 queries
 // We create programmatic variants covering grades 1-11, 10 subjects, all intents, difficulties
 
 const INTENTS: SearchIntent[] = [
-  "explain", "definition", "lesson_plan", "presentation", "quiz_test",
-  "worksheet", "curriculum", "compare", "example", "homework",
-  "classroom_activity", "exam_prep", "topic_search"
+  "explain",
+  "definition",
+  "lesson_plan",
+  "presentation",
+  "quiz_test",
+  "worksheet",
+  "curriculum",
+  "compare",
+  "example",
+  "homework",
+  "classroom_activity",
+  "exam_prep",
+  "topic_search",
 ];
 
 let queryCounter = DATASET_500.length + 1;
 
 // Generate rich, diverse real queries for each subject across grades 1-11
-const TOPIC_SEEDS: Record<string, Array<{ grade: string; topicUz: string; topicRu: string; topicEn: string }>> = {
+const TOPIC_SEEDS: Record<
+  string,
+  Array<{ grade: string; topicUz: string; topicRu: string; topicEn: string }>
+> = {
   Matematika: [
-    { grade: "1-sinf", topicUz: "sonlar va sanash", topicRu: "числа и счет", topicEn: "counting numbers" },
-    { grade: "2-sinf", topicUz: "yuzliklar ichida qo'shish", topicRu: "сложение в пределах 100", topicEn: "addition within 100" },
-    { grade: "3-sinf", topicUz: "ko'paytirish va bo'lish", topicRu: "умножение и деление", topicEn: "multiplication and division" },
-    { grade: "4-sinf", topicUz: "ko'p xonali sonlar ustida amallar", topicRu: "многозначные числа", topicEn: "multi-digit numbers" },
-    { grade: "5-sinf", topicUz: "natural sonlar va kasrlar", topicRu: "натуральные числа и дроби", topicEn: "fractions and natural numbers" },
-    { grade: "6-sinf", topicUz: "ratsional sonlar va proporsiya", topicRu: "рациональные числа и пропорции", topicEn: "rational numbers and proportions" },
-    { grade: "7-sinf", topicUz: "chiziqli tenglamalar va birhadlar", topicRu: "линейные уравнения и одночлены", topicEn: "linear equations and monomials" },
-    { grade: "8-sinf", topicUz: "kvadrat ildizlar va tenglamalar", topicRu: "квадратные корни и уравнения", topicEn: "quadratic roots and equations" },
-    { grade: "9-sinf", topicUz: "arifmetik progressiya va funksiyalar", topicRu: "арифметическая прогрессия", topicEn: "arithmetic progression" },
-    { grade: "10-sinf", topicUz: "hosila va logarifmik funksiyalar", topicRu: "производная и логарифмы", topicEn: "derivatives and logarithms" },
-    { grade: "11-sinf", topicUz: "integral va kombinatorika", topicRu: "интеграл и комбинаторика", topicEn: "integral and combinatorics" },
+    {
+      grade: "1-sinf",
+      topicUz: "sonlar va sanash",
+      topicRu: "числа и счет",
+      topicEn: "counting numbers",
+    },
+    {
+      grade: "2-sinf",
+      topicUz: "yuzliklar ichida qo'shish",
+      topicRu: "сложение в пределах 100",
+      topicEn: "addition within 100",
+    },
+    {
+      grade: "3-sinf",
+      topicUz: "ko'paytirish va bo'lish",
+      topicRu: "умножение и деление",
+      topicEn: "multiplication and division",
+    },
+    {
+      grade: "4-sinf",
+      topicUz: "ko'p xonali sonlar ustida amallar",
+      topicRu: "многозначные числа",
+      topicEn: "multi-digit numbers",
+    },
+    {
+      grade: "5-sinf",
+      topicUz: "natural sonlar va kasrlar",
+      topicRu: "натуральные числа и дроби",
+      topicEn: "fractions and natural numbers",
+    },
+    {
+      grade: "6-sinf",
+      topicUz: "ratsional sonlar va proporsiya",
+      topicRu: "рациональные числа и пропорции",
+      topicEn: "rational numbers and proportions",
+    },
+    {
+      grade: "7-sinf",
+      topicUz: "chiziqli tenglamalar va birhadlar",
+      topicRu: "линейные уравнения и одночлены",
+      topicEn: "linear equations and monomials",
+    },
+    {
+      grade: "8-sinf",
+      topicUz: "kvadrat ildizlar va tenglamalar",
+      topicRu: "квадратные корни и уравнения",
+      topicEn: "quadratic roots and equations",
+    },
+    {
+      grade: "9-sinf",
+      topicUz: "arifmetik progressiya va funksiyalar",
+      topicRu: "арифметическая прогрессия",
+      topicEn: "arithmetic progression",
+    },
+    {
+      grade: "10-sinf",
+      topicUz: "hosila va logarifmik funksiyalar",
+      topicRu: "производная и логарифмы",
+      topicEn: "derivatives and logarithms",
+    },
+    {
+      grade: "11-sinf",
+      topicUz: "integral va kombinatorika",
+      topicRu: "интеграл и комбинаторика",
+      topicEn: "integral and combinatorics",
+    },
   ],
   "Ona tili": [
-    { grade: "1-sinf", topicUz: "alifbo va tovushlar", topicRu: "алфавит и звуки", topicEn: "alphabet and sounds" },
-    { grade: "2-sinf", topicUz: "so'z va gap tuzilishi", topicRu: "слова и предложения", topicEn: "words and sentences" },
-    { grade: "3-sinf", topicUz: "so'z tarkibi o'zak va qo'shimcha", topicRu: "корень и суффиксы", topicEn: "root and suffixes" },
-    { grade: "4-sinf", topicUz: "ot va sifat so'z turkumlari", topicRu: "существительное и прилагательное", topicEn: "nouns and adjectives" },
-    { grade: "5-sinf", topicUz: "fonetika va grafik me'yorlar", topicRu: "фонетика и графика", topicEn: "phonetics and graphics" },
-    { grade: "6-sinf", topicUz: "mustaqil so'z turkumlari ot va fe'l", topicRu: "части речи", topicEn: "parts of speech" },
-    { grade: "7-sinf", topicUz: "fe'l zamonlari va ravish", topicRu: "глаголы и наречия", topicEn: "verb tenses and adverbs" },
-    { grade: "8-sinf", topicUz: "sodda gap sintaksisi va tinish belgilari", topicRu: "синтаксис простого предложения", topicEn: "simple sentence syntax" },
-    { grade: "9-sinf", topicUz: "qo'shma gaplar tahlili", topicRu: "сложные предложения", topicEn: "compound and complex sentences" },
-    { grade: "10-sinf", topicUz: "nutq madaniyati va uslubiyat", topicRu: "культура речи и стилистика", topicEn: "speech culture and stylistics" },
-    { grade: "11-sinf", topicUz: "matn tahlili va tahrir", topicRu: "анализ текста", topicEn: "text analysis and editing" },
+    {
+      grade: "1-sinf",
+      topicUz: "alifbo va tovushlar",
+      topicRu: "алфавит и звуки",
+      topicEn: "alphabet and sounds",
+    },
+    {
+      grade: "2-sinf",
+      topicUz: "so'z va gap tuzilishi",
+      topicRu: "слова и предложения",
+      topicEn: "words and sentences",
+    },
+    {
+      grade: "3-sinf",
+      topicUz: "so'z tarkibi o'zak va qo'shimcha",
+      topicRu: "корень и суффиксы",
+      topicEn: "root and suffixes",
+    },
+    {
+      grade: "4-sinf",
+      topicUz: "ot va sifat so'z turkumlari",
+      topicRu: "существительное и прилагательное",
+      topicEn: "nouns and adjectives",
+    },
+    {
+      grade: "5-sinf",
+      topicUz: "fonetika va grafik me'yorlar",
+      topicRu: "фонетика и графика",
+      topicEn: "phonetics and graphics",
+    },
+    {
+      grade: "6-sinf",
+      topicUz: "mustaqil so'z turkumlari ot va fe'l",
+      topicRu: "части речи",
+      topicEn: "parts of speech",
+    },
+    {
+      grade: "7-sinf",
+      topicUz: "fe'l zamonlari va ravish",
+      topicRu: "глаголы и наречия",
+      topicEn: "verb tenses and adverbs",
+    },
+    {
+      grade: "8-sinf",
+      topicUz: "sodda gap sintaksisi va tinish belgilari",
+      topicRu: "синтаксис простого предложения",
+      topicEn: "simple sentence syntax",
+    },
+    {
+      grade: "9-sinf",
+      topicUz: "qo'shma gaplar tahlili",
+      topicRu: "сложные предложения",
+      topicEn: "compound and complex sentences",
+    },
+    {
+      grade: "10-sinf",
+      topicUz: "nutq madaniyati va uslubiyat",
+      topicRu: "культура речи и стилистика",
+      topicEn: "speech culture and stylistics",
+    },
+    {
+      grade: "11-sinf",
+      topicUz: "matn tahlili va tahrir",
+      topicRu: "анализ текста",
+      topicEn: "text analysis and editing",
+    },
   ],
   Adabiyot: [
-    { grade: "5-sinf", topicUz: "ertaklar va maqollar", topicRu: "сказки и пословицы", topicEn: "fairy tales and proverbs" },
-    { grade: "6-sinf", topicUz: "Navoiy va Bobur ruboiylari", topicRu: "рубаи Навои и Бабура", topicEn: "rubais of Navoi and Babur" },
-    { grade: "7-sinf", topicUz: "tarixiy asarlar Boburnoma", topicRu: "исторические произведения", topicEn: "historical literature" },
-    { grade: "8-sinf", topicUz: "jadid adabiyoti Fitrat va Cho'lpon", topicRu: "литература джадидизма", topicEn: "Jadid literature" },
-    { grade: "9-sinf", topicUz: "jahon adabiyoti mumtoz asarlar", topicRu: "мировая классическая литература", topicEn: "world classical literature" },
-    { grade: "10-sinf", topicUz: "XX asr o'zbek nasri", topicRu: "узбекская проза XX века", topicEn: "20th century Uzbek prose" },
-    { grade: "11-sinf", topicUz: "zamonaviy o'zbek she'riyati", topicRu: "современная узбекская поэзия", topicEn: "contemporary Uzbek poetry" },
+    {
+      grade: "5-sinf",
+      topicUz: "ertaklar va maqollar",
+      topicRu: "сказки и пословицы",
+      topicEn: "fairy tales and proverbs",
+    },
+    {
+      grade: "6-sinf",
+      topicUz: "Navoiy va Bobur ruboiylari",
+      topicRu: "рубаи Навои и Бабура",
+      topicEn: "rubais of Navoi and Babur",
+    },
+    {
+      grade: "7-sinf",
+      topicUz: "tarixiy asarlar Boburnoma",
+      topicRu: "исторические произведения",
+      topicEn: "historical literature",
+    },
+    {
+      grade: "8-sinf",
+      topicUz: "jadid adabiyoti Fitrat va Cho'lpon",
+      topicRu: "литература джадидизма",
+      topicEn: "Jadid literature",
+    },
+    {
+      grade: "9-sinf",
+      topicUz: "jahon adabiyoti mumtoz asarlar",
+      topicRu: "мировая классическая литература",
+      topicEn: "world classical literature",
+    },
+    {
+      grade: "10-sinf",
+      topicUz: "XX asr o'zbek nasri",
+      topicRu: "узбекская проза XX века",
+      topicEn: "20th century Uzbek prose",
+    },
+    {
+      grade: "11-sinf",
+      topicUz: "zamonaviy o'zbek she'riyati",
+      topicRu: "современная узбекская поэзия",
+      topicEn: "contemporary Uzbek poetry",
+    },
   ],
   Fizika: [
-    { grade: "6-sinf", topicUz: "jism massasi va zichlik", topicRu: "масса и плотность", topicEn: "mass and density" },
-    { grade: "7-sinf", topicUz: "inersiya va tezlik", topicRu: "инерция и скорость", topicEn: "inertia and speed" },
-    { grade: "8-sinf", topicUz: "elektr zanjiri va Om qonuni", topicRu: "электрическая цепь и закон Ома", topicEn: "electric circuit and Ohm's law" },
-    { grade: "9-sinf", topicUz: "yorug'likning sinishi optika", topicRu: "преломление света оптика", topicEn: "light refraction optics" },
-    { grade: "10-sinf", topicUz: "termodinamika qonunlari", topicRu: "законы термодинамики", topicEn: "laws of thermodynamics" },
-    { grade: "11-sinf", topicUz: "kvant va atom fizikasi", topicRu: "квантовая и атомная физика", topicEn: "quantum and atomic physics" },
+    {
+      grade: "6-sinf",
+      topicUz: "jism massasi va zichlik",
+      topicRu: "масса и плотность",
+      topicEn: "mass and density",
+    },
+    {
+      grade: "7-sinf",
+      topicUz: "inersiya va tezlik",
+      topicRu: "инерция и скорость",
+      topicEn: "inertia and speed",
+    },
+    {
+      grade: "8-sinf",
+      topicUz: "elektr zanjiri va Om qonuni",
+      topicRu: "электрическая цепь и закон Ома",
+      topicEn: "electric circuit and Ohm's law",
+    },
+    {
+      grade: "9-sinf",
+      topicUz: "yorug'likning sinishi optika",
+      topicRu: "преломление света оптика",
+      topicEn: "light refraction optics",
+    },
+    {
+      grade: "10-sinf",
+      topicUz: "termodinamika qonunlari",
+      topicRu: "законы термодинамики",
+      topicEn: "laws of thermodynamics",
+    },
+    {
+      grade: "11-sinf",
+      topicUz: "kvant va atom fizikasi",
+      topicRu: "квантовая и атомная физика",
+      topicEn: "quantum and atomic physics",
+    },
   ],
   Kimyo: [
-    { grade: "7-sinf", topicUz: "davriy qonun va elementlar", topicRu: "периодический закон", topicEn: "periodic law" },
-    { grade: "8-sinf", topicUz: "kovalent va ion bog'lanish", topicRu: "ковалентная и ионная связь", topicEn: "covalent and ionic bonding" },
-    { grade: "9-sinf", topicUz: "anorganik moddalar sinflari", topicRu: "классы неорганических веществ", topicEn: "classes of inorganic substances" },
-    { grade: "10-sinf", topicUz: "uglevodorodlar alkanlar va alkenlar", topicRu: "углеводороды алканы", topicEn: "hydrocarbons alkanes" },
-    { grade: "11-sinf", topicUz: "oqsillar yog'lar uglevodlar", topicRu: "белки жиры углеводы", topicEn: "proteins lipids carbohydrates" },
+    {
+      grade: "7-sinf",
+      topicUz: "davriy qonun va elementlar",
+      topicRu: "периодический закон",
+      topicEn: "periodic law",
+    },
+    {
+      grade: "8-sinf",
+      topicUz: "kovalent va ion bog'lanish",
+      topicRu: "ковалентная и ионная связь",
+      topicEn: "covalent and ionic bonding",
+    },
+    {
+      grade: "9-sinf",
+      topicUz: "anorganik moddalar sinflari",
+      topicRu: "классы неорганических веществ",
+      topicEn: "classes of inorganic substances",
+    },
+    {
+      grade: "10-sinf",
+      topicUz: "uglevodorodlar alkanlar va alkenlar",
+      topicRu: "углеводороды алканы",
+      topicEn: "hydrocarbons alkanes",
+    },
+    {
+      grade: "11-sinf",
+      topicUz: "oqsillar yog'lar uglevodlar",
+      topicRu: "белки жиры углеводы",
+      topicEn: "proteins lipids carbohydrates",
+    },
   ],
   Biologiya: [
-    { grade: "5-sinf", topicUz: "o'simliklar dunyosi organlari", topicRu: "мир растений органы", topicEn: "plant world organs" },
-    { grade: "6-sinf", topicUz: "ildiz va barg tuzilishi", topicRu: "строение корня и листа", topicEn: "root and leaf structure" },
-    { grade: "7-sinf", topicUz: "umurtqali va umurtqasiz hayvonlar", topicRu: "позвоночные и беспозвоночные", topicEn: "vertebrates and invertebrates" },
-    { grade: "8-sinf", topicUz: "odam anatomiyasi qon aylanish", topicRu: "анатомия человека кровообращение", topicEn: "human anatomy circulation" },
-    { grade: "9-sinf", topicUz: "hujayra biologiyasi sitologiya", topicRu: "клеточная биология цитология", topicEn: "cell biology cytology" },
-    { grade: "10-sinf", topicUz: "genetika va seleksiya asoslari", topicRu: "генетика и селекция", topicEn: "genetics and selection" },
-    { grade: "11-sinf", topicUz: "evolyutsiya va biosfera", topicRu: "эволюция и биосфера", topicEn: "evolution and biosphere" },
+    {
+      grade: "5-sinf",
+      topicUz: "o'simliklar dunyosi organlari",
+      topicRu: "мир растений органы",
+      topicEn: "plant world organs",
+    },
+    {
+      grade: "6-sinf",
+      topicUz: "ildiz va barg tuzilishi",
+      topicRu: "строение корня и листа",
+      topicEn: "root and leaf structure",
+    },
+    {
+      grade: "7-sinf",
+      topicUz: "umurtqali va umurtqasiz hayvonlar",
+      topicRu: "позвоночные и беспозвоночные",
+      topicEn: "vertebrates and invertebrates",
+    },
+    {
+      grade: "8-sinf",
+      topicUz: "odam anatomiyasi qon aylanish",
+      topicRu: "анатомия человека кровообращение",
+      topicEn: "human anatomy circulation",
+    },
+    {
+      grade: "9-sinf",
+      topicUz: "hujayra biologiyasi sitologiya",
+      topicRu: "клеточная биология цитология",
+      topicEn: "cell biology cytology",
+    },
+    {
+      grade: "10-sinf",
+      topicUz: "genetika va seleksiya asoslari",
+      topicRu: "генетика и селекция",
+      topicEn: "genetics and selection",
+    },
+    {
+      grade: "11-sinf",
+      topicUz: "evolyutsiya va biosfera",
+      topicRu: "эволюция и биосфера",
+      topicEn: "evolution and biosphere",
+    },
   ],
   Tarix: [
-    { grade: "5-sinf", topicUz: "qadimgi sharq sivilizatsiyalari", topicRu: "древние цивилизации востока", topicEn: "ancient eastern civilizations" },
-    { grade: "6-sinf", topicUz: "yunoniston va rim tarixi", topicRu: "история греции и рима", topicEn: "history of greece and rome" },
-    { grade: "7-sinf", topicUz: "Amir Temur saltanati", topicRu: "империя Амира Темура", topicEn: "empire of Amir Temur" },
-    { grade: "8-sinf", topicUz: "xonliklar davri madaniyati", topicRu: "культура эпохи ханств", topicEn: "khanates era culture" },
-    { grade: "9-sinf", topicUz: "yangi davr jahon tarixi", topicRu: "новая история мира", topicEn: "modern world history" },
-    { grade: "10-sinf", topicUz: "jadidchilik va milliy uyg'onish", topicRu: "джадидизм и национальное возрождение", topicEn: "jadidism and national revival" },
-    { grade: "11-sinf", topicUz: "eng yangi davr O'zbekiston", topicRu: "новейшая история Узбекистана", topicEn: "contemporary Uzbekistan history" },
+    {
+      grade: "5-sinf",
+      topicUz: "qadimgi sharq sivilizatsiyalari",
+      topicRu: "древние цивилизации востока",
+      topicEn: "ancient eastern civilizations",
+    },
+    {
+      grade: "6-sinf",
+      topicUz: "yunoniston va rim tarixi",
+      topicRu: "история греции и рима",
+      topicEn: "history of greece and rome",
+    },
+    {
+      grade: "7-sinf",
+      topicUz: "Amir Temur saltanati",
+      topicRu: "империя Амира Темура",
+      topicEn: "empire of Amir Temur",
+    },
+    {
+      grade: "8-sinf",
+      topicUz: "xonliklar davri madaniyati",
+      topicRu: "культура эпохи ханств",
+      topicEn: "khanates era culture",
+    },
+    {
+      grade: "9-sinf",
+      topicUz: "yangi davr jahon tarixi",
+      topicRu: "новая история мира",
+      topicEn: "modern world history",
+    },
+    {
+      grade: "10-sinf",
+      topicUz: "jadidchilik va milliy uyg'onish",
+      topicRu: "джадидизм и национальное возрождение",
+      topicEn: "jadidism and national revival",
+    },
+    {
+      grade: "11-sinf",
+      topicUz: "eng yangi davr O'zbekiston",
+      topicRu: "новейшая история Узбекистана",
+      topicEn: "contemporary Uzbekistan history",
+    },
   ],
   Geografiya: [
-    { grade: "5-sinf", topicUz: "dunyo xaritasi va globus", topicRu: "карта мира и глобус", topicEn: "world map and globe" },
-    { grade: "6-sinf", topicUz: "okeanlar va gidrosfera", topicRu: "океаны и гидросфера", topicEn: "oceans and hydrosphere" },
-    { grade: "7-sinf", topicUz: "materiklar tabiat zonalari", topicRu: "природные зоны материков", topicEn: "natural zones of continents" },
-    { grade: "8-sinf", topicUz: "O'zbekiston foydali qazilmalari", topicRu: "полезные ископаемые Узбекистана", topicEn: "mineral resources of Uzbekistan" },
-    { grade: "9-sinf", topicUz: "hududiy iqtisodiy rayonlar", topicRu: "экономические районы", topicEn: "economic regions" },
-    { grade: "10-sinf", topicUz: "jahon energetika xaritasi", topicRu: "мировая энергетика", topicEn: "world energy map" },
-    { grade: "11-sinf", topicUz: "global ekologik muammolar", topicRu: "глобальные экологические проблемы", topicEn: "global ecological problems" },
+    {
+      grade: "5-sinf",
+      topicUz: "dunyo xaritasi va globus",
+      topicRu: "карта мира и глобус",
+      topicEn: "world map and globe",
+    },
+    {
+      grade: "6-sinf",
+      topicUz: "okeanlar va gidrosfera",
+      topicRu: "океаны и гидросфера",
+      topicEn: "oceans and hydrosphere",
+    },
+    {
+      grade: "7-sinf",
+      topicUz: "materiklar tabiat zonalari",
+      topicRu: "природные зоны материков",
+      topicEn: "natural zones of continents",
+    },
+    {
+      grade: "8-sinf",
+      topicUz: "O'zbekiston foydali qazilmalari",
+      topicRu: "полезные ископаемые Узбекистана",
+      topicEn: "mineral resources of Uzbekistan",
+    },
+    {
+      grade: "9-sinf",
+      topicUz: "hududiy iqtisodiy rayonlar",
+      topicRu: "экономические районы",
+      topicEn: "economic regions",
+    },
+    {
+      grade: "10-sinf",
+      topicUz: "jahon energetika xaritasi",
+      topicRu: "мировая энергетика",
+      topicEn: "world energy map",
+    },
+    {
+      grade: "11-sinf",
+      topicUz: "global ekologik muammolar",
+      topicRu: "глобальные экологические проблемы",
+      topicEn: "global ecological problems",
+    },
   ],
   Informatika: [
-    { grade: "5-sinf", topicUz: "klaviatura va matn muharriri", topicRu: "клавиатура и текстовый редактор", topicEn: "keyboard and text editor" },
-    { grade: "6-sinf", topicUz: "chiziqli va tarmoqlanuvchi algoritmlar", topicRu: "линейные и ветвящиеся алгоритмы", topicEn: "linear and branching algorithms" },
-    { grade: "7-sinf", topicUz: "Scratch dasturlash o'yin yaratish", topicRu: "программирование Scratch", topicEn: "Scratch game programming" },
-    { grade: "8-sinf", topicUz: "Python sintaksisi va operatorlar", topicRu: "синтаксис Python и операторы", topicEn: "Python syntax and operators" },
-    { grade: "9-sinf", topicUz: "satrlar va ro'yxatlar bilan ishlash", topicRu: "строки и списки в Python", topicEn: "strings and lists in Python" },
-    { grade: "10-sinf", topicUz: "tarmoq protokollari va xavfsizlik", topicRu: "сетевые протоколы и безопасность", topicEn: "network protocols and security" },
-    { grade: "11-sinf", topicUz: "web dasturlash HTML va CSS asoslari", topicRu: "веб-программирование HTML и CSS", topicEn: "web development HTML and CSS" },
+    {
+      grade: "5-sinf",
+      topicUz: "klaviatura va matn muharriri",
+      topicRu: "клавиатура и текстовый редактор",
+      topicEn: "keyboard and text editor",
+    },
+    {
+      grade: "6-sinf",
+      topicUz: "chiziqli va tarmoqlanuvchi algoritmlar",
+      topicRu: "линейные и ветвящиеся алгоритмы",
+      topicEn: "linear and branching algorithms",
+    },
+    {
+      grade: "7-sinf",
+      topicUz: "Scratch dasturlash o'yin yaratish",
+      topicRu: "программирование Scratch",
+      topicEn: "Scratch game programming",
+    },
+    {
+      grade: "8-sinf",
+      topicUz: "Python sintaksisi va operatorlar",
+      topicRu: "синтаксис Python и операторы",
+      topicEn: "Python syntax and operators",
+    },
+    {
+      grade: "9-sinf",
+      topicUz: "satrlar va ro'yxatlar bilan ishlash",
+      topicRu: "строки и списки в Python",
+      topicEn: "strings and lists in Python",
+    },
+    {
+      grade: "10-sinf",
+      topicUz: "tarmoq protokollari va xavfsizlik",
+      topicRu: "сетевые протоколы и безопасность",
+      topicEn: "network protocols and security",
+    },
+    {
+      grade: "11-sinf",
+      topicUz: "web dasturlash HTML va CSS asoslari",
+      topicRu: "веб-программирование HTML и CSS",
+      topicEn: "web development HTML and CSS",
+    },
   ],
   "Ingliz tili": [
-    { grade: "1-sinf", topicUz: "colors and numbers", topicRu: "цвета и цифры", topicEn: "colors and numbers" },
-    { grade: "2-sinf", topicUz: "family and animals vocabulary", topicRu: "семья и животные слова", topicEn: "family and animals vocabulary" },
-    { grade: "3-sinf", topicUz: "can and cannot modal verbs", topicRu: "модальный глагол can", topicEn: "can and cannot modal verbs" },
-    { grade: "4-sinf", topicUz: "daily routine Present Simple", topicRu: "распорядок дня Present Simple", topicEn: "daily routine Present Simple" },
-    { grade: "5-sinf", topicUz: "comparative adjectives", topicRu: "сравнительные прилагательные", topicEn: "comparative adjectives" },
-    { grade: "6-sinf", topicUz: "irregular verbs Past Simple", topicRu: "неправильные глаголы Past Simple", topicEn: "irregular verbs Past Simple" },
-    { grade: "7-sinf", topicUz: "Present Continuous for future plans", topicRu: "Present Continuous для будущего", topicEn: "Present Continuous for future plans" },
-    { grade: "8-sinf", topicUz: "reported speech rules", topicRu: "косвенная речь правила", topicEn: "reported speech rules" },
-    { grade: "9-sinf", topicUz: "conditional sentences zero and first", topicRu: "условные предложения", topicEn: "conditional sentences zero and first" },
-    { grade: "10-sinf", topicUz: "academic essay structure", topicRu: "структура академического эссе", topicEn: "academic essay structure" },
-    { grade: "11-sinf", topicUz: "idioms and advanced collocations", topicRu: "идиомы и устойчивые выражения", topicEn: "idioms and advanced collocations" },
+    {
+      grade: "1-sinf",
+      topicUz: "colors and numbers",
+      topicRu: "цвета и цифры",
+      topicEn: "colors and numbers",
+    },
+    {
+      grade: "2-sinf",
+      topicUz: "family and animals vocabulary",
+      topicRu: "семья и животные слова",
+      topicEn: "family and animals vocabulary",
+    },
+    {
+      grade: "3-sinf",
+      topicUz: "can and cannot modal verbs",
+      topicRu: "модальный глагол can",
+      topicEn: "can and cannot modal verbs",
+    },
+    {
+      grade: "4-sinf",
+      topicUz: "daily routine Present Simple",
+      topicRu: "распорядок дня Present Simple",
+      topicEn: "daily routine Present Simple",
+    },
+    {
+      grade: "5-sinf",
+      topicUz: "comparative adjectives",
+      topicRu: "сравнительные прилагательные",
+      topicEn: "comparative adjectives",
+    },
+    {
+      grade: "6-sinf",
+      topicUz: "irregular verbs Past Simple",
+      topicRu: "неправильные глаголы Past Simple",
+      topicEn: "irregular verbs Past Simple",
+    },
+    {
+      grade: "7-sinf",
+      topicUz: "Present Continuous for future plans",
+      topicRu: "Present Continuous для будущего",
+      topicEn: "Present Continuous for future plans",
+    },
+    {
+      grade: "8-sinf",
+      topicUz: "reported speech rules",
+      topicRu: "косвенная речь правила",
+      topicEn: "reported speech rules",
+    },
+    {
+      grade: "9-sinf",
+      topicUz: "conditional sentences zero and first",
+      topicRu: "условные предложения",
+      topicEn: "conditional sentences zero and first",
+    },
+    {
+      grade: "10-sinf",
+      topicUz: "academic essay structure",
+      topicRu: "структура академического эссе",
+      topicEn: "academic essay structure",
+    },
+    {
+      grade: "11-sinf",
+      topicUz: "idioms and advanced collocations",
+      topicRu: "идиомы и устойчивые выражения",
+      topicEn: "idioms and advanced collocations",
+    },
   ],
 };
 
@@ -2246,7 +2654,8 @@ let topicStep = 0;
 while (DATASET_500.length < 500) {
   const currentSubj = subjectKeys[subjIdx % subjectKeys.length];
   const topics = TOPIC_SEEDS[currentSubj];
-  const t = topics[(topicStep + Math.floor(subjIdx / subjectKeys.length)) % topics.length];
+  const t =
+    topics[(topicStep + Math.floor(subjIdx / subjectKeys.length)) % topics.length];
   const intent = INTENTS[(DATASET_500.length + topicStep) % INTENTS.length];
 
   const id = `gen-${String(queryCounter).padStart(3, "0")}`;
@@ -2261,7 +2670,8 @@ while (DATASET_500.length < 500) {
     // Uzbek
     lang = "UZ";
     const intentSuffixes = INTENT_SUFFIXES_UZ[intent] || ["tushuntir"];
-    const suffix = intentSuffixes[(topicStep + DATASET_500.length) % intentSuffixes.length];
+    const suffix =
+      intentSuffixes[(topicStep + DATASET_500.length) % intentSuffixes.length];
     candidateQ = `${t.grade} ${currentSubj.toLowerCase()} ${t.topicUz} ${suffix}`;
     if (seenQueries.has(candidateQ.toLowerCase().trim())) {
       candidateQ = `${t.grade} ${currentSubj.toLowerCase()} ${t.topicUz} bo'yicha ${suffix}`;
@@ -2331,7 +2741,8 @@ const diffDist: Record<string, number> = {};
 
 for (const q of DATASET_500) {
   langDist[q.expectedLanguage] = (langDist[q.expectedLanguage] || 0) + 1;
-  if (q.expectedSubject) subjDist[q.expectedSubject] = (subjDist[q.expectedSubject] || 0) + 1;
+  if (q.expectedSubject)
+    subjDist[q.expectedSubject] = (subjDist[q.expectedSubject] || 0) + 1;
   intentDist[q.expectedIntent] = (intentDist[q.expectedIntent] || 0) + 1;
   diffDist[q.difficulty] = (diffDist[q.difficulty] || 0) + 1;
 }

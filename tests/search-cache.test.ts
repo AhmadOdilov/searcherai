@@ -113,7 +113,13 @@ describe("search lru cache", () => {
   });
 
   it("o'quv dasturi, model yoki prompt versiyasi yangilanganda kesh tozalanadi (Version Invalidation)", () => {
-    const cache = new SearchLruCache(1000, 10, "DTS-2025-v1", "retrieval-v3", "prompt-v3");
+    const cache = new SearchLruCache(
+      1000,
+      10,
+      "DTS-2025-v1",
+      "retrieval-v3",
+      "prompt-v3",
+    );
     const u = understandQuery("natural sonlar");
     const key = cache.generateKey(u);
 

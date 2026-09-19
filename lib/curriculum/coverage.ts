@@ -66,7 +66,12 @@ export function getCurriculumCoverage(
 
   const entry = getSubjectCurriculumStatus(subject);
   if (!entry) {
-    return { status: "UNKNOWN_SUBJECT", subject, requestedGrade: grade, availableGrades: [] };
+    return {
+      status: "UNKNOWN_SUBJECT",
+      subject,
+      requestedGrade: grade,
+      availableGrades: [],
+    };
   }
 
   if (entry.status !== "OFFICIAL") {
@@ -86,7 +91,9 @@ export function getCurriculumCoverage(
     };
   }
 
-  const covered = entry.gradesAvailable.some((g) => normalizeGrade(g) === normalizeGrade(grade));
+  const covered = entry.gradesAvailable.some(
+    (g) => normalizeGrade(g) === normalizeGrade(grade),
+  );
 
   return {
     status: covered ? "COVERED" : "GRADE_NOT_AVAILABLE",

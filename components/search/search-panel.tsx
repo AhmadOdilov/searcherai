@@ -25,7 +25,10 @@ import { EmptyState } from "@/components/ui/empty-state";
 import type { SearchAnswer } from "@/lib/validations/search";
 import type { QueryUnderstanding } from "@/lib/search/understanding";
 import type { RankedCurriculumMatch } from "@/lib/search/curriculum-matcher";
-import { isOfficiallyVerified, type GroundingValidationResult } from "@/lib/search/validator";
+import {
+  isOfficiallyVerified,
+  type GroundingValidationResult,
+} from "@/lib/search/validator";
 import type { OrchestrationAction } from "@/lib/search/orchestration";
 import type { AdaptiveSearchStrategy } from "@/lib/search/adaptive";
 import type { SearchCostMetrics } from "@/lib/search/cost";
@@ -262,7 +265,10 @@ function AnswerView({
 
     Endi bitta qiymat ikkala blokni ham boshqaradi.
   */
-  const isVerified = isOfficiallyVerified(result.grounding, curriculumMatches?.length ?? 0);
+  const isVerified = isOfficiallyVerified(
+    result.grounding,
+    curriculumMatches?.length ?? 0,
+  );
 
   return (
     <section className="mt-8 space-y-6">
@@ -286,7 +292,9 @@ function AnswerView({
             )}
             <span className="rounded-full bg-neutral-100 px-3 py-1 text-neutral-600">
               {t("detected.mode")}:{" "}
-              {understanding.audience === "student" ? t("detected.student") : t("detected.teacher")}
+              {understanding.audience === "student"
+                ? t("detected.student")
+                : t("detected.teacher")}
             </span>
           </div>
         )}
@@ -308,7 +316,9 @@ function AnswerView({
               )}
               <div>
                 <span className="font-semibold">
-                  {isVerified ? t("grounding.verifiedTitle") : t("grounding.generalTitle")}
+                  {isVerified
+                    ? t("grounding.verifiedTitle")
+                    : t("grounding.generalTitle")}
                 </span>
                 <span>{result.explanation}</span>
               </div>
@@ -439,14 +449,18 @@ function AnswerView({
             <span
               aria-hidden
               className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${
-                isVerified ? "bg-primary-soft text-primary" : "bg-neutral-100 text-neutral-500"
+                isVerified
+                  ? "bg-primary-soft text-primary"
+                  : "bg-neutral-100 text-neutral-500"
               }`}
             >
               <BookOpen className="size-6" />
             </span>
             <div>
               <h3 className="text-xl font-semibold text-neutral-900">
-                {isVerified ? t("curriculum.verifiedTitle") : t("curriculum.relatedTitle")}
+                {isVerified
+                  ? t("curriculum.verifiedTitle")
+                  : t("curriculum.relatedTitle")}
               </h3>
               <p className="text-sm text-neutral-500">
                 {isVerified ? t("curriculum.verifiedHint") : t("curriculum.relatedHint")}
@@ -473,12 +487,16 @@ function AnswerView({
                 </div>
                 {topic.expectedOutcomes.length > 0 && (
                   <div className="mt-2 text-sm text-neutral-600">
-                    <span className="font-medium text-neutral-700">{t("curriculum.outcome")}</span>{" "}
+                    <span className="font-medium text-neutral-700">
+                      {t("curriculum.outcome")}
+                    </span>{" "}
                     {topic.expectedOutcomes[0]}
                   </div>
                 )}
                 {isSafeHttpUrl(topic.source) && (
-                  <div className={`mt-2 text-xs ${isVerified ? "text-primary" : "text-neutral-500"}`}>
+                  <div
+                    className={`mt-2 text-xs ${isVerified ? "text-primary" : "text-neutral-500"}`}
+                  >
                     <a
                       href={topic.source}
                       target="_blank"
@@ -550,12 +568,7 @@ function AnswerView({
                     </p>
                   </div>
                   <div className="mt-4">
-                    <LinkButton
-                      href={action.url}
-                      variant="secondary"
-                      size="sm"
-                      fullWidth
-                    >
+                    <LinkButton href={action.url} variant="secondary" size="sm" fullWidth>
                       {t("actions.open")}
                     </LinkButton>
                   </div>

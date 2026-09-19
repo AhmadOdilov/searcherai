@@ -49,8 +49,22 @@ import { stemUzbekWord } from "./normalization";
 
 export function calculateJaccardSimilarity(a: string, b: string): number {
   if (!a || !b) return 0;
-  const tokensA = Array.from(new Set(a.toLowerCase().split(/[^\p{L}\p{N}']+/u).filter((t) => t.length >= 3)));
-  const tokensB = Array.from(new Set(b.toLowerCase().split(/[^\p{L}\p{N}']+/u).filter((t) => t.length >= 3)));
+  const tokensA = Array.from(
+    new Set(
+      a
+        .toLowerCase()
+        .split(/[^\p{L}\p{N}']+/u)
+        .filter((t) => t.length >= 3),
+    ),
+  );
+  const tokensB = Array.from(
+    new Set(
+      b
+        .toLowerCase()
+        .split(/[^\p{L}\p{N}']+/u)
+        .filter((t) => t.length >= 3),
+    ),
+  );
 
   if (tokensA.length === 0 || tokensB.length === 0) return 0;
 
@@ -82,14 +96,21 @@ export function calculateHybridScore(input: ScoringInput): ScoreResult {
     candidateExpectedOutcomes,
   } = input;
 
-  const norm = (s: string) => s.toUpperCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
+  const norm = (s: string) =>
+    s.toUpperCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
   const topicUpper = norm(candidateTopicName);
   const queryUpper = norm(queryTopic);
-  const descLower = candidateDescription.toLowerCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
+  const descLower = candidateDescription
+    .toLowerCase()
+    .replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
 
   // 1. Exact Match (0..1) — Sarlavhadagi moslikka tavsifdagidan ko'ra yuqori ustunlik beriladi
   let exactMatch = 0;
-  if (topicUpper === queryUpper || topicUpper.includes(queryUpper) || queryUpper.includes(topicUpper)) {
+  if (
+    topicUpper === queryUpper ||
+    topicUpper.includes(queryUpper) ||
+    queryUpper.includes(topicUpper)
+  ) {
     exactMatch = 1.0;
   } else {
     const stemmedKeywords = keywords.map(stemUzbekWord);
@@ -107,7 +128,10 @@ export function calculateHybridScore(input: ScoringInput): ScoreResult {
 
     const totalK = Math.max(1, stemmedKeywords.filter((k) => k.length >= 3).length);
     // Sarlavha mosligi 80%, tavsif mosligi 20%
-    exactMatch = Math.min(1.0, (titleMatches / totalK) * 0.85 + (descMatches / totalK) * 0.25);
+    exactMatch = Math.min(
+      1.0,
+      (titleMatches / totalK) * 0.85 + (descMatches / totalK) * 0.25,
+    );
   }
 
   // 2. Semantic Similarity (0..1)
@@ -118,18 +142,30 @@ export function calculateHybridScore(input: ScoringInput): ScoreResult {
   // 3. Outcome Match (0..1)
   let outcomeMatches = 0;
   for (const outcome of candidateExpectedOutcomes) {
-    const outcomeClean = outcome.toLowerCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
-    if (keywords.some((k) => outcomeClean.includes(k.toLowerCase()) || outcomeClean.includes(stemUzbekWord(k)))) {
+    const outcomeClean = outcome
+      .toLowerCase()
+      .replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
+    if (
+      keywords.some(
+        (k) =>
+          outcomeClean.includes(k.toLowerCase()) ||
+          outcomeClean.includes(stemUzbekWord(k)),
+      )
+    ) {
       outcomeMatches++;
     }
   }
-  const outcomeMatch = candidateExpectedOutcomes.length > 0
-    ? Math.min(1.0, outcomeMatches / Math.min(3, candidateExpectedOutcomes.length))
-    : 0;
+  const outcomeMatch =
+    candidateExpectedOutcomes.length > 0
+      ? Math.min(1.0, outcomeMatches / Math.min(3, candidateExpectedOutcomes.length))
+      : 0;
 
   // 4. Grade + Subject Match (0..1)
   let gradeSubjectMatch = 0;
-  if (detectedSubject && candidateSubject.toLowerCase() === detectedSubject.toLowerCase()) {
+  if (
+    detectedSubject &&
+    candidateSubject.toLowerCase() === detectedSubject.toLowerCase()
+  ) {
     gradeSubjectMatch += 0.5;
   }
   if (detectedGrade && candidateGrade.toLowerCase() === detectedGrade.toLowerCase()) {
@@ -149,9 +185,9 @@ export function calculateHybridScore(input: ScoringInput): ScoreResult {
   let totalScore =
     0.35 * exactMatch +
     0.25 * semanticSimilarity +
-    0.20 * gradeSubjectMatch +
-    0.10 * outcomeMatch +
-    0.10 * intentMatch;
+    0.2 * gradeSubjectMatch +
+    0.1 * outcomeMatch +
+    0.1 * intentMatch;
 
   // Grade mismatch penalty (Phase 8 Grade Intelligence):
   // Exact grade: 0 penalty
@@ -163,12 +199,12 @@ export function calculateHybridScore(input: ScoringInput): ScoreResult {
     if (!isNaN(numReq) && !isNaN(numCand)) {
       const diff = Math.abs(numReq - numCand);
       if (diff === 1) {
-        totalScore = Math.max(0, totalScore - 0.10);
+        totalScore = Math.max(0, totalScore - 0.1);
       } else {
         totalScore = Math.max(0, totalScore - 0.25);
       }
     } else {
-      totalScore = Math.max(0, totalScore - 0.20);
+      totalScore = Math.max(0, totalScore - 0.2);
     }
   }
 

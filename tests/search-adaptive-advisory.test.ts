@@ -2,7 +2,10 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { determineAdaptiveStrategy } from "../lib/search/adaptive";
 import { understandQuery } from "../lib/search/understanding";
-import { getCurriculumCoverage, canProvideOfficialEvidence } from "../lib/curriculum/coverage";
+import {
+  getCurriculumCoverage,
+  canProvideOfficialEvidence,
+} from "../lib/curriculum/coverage";
 
 /*
   V6 PHASE 5 — tavsiyaviy (advisory) maydonlar.
@@ -33,11 +36,19 @@ describe("adaptiv strategiya — tavsiyaviy maydonlar", () => {
     const u = understandQuery("1-sinf matematika sonlarni qo'shish");
     const strategy = determineAdaptiveStrategy(u);
 
-    assert.equal(strategy.shouldAbstain, false, "fan darajasidagi ishora bu holatni ko'rmaydi");
+    assert.equal(
+      strategy.shouldAbstain,
+      false,
+      "fan darajasidagi ishora bu holatni ko'rmaydi",
+    );
 
     const coverage = getCurriculumCoverage(u.detectedSubject, u.detectedGrade);
     assert.equal(coverage.status, "GRADE_NOT_AVAILABLE");
-    assert.equal(canProvideOfficialEvidence(coverage), false, "qamrov qatlami uni tutadi");
+    assert.equal(
+      canProvideOfficialEvidence(coverage),
+      false,
+      "qamrov qatlami uni tutadi",
+    );
   });
 
   it("qamrovli so'rovda ikkala qatlam ham dalilga ruxsat beradi", () => {
@@ -45,7 +56,12 @@ describe("adaptiv strategiya — tavsiyaviy maydonlar", () => {
     const strategy = determineAdaptiveStrategy(u);
 
     assert.equal(strategy.shouldAbstain, false);
-    assert.equal(canProvideOfficialEvidence(getCurriculumCoverage(u.detectedSubject, u.detectedGrade)), true);
+    assert.equal(
+      canProvideOfficialEvidence(
+        getCurriculumCoverage(u.detectedSubject, u.detectedGrade),
+      ),
+      true,
+    );
   });
 
   it("candidateDepth musbat va finalLimit dan katta bo'lishi kerak", () => {

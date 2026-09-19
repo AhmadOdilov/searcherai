@@ -16,7 +16,10 @@ describe("grounding holati — UI bilan yagona manba", () => {
   });
 
   it("moslar bo'lsa ham, asoslanmagan javob TASDIQLANMAGAN", () => {
-    assert.equal(isOfficiallyVerified({ isGrounded: false, isAbstained: false }, 3), false);
+    assert.equal(
+      isOfficiallyVerified({ isGrounded: false, isAbstained: false }, 3),
+      false,
+    );
   });
 
   it("ehtiyot rejimidagi javob moslar bilan ham TASDIQLANMAGAN", () => {
@@ -24,7 +27,10 @@ describe("grounding holati — UI bilan yagona manba", () => {
   });
 
   it("mos topilmagan bo'lsa TASDIQLANMAGAN", () => {
-    assert.equal(isOfficiallyVerified({ isGrounded: true, isAbstained: false }, 0), false);
+    assert.equal(
+      isOfficiallyVerified({ isGrounded: true, isAbstained: false }, 0),
+      false,
+    );
   });
 
   it("grounding ma'lumoti umuman bo'lmasa TASDIQLANMAGAN", () => {

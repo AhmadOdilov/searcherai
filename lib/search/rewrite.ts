@@ -37,7 +37,8 @@ export function rewriteQueryForRetrieval(
   const subject = typeof rawSubject === "string" ? rawSubject : "";
 
   const originalQuery =
-    (typeof understanding.normalizedQuery === "string" && understanding.normalizedQuery) ||
+    (typeof understanding.normalizedQuery === "string" &&
+      understanding.normalizedQuery) ||
     topic ||
     "";
 
@@ -56,7 +57,11 @@ export function rewriteQueryForRetrieval(
   const lowerQuery = originalQuery.toLowerCase();
 
   for (const concept of CANONICAL_CONCEPTS) {
-    if (subject && typeof concept.subject === "string" && concept.subject.toLowerCase() !== subject.toLowerCase()) {
+    if (
+      subject &&
+      typeof concept.subject === "string" &&
+      concept.subject.toLowerCase() !== subject.toLowerCase()
+    ) {
       continue;
     }
 
@@ -87,7 +92,8 @@ export function rewriteQueryForRetrieval(
       if (!crossLingual.includes(enRep)) crossLingual.push(enRep);
 
       // Konseptual kengaytma
-      const uzConceptRep = `${concept.canonicalUz} ${grade ?? ""} ${concept.relatedConcepts.slice(0, 2).join(" ")}`.trim();
+      const uzConceptRep =
+        `${concept.canonicalUz} ${grade ?? ""} ${concept.relatedConcepts.slice(0, 2).join(" ")}`.trim();
       if (!conceptExpansions.includes(uzConceptRep)) conceptExpansions.push(uzConceptRep);
     }
   }

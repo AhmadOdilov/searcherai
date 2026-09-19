@@ -108,7 +108,11 @@ export function isOfficiallyVerified(
   curriculumMatchCount: number,
 ): boolean {
   if (!grounding) return false;
-  return grounding.isGrounded === true && grounding.isAbstained !== true && curriculumMatchCount > 0;
+  return (
+    grounding.isGrounded === true &&
+    grounding.isAbstained !== true &&
+    curriculumMatchCount > 0
+  );
 }
 
 /**
@@ -136,7 +140,9 @@ export function validateAndGroundAnswer(
 
   // 1. Agar rasmiy dasturdan hech narsa topilmagan bo'lsa
   if (curriculumMatches.length === 0) {
-    const registryInfo = understanding.detectedSubject ? getSubjectCurriculumStatus(understanding.detectedSubject) : null;
+    const registryInfo = understanding.detectedSubject
+      ? getSubjectCurriculumStatus(understanding.detectedSubject)
+      : null;
     const isUnseededSubject = registryInfo?.status === "NOT_AVAILABLE";
 
     /*
@@ -147,7 +153,10 @@ export function validateAndGroundAnswer(
       ma'no. Ikkinchi holatda qaysi sinflar mavjudligini aytish
       foydalanuvchiga to'g'ridan-to'g'ri yordam beradi.
     */
-    const coverage = getCurriculumCoverage(understanding.detectedSubject, understanding.detectedGrade);
+    const coverage = getCurriculumCoverage(
+      understanding.detectedSubject,
+      understanding.detectedGrade,
+    );
 
     let ungroundedCaution = "";
 
@@ -157,22 +166,22 @@ export function validateAndGroundAnswer(
         understanding.detectedLanguage === "RU"
           ? `Примечание: официальная учебная программа по предмету «${coverage.subject}» оцифрована только для классов ${grades}. Для ${coverage.requestedGrade} официальных данных нет, поэтому ответ основан на общих методических рекомендациях.`
           : understanding.detectedLanguage === "EN"
-          ? `Note: the official curriculum for ${coverage.subject} is digitised only for grades ${grades}. No official data exists for ${coverage.requestedGrade}, so this answer is based on general pedagogical guidance.`
-          : `Eslatma: «${coverage.subject}» fani bo'yicha rasmiy o'quv dasturi faqat ${grades} uchun bazaga kiritilgan. ${coverage.requestedGrade} bo'yicha rasmiy ma'lumot yo'q, shuning uchun javob umumiy metodik tavsiyalar asosida tayyorlandi.`;
+            ? `Note: the official curriculum for ${coverage.subject} is digitised only for grades ${grades}. No official data exists for ${coverage.requestedGrade}, so this answer is based on general pedagogical guidance.`
+            : `Eslatma: «${coverage.subject}» fani bo'yicha rasmiy o'quv dasturi faqat ${grades} uchun bazaga kiritilgan. ${coverage.requestedGrade} bo'yicha rasmiy ma'lumot yo'q, shuning uchun javob umumiy metodik tavsiyalar asosida tayyorlandi.`;
     } else if (isUnseededSubject) {
       ungroundedCaution =
         understanding.detectedLanguage === "RU"
           ? `Примечание: Точное соответствие в официальной учебной программе не найдено (база по предмету «${understanding.detectedSubject}» пока не загружена). Ответ составлен на основе общих методических стандартов.`
           : understanding.detectedLanguage === "EN"
-          ? `Note: No exact match found in official curriculum (curriculum for ${understanding.detectedSubject} is not yet seeded). Response is based on general pedagogical guidelines.`
-          : `Eslatma: Ushbu mavzu rasmiy o'quv dasturidan topilmadi («${understanding.detectedSubject}» fani bo'yicha rasmiy DTS dasturi hozircha bazaga kiritilmagan). Javob umumiy pedagogik va metodik tavsiyalar asosida tayyorlandi.`;
+            ? `Note: No exact match found in official curriculum (curriculum for ${understanding.detectedSubject} is not yet seeded). Response is based on general pedagogical guidelines.`
+            : `Eslatma: Ushbu mavzu rasmiy o'quv dasturidan topilmadi («${understanding.detectedSubject}» fani bo'yicha rasmiy DTS dasturi hozircha bazaga kiritilmagan). Javob umumiy pedagogik va metodik tavsiyalar asosida tayyorlandi.`;
     } else {
       ungroundedCaution =
         understanding.detectedLanguage === "RU"
           ? "Примечание: Точное соответствие в официальной учебной программе не найдено. Ответ составлен на основе общих методических рекомендаций."
           : understanding.detectedLanguage === "EN"
-          ? "Note: No exact match found in official curriculum. The response is based on general pedagogical principles."
-          : "Eslatma: Ushbu mavzu rasmiy o'quv dasturidan topilmadi. Javob umumiy pedagogik va metodik tavsiyalar asosida tayyorlandi.";
+            ? "Note: No exact match found in official curriculum. The response is based on general pedagogical principles."
+            : "Eslatma: Ushbu mavzu rasmiy o'quv dasturidan topilmadi. Javob umumiy pedagogik va metodik tavsiyalar asosida tayyorlandi.";
     }
 
     claims.push({
@@ -188,7 +197,9 @@ export function validateAndGroundAnswer(
       isGrounded: false,
       groundingScore: 0.0,
       isAbstained: true,
-      caution: answer.caution ? `${answer.caution} | ${ungroundedCaution}` : ungroundedCaution,
+      caution: answer.caution
+        ? `${answer.caution} | ${ungroundedCaution}`
+        : ungroundedCaution,
       sourceCitations: [],
       claims,
       contradictions: [],
@@ -222,14 +233,15 @@ export function validateAndGroundAnswer(
   // b) Grade claim va Cross-grade tekshiruvi (Phase 8)
   let crossGradeCaution: string | undefined;
   if (topMatch.isCrossGrade && topMatch.requestedGrade && topMatch.availableGrade) {
-    const isMismatch = topMatch.requestedGrade.toLowerCase() !== topMatch.availableGrade.toLowerCase();
+    const isMismatch =
+      topMatch.requestedGrade.toLowerCase() !== topMatch.availableGrade.toLowerCase();
     if (isMismatch) {
       crossGradeCaution =
         understanding.detectedLanguage === "RU"
           ? `Внимание: Данная тема в официальной программе соотнесена с ${topMatch.availableGrade} (запрошен ${topMatch.requestedGrade}).`
           : understanding.detectedLanguage === "EN"
-          ? `Notice: This topic is linked to ${topMatch.availableGrade} in the curriculum (requested ${topMatch.requestedGrade}).`
-          : `Diqqat: Ushbu mavzu rasmiy o'quv dasturida ${topMatch.availableGrade} bilan bog'langan (so'rovda ${topMatch.requestedGrade} kiritilgan).`;
+            ? `Notice: This topic is linked to ${topMatch.availableGrade} in the curriculum (requested ${topMatch.requestedGrade}).`
+            : `Diqqat: Ushbu mavzu rasmiy o'quv dasturida ${topMatch.availableGrade} bilan bog'langan (so'rovda ${topMatch.requestedGrade} kiritilgan).`;
 
       claims.push({
         type: "grade",
@@ -334,7 +346,9 @@ export function validateAndGroundAnswer(
   // d) Expected Outcomes claim tekshiruvi
   if (topMatch.expectedOutcomes && topMatch.expectedOutcomes.length > 0) {
     const outcomeClean = topMatch.expectedOutcomes.join(" ").toLowerCase();
-    const isOutcomeMentioned = understanding.keywords.some((k) => outcomeClean.includes(k.toLowerCase()));
+    const isOutcomeMentioned = understanding.keywords.some((k) =>
+      outcomeClean.includes(k.toLowerCase()),
+    );
     claims.push({
       type: "outcome",
       claim: `Kutilayotgan ta'limiy natijalar: ${topMatch.expectedOutcomes.length} ta kompetensiya mavjud`,
@@ -387,17 +401,23 @@ export function validateAndGroundAnswer(
   const evidenceTitles = curriculumMatches.map((m) =>
     m.topicName.toUpperCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'"),
   );
-  const answerText = [answer.answer, ...answer.keyPoints, ...answer.classroomIdeas].join(" ");
+  const answerText = [answer.answer, ...answer.keyPoints, ...answer.classroomIdeas].join(
+    " ",
+  );
 
   for (const match of answerText.matchAll(QUOTED_SECTION)) {
-    const quoted = match[1].trim().toUpperCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
+    const quoted = match[1]
+      .trim()
+      .toUpperCase()
+      .replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
 
     // Faqat rasmiy bo'lim sifatida taqdim etilgan iqtiboslar tekshiriladi.
     const start = Math.max(0, match.index - 60);
     const context = answerText.slice(start, match.index).toLowerCase();
-    const claimsOfficial = /(dts|rasmiy|o'quv dastur|дтс|официальн|учебной программ|curriculum|official)/.test(
-      context.replace(/['\u2018\u2019\u02BB\u02BC]/g, "'"),
-    );
+    const claimsOfficial =
+      /(dts|rasmiy|o'quv dastur|дтс|официальн|учебной программ|curriculum|official)/.test(
+        context.replace(/['\u2018\u2019\u02BB\u02BC]/g, "'"),
+      );
     if (!claimsOfficial) continue;
 
     const isKnown = evidenceTitles.some(
@@ -428,8 +448,8 @@ export function validateAndGroundAnswer(
       understanding.detectedLanguage === "RU"
         ? `Внимание: Найдено лишь частичное соответствие разделу «${topMatch.topicName}». Проверьте соответствие программе вашего класса.`
         : understanding.detectedLanguage === "EN"
-        ? `Caution: Only partial match found for section "${topMatch.topicName}". Please verify grade-level suitability.`
-        : `Diqqat: Mazkur mavzu rasmiy dasturdagi «${topMatch.topicName}» bo'limiga qisman mos keladi. Sinf darsligingiz bilan solishtirib ko'ring.`;
+          ? `Caution: Only partial match found for section "${topMatch.topicName}". Please verify grade-level suitability.`
+          : `Diqqat: Mazkur mavzu rasmiy dasturdagi «${topMatch.topicName}» bo'limiga qisman mos keladi. Sinf darsligingiz bilan solishtirib ko'ring.`;
   }
 
   // Ogohlantirishlarni birlashtirish
@@ -455,23 +475,25 @@ export function validateAndGroundAnswer(
 
   const supportedClaimRate = Number((supportedCount / totalClaims).toFixed(2));
   const contradictionRate = Number((contradictedCount / totalClaims).toFixed(2));
-  const factualContradictionRate = Number((byConflict("FACTUAL_CONTRADICTION") / totalClaims).toFixed(2));
-  const gradeConflictRate = Number((byConflict("GRADE_CONFLICT") / totalClaims).toFixed(2));
-  const sourceConflictRate = Number((byConflict("SOURCE_CONFLICT") / totalClaims).toFixed(2));
+  const factualContradictionRate = Number(
+    (byConflict("FACTUAL_CONTRADICTION") / totalClaims).toFixed(2),
+  );
+  const gradeConflictRate = Number(
+    (byConflict("GRADE_CONFLICT") / totalClaims).toFixed(2),
+  );
+  const sourceConflictRate = Number(
+    (byConflict("SOURCE_CONFLICT") / totalClaims).toFixed(2),
+  );
   const unsupportedClaimRate = Number((unsupportedCount / totalClaims).toFixed(2));
 
   const isGrounded =
-    curriculumMatches.length > 0 &&
-    topMatch.score >= 0.45 &&
-    contradictedCount === 0;
+    curriculumMatches.length > 0 && topMatch.score >= 0.45 && contradictedCount === 0;
 
   return {
     isGrounded,
     isAbstained: topMatch.score < 0.35,
     groundingScore:
-      contradictions.length > 0
-        ? Math.max(0.2, topMatch.score - 0.25)
-        : topMatch.score,
+      contradictions.length > 0 ? Math.max(0.2, topMatch.score - 0.25) : topMatch.score,
     caution: allCautions.length > 0 ? allCautions : undefined,
     sourceCitations: citations,
     claims,

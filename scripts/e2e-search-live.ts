@@ -65,7 +65,10 @@ async function main() {
 
   for (const testCase of CASES) {
     // Production kirish nuqtasi: so'rov avval zod sxemasidan o'tadi.
-    const input = searchInputSchema.parse({ question: testCase.question, language: "UZ" });
+    const input = searchInputSchema.parse({
+      question: testCase.question,
+      language: "UZ",
+    });
 
     const started = Date.now();
     const result = await runSearch(input);
@@ -73,7 +76,10 @@ async function main() {
     latencies.push(elapsed);
     totalCostUsd += result.costMetrics?.estimatedCostUsd ?? 0;
 
-    const verified = isOfficiallyVerified(result.grounding, result.curriculumMatches.length);
+    const verified = isOfficiallyVerified(
+      result.grounding,
+      result.curriculumMatches.length,
+    );
     /*
       Sinf tafovuti — UI va validator bilan BIR XIL ta'rif: faqat 1-o'rindagi
       moslik. Ro'yxatning quyi o'rinlarida boshqa sinf bo'limi bo'lishi
@@ -93,8 +99,10 @@ async function main() {
 
     // 1. Javob sxemasi — `generateJson` allaqachon tekshiradi, lekin
     //    bu yerda shakl haqiqatan to'lganini ham ko'ramiz.
-    if (result.answer.keyPoints.length < 3) problems.push(`${testCase.name}: keyPoints < 3`);
-    if (result.answer.classroomIdeas.length < 2) problems.push(`${testCase.name}: classroomIdeas < 2`);
+    if (result.answer.keyPoints.length < 3)
+      problems.push(`${testCase.name}: keyPoints < 3`);
+    if (result.answer.classroomIdeas.length < 2)
+      problems.push(`${testCase.name}: classroomIdeas < 2`);
 
     // 2. Sirlar hech qachon javobga chiqmasligi kerak.
     const serialized = JSON.stringify(result);
@@ -107,13 +115,18 @@ async function main() {
 
     // 3. Har bir iqtibos bazadagi haqiqiy yozuvga tegishli bo'lishi shart.
     for (const citation of result.grounding.sourceCitations) {
-      const exists = await prisma.curriculumTopic.findUnique({ where: { id: citation.sourceId } });
-      if (!exists) problems.push(`${testCase.name}: bazada yo'q dalil id ${citation.sourceId}`);
+      const exists = await prisma.curriculumTopic.findUnique({
+        where: { id: citation.sourceId },
+      });
+      if (!exists)
+        problems.push(`${testCase.name}: bazada yo'q dalil id ${citation.sourceId}`);
     }
 
     // 4. Kutilgan xatti-harakat.
     if (testCase.expect === "grounded" && !verified) {
-      problems.push(`${testCase.name}: asoslangan javob kutilgandi (ball ${result.curriculumMatches[0]?.score ?? 0})`);
+      problems.push(
+        `${testCase.name}: asoslangan javob kutilgandi (ball ${result.curriculumMatches[0]?.score ?? 0})`,
+      );
     }
     if (testCase.expect === "cross_grade" && !crossGrade) {
       problems.push(`${testCase.name}: sinf tafovuti ogohlantirishi kutilgandi`);
@@ -124,12 +137,18 @@ async function main() {
 
     console.log(`▶ ${testCase.name}`);
     console.log(`  savol:      ${testCase.question}`);
-    console.log(`  fan/sinf:   ${result.understanding.detectedSubject ?? "—"} / ${result.understanding.detectedGrade ?? "—"}`);
+    console.log(
+      `  fan/sinf:   ${result.understanding.detectedSubject ?? "—"} / ${result.understanding.detectedGrade ?? "—"}`,
+    );
     console.log(`  tasdiq:     ${verified ? "RASMIY DTS" : "umumiy metodik"}`);
     console.log(`  cross-grade:${crossGrade ? " HA" : " yo'q"}`);
     console.log(`  dalillar:   ${result.curriculumMatches.length}`);
-    console.log(`  E2E vaqt:   ${elapsed} ms (AI: ${result.latencyBreakdown.aiMs} ms, retrieval: ${result.latencyBreakdown.retrievalMs} ms)`);
-    console.log(`  tokenlar:   in ${result.usage.inputTokens} / out ${result.usage.outputTokens}, ~$${(result.costMetrics?.estimatedCostUsd ?? 0).toFixed(5)}`);
+    console.log(
+      `  E2E vaqt:   ${elapsed} ms (AI: ${result.latencyBreakdown.aiMs} ms, retrieval: ${result.latencyBreakdown.retrievalMs} ms)`,
+    );
+    console.log(
+      `  tokenlar:   in ${result.usage.inputTokens} / out ${result.usage.outputTokens}, ~$${(result.costMetrics?.estimatedCostUsd ?? 0).toFixed(5)}`,
+    );
     console.log("");
 
     results.push({
@@ -152,7 +171,10 @@ async function main() {
   }
 
   // Kesh: ayni so'rov ikkinchi marta AI chaqirmasligi kerak.
-  const cacheProbeInput = searchInputSchema.parse({ question: CASES[0].question, language: "UZ" });
+  const cacheProbeInput = searchInputSchema.parse({
+    question: CASES[0].question,
+    language: "UZ",
+  });
   const cachedStart = Date.now();
   const cached = await runSearch(cacheProbeInput);
   const cachedMs = Date.now() - cachedStart;
@@ -182,7 +204,9 @@ async function main() {
   );
 
   console.log("----------------------------------------------------------");
-  console.log(`E2E latency (LLM bilan): median ${report.e2eLatencyMs.median} ms, max ${report.e2eLatencyMs.max} ms`);
+  console.log(
+    `E2E latency (LLM bilan): median ${report.e2eLatencyMs.median} ms, max ${report.e2eLatencyMs.max} ms`,
+  );
   console.log(`Kesh urilishi: ${cached.cached ? "HA" : "YO'Q"} (${cachedMs} ms)`);
   console.log(`Jami taxminiy xarajat: ~$${report.totalEstimatedCostUsd}`);
 

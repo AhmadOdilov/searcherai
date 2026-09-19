@@ -126,15 +126,20 @@ export function buildSearchUserPrompt(
   const effectiveSubject = input.subject ?? understanding?.detectedSubject;
   const effectiveGrade = input.grade ?? understanding?.detectedGrade;
 
-  if (effectiveSubject !== undefined) lines.push(`${labels.subject}: ${effectiveSubject}`);
+  if (effectiveSubject !== undefined)
+    lines.push(`${labels.subject}: ${effectiveSubject}`);
   if (effectiveGrade !== undefined) {
     lines.push(`${labels.grade}: ${effectiveGrade}`);
     const gradeNum = parseInt(effectiveGrade.replace(/\D/g, ""), 10);
     if (!isNaN(gradeNum)) {
       if (gradeNum <= 6) {
-        lines.push("Uslubiy yo'riqnoma: Kichik sinf darajasi (5-6 sinf) — tushuntirish sodda, ko'rgazmali, hayotiy misollar bilan berilsin.");
+        lines.push(
+          "Uslubiy yo'riqnoma: Kichik sinf darajasi (5-6 sinf) — tushuntirish sodda, ko'rgazmali, hayotiy misollar bilan berilsin.",
+        );
       } else if (gradeNum >= 9) {
-        lines.push("Uslubiy yo'riqnoma: Yuqori sinf darajasi (9-11 sinf) — chuqur ilmiy, nazariy asoslangan, atamalar va formulalar bilan to'liq berilsin.");
+        lines.push(
+          "Uslubiy yo'riqnoma: Yuqori sinf darajasi (9-11 sinf) — chuqur ilmiy, nazariy asoslangan, atamalar va formulalar bilan to'liq berilsin.",
+        );
       }
     }
   }
@@ -166,7 +171,9 @@ export function buildSearchUserPrompt(
         lines.push(`  Mavzular mazmuni: ${topic.description.slice(0, 300)}`);
       }
       if (topic.expectedOutcomes.length > 0) {
-        lines.push(`  Kutilayotgan natijalar: ${topic.expectedOutcomes.slice(0, 2).join("; ")}`);
+        lines.push(
+          `  Kutilayotgan natijalar: ${topic.expectedOutcomes.slice(0, 2).join("; ")}`,
+        );
       }
     }
     lines.push("");

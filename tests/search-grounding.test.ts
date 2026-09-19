@@ -7,9 +7,17 @@ import type { SearchAnswer } from "../lib/validations/search";
 
 describe("search validator & grounding guard", () => {
   const dummyAnswer: SearchAnswer = {
-    answer: "Kasrlar bir butunning qismlarini ifodalaydi. Ularni qo'shish uchun maxrajlari bir xil bo'lishi shart.",
-    keyPoints: ["Surat va maxraj tushunchasi", "Bir xil maxrajli kasrlar", "Aralash sonlar"],
-    classroomIdeas: ["Pitsa yoki qog'oz bo'laklari yordamida ko'rsatish", "Interaktiv doskada o'yin"],
+    answer:
+      "Kasrlar bir butunning qismlarini ifodalaydi. Ularni qo'shish uchun maxrajlari bir xil bo'lishi shart.",
+    keyPoints: [
+      "Surat va maxraj tushunchasi",
+      "Bir xil maxrajli kasrlar",
+      "Aralash sonlar",
+    ],
+    classroomIdeas: [
+      "Pitsa yoki qog'oz bo'laklari yordamida ko'rsatish",
+      "Interaktiv doskada o'yin",
+    ],
   };
 
   it("o'quv dasturi topilmaganda ungrounded ogohlantirish qo'shadi", () => {

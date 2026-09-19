@@ -13,7 +13,11 @@
 import fs from "fs";
 import path from "path";
 import { performance } from "perf_hooks";
-import { understandQuery, type SearchIntent, type AudienceMode } from "../lib/search/understanding";
+import {
+  understandQuery,
+  type SearchIntent,
+  type AudienceMode,
+} from "../lib/search/understanding";
 import { retrieveCurriculumCandidates } from "../lib/search/curriculum-matcher";
 import { rerankCandidates } from "../lib/search/reranker";
 import { searchCache } from "../lib/search/cache";
@@ -219,7 +223,8 @@ async function main() {
     const isAudienceOk = u.audience === item.expectedAudience;
     if (isAudienceOk) audienceCorrect++;
 
-    const isFullyCorrect = isLangOk && isSubjOk && isGradeOk && isIntentOk && isAudienceOk;
+    const isFullyCorrect =
+      isLangOk && isSubjOk && isGradeOk && isIntentOk && isAudienceOk;
     if (diffStats[item.difficulty]) {
       diffStats[item.difficulty].total++;
       if (isFullyCorrect) diffStats[item.difficulty].correct++;
@@ -376,10 +381,17 @@ async function main() {
   const p50 = latenciesTotal[Math.floor(latenciesTotal.length * 0.5)];
   const p95 = latenciesTotal[Math.floor(latenciesTotal.length * 0.95)];
   const p99 = latenciesTotal[Math.floor(latenciesTotal.length * 0.99)];
-  const totalColdAvgMs = latenciesTotal.reduce((a, b) => a + b, 0) / latenciesTotal.length;
+  const totalColdAvgMs =
+    latenciesTotal.reduce((a, b) => a + b, 0) / latenciesTotal.length;
   const undAvgMs = latenciesUnd.reduce((a, b) => a + b, 0) / latenciesUnd.length;
-  const retAvgMs = latenciesRet.length > 0 ? latenciesRet.reduce((a, b) => a + b, 0) / latenciesRet.length : 0;
-  const rerankAvgMs = latenciesRerank.length > 0 ? latenciesRerank.reduce((a, b) => a + b, 0) / latenciesRerank.length : 0;
+  const retAvgMs =
+    latenciesRet.length > 0
+      ? latenciesRet.reduce((a, b) => a + b, 0) / latenciesRet.length
+      : 0;
+  const rerankAvgMs =
+    latenciesRerank.length > 0
+      ? latenciesRerank.reduce((a, b) => a + b, 0) / latenciesRerank.length
+      : 0;
 
   const r20 = (candHit20 / evalCount) * 100;
   const r50 = (candHit50 / evalCount) * 100;
@@ -394,9 +406,12 @@ async function main() {
   const ndcg5 = ndcg5Sum / evalCount;
   const ndcg10 = ndcg10Sum / evalCount;
 
-  const abstentionPrecision = unseededAbstained / (unseededAbstained + seededAbstained || 1);
+  const abstentionPrecision =
+    unseededAbstained / (unseededAbstained + seededAbstained || 1);
   const abstentionRecall = unseededAbstained / unseededTotal;
-  const abstentionF1 = (2 * abstentionPrecision * abstentionRecall) / (abstentionPrecision + abstentionRecall || 1);
+  const abstentionF1 =
+    (2 * abstentionPrecision * abstentionRecall) /
+    (abstentionPrecision + abstentionRecall || 1);
 
   const report: EvaluationReportV4 = {
     timestamp: new Date().toISOString(),
@@ -410,13 +425,21 @@ async function main() {
       byDifficulty: Object.fromEntries(
         Object.entries(diffStats).map(([k, v]) => [
           k,
-          { total: v.total, correct: v.correct, accuracy: (v.correct / (v.total || 1)) * 100 },
+          {
+            total: v.total,
+            correct: v.correct,
+            accuracy: (v.correct / (v.total || 1)) * 100,
+          },
         ]),
       ),
       byLanguage: Object.fromEntries(
         Object.entries(langStats).map(([k, v]) => [
           k,
-          { total: v.total, correct: v.correct, accuracy: (v.correct / (v.total || 1)) * 100 },
+          {
+            total: v.total,
+            correct: v.correct,
+            accuracy: (v.correct / (v.total || 1)) * 100,
+          },
         ]),
       ),
     },
@@ -450,7 +473,10 @@ async function main() {
     crossGradeWarnings: {
       totalCrossGradeQueries: crossGradeTotal,
       correctlyDetectedWarnings: crossGradeDetected,
-      accuracy: crossGradeTotal > 0 ? Number(((crossGradeDetected / crossGradeTotal) * 100).toFixed(2)) : 100,
+      accuracy:
+        crossGradeTotal > 0
+          ? Number(((crossGradeDetected / crossGradeTotal) * 100).toFixed(2))
+          : 100,
     },
     latencyPercentiles: {
       understandingAvgMs: Number(undAvgMs.toFixed(2)),
@@ -507,7 +533,7 @@ async function main() {
   fs.writeFileSync(
     path.join(reportDir, "search-v4-evaluation.json"),
     JSON.stringify(report, null, 2),
-    "utf8"
+    "utf8",
   );
   console.log("\n✅ Evaluation Report saved to reports/search-v4-evaluation.json");
 }

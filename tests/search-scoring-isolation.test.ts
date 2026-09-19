@@ -58,7 +58,8 @@ describe("scoring.ts — quvurdan ajratilgan", () => {
     for (const root of roots) {
       for (const file of collectTsFiles(root)) {
         const source = readFileSync(file, "utf8");
-        if (/search\/scoring/.test(source)) offenders.push(path.relative(process.cwd(), file));
+        if (/search\/scoring/.test(source))
+          offenders.push(path.relative(process.cwd(), file));
       }
     }
 

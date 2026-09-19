@@ -74,7 +74,11 @@ export function determineAdaptiveStrategy(
     Boolean(understanding.ambiguityFlags?.isSubjectAmbiguous) ||
     Boolean(understanding.isAmbiguous);
 
-  if (isAmbiguous && understanding.ambiguityFlags?.candidateSubjects && understanding.ambiguityFlags.candidateSubjects.length > 1) {
+  if (
+    isAmbiguous &&
+    understanding.ambiguityFlags?.candidateSubjects &&
+    understanding.ambiguityFlags.candidateSubjects.length > 1
+  ) {
     const candidates = understanding.ambiguityFlags.candidateSubjects;
     const term = understanding.ambiguityTerm ?? understanding.topic;
 
@@ -82,8 +86,8 @@ export function determineAdaptiveStrategy(
       understanding.language === "RU"
         ? `В контексте какого предмета вы ищете «${term}»?`
         : understanding.language === "EN"
-        ? `In the context of which subject are you searching for "${term}"?`
-        : `«${term}» tushunchasini qaysi fan kontekstida qidiryapsiz?`;
+          ? `In the context of which subject are you searching for "${term}"?`
+          : `«${term}» tushunchasini qaysi fan kontekstida qidiryapsiz?`;
 
     const options: ClarificationOption[] = candidates.map((subj) => ({
       label: subj,
@@ -119,7 +123,9 @@ export function determineAdaptiveStrategy(
   }
 
   // 3. Murakkablikni baholash (Easy, Medium, Hard)
-  const wordCount = (understanding.normalizedQuery || understanding.topic).trim().split(/\s+/).length;
+  const wordCount = (understanding.normalizedQuery || understanding.topic)
+    .trim()
+    .split(/\s+/).length;
   const isHardIntent =
     understanding.intent === "compare" ||
     understanding.intent === "lesson_plan" ||

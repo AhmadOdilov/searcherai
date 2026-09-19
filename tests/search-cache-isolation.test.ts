@@ -35,7 +35,11 @@ describe("kesh kaliti izolyatsiyasi (§12)", () => {
       keys.add(cache.generateKey(understandQuery(variant)));
     }
 
-    assert.equal(keys.size, variants.length + 1, "har bir variant alohida kalit olishi kerak");
+    assert.equal(
+      keys.size,
+      variants.length + 1,
+      "har bir variant alohida kalit olishi kerak",
+    );
   });
 
   it("kalit DETERMINISTIK — bir xil so'rov bir xil kalit beradi", () => {
@@ -45,7 +49,9 @@ describe("kesh kaliti izolyatsiyasi (§12)", () => {
   });
 
   it("kalitda shaxsiy ma'lumot bo'lmaydi — u sof xesh", () => {
-    const key = cache.generateKey(understandQuery("8-sinf matematika kvadrat tenglamalar"));
+    const key = cache.generateKey(
+      understandQuery("8-sinf matematika kvadrat tenglamalar"),
+    );
     assert.match(key, /^[0-9a-f]{64}$/);
   });
 

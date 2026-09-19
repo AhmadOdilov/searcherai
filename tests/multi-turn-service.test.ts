@@ -14,14 +14,26 @@ describe("MultiTurnService (Phase 10 Backend Context & Security)", () => {
 
     // Turn 1: "Fotosintez nima?"
     const u1 = understandQuery("Fotosintez nima?");
-    MultiTurnService.addTurn(thread.id, userId, "Fotosintez nima?", u1, "Fotosintez - yorug'lik energiyasi...");
+    MultiTurnService.addTurn(
+      thread.id,
+      userId,
+      "Fotosintez nima?",
+      u1,
+      "Fotosintez - yorug'lik energiyasi...",
+    );
 
     const ctxAfterT1 = MultiTurnService.getContextForNextTurn(thread.id, userId);
     assert.ok(ctxAfterT1);
     assert.strictEqual(ctxAfterT1.previousSubject, "Biologiya");
 
     // Turn 2: "6-sinf uchun" (sinf qo'shildi, mavzu meros qilinadi)
-    const u2 = understandQuery("6-sinf uchun", undefined, undefined, undefined, ctxAfterT1);
+    const u2 = understandQuery(
+      "6-sinf uchun",
+      undefined,
+      undefined,
+      undefined,
+      ctxAfterT1,
+    );
     MultiTurnService.addTurn(thread.id, userId, "6-sinf uchun", u2);
 
     const ctxAfterT2 = MultiTurnService.getContextForNextTurn(thread.id, userId);
@@ -30,7 +42,13 @@ describe("MultiTurnService (Phase 10 Backend Context & Security)", () => {
     assert.strictEqual(ctxAfterT2.previousSubject, "Biologiya");
 
     // Turn 3: "10 ta test tuz" (intent qo'shildi, mavzu va sinf saqlanadi)
-    const u3 = understandQuery("10 ta test tuz", undefined, undefined, undefined, ctxAfterT2);
+    const u3 = understandQuery(
+      "10 ta test tuz",
+      undefined,
+      undefined,
+      undefined,
+      ctxAfterT2,
+    );
     MultiTurnService.addTurn(thread.id, userId, "10 ta test tuz", u3);
 
     assert.strictEqual(u3.detectedIntent, "quiz_test");
@@ -52,7 +70,10 @@ describe("MultiTurnService (Phase 10 Backend Context & Security)", () => {
         MultiTurnService.getThread(threadA.id, userB);
       },
       (err: Error) => {
-        return err.message.includes("IDOR detected") || err.message.includes("Ruxsatsiz kirish");
+        return (
+          err.message.includes("IDOR detected") ||
+          err.message.includes("Ruxsatsiz kirish")
+        );
       },
       "IDOR ruxsatsiz kirish to'xtatilmadi",
     );
@@ -63,7 +84,10 @@ describe("MultiTurnService (Phase 10 Backend Context & Security)", () => {
         MultiTurnService.addTurn(threadA.id, userB, "hacker query", uA);
       },
       (err: Error) => {
-        return err.message.includes("IDOR detected") || err.message.includes("Ruxsatsiz kirish");
+        return (
+          err.message.includes("IDOR detected") ||
+          err.message.includes("Ruxsatsiz kirish")
+        );
       },
     );
   });
@@ -108,4 +132,3 @@ describe("MultiTurnService (Phase 10 Backend Context & Security)", () => {
     assert.ok(win.summary.includes("Avvalgi bosqichlarda muhokama qilingan mavzular"));
   });
 });
-

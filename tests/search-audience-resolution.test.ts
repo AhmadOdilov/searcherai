@@ -90,7 +90,9 @@ describe("auditoriya — DALILSIZ xulosa olib tashlandi (V6)", () => {
     NOTO'G'RI bo'lgan: "mustaqil ish topshiriqlari" ni O'QITUVCHI yozadi.
   */
   it("topshiriq TAYYORLASH so'rovi o'quvchi deb belgilanmaydi", () => {
-    const u = understandQuery("6-sinf biologiya ildiz va barg tuzilishi mustaqil ish topshiriqlari");
+    const u = understandQuery(
+      "6-sinf biologiya ildiz va barg tuzilishi mustaqil ish topshiriqlari",
+    );
     assert.notEqual(u.audienceResolution, "INFERRED_STUDENT");
     assert.notEqual(u.audienceResolution, "EXPLICIT_STUDENT");
   });
@@ -137,8 +139,12 @@ describe("auditoriya noaniqligi RANKINGGA ta'sir qilmaydi", () => {
   ];
 
   it("bir xil mavzu turli auditoriyada AYNAN bir xil reyting oladi", async () => {
-    const teacherQuery = understandQuery("8-sinf matematika kvadrat tenglama o'qituvchi uchun");
-    const studentQuery = understandQuery("8-sinf matematika kvadrat tenglama bolaga tushuntir");
+    const teacherQuery = understandQuery(
+      "8-sinf matematika kvadrat tenglama o'qituvchi uchun",
+    );
+    const studentQuery = understandQuery(
+      "8-sinf matematika kvadrat tenglama bolaga tushuntir",
+    );
     const unknownQuery = understandQuery("8-sinf matematika kvadrat tenglama");
 
     assert.equal(teacherQuery.audienceResolution, "EXPLICIT_TEACHER");

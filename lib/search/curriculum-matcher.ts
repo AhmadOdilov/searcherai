@@ -7,7 +7,10 @@ import { stemUzbekWord, getApostropheVariants } from "./normalization";
 import { expandRetrievalTerms } from "./concept-map";
 import { rewriteQueryForRetrieval } from "./rewrite";
 import { rerankCandidates, type RerankerCandidate } from "./reranker";
-import { getCurriculumCoverage, canProvideOfficialEvidence } from "@/lib/curriculum/coverage";
+import {
+  getCurriculumCoverage,
+  canProvideOfficialEvidence,
+} from "@/lib/curriculum/coverage";
 
 /**
  * Darajalangan o'quv dasturi bo'limi natijasi va to'liq manba provenansi (Phase 12).
@@ -32,7 +35,6 @@ export interface RankedCurriculumMatch extends CurriculumMatch {
     intentMatch: number;
   };
 }
-
 
 /**
  * O'quv dasturi bazasidan birlamchi nomzodlarni qidirib topish (Retrieval Candidate Generation bosqichi).
@@ -77,11 +79,18 @@ export async function retrieveCurriculumCandidates(
     ...baseTerms,
     ...stemmedKeywords,
     extractedTopic,
-    ...rewrites.retrievalRepresentations.flatMap((r) => r.split(/\s+/)).filter((w) => w.length >= 3),
+    ...rewrites.retrievalRepresentations
+      .flatMap((r) => r.split(/\s+/))
+      .filter((w) => w.length >= 3),
   ]);
 
   // Cross-lingual tushunchalar kengaytmasi — reranker ham AYNAN shu manbadan foydalanadi.
-  const conceptExpansion = expandRetrievalTerms(extractedTopic, keywords, detectedSubject, detectedGrade);
+  const conceptExpansion = expandRetrievalTerms(
+    extractedTopic,
+    keywords,
+    detectedSubject,
+    detectedGrade,
+  );
   for (const term of conceptExpansion.expandedTerms) {
     expandedTerms.add(term);
     for (const t of term.split(/\s+/)) {
@@ -90,10 +99,31 @@ export async function retrieveCurriculumCandidates(
   }
 
   const STOP_CLAUSE_TERMS = new Set([
-    "sinf", "класс", "grade", "class",
-    "matematika", "ona tili", "adabiyot", "fizika", "kimyo", "biologiya",
-    "tarix", "geografiya", "informatika", "ingliz tili", "english", "math", "physics", "chemistry",
-    "dars", "reja", "mavzu", "haqida", "uchun", "asosiy", "umumiy"
+    "sinf",
+    "класс",
+    "grade",
+    "class",
+    "matematika",
+    "ona tili",
+    "adabiyot",
+    "fizika",
+    "kimyo",
+    "biologiya",
+    "tarix",
+    "geografiya",
+    "informatika",
+    "ingliz tili",
+    "english",
+    "math",
+    "physics",
+    "chemistry",
+    "dars",
+    "reja",
+    "mavzu",
+    "haqida",
+    "uchun",
+    "asosiy",
+    "umumiy",
   ]);
 
   const isStopTerm = (term: string) => {
@@ -290,7 +320,10 @@ export async function retrieveCurriculumCandidates(
       }
 
       const seen = new Set(candidates.map((c) => c.id));
-      candidates = [...candidates, ...crossGradeCandidates.filter((c) => !seen.has(c.id))];
+      candidates = [
+        ...candidates,
+        ...crossGradeCandidates.filter((c) => !seen.has(c.id)),
+      ];
     }
 
     // 2.3 Agar umumiy so'rov bo'lsa (kalit so'zlar bo'yicha cheklov yo'q), shu sinf/fanning barcha mavzulari olinadi

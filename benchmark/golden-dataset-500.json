@@ -2084,11 +2084,7 @@
     "difficulty": "adversarial",
     "category": "polysemic_ambiguous",
     "isAmbiguous": true,
-    "ambiguityCandidates": [
-      "Fizika",
-      "Kimyo",
-      "Matematika"
-    ],
+    "ambiguityCandidates": ["Fizika", "Kimyo", "Matematika"],
     "goldEvidenceTopicId": null,
     "goldEvidenceTopicTitle": null
   },
@@ -2101,11 +2097,7 @@
     "difficulty": "adversarial",
     "category": "polysemic_ambiguous",
     "isAmbiguous": true,
-    "ambiguityCandidates": [
-      "Matematika",
-      "Biologiya",
-      "Ona tili"
-    ],
+    "ambiguityCandidates": ["Matematika", "Biologiya", "Ona tili"],
     "goldEvidenceTopicId": null,
     "goldEvidenceTopicTitle": null
   },
@@ -2118,10 +2110,7 @@
     "difficulty": "adversarial",
     "category": "polysemic_ambiguous",
     "isAmbiguous": true,
-    "ambiguityCandidates": [
-      "Fizika",
-      "Biologiya"
-    ],
+    "ambiguityCandidates": ["Fizika", "Biologiya"],
     "goldEvidenceTopicId": null,
     "goldEvidenceTopicTitle": null
   },
@@ -2134,10 +2123,7 @@
     "difficulty": "adversarial",
     "category": "polysemic_ambiguous",
     "isAmbiguous": true,
-    "ambiguityCandidates": [
-      "Fizika",
-      "Geografiya"
-    ],
+    "ambiguityCandidates": ["Fizika", "Geografiya"],
     "goldEvidenceTopicId": null,
     "goldEvidenceTopicTitle": null
   },
@@ -2150,10 +2136,7 @@
     "difficulty": "adversarial",
     "category": "polysemic_ambiguous",
     "isAmbiguous": true,
-    "ambiguityCandidates": [
-      "Biologiya",
-      "Informatika"
-    ],
+    "ambiguityCandidates": ["Biologiya", "Informatika"],
     "goldEvidenceTopicId": null,
     "goldEvidenceTopicTitle": null
   },

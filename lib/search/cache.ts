@@ -54,11 +54,17 @@ export class SearchLruCache {
     promptVersion?: string;
   }): void {
     let changed = false;
-    if (versions.curriculumVersion && versions.curriculumVersion !== this.curriculumVersion) {
+    if (
+      versions.curriculumVersion &&
+      versions.curriculumVersion !== this.curriculumVersion
+    ) {
       this.curriculumVersion = versions.curriculumVersion;
       changed = true;
     }
-    if (versions.retrievalVersion && versions.retrievalVersion !== this.retrievalVersion) {
+    if (
+      versions.retrievalVersion &&
+      versions.retrievalVersion !== this.retrievalVersion
+    ) {
       this.retrievalVersion = versions.retrievalVersion;
       changed = true;
     }
@@ -90,7 +96,10 @@ export class SearchLruCache {
   /**
    * So'rov parametrlari asosida 9 ta mezonli deterministik kesh kaliti yaratadi (Phase 17).
    */
-  public generateKey(understanding: QueryUnderstanding, customCurriculumVersion?: string): string {
+  public generateKey(
+    understanding: QueryUnderstanding,
+    customCurriculumVersion?: string,
+  ): string {
     const cVersion = customCurriculumVersion ?? this.curriculumVersion;
 
     const rawKey = [

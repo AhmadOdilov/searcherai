@@ -21,7 +21,7 @@
     "evaluatedQueries": 69,
     "recallAt1": 68.12,
     "recallAt3": 88.41,
-    "recallAt5": 91.30,
+    "recallAt5": 91.3,
     "mrr": 0.7771,
     "ndcgAt5": 0.8115,
     "avgDbLatencyMs": 7.51

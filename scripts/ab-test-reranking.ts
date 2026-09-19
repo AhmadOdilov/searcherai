@@ -26,10 +26,38 @@ interface WeightVariant {
 }
 
 const VARIANTS: WeightVariant[] = [
-  { name: "Variant A (Baseline)", wExact: 0.35, wSemantic: 0.25, wGradeSubj: 0.20, wOutcome: 0.10, wIntent: 0.10 },
-  { name: "Variant B (Lexical-first)", wExact: 0.50, wSemantic: 0.15, wGradeSubj: 0.20, wOutcome: 0.05, wIntent: 0.10 },
-  { name: "Variant C (Semantic-first)", wExact: 0.20, wSemantic: 0.45, wGradeSubj: 0.20, wOutcome: 0.05, wIntent: 0.10 },
-  { name: "Variant D (Hybrid Calibrated)", wExact: 0.40, wSemantic: 0.30, wGradeSubj: 0.15, wOutcome: 0.08, wIntent: 0.07 },
+  {
+    name: "Variant A (Baseline)",
+    wExact: 0.35,
+    wSemantic: 0.25,
+    wGradeSubj: 0.2,
+    wOutcome: 0.1,
+    wIntent: 0.1,
+  },
+  {
+    name: "Variant B (Lexical-first)",
+    wExact: 0.5,
+    wSemantic: 0.15,
+    wGradeSubj: 0.2,
+    wOutcome: 0.05,
+    wIntent: 0.1,
+  },
+  {
+    name: "Variant C (Semantic-first)",
+    wExact: 0.2,
+    wSemantic: 0.45,
+    wGradeSubj: 0.2,
+    wOutcome: 0.05,
+    wIntent: 0.1,
+  },
+  {
+    name: "Variant D (Hybrid Calibrated)",
+    wExact: 0.4,
+    wSemantic: 0.3,
+    wGradeSubj: 0.15,
+    wOutcome: 0.08,
+    wIntent: 0.07,
+  },
 ];
 
 async function runRerankingABTest() {
@@ -52,14 +80,29 @@ async function runRerankingABTest() {
     const latencies: number[] = [];
 
     for (const item of evaluatedQueries) {
-      const u = understandQuery(item.q, undefined, undefined, undefined, item.conversationContext);
+      const u = understandQuery(
+        item.q,
+        undefined,
+        undefined,
+        undefined,
+        item.conversationContext,
+      );
       const t0 = performance.now();
 
       // Retrieve candidates
       const baseTerms = searchTerms(u.extractedTopic);
       const stemmed = u.keywords.map(stemUzbekWord);
-      const exp = expandQueryConcepts(u.extractedTopic, u.detectedSubject, u.detectedGrade);
-      const allTerms = new Set([...baseTerms, ...stemmed, ...exp.expandedTerms, u.extractedTopic]);
+      const exp = expandQueryConcepts(
+        u.extractedTopic,
+        u.detectedSubject,
+        u.detectedGrade,
+      );
+      const allTerms = new Set([
+        ...baseTerms,
+        ...stemmed,
+        ...exp.expandedTerms,
+        u.extractedTopic,
+      ]);
 
       const variants = new Set<string>();
       for (const t of allTerms) {
@@ -68,13 +111,16 @@ async function runRerankingABTest() {
         }
       }
 
-      const orClauses = Array.from(variants).slice(0, 16).flatMap((term) => [
-        { topicName: { contains: term, mode: "insensitive" as const } },
-        { description: { contains: term, mode: "insensitive" as const } },
-      ]);
+      const orClauses = Array.from(variants)
+        .slice(0, 16)
+        .flatMap((term) => [
+          { topicName: { contains: term, mode: "insensitive" as const } },
+          { description: { contains: term, mode: "insensitive" as const } },
+        ]);
 
       const where: Record<string, unknown> = {};
-      if (u.detectedSubject) where.subject = { equals: u.detectedSubject, mode: "insensitive" };
+      if (u.detectedSubject)
+        where.subject = { equals: u.detectedSubject, mode: "insensitive" };
       if (u.detectedGrade) where.grade = { equals: u.detectedGrade, mode: "insensitive" };
       if (orClauses.length > 0) where.OR = orClauses;
 
@@ -85,16 +131,22 @@ async function runRerankingABTest() {
 
       // Score candidates according to variant
       const scored = candidates.map((c) => {
-        const norm = (s: string) => s.toUpperCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
+        const norm = (s: string) =>
+          s.toUpperCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
         const topicUpper = norm(c.topicName);
         const queryUpper = norm(u.extractedTopic);
         const descLower = c.description.toLowerCase();
 
         let exactMatch = 0;
-        if (topicUpper === queryUpper || topicUpper.includes(queryUpper) || queryUpper.includes(topicUpper)) {
+        if (
+          topicUpper === queryUpper ||
+          topicUpper.includes(queryUpper) ||
+          queryUpper.includes(topicUpper)
+        ) {
           exactMatch = 1.0;
         } else {
-          let tm = 0, dm = 0;
+          let tm = 0,
+            dm = 0;
           for (const k of stemmed) {
             if (k.length < 3) continue;
             if (topicUpper.toLowerCase().includes(k)) tm++;
@@ -109,8 +161,13 @@ async function runRerankingABTest() {
         const semanticSimilarity = Math.max(simTopic, simDesc);
 
         let gradeSubjectMatch = 0;
-        if (u.detectedSubject && c.subject.toLowerCase() === u.detectedSubject.toLowerCase()) gradeSubjectMatch += 0.5;
-        if (u.detectedGrade && c.grade.toLowerCase() === u.detectedGrade.toLowerCase()) gradeSubjectMatch += 0.5;
+        if (
+          u.detectedSubject &&
+          c.subject.toLowerCase() === u.detectedSubject.toLowerCase()
+        )
+          gradeSubjectMatch += 0.5;
+        if (u.detectedGrade && c.grade.toLowerCase() === u.detectedGrade.toLowerCase())
+          gradeSubjectMatch += 0.5;
 
         const outcomeMatch = 0.5;
         const intentMatch = 0.8;
@@ -123,7 +180,7 @@ async function runRerankingABTest() {
           variant.wIntent * intentMatch;
 
         if (u.detectedGrade && c.grade.toLowerCase() !== u.detectedGrade.toLowerCase()) {
-          total = Math.max(0, total - 0.20);
+          total = Math.max(0, total - 0.2);
         }
 
         return { ...c, totalScore: total };

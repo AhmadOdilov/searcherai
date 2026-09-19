@@ -59,7 +59,13 @@ async function main() {
 
   // 1. Duplicate & Near-duplicate check
   const exactDuplicates: { id1: string; id2: string; q: string }[] = [];
-  const nearDuplicates: { id1: string; id2: string; q1: string; q2: string; sim: number }[] = [];
+  const nearDuplicates: {
+    id1: string;
+    id2: string;
+    q1: string;
+    q2: string;
+    sim: number;
+  }[] = [];
   const seenQueries = new Map<string, string>();
 
   for (let i = 0; i < dataset.length; i++) {
@@ -116,9 +122,18 @@ async function main() {
       const expNorm = normalizeQuery(item.expectedCurriculumTopic || "").normalized;
       const matchedTopic = dbTopics.find((t) => {
         const topicNorm = normalizeQuery(t.topicName || "").normalized;
-        const subjMatch = !item.expectedSubject || t.subject.toLowerCase() === item.expectedSubject.toLowerCase();
-        const gradeMatch = !item.expectedGrade || t.grade.toLowerCase() === item.expectedGrade.toLowerCase() || item.isCrossGrade;
-        return (topicNorm.includes(expNorm) || expNorm.includes(topicNorm)) && subjMatch && gradeMatch;
+        const subjMatch =
+          !item.expectedSubject ||
+          t.subject.toLowerCase() === item.expectedSubject.toLowerCase();
+        const gradeMatch =
+          !item.expectedGrade ||
+          t.grade.toLowerCase() === item.expectedGrade.toLowerCase() ||
+          item.isCrossGrade;
+        return (
+          (topicNorm.includes(expNorm) || expNorm.includes(topicNorm)) &&
+          subjMatch &&
+          gradeMatch
+        );
       });
 
       if (matchedTopic) {
@@ -129,7 +144,7 @@ async function main() {
         // Fallback: search by topic name only in same subject
         const fallbackTopic = dbTopics.find((t) => {
           const topicNorm = normalizeQuery(t.topicName || "").normalized;
-          return (topicNorm.includes(expNorm) || expNorm.includes(topicNorm));
+          return topicNorm.includes(expNorm) || expNorm.includes(topicNorm);
         });
         if (fallbackTopic) {
           item.goldEvidenceTopicId = fallbackTopic.id;
@@ -149,8 +164,12 @@ async function main() {
   }
 
   console.log(`- Linked Gold Evidence IDs: ${linkedGoldEvidenceCount}`);
-  console.log(`- Queries expecting Evidence but not matched in DB: ${unlinkedCurriculumExpected}`);
-  console.log(`- Queries expecting Abstention (no DB evidence / unseeded): ${abstentionExpectedCount}`);
+  console.log(
+    `- Queries expecting Evidence but not matched in DB: ${unlinkedCurriculumExpected}`,
+  );
+  console.log(
+    `- Queries expecting Abstention (no DB evidence / unseeded): ${abstentionExpectedCount}`,
+  );
 
   // 4. Distributions
   const subjectDist: Record<string, number> = {};
@@ -200,13 +219,15 @@ async function main() {
   fs.writeFileSync(
     path.join(reportDir, "golden-dataset-audit.json"),
     JSON.stringify(auditReport, null, 2),
-    "utf8"
+    "utf8",
   );
 
   // Also write updated dataset with goldEvidenceTopicId and goldEvidenceTopicTitle back
   fs.writeFileSync(datasetPath, JSON.stringify(dataset, null, 2), "utf8");
 
-  console.log("✅ Golden Dataset Audit finished! Report written to reports/golden-dataset-audit.json");
+  console.log(
+    "✅ Golden Dataset Audit finished! Report written to reports/golden-dataset-audit.json",
+  );
 }
 
 main()

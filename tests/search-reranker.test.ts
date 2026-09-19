@@ -12,7 +12,9 @@ import { understandQuery } from "../lib/search/understanding";
   Ya'ni V4'gacha reranker skoringi testlar bilan qoplanmagan edi.
 */
 
-function candidate(partial: Partial<RerankerCandidate> & { id: string; topicName: string }): RerankerCandidate {
+function candidate(
+  partial: Partial<RerankerCandidate> & { id: string; topicName: string },
+): RerankerCandidate {
   return {
     description: "",
     expectedHours: 10,
@@ -72,7 +74,13 @@ describe("reranker — exact/subphrase skoring (V5 regressiya)", () => {
     // "MUSBAT VA MANFIY SONLAR. BUTUN SONLAR" -> so'rov "butun sonlar"
     const u = understandQuery("6-sinf matematika butun sonlar");
     const [match] = await rerankCandidates(
-      [candidate({ id: "sub", topicName: "MUSBAT VA MANFIY SONLAR. BUTUN SONLAR", grade: "6-sinf" })],
+      [
+        candidate({
+          id: "sub",
+          topicName: "MUSBAT VA MANFIY SONLAR. BUTUN SONLAR",
+          grade: "6-sinf",
+        }),
+      ],
       u,
       1,
     );
@@ -89,7 +97,9 @@ describe("reranker — exact/subphrase skoring (V5 regressiya)", () => {
       bilan bo'laklarga ajraladi va bo'laklardan biri nomzod sarlavhasida uchraydi.
       Butun so'rov sarlavha ichida bo'lsa, undan yuqoridagi 0.90 shoxi ishlaydi.
     */
-    const u = understandQuery("8-sinf matematika kvadrat tenglamalar, diskriminant va Viet teoremasi");
+    const u = understandQuery(
+      "8-sinf matematika kvadrat tenglamalar, diskriminant va Viet teoremasi",
+    );
     const [match] = await rerankCandidates(
       [candidate({ id: "rev", topicName: "KVADRAT TENGLAMALAR" })],
       u,
@@ -111,7 +121,9 @@ describe("reranker — ketma-ket ibora mosligi (V6 regressiya)", () => {
       so'rovning asosiy iborasi bilan boshlanishiga qaramay, moslik
       hisobga olinmasdi.
     */
-    const u = understandQuery("10-sinf ona tili nutq uslublari rasmiy publitsistik badiiy");
+    const u = understandQuery(
+      "10-sinf ona tili nutq uslublari rasmiy publitsistik badiiy",
+    );
     const [m] = await rerankCandidates(
       [
         candidate({
@@ -132,10 +144,17 @@ describe("reranker — ketma-ket ibora mosligi (V6 regressiya)", () => {
   });
 
   it("ibora mos kelgan nomzod aloqasiz nomzoddan YUQORI turadi", async () => {
-    const u = understandQuery("10-sinf ona tili nutq uslublari rasmiy publitsistik badiiy");
+    const u = understandQuery(
+      "10-sinf ona tili nutq uslublari rasmiy publitsistik badiiy",
+    );
     const ranked = await rerankCandidates(
       [
-        candidate({ id: "other", topicName: "Nutqning aniqligi", subject: "Ona tili", grade: "11-sinf" }),
+        candidate({
+          id: "other",
+          topicName: "Nutqning aniqligi",
+          subject: "Ona tili",
+          grade: "11-sinf",
+        }),
         candidate({
           id: "gold",
           topicName: "NUTQ USLUBLARI VA USLUBIYAT. TAKRORLASH",
@@ -200,7 +219,11 @@ describe("reranker — TO'LIQ sarlavha mosligi sinf yaqinligidan ustun (V6 audit
       2,
     );
 
-    assert.equal(ranked[0].scoreBreakdown.exactMatch, 1, "1-o'rin to'liq moslik bo'lishi kerak");
+    assert.equal(
+      ranked[0].scoreBreakdown.exactMatch,
+      1,
+      "1-o'rin to'liq moslik bo'lishi kerak",
+    );
     assert.equal(ranked[0].sourceId, "far-exact");
     assert.equal(ranked[0].isCrossGrade, true, "sinf tafovuti bayrog'i saqlanadi");
   });

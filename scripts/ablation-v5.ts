@@ -71,7 +71,11 @@ type Scorer = (
   },
 ) => Promise<number>;
 
-function exactComponent(cand: RerankerCandidate, queryTopic: string, keywords: string[]): number {
+function exactComponent(
+  cand: RerankerCandidate,
+  queryTopic: string,
+  keywords: string[],
+): number {
   const candTitle = norm(cand.topicName);
   const qTitle = norm(queryTopic);
   if (candTitle === qTitle) return 1;
@@ -92,23 +96,40 @@ function lexicalComponent(
   const tokens = Array.from(
     new Set([
       ...keywords.map(stemUzbekWord),
-      ...queryTopic.toLowerCase().split(/\s+/).filter((w) => w.length >= 3).map(stemUzbekWord),
+      ...queryTopic
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((w) => w.length >= 3)
+        .map(stemUzbekWord),
     ]),
   );
-  const raw = tokens.length > 0 ? tokens.filter((t) => haystack.includes(t)).length / tokens.length : 0;
+  const raw =
+    tokens.length > 0
+      ? tokens.filter((t) => haystack.includes(t)).length / tokens.length
+      : 0;
   const canonical =
     canonicalTokens.length > 0
-      ? canonicalTokens.filter((t) => haystack.includes(t)).length / canonicalTokens.length
+      ? canonicalTokens.filter((t) => haystack.includes(t)).length /
+        canonicalTokens.length
       : 0;
   return Math.min(1, Math.max(raw, canonical));
 }
 
-async function semanticComponent(cand: RerankerCandidate, queryVec: number[]): Promise<number> {
-  const vec = await defaultSemanticProvider.embedText(`${cand.topicName} ${cand.description}`);
+async function semanticComponent(
+  cand: RerankerCandidate,
+  queryVec: number[],
+): Promise<number> {
+  const vec = await defaultSemanticProvider.embedText(
+    `${cand.topicName} ${cand.description}`,
+  );
   return Math.max(0, defaultSemanticProvider.computeSimilarity(queryVec, vec));
 }
 
-function metadataComponent(cand: RerankerCandidate, subject?: string, grade?: string): number {
+function metadataComponent(
+  cand: RerankerCandidate,
+  subject?: string,
+  grade?: string,
+): number {
   let score = 0;
   if (subject && cand.subject.toLowerCase() === subject.toLowerCase()) score += 0.5;
   if (grade && cand.grade.toLowerCase() === grade.toLowerCase()) score += 0.5;
@@ -125,7 +146,8 @@ function gradePenalty(cand: RerankerCandidate, grade?: string): number {
 
 const SCORERS: Record<string, Scorer> = {
   "A. Exact": async (c, ctx) => exactComponent(c, ctx.queryTopic, ctx.keywords),
-  "B. Lexical": async (c, ctx) => lexicalComponent(c, ctx.queryTopic, ctx.keywords, ctx.canonicalTokens),
+  "B. Lexical": async (c, ctx) =>
+    lexicalComponent(c, ctx.queryTopic, ctx.keywords, ctx.canonicalTokens),
   "C. Semantic": async (c, ctx) => semanticComponent(c, ctx.queryVec),
   "D. Hybrid (A+B+C)": async (c, ctx) =>
     0.4 * exactComponent(c, ctx.queryTopic, ctx.keywords) +
@@ -176,9 +198,17 @@ function computeNdcg5(rank: number): number {
 async function scoreVariant(
   name: string,
   scorer: Scorer,
-  samples: Array<{ u: QueryUnderstanding; candidates: RerankerCandidate[]; gold: string }>,
+  samples: Array<{
+    u: QueryUnderstanding;
+    candidates: RerankerCandidate[];
+    gold: string;
+  }>,
 ): Promise<Metrics> {
-  let h1 = 0, h3 = 0, h5 = 0, rr = 0, ndcg = 0;
+  let h1 = 0,
+    h3 = 0,
+    h5 = 0,
+    rr = 0,
+    ndcg = 0;
   const t0 = performance.now();
 
   for (const sample of samples) {
@@ -194,7 +224,9 @@ async function scoreVariant(
       keywords: sample.u.keywords,
       subject: sample.u.detectedSubject,
       grade: sample.u.detectedGrade,
-      queryVec: await defaultSemanticProvider.embedText(`${queryTopic} ${sample.u.detectedSubject ?? ""}`),
+      queryVec: await defaultSemanticProvider.embedText(
+        `${queryTopic} ${sample.u.detectedSubject ?? ""}`,
+      ),
       canonicalTokens: Array.from(
         new Set(
           expandedTerms
@@ -253,7 +285,11 @@ async function main() {
   console.log("reyting usuli almashtiriladi.\n");
 
   // Nomzodlarni bir marta yig'amiz.
-  const samples: Array<{ u: QueryUnderstanding; candidates: RerankerCandidate[]; gold: string }> = [];
+  const samples: Array<{
+    u: QueryUnderstanding;
+    candidates: RerankerCandidate[];
+    gold: string;
+  }> = [];
   for (const item of withGold) {
     const u = understandQuery(item.q);
     const candidates = await retrieveCurriculumCandidates(u, 100);
@@ -267,7 +303,11 @@ async function main() {
 
   // F — ishlab chiqarishdagi reranker (to'liq quvur).
   {
-    let h1 = 0, h3 = 0, h5 = 0, rr = 0, ndcg = 0;
+    let h1 = 0,
+      h3 = 0,
+      h5 = 0,
+      rr = 0,
+      ndcg = 0;
     const t0 = performance.now();
     for (const sample of samples) {
       const top = await rerankCandidates(sample.candidates, sample.u, 10);
@@ -297,15 +337,23 @@ async function main() {
 
   console.log(
     "Variant".padEnd(36) +
-      "R@1".padStart(8) + "R@3".padStart(8) + "R@5".padStart(8) +
-      "MRR".padStart(9) + "nDCG@5".padStart(9) + "ms".padStart(8),
+      "R@1".padStart(8) +
+      "R@3".padStart(8) +
+      "R@5".padStart(8) +
+      "MRR".padStart(9) +
+      "nDCG@5".padStart(9) +
+      "ms".padStart(8),
   );
   console.log("-".repeat(86));
   for (const r of results) {
     console.log(
       r.variant.padEnd(36) +
-        `${r.recall1}`.padStart(8) + `${r.recall3}`.padStart(8) + `${r.recall5}`.padStart(8) +
-        `${r.mrr}`.padStart(9) + `${r.ndcg5}`.padStart(9) + `${r.avgLatencyMs}`.padStart(8),
+        `${r.recall1}`.padStart(8) +
+        `${r.recall3}`.padStart(8) +
+        `${r.recall5}`.padStart(8) +
+        `${r.mrr}`.padStart(9) +
+        `${r.ndcg5}`.padStart(9) +
+        `${r.avgLatencyMs}`.padStart(8),
     );
   }
 
@@ -313,7 +361,9 @@ async function main() {
   for (const r of results.filter((x) => /^[GHIJ]\./.test(x.variant))) {
     const delta = Number((full.mrr - r.mrr).toFixed(4));
     const verdict = delta > 0.005 ? "FOYDALI" : delta < -0.005 ? "ZARARLI" : "ta'sirsiz";
-    console.log(`- ${r.variant.padEnd(34)} MRR ${r.mrr} (F dan ${delta >= 0 ? "+" : ""}${delta}) -> ${verdict}`);
+    console.log(
+      `- ${r.variant.padEnd(34)} MRR ${r.mrr} (F dan ${delta >= 0 ? "+" : ""}${delta}) -> ${verdict}`,
+    );
   }
 
   fs.mkdirSync(path.join(root, "reports"), { recursive: true });

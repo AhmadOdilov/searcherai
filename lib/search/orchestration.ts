@@ -6,9 +6,7 @@
 import type { QueryUnderstanding } from "./understanding";
 
 export type OrchestrationActionType =
-  | "create_lesson_plan"
-  | "create_presentation"
-  | "create_calendar_plan";
+  "create_lesson_plan" | "create_presentation" | "create_calendar_plan";
 
 export interface OrchestrationAction {
   type: OrchestrationActionType;
@@ -26,18 +24,27 @@ export interface OrchestrationAction {
 export function buildOrchestrationActions(
   understanding: QueryUnderstanding,
 ): OrchestrationAction[] {
-  const { detectedSubject, detectedGrade, extractedTopic, detectedIntent, detectedLanguage } = understanding;
+  const {
+    detectedSubject,
+    detectedGrade,
+    extractedTopic,
+    detectedIntent,
+    detectedLanguage,
+  } = understanding;
 
   const actions: OrchestrationAction[] = [];
 
   const labels = {
     UZ: {
       lessonPlanTitle: "Dars ishlanma (Word) yaratish",
-      lessonPlanDesc: "Mavzu bo'yicha 45 daqiqalik to'liq dars ishlanmasi va konspekt generatsiya qilish",
+      lessonPlanDesc:
+        "Mavzu bo'yicha 45 daqiqalik to'liq dars ishlanmasi va konspekt generatsiya qilish",
       presentationTitle: "Prezentatsiya (PPTX) yaratish",
-      presentationDesc: "Sinfda ko'rgazmali namoyish qilish uchun slaydlar to'plami tayyorlash",
+      presentationDesc:
+        "Sinfda ko'rgazmali namoyish qilish uchun slaydlar to'plami tayyorlash",
       calendarTitle: "Taqvim-mavzu reja va test (Excel) yaratish",
-      calendarDesc: "Chorak yoki yillik soatlar taqsimoti, test va kutilayotgan natijalar jadvalini olish",
+      calendarDesc:
+        "Chorak yoki yillik soatlar taqsimoti, test va kutilayotgan natijalar jadvalini olish",
     },
     RU: {
       lessonPlanTitle: "Создать поурочный план (Word)",
@@ -49,7 +56,8 @@ export function buildOrchestrationActions(
     },
     EN: {
       lessonPlanTitle: "Generate Lesson Plan (Word)",
-      lessonPlanDesc: "Generate a complete 45-minute lesson plan and notes for this topic",
+      lessonPlanDesc:
+        "Generate a complete 45-minute lesson plan and notes for this topic",
       presentationTitle: "Generate Presentation (PPTX)",
       presentationDesc: "Prepare presentation slides for classroom demonstration",
       calendarTitle: "Generate Calendar & Assessment (Excel)",

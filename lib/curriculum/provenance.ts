@@ -63,7 +63,9 @@ export function buildProvenanceTrace(input: {
   expectedHours?: number | null;
   source: string;
 }): ProvenanceTrace {
-  const normSourceId = input.sourceId || `uzbmb-${input.subject.toLowerCase()}-${input.grade}-${input.id.slice(-6)}`;
+  const normSourceId =
+    input.sourceId ||
+    `uzbmb-${input.subject.toLowerCase()}-${input.grade}-${input.id.slice(-6)}`;
   // Versiya/yil MANBADAN olinadi — konstanta yozib qo'yilmaydi.
   const derived = deriveCurriculumProvenance(input.source);
   const normVersion = input.sourceVersion || derived.sourceVersion;

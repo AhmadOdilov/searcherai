@@ -9,7 +9,11 @@
  */
 
 import type { LanguageCode } from "@/lib/validations/common";
-import type { SearchIntent, ConversationTurnContext, QueryUnderstanding } from "./understanding";
+import type {
+  SearchIntent,
+  ConversationTurnContext,
+  QueryUnderstanding,
+} from "./understanding";
 
 export interface ConversationTurn {
   id: string;
@@ -40,7 +44,11 @@ export class MultiTurnService {
   /**
    * Yangi suhbat oqimi (Thread) ochish
    */
-  public static createThread(userId: string, title: string, language: LanguageCode = "UZ"): ConversationThread {
+  public static createThread(
+    userId: string,
+    title: string,
+    language: LanguageCode = "UZ",
+  ): ConversationThread {
     if (!userId) {
       throw new Error("Foydalanuvchi identifikatori talab qilinadi");
     }
@@ -69,7 +77,9 @@ export class MultiTurnService {
 
     // IDOR / BOLA Guard: Boshqa foydalanuvchining suhbatiga kirish qat'iyan taqiqlangan
     if (thread.userId !== userId) {
-      throw new Error("Ruxsatsiz kirish: Ushbu suhbat boshqa foydalanuvchiga tegishli (IDOR detected)");
+      throw new Error(
+        "Ruxsatsiz kirish: Ushbu suhbat boshqa foydalanuvchiga tegishli (IDOR detected)",
+      );
     }
 
     return thread;
@@ -121,7 +131,10 @@ export class MultiTurnService {
   /**
    * Keyingi savol uchun oldingi kontekstni ajratib olish (Topic, Subject, Grade merosi)
    */
-  public static getContextForNextTurn(threadId: string, userId: string): ConversationTurnContext | undefined {
+  public static getContextForNextTurn(
+    threadId: string,
+    userId: string,
+  ): ConversationTurnContext | undefined {
     const thread = this.getThread(threadId, userId);
     if (!thread || thread.turns.length === 0) return undefined;
 
@@ -191,7 +204,9 @@ export class MultiTurnService {
   /**
    * Foydalanuvchining barcha suhbatlarini ro'yxatlash
    */
-  public static listUserThreads(userId: string): Array<Omit<ConversationThread, "turns">> {
+  public static listUserThreads(
+    userId: string,
+  ): Array<Omit<ConversationThread, "turns">> {
     const userThreads: Array<Omit<ConversationThread, "turns">> = [];
     const now = Date.now();
 

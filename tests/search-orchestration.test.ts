@@ -5,7 +5,9 @@ import { understandQuery } from "../lib/search/understanding";
 
 describe("search orchestration & handoff", () => {
   it("dars ishlanmasi so'ralganda Word action birinchi turadi va url parametrlari to'g'ri shakllanadi", () => {
-    const understanding = understandQuery("7-sinf fizika Nyuton qonunlari dars ishlanmasi");
+    const understanding = understandQuery(
+      "7-sinf fizika Nyuton qonunlari dars ishlanmasi",
+    );
     const actions = buildOrchestrationActions(understanding);
 
     assert.ok(actions.length >= 2);

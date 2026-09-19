@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { deriveCurriculumProvenance, buildProvenanceTrace } from "../lib/curriculum/provenance";
+import {
+  deriveCurriculumProvenance,
+  buildProvenanceTrace,
+} from "../lib/curriculum/provenance";
 
 /*
   V4 da har bir dalilga `DTS-UZBMB-2025-v1` / 2025 qattiq yozilgan edi,

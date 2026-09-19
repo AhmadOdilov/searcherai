@@ -46,9 +46,7 @@ describe("Curriculum Ingestion Pipeline V3 (Phase 23 Automated Quality Tests)", 
     );
     assert.strictEqual(valMissing.isValid, false);
     assert.ok(
-      valMissing.issues.some(
-        (iss) => iss.field === "source" && iss.severity === "ERROR",
-      ),
+      valMissing.issues.some((iss) => iss.field === "source" && iss.severity === "ERROR"),
       "Bo'sh manba xatolik deb topilmadi",
     );
 
@@ -102,9 +100,7 @@ describe("Curriculum Ingestion Pipeline V3 (Phase 23 Automated Quality Tests)", 
     assert.strictEqual(valUnavailSubj.isValid, false);
     assert.ok(
       valUnavailSubj.issues.some(
-        (iss) =>
-          iss.field === "subject" &&
-          iss.message.includes("status: NOT_AVAILABLE"),
+        (iss) => iss.field === "subject" && iss.message.includes("status: NOT_AVAILABLE"),
       ),
       "NOT_AVAILABLE fani to'xtatilmadi",
     );
@@ -152,8 +148,7 @@ describe("Curriculum Ingestion Pipeline V3 (Phase 23 Automated Quality Tests)", 
     assert.ok(
       valNeg.issues.some(
         (iss) =>
-          iss.field === "expectedHours" &&
-          iss.message.includes("Manfiy dars soati"),
+          iss.field === "expectedHours" && iss.message.includes("Manfiy dars soati"),
       ),
       "Manfiy soat aniqlanmadi",
     );
@@ -186,9 +181,7 @@ describe("Curriculum Ingestion Pipeline V3 (Phase 23 Automated Quality Tests)", 
     );
     assert.ok(
       valShortOutcome.issues.some(
-        (iss) =>
-          iss.field === "expectedOutcomes" &&
-          iss.message.includes("juda qisqa"),
+        (iss) => iss.field === "expectedOutcomes" && iss.message.includes("juda qisqa"),
       ),
       "Qisqa kutilgan natija xatosi aniqlanmadi",
     );

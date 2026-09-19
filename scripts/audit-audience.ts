@@ -57,7 +57,14 @@ function main() {
 
     const hasStudent = STUDENT_MARKER.test(item.q);
     const hasTeacher = TEACHER_MARKER.test(item.q);
-    const datasetMarker = hasStudent && hasTeacher ? "both" : hasStudent ? "student" : hasTeacher ? "teacher" : "none";
+    const datasetMarker =
+      hasStudent && hasTeacher
+        ? "both"
+        : hasStudent
+          ? "student"
+          : hasTeacher
+            ? "teacher"
+            : "none";
 
     rows.push({
       id: item.id,
@@ -79,8 +86,12 @@ function main() {
   console.log("   AUDIENCE AUDIT — V6 PHASE 1");
   console.log("==========================================================");
   console.log(`Auditoriya kutilmasi bor so'rovlar: ${rows.length}`);
-  console.log(`To'g'ri: ${rows.length - failures.length}  (${((1 - failures.length / rows.length) * 100).toFixed(2)}%)`);
-  console.log(`Xato:    ${failures.length}  (teacher->student ${t2s.length}, student->teacher ${s2t.length})\n`);
+  console.log(
+    `To'g'ri: ${rows.length - failures.length}  (${((1 - failures.length / rows.length) * 100).toFixed(2)}%)`,
+  );
+  console.log(
+    `Xato:    ${failures.length}  (teacher->student ${t2s.length}, student->teacher ${s2t.length})\n`,
+  );
 
   // Markerlar bo'yicha kesim
   const byMarker: Record<string, { total: number; ok: number }> = {};
@@ -99,13 +110,18 @@ function main() {
 
   const markerless = rows.filter((r) => r.datasetMarker === "none");
   const markerlessExpected: Record<string, number> = {};
-  for (const r of markerless) markerlessExpected[r.expected] = (markerlessExpected[r.expected] ?? 0) + 1;
+  for (const r of markerless)
+    markerlessExpected[r.expected] = (markerlessExpected[r.expected] ?? 0) + 1;
 
-  console.log(`\n## Markersiz so'rovlarda dataset nimani kutadi (${markerless.length} ta)`);
+  console.log(
+    `\n## Markersiz so'rovlarda dataset nimani kutadi (${markerless.length} ta)`,
+  );
   console.log(`   ${JSON.stringify(markerlessExpected)}`);
   console.log("   -> Bitta standart qiymat bilan erishish mumkin bo'lgan MAKSIMUM:");
   const best = Math.max(...Object.values(markerlessExpected));
-  console.log(`      ${best}/${markerless.length} = ${((best / markerless.length) * 100).toFixed(2)}%`);
+  console.log(
+    `      ${best}/${markerless.length} = ${((best / markerless.length) * 100).toFixed(2)}%`,
+  );
 
   console.log("\n## MARKERLI, lekin XATO aniqlangan (haqiqiy nosozliklar)");
   const realBugs = failures.filter((r) => r.datasetMarker !== "none");
@@ -132,10 +148,14 @@ function main() {
         timestamp: new Date().toISOString(),
         total: rows.length,
         correct: rows.length - failures.length,
-        accuracy: Number((((rows.length - failures.length) / rows.length) * 100).toFixed(2)),
+        accuracy: Number(
+          (((rows.length - failures.length) / rows.length) * 100).toFixed(2),
+        ),
         byDatasetMarker: byMarker,
         markerlessExpectedDistribution: markerlessExpected,
-        markerlessBestPossibleWithSingleDefault: Number(((best / markerless.length) * 100).toFixed(2)),
+        markerlessBestPossibleWithSingleDefault: Number(
+          ((best / markerless.length) * 100).toFixed(2),
+        ),
         realDetectionBugs: realBugs,
         teacherInsteadOfStudent: t2s,
         studentInsteadOfTeacher: s2t,

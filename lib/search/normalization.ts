@@ -102,8 +102,14 @@ export function normalizeApostrophes(text: string): string {
  */
 export function normalizeGrades(text: string): string {
   return text
-    .replace(/(^|[^\p{L}\p{N}])([1-9]|1[0-1])\s*[-_]?\s*(?:sinf|синф|class|grade|класс)(?:[a-z'\p{L}]*)?(?=$|[^\p{L}\p{N}])/giu, "$1$2-sinf")
-    .replace(/(^|[^\p{L}\p{N}])(?:sinf|синф|class|grade|класс)\s*([1-9]|1[0-1])(?=$|[^\p{L}\p{N}])/giu, "$1$2-sinf");
+    .replace(
+      /(^|[^\p{L}\p{N}])([1-9]|1[0-1])\s*[-_]?\s*(?:sinf|синф|class|grade|класс)(?:[a-z'\p{L}]*)?(?=$|[^\p{L}\p{N}])/giu,
+      "$1$2-sinf",
+    )
+    .replace(
+      /(^|[^\p{L}\p{N}])(?:sinf|синф|class|grade|класс)\s*([1-9]|1[0-1])(?=$|[^\p{L}\p{N}])/giu,
+      "$1$2-sinf",
+    );
 }
 
 /**
@@ -176,7 +182,8 @@ export function getApostropheVariants(term: string): string[] {
  * kelajakdagi yangi chaqiruv nuqtalari uni chetlab o'tishi mumkin.
  * NUL bayti esa PostgreSQL'da `22021` xatosiga olib keladi.
  */
-const UNSAFE_INVISIBLE = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u200B-\u200F\u202A-\u202E\uFEFF]/g;
+const UNSAFE_INVISIBLE =
+  /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u200B-\u200F\u202A-\u202E\uFEFF]/g;
 
 export function normalizeQuery(query: string): NormalizedQuery {
   const original = query.replace(UNSAFE_INVISIBLE, " ").replace(/\s+/g, " ").trim();
@@ -197,7 +204,9 @@ export function normalizeQuery(query: string): NormalizedQuery {
   const didYouMeanSuggestions: string[] = [];
 
   const normalizedWords = words.map((rawWord) => {
-    const cleanWord = rawWord.toLowerCase().replace(/^[^\p{L}\p{N}']+|[^\p{L}\p{N}']+$/gu, "");
+    const cleanWord = rawWord
+      .toLowerCase()
+      .replace(/^[^\p{L}\p{N}']+|[^\p{L}\p{N}']+$/gu, "");
     if (!cleanWord) return rawWord.toLowerCase();
 
     const typoResult = correctWord(cleanWord);
@@ -212,9 +221,7 @@ export function normalizeQuery(query: string): NormalizedQuery {
   });
 
   const normalized = normalizedWords.join(" ").trim();
-  const tokens = normalized
-    .split(/[^\p{L}\p{N}']+/u)
-    .filter((token) => token.length > 0);
+  const tokens = normalized.split(/[^\p{L}\p{N}']+/u).filter((token) => token.length > 0);
 
   return {
     original,
@@ -223,6 +230,7 @@ export function normalizeQuery(query: string): NormalizedQuery {
     isCyrillic,
     tokens,
     corrections,
-    didYouMean: didYouMeanSuggestions.length > 0 ? didYouMeanSuggestions.join(" ") : undefined,
+    didYouMean:
+      didYouMeanSuggestions.length > 0 ? didYouMeanSuggestions.join(" ") : undefined,
   };
 }

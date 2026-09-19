@@ -57,10 +57,34 @@ function main() {
 
   const checks: GateCheck[] = [
     // ── Query understanding ──────────────────────────────────────────────
-    { name: "Language accuracy", actual: evaluation.understanding.languageAccuracy, threshold: 98, comparison: ">=", unit: "%" },
-    { name: "Subject accuracy", actual: evaluation.understanding.subjectAccuracy, threshold: 95, comparison: ">=", unit: "%" },
-    { name: "Grade accuracy", actual: evaluation.understanding.gradeAccuracy, threshold: 98, comparison: ">=", unit: "%" },
-    { name: "Intent accuracy", actual: evaluation.understanding.intentAccuracy, threshold: 90, comparison: ">=", unit: "%" },
+    {
+      name: "Language accuracy",
+      actual: evaluation.understanding.languageAccuracy,
+      threshold: 98,
+      comparison: ">=",
+      unit: "%",
+    },
+    {
+      name: "Subject accuracy",
+      actual: evaluation.understanding.subjectAccuracy,
+      threshold: 95,
+      comparison: ">=",
+      unit: "%",
+    },
+    {
+      name: "Grade accuracy",
+      actual: evaluation.understanding.gradeAccuracy,
+      threshold: 98,
+      comparison: ">=",
+      unit: "%",
+    },
+    {
+      name: "Intent accuracy",
+      actual: evaluation.understanding.intentAccuracy,
+      threshold: 90,
+      comparison: ">=",
+      unit: "%",
+    },
     {
       name: "Audience accuracy (umumiy)",
       actual: evaluation.understanding.audienceAccuracy,
@@ -79,10 +103,27 @@ function main() {
     },
 
     // ── Retrieval va ranking ─────────────────────────────────────────────
-    { name: "Candidate Recall@20", actual: evaluation.candidateRetrieval.recall20, threshold: 80, comparison: ">=", unit: "%" },
-    { name: "Reranker Recall@5", actual: evaluation.reranker.recall5, threshold: 80, comparison: ">=", unit: "%" },
+    {
+      name: "Candidate Recall@20",
+      actual: evaluation.candidateRetrieval.recall20,
+      threshold: 80,
+      comparison: ">=",
+      unit: "%",
+    },
+    {
+      name: "Reranker Recall@5",
+      actual: evaluation.reranker.recall5,
+      threshold: 80,
+      comparison: ">=",
+      unit: "%",
+    },
     { name: "MRR", actual: evaluation.reranker.mrr, threshold: 0.65, comparison: ">=" },
-    { name: "nDCG@5", actual: evaluation.reranker.ndcg5, threshold: 0.68, comparison: ">=" },
+    {
+      name: "nDCG@5",
+      actual: evaluation.reranker.ndcg5,
+      threshold: 0.68,
+      comparison: ">=",
+    },
 
     // ── Grounding ────────────────────────────────────────────────────────
     /*
@@ -137,7 +178,12 @@ function main() {
       comparison: "<=",
       unit: "%",
     },
-    { name: "Soxta DTS iqtiboslari", actual: evaluation.grounding.fakeDtsCitations, threshold: 0, comparison: "==" },
+    {
+      name: "Soxta DTS iqtiboslari",
+      actual: evaluation.grounding.fakeDtsCitations,
+      threshold: 0,
+      comparison: "==",
+    },
     {
       name: "Soat ziddiyatini aniqlash",
       actual: evaluation.grounding.hoursProbe.detectionRate,
@@ -153,19 +199,71 @@ function main() {
     },
 
     // ── Abstention va cross-grade ────────────────────────────────────────
-    { name: "Abstention precision", actual: evaluation.abstention.precision, threshold: 99, comparison: ">=", unit: "%" },
-    { name: "Abstention recall", actual: evaluation.abstention.recall, threshold: 90, comparison: ">=", unit: "%" },
-    { name: "False grounding", actual: evaluation.abstention.falseGrounding, threshold: 0, comparison: "==" },
-    { name: "Cross-grade warning accuracy", actual: evaluation.crossGrade.accuracy, threshold: 98, comparison: ">=", unit: "%" },
-    { name: "Cross-grade false positive rate", actual: evaluation.crossGrade.falsePositiveRate, threshold: 2, comparison: "<=", unit: "%" },
+    {
+      name: "Abstention precision",
+      actual: evaluation.abstention.precision,
+      threshold: 99,
+      comparison: ">=",
+      unit: "%",
+    },
+    {
+      name: "Abstention recall",
+      actual: evaluation.abstention.recall,
+      threshold: 90,
+      comparison: ">=",
+      unit: "%",
+    },
+    {
+      name: "False grounding",
+      actual: evaluation.abstention.falseGrounding,
+      threshold: 0,
+      comparison: "==",
+    },
+    {
+      name: "Cross-grade warning accuracy",
+      actual: evaluation.crossGrade.accuracy,
+      threshold: 98,
+      comparison: ">=",
+      unit: "%",
+    },
+    {
+      name: "Cross-grade false positive rate",
+      actual: evaluation.crossGrade.falsePositiveRate,
+      threshold: 2,
+      comparison: "<=",
+      unit: "%",
+    },
 
     // ── Xavfsizlik ───────────────────────────────────────────────────────
-    { name: "Adversarial pass rate", actual: evaluation.security.passRate, threshold: 100, comparison: ">=", unit: "%" },
+    {
+      name: "Adversarial pass rate",
+      actual: evaluation.security.passRate,
+      threshold: 100,
+      comparison: ">=",
+      unit: "%",
+    },
 
     // ── Multi-turn ───────────────────────────────────────────────────────
-    { name: "Multi-turn: fan saqlanishi", actual: multiturn.subjectRetention.rate, threshold: 98, comparison: ">=", unit: "%" },
-    { name: "Multi-turn: mavzu saqlanishi", actual: multiturn.topicRetention.rate, threshold: 95, comparison: ">=", unit: "%" },
-    { name: "Multi-turn: chegaralangan xotira", actual: multiturn.boundedMemoryAt1000Turns, threshold: true, comparison: "==" },
+    {
+      name: "Multi-turn: fan saqlanishi",
+      actual: multiturn.subjectRetention.rate,
+      threshold: 98,
+      comparison: ">=",
+      unit: "%",
+    },
+    {
+      name: "Multi-turn: mavzu saqlanishi",
+      actual: multiturn.topicRetention.rate,
+      threshold: 95,
+      comparison: ">=",
+      unit: "%",
+    },
+    {
+      name: "Multi-turn: chegaralangan xotira",
+      actual: multiturn.boundedMemoryAt1000Turns,
+      threshold: true,
+      comparison: "==",
+    },
 
     // ── Latency (LLM generatsiyasidan ALOHIDA) ───────────────────────────
     {
@@ -211,7 +309,9 @@ function main() {
     `   Contradiction rate (eski, umumiy ta'rif): ${evaluation.grounding.contradictionRate}%` +
       `  — shundan GRADE_CONFLICT ${evaluation.grounding.gradeConflictRate}%`,
   );
-  console.log(`   Ziddiyat toifalari: ${JSON.stringify(evaluation.grounding.contradictionsByType)}`);
+  console.log(
+    `   Ziddiyat toifalari: ${JSON.stringify(evaluation.grounding.contradictionsByType)}`,
+  );
   console.log(
     `   Audience: aniq markerli ${evaluation.understanding.audienceExplicitAccuracy}%, ` +
       `xulosa/standart ${evaluation.understanding.audienceDefaultAgreement}%`,
@@ -227,7 +327,9 @@ function main() {
   console.error(`❌ V5 QUALITY GATE BAJARILMADI — ${failures.length} ta chegara`);
   console.error("");
   for (const f of failures) {
-    console.error(`  · ${f.name}: ${f.actual}${f.unit ?? ""} (talab ${f.comparison} ${f.threshold}${f.unit ?? ""})`);
+    console.error(
+      `  · ${f.name}: ${f.actual}${f.unit ?? ""} (talab ${f.comparison} ${f.threshold}${f.unit ?? ""})`,
+    );
   }
   console.error("");
   console.error("Chegaralar ATAYLAB yumshatilmadi (§22). Yuqoridagi raqamlar");

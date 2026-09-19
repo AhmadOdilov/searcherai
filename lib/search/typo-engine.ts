@@ -233,7 +233,11 @@ export function getCorrectionSuggestions(text: string): string[] {
     const res = correctWord(w);
     if (res.didYouMean && !suggestions.includes(res.didYouMean)) {
       suggestions.push(res.didYouMean);
-    } else if (res.method !== "none" && res.corrected !== res.original && !suggestions.includes(res.corrected)) {
+    } else if (
+      res.method !== "none" &&
+      res.corrected !== res.original &&
+      !suggestions.includes(res.corrected)
+    ) {
       suggestions.push(res.corrected);
     }
   }

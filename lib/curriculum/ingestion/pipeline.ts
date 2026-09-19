@@ -193,8 +193,12 @@ export class CurriculumIngestionPipeline {
     // Deterministic sourceId va sourceVersion yaratish
     const autoSourceId =
       meta?.sourceId ??
-      `${trimmedSubject.toLowerCase().replace(/[^a-z0-9]/g, "-")}-${trimmedGrade}-${normTopicName.slice(0, 20).toLowerCase().replace(/[^a-z0-9]/g, "-")}`;
-    const autoSourceVersion = meta?.sourceVersion ?? registryEntry?.sourceVersion ?? "DTS-2025-v1";
+      `${trimmedSubject.toLowerCase().replace(/[^a-z0-9]/g, "-")}-${trimmedGrade}-${normTopicName
+        .slice(0, 20)
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "-")}`;
+    const autoSourceVersion =
+      meta?.sourceVersion ?? registryEntry?.sourceVersion ?? "DTS-2025-v1";
     const autoYear = meta?.curriculumYear ?? registryEntry?.curriculumYear;
 
     const normalizedRecord: NormalizedTopicRecord = {
@@ -231,8 +235,17 @@ export class CurriculumIngestionPipeline {
     const seenTopicKeys = new Set<string>();
     let duplicateCount = 0;
 
-    const { subject, grade, source, sourceId, sourceVersion, curriculumYear, sourceUpdatedAt, language, topics } =
-      fileInput;
+    const {
+      subject,
+      grade,
+      source,
+      sourceId,
+      sourceVersion,
+      curriculumYear,
+      sourceUpdatedAt,
+      language,
+      topics,
+    } = fileInput;
 
     if (!Array.isArray(topics) || topics.length === 0) {
       issues.push({

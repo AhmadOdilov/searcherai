@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { understandQuery, type ConversationTurnContext } from "../lib/search/understanding";
+import {
+  understandQuery,
+  type ConversationTurnContext,
+} from "../lib/search/understanding";
 
 describe("search multi-turn context resolution (Phase 14)", () => {
   it("ketma-ket suhbat qadamlarida mavzu, fan va sinfni to'g'ri meros qilib oladi", () => {
@@ -20,10 +23,24 @@ describe("search multi-turn context resolution (Phase 14)", () => {
     };
 
     // 2-qadam: Foydalanuvchi faqat sinfni aytadi: "5-sinf uchun"
-    const turn2 = understandQuery("5-sinf uchun", undefined, undefined, undefined, contextAfterTurn1);
+    const turn2 = understandQuery(
+      "5-sinf uchun",
+      undefined,
+      undefined,
+      undefined,
+      contextAfterTurn1,
+    );
     assert.equal(turn2.detectedGrade, "5-sinf");
-    assert.equal(turn2.detectedSubject, "Biologiya", "Kontekstdan fan (Biologiya) meros qilib olinishi shart");
-    assert.equal(turn2.extractedTopic, turn1.extractedTopic, "Kontekstdan mavzu (Fotosintez) meros qilib olinishi shart");
+    assert.equal(
+      turn2.detectedSubject,
+      "Biologiya",
+      "Kontekstdan fan (Biologiya) meros qilib olinishi shart",
+    );
+    assert.equal(
+      turn2.extractedTopic,
+      turn1.extractedTopic,
+      "Kontekstdan mavzu (Fotosintez) meros qilib olinishi shart",
+    );
 
     const contextAfterTurn2: ConversationTurnContext = {
       previousTopic: turn2.extractedTopic,
@@ -34,11 +51,33 @@ describe("search multi-turn context resolution (Phase 14)", () => {
     };
 
     // 3-qadam: Foydalanuvchi yangi intent so'raydi: "Endi 10 ta test qil"
-    const turn3 = understandQuery("Endi 10 ta test qil", undefined, undefined, undefined, contextAfterTurn2);
-    assert.equal(turn3.detectedIntent, "quiz_test", "Intent quiz_test ga yangilanishi shart");
-    assert.equal(turn3.detectedGrade, "5-sinf", "Sinf (5-sinf) avvalgi kontekstdan saqlanishi shart");
-    assert.equal(turn3.detectedSubject, "Biologiya", "Fan (Biologiya) avvalgi kontekstdan saqlanishi shart");
-    assert.equal(turn3.extractedTopic, turn1.extractedTopic, "Mavzu (Fotosintez) saqlanishi shart");
+    const turn3 = understandQuery(
+      "Endi 10 ta test qil",
+      undefined,
+      undefined,
+      undefined,
+      contextAfterTurn2,
+    );
+    assert.equal(
+      turn3.detectedIntent,
+      "quiz_test",
+      "Intent quiz_test ga yangilanishi shart",
+    );
+    assert.equal(
+      turn3.detectedGrade,
+      "5-sinf",
+      "Sinf (5-sinf) avvalgi kontekstdan saqlanishi shart",
+    );
+    assert.equal(
+      turn3.detectedSubject,
+      "Biologiya",
+      "Fan (Biologiya) avvalgi kontekstdan saqlanishi shart",
+    );
+    assert.equal(
+      turn3.extractedTopic,
+      turn1.extractedTopic,
+      "Mavzu (Fotosintez) saqlanishi shart",
+    );
 
     const contextAfterTurn3: ConversationTurnContext = {
       previousTopic: turn3.extractedTopic,
@@ -49,10 +88,20 @@ describe("search multi-turn context resolution (Phase 14)", () => {
     };
 
     // 4-qadam: "Javoblarini ham ber"
-    const turn4 = understandQuery("Javoblarini ham ber", undefined, undefined, undefined, contextAfterTurn3);
+    const turn4 = understandQuery(
+      "Javoblarini ham ber",
+      undefined,
+      undefined,
+      undefined,
+      contextAfterTurn3,
+    );
     assert.equal(turn4.detectedGrade, "5-sinf", "Sinf 4-qadamda saqlanishi shart");
     assert.equal(turn4.detectedSubject, "Biologiya", "Fan 4-qadamda saqlanishi shart");
-    assert.equal(turn4.extractedTopic, turn1.extractedTopic, "Mavzu 4-qadamda saqlanishi shart");
+    assert.equal(
+      turn4.extractedTopic,
+      turn1.extractedTopic,
+      "Mavzu 4-qadamda saqlanishi shart",
+    );
 
     const contextAfterTurn4: ConversationTurnContext = {
       previousTopic: turn4.extractedTopic,
@@ -63,12 +112,26 @@ describe("search multi-turn context resolution (Phase 14)", () => {
     };
 
     // 5-qadam: "Endi o'qituvchi uchun dars reja qil"
-    const turn5 = understandQuery("Endi o'qituvchi uchun dars reja qil", undefined, undefined, undefined, contextAfterTurn4);
-    assert.equal(turn5.detectedIntent, "lesson_plan", "Intent lesson_plan ga o'tishi kerak");
+    const turn5 = understandQuery(
+      "Endi o'qituvchi uchun dars reja qil",
+      undefined,
+      undefined,
+      undefined,
+      contextAfterTurn4,
+    );
+    assert.equal(
+      turn5.detectedIntent,
+      "lesson_plan",
+      "Intent lesson_plan ga o'tishi kerak",
+    );
     assert.equal(turn5.audience, "teacher", "Auditoriya teacher bo'lishi kerak");
     assert.equal(turn5.detectedGrade, "5-sinf", "Sinf 5-qadamda saqlanishi shart");
     assert.equal(turn5.detectedSubject, "Biologiya", "Fan 5-qadamda saqlanishi shart");
-    assert.equal(turn5.extractedTopic, turn1.extractedTopic, "Mavzu 5-qadamda saqlanishi shart");
+    assert.equal(
+      turn5.extractedTopic,
+      turn1.extractedTopic,
+      "Mavzu 5-qadamda saqlanishi shart",
+    );
   });
 
   it("seans qayta ishga tushganda (session reset/restart) eski kontekst tozalanadi", () => {
@@ -86,9 +149,22 @@ describe("search multi-turn context resolution (Phase 14)", () => {
       previousLanguage: "UZ",
     };
 
-    const newQuery = understandQuery("8-sinf algebra kvadrat tenglamalar", undefined, undefined, undefined, context);
-    assert.equal(newQuery.detectedSubject, "Matematika", "Yangi so'rovdagi fan eski fanni almashtirishi kerak");
+    const newQuery = understandQuery(
+      "8-sinf algebra kvadrat tenglamalar",
+      undefined,
+      undefined,
+      undefined,
+      context,
+    );
+    assert.equal(
+      newQuery.detectedSubject,
+      "Matematika",
+      "Yangi so'rovdagi fan eski fanni almashtirishi kerak",
+    );
     assert.equal(newQuery.detectedGrade, "8-sinf", "Yangi sinf o'rnatilishi kerak");
-    assert.equal(newQuery.extractedTopic.toLowerCase().includes("kvadrat tenglamalar"), true);
+    assert.equal(
+      newQuery.extractedTopic.toLowerCase().includes("kvadrat tenglamalar"),
+      true,
+    );
   });
 });

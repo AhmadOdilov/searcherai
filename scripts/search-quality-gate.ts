@@ -43,19 +43,29 @@ async function checkQualityGate() {
   const violations: string[] = [];
 
   if (results.langAcc < THRESHOLDS.minLanguageAccuracy) {
-    violations.push(`Language Accuracy (${results.langAcc}%) < ${THRESHOLDS.minLanguageAccuracy}%`);
+    violations.push(
+      `Language Accuracy (${results.langAcc}%) < ${THRESHOLDS.minLanguageAccuracy}%`,
+    );
   }
   if (results.subjAcc < THRESHOLDS.minSubjectAccuracy) {
-    violations.push(`Subject Accuracy (${results.subjAcc}%) < ${THRESHOLDS.minSubjectAccuracy}%`);
+    violations.push(
+      `Subject Accuracy (${results.subjAcc}%) < ${THRESHOLDS.minSubjectAccuracy}%`,
+    );
   }
   if (results.gradeAcc < THRESHOLDS.minGradeAccuracy) {
-    violations.push(`Grade Accuracy (${results.gradeAcc}%) < ${THRESHOLDS.minGradeAccuracy}%`);
+    violations.push(
+      `Grade Accuracy (${results.gradeAcc}%) < ${THRESHOLDS.minGradeAccuracy}%`,
+    );
   }
   if (results.intentAcc < THRESHOLDS.minIntentAccuracy) {
-    violations.push(`Intent Accuracy (${results.intentAcc}%) < ${THRESHOLDS.minIntentAccuracy}%`);
+    violations.push(
+      `Intent Accuracy (${results.intentAcc}%) < ${THRESHOLDS.minIntentAccuracy}%`,
+    );
   }
   if (results.audAcc < THRESHOLDS.minAudienceAccuracy) {
-    violations.push(`Audience Accuracy (${results.audAcc}%) < ${THRESHOLDS.minAudienceAccuracy}%`);
+    violations.push(
+      `Audience Accuracy (${results.audAcc}%) < ${THRESHOLDS.minAudienceAccuracy}%`,
+    );
   }
   if (results.recall5 < THRESHOLDS.minRecallAt5) {
     violations.push(`Recall@5 (${results.recall5}%) < ${THRESHOLDS.minRecallAt5}%`);
@@ -67,10 +77,14 @@ async function checkQualityGate() {
     violations.push(`nDCG@5 (${results.ndcg5}) < ${THRESHOLDS.minNdcg5}`);
   }
   if (results.p95Latency > THRESHOLDS.maxP95LatencyMs) {
-    violations.push(`p95 Latency (${results.p95Latency} ms) > ${THRESHOLDS.maxP95LatencyMs} ms`);
+    violations.push(
+      `p95 Latency (${results.p95Latency} ms) > ${THRESHOLDS.maxP95LatencyMs} ms`,
+    );
   }
   if (results.contradictionRate > THRESHOLDS.maxContradictionRate) {
-    violations.push(`Contradiction Rate (${results.contradictionRate}%) > ${THRESHOLDS.maxContradictionRate}%`);
+    violations.push(
+      `Contradiction Rate (${results.contradictionRate}%) > ${THRESHOLDS.maxContradictionRate}%`,
+    );
   }
 
   console.log("\n==========================================================");

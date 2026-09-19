@@ -487,7 +487,8 @@ export function addChartSlide(
       w: slide.keyMessage ? CONTENT_WIDTH * 0.62 : CONTENT_WIDTH,
       h: 2.75,
       chartColors: [palette.heading, palette.summary, palette.muted],
-      showLegend: chart.series.length > 1 || chart.kind === "pie" || chart.kind === "doughnut",
+      showLegend:
+        chart.series.length > 1 || chart.kind === "pie" || chart.kind === "doughnut",
       legendPos: "b",
       legendFontSize: 10,
       catAxisLabelFontSize: 10,
@@ -511,7 +512,13 @@ export function addChartSlide(
     });
   }
 
-  addFooter(target, palette, { ...slide, source: slide.source ?? chart.source }, position, total);
+  addFooter(
+    target,
+    palette,
+    { ...slide, source: slide.source ?? chart.source },
+    position,
+    total,
+  );
 }
 
 /* ─────────────────────────────────────────────────────────────────────────

@@ -39,7 +39,9 @@ async function runPipelineStep(query: string) {
   };
 }
 
-async function runConcurrentBatch(concurrency: number): Promise<{ p50: number; p95: number; p99: number; avg: number }> {
+async function runConcurrentBatch(
+  concurrency: number,
+): Promise<{ p50: number; p95: number; p99: number; avg: number }> {
   const promises = [];
   for (let i = 0; i < concurrency; i++) {
     const q = TEST_QUERIES[i % TEST_QUERIES.length];
@@ -84,10 +86,28 @@ async function main() {
     answer: { answer: "Kesh javobi", keyPoints: [], classroomIdeas: [] },
     understanding: testU,
     curriculumMatches: [],
-    grounding: { isGrounded: true, groundingScore: 1, sourceCitations: [], claims: [], contradictions: [], supportedClaimRate: 1, contradictionRate: 0, factualContradictionRate: 0, gradeConflictRate: 0, sourceConflictRate: 0, unsupportedClaimRate: 0 },
+    grounding: {
+      isGrounded: true,
+      groundingScore: 1,
+      sourceCitations: [],
+      claims: [],
+      contradictions: [],
+      supportedClaimRate: 1,
+      contradictionRate: 0,
+      factualContradictionRate: 0,
+      gradeConflictRate: 0,
+      sourceConflictRate: 0,
+      unsupportedClaimRate: 0,
+    },
     suggestedActions: [],
     durationMs: 1,
-    latencyBreakdown: { understandingMs: 0.5, retrievalMs: 0.5, aiMs: 0, validationMs: 0, totalMs: 1 },
+    latencyBreakdown: {
+      understandingMs: 0.5,
+      retrievalMs: 0.5,
+      aiMs: 0,
+      validationMs: 0,
+      totalMs: 1,
+    },
     model: "mock",
     usage: { inputTokens: 10, outputTokens: 10 },
   });
@@ -109,7 +129,9 @@ async function main() {
   const concurrencies = [1, 10, 50, 100, 250];
   for (const c of concurrencies) {
     const res = await runConcurrentBatch(c);
-    console.log(`- Concurrency = ${c.toString().padEnd(3)}: Avg = ${res.avg.toFixed(2)} ms | p50 = ${res.p50} ms | p95 = ${res.p95} ms | p99 = ${res.p99} ms`);
+    console.log(
+      `- Concurrency = ${c.toString().padEnd(3)}: Avg = ${res.avg.toFixed(2)} ms | p50 = ${res.p50} ms | p95 = ${res.p95} ms | p99 = ${res.p99} ms`,
+    );
   }
   console.log("");
 
@@ -126,11 +148,15 @@ async function main() {
   if (global.gc) global.gc();
   const memAfter = process.memoryUsage();
 
-  const heapDiffMb = ((memAfter.heapUsed - memBefore.heapUsed) / (1024 * 1024)).toFixed(2);
+  const heapDiffMb = ((memAfter.heapUsed - memBefore.heapUsed) / (1024 * 1024)).toFixed(
+    2,
+  );
   const rssDiffMb = ((memAfter.rss - memBefore.rss) / (1024 * 1024)).toFixed(2);
   console.log(`- Heap Used Delta: ${heapDiffMb} MB (1,000 requests)`);
   console.log(`- RSS Delta: ${rssDiffMb} MB`);
-  console.log(`- Memory Status: ${Number(heapDiffMb) < 50 ? "PASS — Stabil va oqishsiz" : "WARNING"}\n`);
+  console.log(
+    `- Memory Status: ${Number(heapDiffMb) < 50 ? "PASS — Stabil va oqishsiz" : "WARNING"}\n`,
+  );
 }
 
 main()

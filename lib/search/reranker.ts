@@ -57,7 +57,9 @@ export async function rerankCandidates(
   const detectedIntent = intent || understanding.detectedIntent;
 
   // Semantik qidiruv uchun so'rov vektorini hisoblaymiz
-  const queryVec = await defaultSemanticProvider.embedText(`${queryTopic} ${detectedSubject ?? ""}`);
+  const queryVec = await defaultSemanticProvider.embedText(
+    `${queryTopic} ${detectedSubject ?? ""}`,
+  );
 
   /*
     CROSS-LINGUAL KANONIK ATAMALAR.
@@ -70,7 +72,12 @@ export async function rerankCandidates(
 
     Shuning uchun reranker ham aynan o'sha kengaytmani oladi.
   */
-  const { expandedTerms } = expandRetrievalTerms(queryTopic, keywords, detectedSubject, detectedGrade);
+  const { expandedTerms } = expandRetrievalTerms(
+    queryTopic,
+    keywords,
+    detectedSubject,
+    detectedGrade,
+  );
   const canonicalPhrases = expandedTerms
     .map((t) => t.toUpperCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'"))
     .filter((t) => t.length >= 5);
@@ -91,7 +98,8 @@ export async function rerankCandidates(
     );
 
     // 1. Exact & Subphrase Match (0..1)
-    const norm = (s: string) => s.toUpperCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
+    const norm = (s: string) =>
+      s.toUpperCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
     const candTitle = norm(cand.topicName);
     const qTitle = norm(queryTopic);
 
@@ -99,7 +107,7 @@ export async function rerankCandidates(
     if (candTitle === qTitle) {
       exactScore = 1.0;
     } else if (candTitle.includes(qTitle) || qTitle.includes(candTitle)) {
-      exactScore = 0.90;
+      exactScore = 0.9;
     } else {
       /*
         Subphrase check — IKKI YO'NALISHLI.
@@ -165,7 +173,7 @@ export async function rerankCandidates(
       }
 
       if (subphraseHit || phraseHit || canonicalHit) {
-        exactScore = subphraseHit || phraseHit ? 0.85 : 0.80;
+        exactScore = subphraseHit || phraseHit ? 0.85 : 0.8;
       } else {
         const qTokens = keywords.map(stemUzbekWord);
         let matchCount = 0;
@@ -190,13 +198,17 @@ export async function rerankCandidates(
 
     let descMatches = 0;
     for (const kw of allQueryTokens) {
-      if (kw.length >= 3 && (candDesc.includes(kw) || candTitle.toLowerCase().includes(kw))) {
+      if (
+        kw.length >= 3 &&
+        (candDesc.includes(kw) || candTitle.toLowerCase().includes(kw))
+      ) {
         descMatches++;
       }
     }
-    const rawLexicalScore = allQueryTokens.length > 0
-      ? Math.min(1.0, descMatches / Math.max(1, allQueryTokens.length))
-      : 0;
+    const rawLexicalScore =
+      allQueryTokens.length > 0
+        ? Math.min(1.0, descMatches / Math.max(1, allQueryTokens.length))
+        : 0;
 
     // Kanonik (o'zbekchalashtirilgan) tokenlar bo'yicha muqobil leksik o'lchov.
     let canonicalMatches = 0;
@@ -205,15 +217,21 @@ export async function rerankCandidates(
         canonicalMatches++;
       }
     }
-    const canonicalLexical = canonicalTokens.length > 0
-      ? Math.min(1.0, canonicalMatches / canonicalTokens.length)
-      : 0;
+    const canonicalLexical =
+      canonicalTokens.length > 0
+        ? Math.min(1.0, canonicalMatches / canonicalTokens.length)
+        : 0;
 
     const lexicalScore = Math.max(rawLexicalScore, canonicalLexical);
 
     // 3. Semantic Similarity (0..1)
-    const candVec = await defaultSemanticProvider.embedText(`${cand.topicName} ${cand.description}`);
-    const semanticScore = Math.max(0, defaultSemanticProvider.computeSimilarity(queryVec, candVec));
+    const candVec = await defaultSemanticProvider.embedText(
+      `${cand.topicName} ${cand.description}`,
+    );
+    const semanticScore = Math.max(
+      0,
+      defaultSemanticProvider.computeSimilarity(queryVec, candVec),
+    );
 
     // 4. Grade & Subject Match (0..1)
     let gradeSubjectScore = 0;
@@ -232,9 +250,10 @@ export async function rerankCandidates(
         outcomeMatches++;
       }
     }
-    const outcomeScore = cand.expectedOutcomes.length > 0
-      ? Math.min(1.0, outcomeMatches / Math.min(3, cand.expectedOutcomes.length))
-      : 0;
+    const outcomeScore =
+      cand.expectedOutcomes.length > 0
+        ? Math.min(1.0, outcomeMatches / Math.min(3, cand.expectedOutcomes.length))
+        : 0;
 
     // 6. Intent Match (0..1)
     let intentScore = 0.6;
@@ -247,10 +266,10 @@ export async function rerankCandidates(
 
     // Rank Fusion Formulalari (Phase 5)
     let hybridScore =
-      0.30 * exactScore +
+      0.3 * exactScore +
       0.25 * lexicalScore +
       0.25 * semanticScore +
-      0.10 * gradeSubjectScore +
+      0.1 * gradeSubjectScore +
       0.05 * outcomeScore +
       0.05 * intentScore;
 
@@ -265,7 +284,9 @@ export async function rerankCandidates(
 
     // Specificity Bonus: If candidate title contains distinctive query tokens
     const qDistinctTokens = allQueryTokens.filter(
-      (t) => t.length >= 4 && !["dars", "sinf", "reja", "mavzu", "haqida", "bilan"].includes(t),
+      (t) =>
+        t.length >= 4 &&
+        !["dars", "sinf", "reja", "mavzu", "haqida", "bilan"].includes(t),
     );
     for (const dt of qDistinctTokens) {
       if (candTitle.toLowerCase().includes(dt)) {
@@ -292,9 +313,12 @@ export async function rerankCandidates(
     if (detectedGrade && isCrossGrade) {
       const numReq = parseInt(detectedGrade, 10);
       const numCand = parseInt(cand.grade, 10);
-      const basePenalty = !isNaN(numReq) && !isNaN(numCand)
-        ? (Math.abs(numReq - numCand) === 1 ? 0.10 : 0.25)
-        : 0.20;
+      const basePenalty =
+        !isNaN(numReq) && !isNaN(numCand)
+          ? Math.abs(numReq - numCand) === 1
+            ? 0.1
+            : 0.25
+          : 0.2;
 
       /*
         Jazo dalil kuchiga qarab yumshatiladi.
@@ -313,7 +337,10 @@ export async function rerankCandidates(
       */
       const evidenceStrength = Math.min(1, Math.max(0, exactScore));
       const discount = exactScore >= 1 ? 0.75 : 0.6;
-      hybridScore = Math.max(0, hybridScore - basePenalty * (1 - discount * evidenceStrength));
+      hybridScore = Math.max(
+        0,
+        hybridScore - basePenalty * (1 - discount * evidenceStrength),
+      );
     }
 
     scored.push({

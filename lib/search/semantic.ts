@@ -100,4 +100,5 @@ export class LocalSemanticProvider implements SemanticEmbeddingProvider {
   }
 }
 
-export const defaultSemanticProvider: SemanticEmbeddingProvider = new LocalSemanticProvider();
+export const defaultSemanticProvider: SemanticEmbeddingProvider =
+  new LocalSemanticProvider();

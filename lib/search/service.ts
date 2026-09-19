@@ -8,7 +8,11 @@ import {
   type SearchAnswer,
   type SearchInput,
 } from "@/lib/validations/search";
-import { understandQuery, type QueryUnderstanding, type ConversationTurnContext } from "./understanding";
+import {
+  understandQuery,
+  type QueryUnderstanding,
+  type ConversationTurnContext,
+} from "./understanding";
 import { matchCurriculumTopics, type RankedCurriculumMatch } from "./curriculum-matcher";
 import { validateAndGroundAnswer, type GroundingValidationResult } from "./validator";
 import { buildOrchestrationActions, type OrchestrationAction } from "./orchestration";
@@ -110,7 +114,10 @@ export async function runSearch(
 
   // 4. RETRIEVE & RANK (O'quv dasturi bilan boyitish — Adaptive Depth)
   const tRetrievalStart = Date.now();
-  const curriculumMatches = await matchCurriculumTopics(understanding, adaptiveStrategy.finalLimit);
+  const curriculumMatches = await matchCurriculumTopics(
+    understanding,
+    adaptiveStrategy.finalLimit,
+  );
   const retrievalMs = Date.now() - tRetrievalStart;
 
   // 5. GENERATE (AI chaqiruvi)
@@ -138,9 +145,10 @@ export async function runSearch(
   let explanation = "Javob umumiy metodik tavsiyalar asosida tayyorlandi.";
   if (curriculumMatches.length > 0) {
     const top = curriculumMatches[0];
-    explanation = top.isCrossGrade && top.requestedGrade && top.availableGrade
-      ? `Bu javob ${top.availableGrade} ${top.subject} o'quv dasturidagi «${top.topicName}» mavzusiga asoslandi (so'ralgan: ${top.requestedGrade}).`
-      : `Bu javob ${top.grade} ${top.subject} o'quv dasturidagi «${top.topicName}» mavzusiga asoslandi.`;
+    explanation =
+      top.isCrossGrade && top.requestedGrade && top.availableGrade
+        ? `Bu javob ${top.availableGrade} ${top.subject} o'quv dasturidagi «${top.topicName}» mavzusiga asoslandi (so'ralgan: ${top.requestedGrade}).`
+        : `Bu javob ${top.grade} ${top.subject} o'quv dasturidagi «${top.topicName}» mavzusiga asoslandi.`;
   }
 
   const totalMs = Date.now() - startTime;

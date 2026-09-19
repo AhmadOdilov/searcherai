@@ -15,7 +15,9 @@ describe("search understanding — query extraction", () => {
   });
 
   it("dars ishlanmasi intentini taniydi", () => {
-    const res = understandQuery("7-sinf matematika kasrlar bo'yicha 45 minutlik dars ishlanmasi");
+    const res = understandQuery(
+      "7-sinf matematika kasrlar bo'yicha 45 minutlik dars ishlanmasi",
+    );
 
     assert.equal(res.detectedSubject, "Matematika");
     assert.equal(res.detectedGrade, "7-sinf");

@@ -75,7 +75,11 @@ describe("multi-turn API holati (V6 — hozirgi cheklov qayd etiladi)", () => {
     });
     assert.equal(first.status, 200);
     const firstTopic = first.data!.understanding?.extractedTopic ?? "";
-    assert.match(firstTopic, /kvadrat|tenglama/i, "birinchi bosqichda mavzu aniqlanishi kerak");
+    assert.match(
+      firstTopic,
+      /kvadrat|tenglama/i,
+      "birinchi bosqichda mavzu aniqlanishi kerak",
+    );
 
     // Keyingi bosqich — faqat modifikator.
     const second = await client.request<SearchPayload>("/api/search", {
@@ -117,7 +121,10 @@ describe("multi-turn API holati (V6 — hozirgi cheklov qayd etiladi)", () => {
         body: { question: "8-sinf matematika kvadrat tenglamalar nima?", language: "UZ" },
       });
       assert.equal(opening.status, 200, `ochilish (${modifier})`);
-      assert.match(opening.data!.understanding?.extractedTopic ?? "", /kvadrat|tenglama/i);
+      assert.match(
+        opening.data!.understanding?.extractedTopic ?? "",
+        /kvadrat|tenglama/i,
+      );
 
       const res = await client.request<SearchPayload>("/api/search", {
         method: "POST",

@@ -53,12 +53,17 @@ async function main() {
 
   files.push({
     name: "golden-dataset-500.json",
-    items: JSON.parse(fs.readFileSync(path.join(root, "benchmark", "golden-dataset-500.json"), "utf8")),
+    items: JSON.parse(
+      fs.readFileSync(path.join(root, "benchmark", "golden-dataset-500.json"), "utf8"),
+    ),
   });
 
   const v5Dir = path.join(root, "benchmark", "v5");
   if (fs.existsSync(v5Dir)) {
-    for (const f of fs.readdirSync(v5Dir).filter((n) => n.endsWith(".json")).sort()) {
+    for (const f of fs
+      .readdirSync(v5Dir)
+      .filter((n) => n.endsWith(".json"))
+      .sort()) {
       files.push({
         name: `v5/${f}`,
         items: JSON.parse(fs.readFileSync(path.join(v5Dir, f), "utf8")),
@@ -94,16 +99,22 @@ async function main() {
 
     for (const g of declared) {
       if (!actual.has(g)) {
-        problems.push(`[registry_grade_missing_in_db] ${entry.subject}: reyestr «${g}» deydi, bazada yo'q`);
+        problems.push(
+          `[registry_grade_missing_in_db] ${entry.subject}: reyestr «${g}» deydi, bazada yo'q`,
+        );
       }
     }
     for (const g of actual) {
       if (!declared.has(g)) {
-        problems.push(`[db_grade_missing_in_registry] ${entry.subject}: bazada «${g}» bor, reyestrda yo'q`);
+        problems.push(
+          `[db_grade_missing_in_registry] ${entry.subject}: bazada «${g}» bor, reyestrda yo'q`,
+        );
       }
     }
     if (entry.status !== "OFFICIAL" && actual.size > 0) {
-      problems.push(`[registry_status_drift] ${entry.subject}: status ${entry.status}, lekin bazada ${actual.size} sinf bor`);
+      problems.push(
+        `[registry_status_drift] ${entry.subject}: status ${entry.status}, lekin bazada ${actual.size} sinf bor`,
+      );
     }
   }
 
@@ -127,14 +138,18 @@ async function main() {
 
       // 1. Takrorlanish
       if (seenIds.has(item.id)) {
-        problems.push(`[duplicate_id] ${item.id} — ${file.name} va ${seenIds.get(item.id)}`);
+        problems.push(
+          `[duplicate_id] ${item.id} — ${file.name} va ${seenIds.get(item.id)}`,
+        );
       } else {
         seenIds.set(item.id, file.name);
       }
 
       const qKey = item.q.trim().toLowerCase();
       if (seenQueries.has(qKey)) {
-        problems.push(`[duplicate_query] ${item.id} — ${seenQueries.get(qKey)} bilan bir xil`);
+        problems.push(
+          `[duplicate_query] ${item.id} — ${seenQueries.get(qKey)} bilan bir xil`,
+        );
       } else {
         seenQueries.set(qKey, item.id);
       }
@@ -157,42 +172,62 @@ async function main() {
         withGold++;
         const topic = topicById.get(item.goldEvidenceTopicId);
         if (!topic) {
-          problems.push(`[missing_gold_topic] ${item.id}: ${item.goldEvidenceTopicId} bazada yo'q`);
+          problems.push(
+            `[missing_gold_topic] ${item.id}: ${item.goldEvidenceTopicId} bazada yo'q`,
+          );
           continue;
         }
         if (!item.goldEvidenceTopicId.startsWith("dts_")) {
-          problems.push(`[non_deterministic_gold_id] ${item.id}: ${item.goldEvidenceTopicId}`);
+          problems.push(
+            `[non_deterministic_gold_id] ${item.id}: ${item.goldEvidenceTopicId}`,
+          );
         }
         if (
           item.goldEvidenceTopicTitle &&
-          item.goldEvidenceTopicTitle.normalize("NFC") !== topic.topicName.normalize("NFC")
+          item.goldEvidenceTopicTitle.normalize("NFC") !==
+            topic.topicName.normalize("NFC")
         ) {
-          problems.push(`[gold_title_drift] ${item.id}: «${item.goldEvidenceTopicTitle}» != «${topic.topicName}»`);
+          problems.push(
+            `[gold_title_drift] ${item.id}: «${item.goldEvidenceTopicTitle}» != «${topic.topicName}»`,
+          );
         }
-        if (item.expectedSubject && topic.subject.toLowerCase() !== item.expectedSubject.toLowerCase()) {
-          problems.push(`[gold_subject_mismatch] ${item.id}: ${topic.subject} != ${item.expectedSubject}`);
+        if (
+          item.expectedSubject &&
+          topic.subject.toLowerCase() !== item.expectedSubject.toLowerCase()
+        ) {
+          problems.push(
+            `[gold_subject_mismatch] ${item.id}: ${topic.subject} != ${item.expectedSubject}`,
+          );
         }
         if (item.expectedGrade) {
-          const sameGrade = topic.grade.toLowerCase() === item.expectedGrade.toLowerCase();
+          const sameGrade =
+            topic.grade.toLowerCase() === item.expectedGrade.toLowerCase();
           if (!sameGrade && !item.isCrossGrade) {
             problems.push(
               `[unlabelled_cross_grade] ${item.id}: so'ralgan ${item.expectedGrade}, gold ${topic.grade}`,
             );
           }
-          if (!sameGrade && item.isCrossGrade &&
-              item.expectedAvailableGrade?.toLowerCase() !== topic.grade.toLowerCase()) {
+          if (
+            !sameGrade &&
+            item.isCrossGrade &&
+            item.expectedAvailableGrade?.toLowerCase() !== topic.grade.toLowerCase()
+          ) {
             problems.push(
               `[cross_grade_label_drift] ${item.id}: ${item.expectedAvailableGrade} != ${topic.grade}`,
             );
           }
           if (sameGrade && item.isCrossGrade) {
-            problems.push(`[false_cross_grade_label] ${item.id}: gold aynan so'ralgan sinfda`);
+            problems.push(
+              `[false_cross_grade_label] ${item.id}: gold aynan so'ralgan sinfda`,
+            );
           }
         }
 
         // 6. Abstention va gold birga bo'lmaydi
         if (item.expectAbstention || item.isUnsupportedSubject) {
-          problems.push(`[abstention_with_gold] ${item.id}: ehtiyot kutilyapti, lekin gold dalil bor`);
+          problems.push(
+            `[abstention_with_gold] ${item.id}: ehtiyot kutilyapti, lekin gold dalil bor`,
+          );
         }
       }
     }
@@ -202,10 +237,15 @@ async function main() {
   console.log("   BENCHMARK INTEGRITY AUDIT");
   console.log("==========================================================");
   console.log(`Fayllar:        ${files.length}`);
-  for (const f of files) console.log(`  · ${f.name.padEnd(28)} ${String(f.items.length).padStart(4)}`);
+  for (const f of files)
+    console.log(`  · ${f.name.padEnd(28)} ${String(f.items.length).padStart(4)}`);
   console.log(`Jami so'rov:    ${total}`);
-  console.log(`Takroriy id:    ${problems.filter((p) => p.startsWith("[duplicate_id]")).length}`);
-  console.log(`Takroriy so'rov:${problems.filter((p) => p.startsWith("[duplicate_query]")).length}`);
+  console.log(
+    `Takroriy id:    ${problems.filter((p) => p.startsWith("[duplicate_id]")).length}`,
+  );
+  console.log(
+    `Takroriy so'rov:${problems.filter((p) => p.startsWith("[duplicate_query]")).length}`,
+  );
   console.log(`Gold dalilli:   ${withGold}`);
   console.log(`Bazadagi mavzu: ${dbTopics.length}`);
 

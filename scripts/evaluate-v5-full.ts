@@ -29,7 +29,11 @@
 import fs from "fs";
 import path from "path";
 import { performance } from "perf_hooks";
-import { understandQuery, type SearchIntent, type AudienceMode } from "../lib/search/understanding";
+import {
+  understandQuery,
+  type SearchIntent,
+  type AudienceMode,
+} from "../lib/search/understanding";
 import { retrieveCurriculumCandidates } from "../lib/search/curriculum-matcher";
 import { rerankCandidates } from "../lib/search/reranker";
 import { validateAndGroundAnswer } from "../lib/search/validator";
@@ -60,16 +64,36 @@ interface EvalItem {
 
 /** §21 — 30 ta nosozlik toifasi. */
 const FAILURE_BUCKETS = [
-  "typo", "synonym_gap", "grade_mismatch", "subject_mismatch",
-  "intent_misclassification", "polysemy", "cross_lingual_mismatch",
-  "complex_multi_concept", "ocr_phonetic_noise", "conversational_vague_query",
-  "over_filtering", "curriculum_out_of_scope", "reranker_demotion",
+  "typo",
+  "synonym_gap",
+  "grade_mismatch",
+  "subject_mismatch",
+  "intent_misclassification",
+  "polysemy",
+  "cross_lingual_mismatch",
+  "complex_multi_concept",
+  "ocr_phonetic_noise",
+  "conversational_vague_query",
+  "over_filtering",
+  "curriculum_out_of_scope",
+  "reranker_demotion",
   "truncation_embedding_dimension_limit",
-  "false_grounding", "false_abstention", "unsupported_claim", "contradiction",
-  "subject_boundary", "audience_boundary", "intent_boundary",
-  "cache_collision", "cache_staleness", "prompt_injection",
-  "evidence_mismatch", "cross_grade_false_positive", "cross_grade_false_negative",
-  "UI_grounding_mismatch", "malformed_llm_output", "stale_curriculum",
+  "false_grounding",
+  "false_abstention",
+  "unsupported_claim",
+  "contradiction",
+  "subject_boundary",
+  "audience_boundary",
+  "intent_boundary",
+  "cache_collision",
+  "cache_staleness",
+  "prompt_injection",
+  "evidence_mismatch",
+  "cross_grade_false_positive",
+  "cross_grade_false_negative",
+  "UI_grounding_mismatch",
+  "malformed_llm_output",
+  "stale_curriculum",
 ] as const;
 
 type FailureBucket = (typeof FAILURE_BUCKETS)[number];
@@ -124,7 +148,10 @@ async function main() {
 
   const v5Dir = path.join(root, "benchmark", "v5");
   const suiteFiles = fs.existsSync(v5Dir)
-    ? fs.readdirSync(v5Dir).filter((f) => f.endsWith(".json") && f !== "multi_turn.json").sort()
+    ? fs
+        .readdirSync(v5Dir)
+        .filter((f) => f.endsWith(".json") && f !== "multi_turn.json")
+        .sort()
     : [];
 
   const extra: EvalItem[] = suiteFiles.flatMap(
@@ -151,36 +178,60 @@ async function main() {
   console.log("==========================================================\n");
 
   // ── Hisoblagichlar ─────────────────────────────────────────────────────
-  let langCorrect = 0, langTotal = 0;
-  let subjCorrect = 0, subjTotal = 0;
-  let gradeCorrect = 0, gradeTotal = 0;
-  let intentCorrect = 0, intentTotal = 0;
-  let audCorrect = 0, audTotal = 0;
+  let langCorrect = 0,
+    langTotal = 0;
+  let subjCorrect = 0,
+    subjTotal = 0;
+  let gradeCorrect = 0,
+    gradeTotal = 0;
+  let intentCorrect = 0,
+    intentTotal = 0;
+  let audCorrect = 0,
+    audTotal = 0;
   // Auditoriya: aniq marker bo'lgan va bo'lmagan holatlar ALOHIDA o'lchanadi.
-  let audExplicitCorrect = 0, audExplicitTotal = 0;
-  let audDefaultAgree = 0, audDefaultTotal = 0;
+  let audExplicitCorrect = 0,
+    audExplicitTotal = 0;
+  let audDefaultAgree = 0,
+    audDefaultTotal = 0;
   // V6: auditoriya QANDAY aniqlanganini holat bo'yicha kesish.
   const audienceByResolution: Record<string, { total: number; correct: number }> = {};
 
   let retrievalEvaluated = 0;
-  let candHit20 = 0, candHit50 = 0, candHit100 = 0;
-  let rerankHit1 = 0, rerankHit3 = 0, rerankHit5 = 0;
-  let rrSum = 0, ndcg5Sum = 0, ndcg10Sum = 0, precision5Sum = 0;
+  let candHit20 = 0,
+    candHit50 = 0,
+    candHit100 = 0;
+  let rerankHit1 = 0,
+    rerankHit3 = 0,
+    rerankHit5 = 0;
+  let rrSum = 0,
+    ndcg5Sum = 0,
+    ndcg10Sum = 0,
+    precision5Sum = 0;
 
   // Abstention — ikkala populyatsiya ham haqiqiy va yiqila oladi.
-  let shouldAbstainTotal = 0, correctlyAbstained = 0;
-  let shouldGroundTotal = 0, wronglyAbstained = 0;
+  let shouldAbstainTotal = 0,
+    correctlyAbstained = 0;
+  let shouldGroundTotal = 0,
+    wronglyAbstained = 0;
   let falseGrounding = 0;
 
-  let crossGradeTotal = 0, crossGradeCorrect = 0, crossGradeWrongGrade = 0;
-  let nonCrossGradeTotal = 0, crossGradeFalsePositive = 0;
+  let crossGradeTotal = 0,
+    crossGradeCorrect = 0,
+    crossGradeWrongGrade = 0;
+  let nonCrossGradeTotal = 0,
+    crossGradeFalsePositive = 0;
 
-  let fakeCitations = 0, totalCitations = 0;
+  let fakeCitations = 0,
+    totalCitations = 0;
 
-  let securityTotal = 0, securityLeaks = 0;
+  let securityTotal = 0,
+    securityLeaks = 0;
   const securityFindings: string[] = [];
 
-  let claimTotal = 0, claimSupported = 0, claimContradicted = 0, claimUnsupported = 0;
+  let claimTotal = 0,
+    claimSupported = 0,
+    claimContradicted = 0,
+    claimUnsupported = 0;
   /*
     Ziddiyatlar TURI bo'yicha ajratiladi.
 
@@ -194,13 +245,21 @@ async function main() {
     Shuning uchun ikkala raqam ham chiqariladi va HECH BIRI yashirilmaydi.
   */
   const contradictionsByType: Record<string, number> = {};
-  let hoursProbeTotal = 0, hoursContradictionDetected = 0, hoursFalsePositive = 0;
+  let hoursProbeTotal = 0,
+    hoursContradictionDetected = 0,
+    hoursFalsePositive = 0;
 
   const buckets: Record<FailureBucket, number> = Object.fromEntries(
     FAILURE_BUCKETS.map((b) => [b, 0]),
   ) as Record<FailureBucket, number>;
 
-  const failures: Array<{ id: string; suite: string; q: string; bucket: FailureBucket; detail: string }> = [];
+  const failures: Array<{
+    id: string;
+    suite: string;
+    q: string;
+    bucket: FailureBucket;
+    detail: string;
+  }> = [];
   const latTotal: number[] = [];
   const latUnderstanding: number[] = [];
   const latRetrieval: number[] = [];
@@ -224,28 +283,55 @@ async function main() {
     if (item.suite !== "adversarial") {
       langTotal++;
       if (u.detectedLanguage === item.expectedLanguage) langCorrect++;
-      else addFailure(item, "cross_lingual_mismatch", `til: ${u.detectedLanguage} != ${item.expectedLanguage}`);
+      else
+        addFailure(
+          item,
+          "cross_lingual_mismatch",
+          `til: ${u.detectedLanguage} != ${item.expectedLanguage}`,
+        );
 
       if (item.expectedSubject) {
         subjTotal++;
-        if (u.detectedSubject?.toLowerCase() === item.expectedSubject.toLowerCase()) subjCorrect++;
-        else addFailure(item, "subject_boundary", `fan: ${u.detectedSubject ?? "yo'q"} != ${item.expectedSubject}`);
+        if (u.detectedSubject?.toLowerCase() === item.expectedSubject.toLowerCase())
+          subjCorrect++;
+        else
+          addFailure(
+            item,
+            "subject_boundary",
+            `fan: ${u.detectedSubject ?? "yo'q"} != ${item.expectedSubject}`,
+          );
       }
       if (item.expectedGrade) {
         gradeTotal++;
-        if (u.detectedGrade?.toLowerCase() === item.expectedGrade.toLowerCase()) gradeCorrect++;
-        else addFailure(item, "grade_mismatch", `sinf: ${u.detectedGrade ?? "yo'q"} != ${item.expectedGrade}`);
+        if (u.detectedGrade?.toLowerCase() === item.expectedGrade.toLowerCase())
+          gradeCorrect++;
+        else
+          addFailure(
+            item,
+            "grade_mismatch",
+            `sinf: ${u.detectedGrade ?? "yo'q"} != ${item.expectedGrade}`,
+          );
       }
       if (item.expectedIntent) {
         intentTotal++;
         if (u.detectedIntent === item.expectedIntent) intentCorrect++;
-        else addFailure(item, "intent_boundary", `intent: ${u.detectedIntent} != ${item.expectedIntent}`);
+        else
+          addFailure(
+            item,
+            "intent_boundary",
+            `intent: ${u.detectedIntent} != ${item.expectedIntent}`,
+          );
       }
       if (item.expectedAudience) {
         audTotal++;
         const audienceOk = u.audience === item.expectedAudience;
         if (audienceOk) audCorrect++;
-        else addFailure(item, "audience_boundary", `auditoriya: ${u.audience} != ${item.expectedAudience}`);
+        else
+          addFailure(
+            item,
+            "audience_boundary",
+            `auditoriya: ${u.audience} != ${item.expectedAudience}`,
+          );
 
         /*
           So'rovda auditoriya markeri bo'lmasa, tizim standart qiymat
@@ -315,7 +401,11 @@ async function main() {
         if (candRank < 50) candHit50++;
         if (candRank < 100) candHit100++;
       } else {
-        addFailure(item, "synonym_gap", `nomzodlar orasida yo'q (${candidates.length} ta nomzod)`);
+        addFailure(
+          item,
+          "synonym_gap",
+          `nomzodlar orasida yo'q (${candidates.length} ta nomzod)`,
+        );
       }
 
       const rank = top10.findIndex((m) => m.sourceId === target) + 1;
@@ -334,40 +424,68 @@ async function main() {
         rel10[rank - 1] = 1;
         ndcg10Sum += computeDCG(rel10, 10) / computeDCG([1], 10);
       } else if (candRank !== -1) {
-        addFailure(item, "reranker_demotion", `nomzodlarda ${candRank}-o'rin, top10'da yo'q`);
+        addFailure(
+          item,
+          "reranker_demotion",
+          `nomzodlarda ${candRank}-o'rin, top10'da yo'q`,
+        );
       }
 
       if (abstained) {
         wronglyAbstained++;
-        addFailure(item, "false_abstention", "rasmiy dalil mavjud, lekin tizim ehtiyot rejimiga o'tdi");
+        addFailure(
+          item,
+          "false_abstention",
+          "rasmiy dalil mavjud, lekin tizim ehtiyot rejimiga o'tdi",
+        );
       }
 
       // Soatlar ziddiyati zondlari — validator haqiqatan ziddiyatni topadimi?
       const realHours = hoursById.get(target) ?? null;
       if (realHours && realHours > 0 && top10[0]?.sourceId === target) {
         hoursProbeTotal++;
-        const bad = validateAndGroundAnswer(contradictoryAnswer(realHours), u, top10.slice(0, 5));
+        const bad = validateAndGroundAnswer(
+          contradictoryAnswer(realHours),
+          u,
+          top10.slice(0, 5),
+        );
         if (bad.claims.some((c) => c.type === "hours" && c.status === "contradicted")) {
           hoursContradictionDetected++;
         } else {
-          addFailure(item, "contradiction", `soatlar ziddiyati aniqlanmadi (rasmiy: ${realHours})`);
+          addFailure(
+            item,
+            "contradiction",
+            `soatlar ziddiyati aniqlanmadi (rasmiy: ${realHours})`,
+          );
         }
-        const good = validateAndGroundAnswer(faithfulAnswer(realHours), u, top10.slice(0, 5));
+        const good = validateAndGroundAnswer(
+          faithfulAnswer(realHours),
+          u,
+          top10.slice(0, 5),
+        );
         if (good.claims.some((c) => c.type === "hours" && c.status === "contradicted")) {
           hoursFalsePositive++;
-          addFailure(item, "unsupported_claim", `to'g'ri soat (${realHours}) noto'g'ri ziddiyat deb belgilandi`);
+          addFailure(
+            item,
+            "unsupported_claim",
+            `to'g'ri soat (${realHours}) noto'g'ri ziddiyat deb belgilandi`,
+          );
         }
       }
     }
 
     // ── 4. Abstention kutilgan so'rovlar ─────────────────────────────────
-    const registry = item.expectedSubject ? getSubjectCurriculumStatus(item.expectedSubject) : null;
+    const registry = item.expectedSubject
+      ? getSubjectCurriculumStatus(item.expectedSubject)
+      : null;
     const subjectUnavailable = registry?.status === "NOT_AVAILABLE";
     const gradeUnavailable = Boolean(
       item.expectedSubject &&
-        item.expectedGrade &&
-        !subjectUnavailable &&
-        !seededGrades.get(item.expectedSubject.toLowerCase())?.has(item.expectedGrade.toLowerCase()),
+      item.expectedGrade &&
+      !subjectUnavailable &&
+      !seededGrades
+        .get(item.expectedSubject.toLowerCase())
+        ?.has(item.expectedGrade.toLowerCase()),
     );
     const mustAbstain =
       item.expectAbstention === true ||
@@ -380,11 +498,19 @@ async function main() {
       if (abstained) {
         correctlyAbstained++;
       } else {
-        addFailure(item, "curriculum_out_of_scope", "rasmiy dalil yo'q, lekin tizim ehtiyot rejimiga o'tmadi");
+        addFailure(
+          item,
+          "curriculum_out_of_scope",
+          "rasmiy dalil yo'q, lekin tizim ehtiyot rejimiga o'tmadi",
+        );
       }
       if (grounding.isGrounded) {
         falseGrounding++;
-        addFailure(item, "false_grounding", `rasmiy dalilsiz grounded=true (ball ${top10[0]?.score ?? 0})`);
+        addFailure(
+          item,
+          "false_grounding",
+          `rasmiy dalilsiz grounded=true (ball ${top10[0]?.score ?? 0})`,
+        );
       }
     }
 
@@ -395,7 +521,11 @@ async function main() {
         .slice(0, 5)
         .find((m) => m.isCrossGrade === true || m.crossGradeMatch === true);
       if (!warned) {
-        addFailure(item, "cross_grade_false_negative", "sinf tafovuti ogohlantirishi chiqmadi");
+        addFailure(
+          item,
+          "cross_grade_false_negative",
+          "sinf tafovuti ogohlantirishi chiqmadi",
+        );
       } else if (
         warned.availableGrade?.toLowerCase() !== item.expectedAvailableGrade.toLowerCase()
       ) {
@@ -412,7 +542,11 @@ async function main() {
       nonCrossGradeTotal++;
       if (top10[0]?.isCrossGrade === true) {
         crossGradeFalsePositive++;
-        addFailure(item, "cross_grade_false_positive", `1-o'rinda boshqa sinf: ${top10[0].grade}`);
+        addFailure(
+          item,
+          "cross_grade_false_positive",
+          `1-o'rinda boshqa sinf: ${top10[0].grade}`,
+        );
       }
     }
 
@@ -456,7 +590,10 @@ async function main() {
       }
 
       // (b) Tozalangichdan keyin bajariladigan teg qolmasligi kerak.
-      if (sanitized.success && /<\s*\/?\s*(script|img|iframe|svg)\b/i.test(sanitizedQuestion)) {
+      if (
+        sanitized.success &&
+        /<\s*\/?\s*(script|img|iframe|svg)\b/i.test(sanitizedQuestion)
+      ) {
         leaked.push("tag_survived_sanitizer");
       }
 
@@ -475,9 +612,13 @@ async function main() {
 
   // ── Yakuniy hisob ────────────────────────────────────────────────────
   latTotal.sort((a, b) => a - b);
-  const avg = (arr: number[]) => (arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0);
+  const avg = (arr: number[]) =>
+    arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
 
-  const abstentionPrecision = pct(correctlyAbstained, correctlyAbstained + wronglyAbstained);
+  const abstentionPrecision = pct(
+    correctlyAbstained,
+    correctlyAbstained + wronglyAbstained,
+  );
   const abstentionRecall = pct(correctlyAbstained, shouldAbstainTotal);
 
   const report = {
@@ -505,8 +646,13 @@ async function main() {
         ]),
       ),
       evaluated: {
-        langTotal, subjTotal, gradeTotal, intentTotal, audTotal,
-        audExplicitTotal, audDefaultTotal,
+        langTotal,
+        subjTotal,
+        gradeTotal,
+        intentTotal,
+        audTotal,
+        audExplicitTotal,
+        audDefaultTotal,
       },
     },
     candidateRetrieval: {
@@ -560,12 +706,16 @@ async function main() {
         tizimning ochiq OGOHLANTIRISHI va u cross-grade aniqligi
         chegarasi bilan allaqachon qattiq nazorat qilinadi.
       */
-      factualContradictionRate: pct(contradictionsByType.FACTUAL_CONTRADICTION ?? 0, claimTotal),
+      factualContradictionRate: pct(
+        contradictionsByType.FACTUAL_CONTRADICTION ?? 0,
+        claimTotal,
+      ),
       sourceConflictRate: pct(contradictionsByType.SOURCE_CONFLICT ?? 0, claimTotal),
       gradeConflictRate: pct(contradictionsByType.GRADE_CONFLICT ?? 0, claimTotal),
       // Gate uchun: javob-dalil ziddiyatlari (sinf ogohlantirishisiz).
       answerEvidenceConflictRate: pct(
-        (contradictionsByType.FACTUAL_CONTRADICTION ?? 0) + (contradictionsByType.SOURCE_CONFLICT ?? 0),
+        (contradictionsByType.FACTUAL_CONTRADICTION ?? 0) +
+          (contradictionsByType.SOURCE_CONFLICT ?? 0),
         claimTotal,
       ),
       unsupportedClaimRate: pct(claimUnsupported, claimTotal),
@@ -608,16 +758,32 @@ async function main() {
   );
 
   console.log("## 1. QUERY UNDERSTANDING");
-  console.log(`- Language:  ${report.understanding.languageAccuracy}% (${langCorrect}/${langTotal})`);
-  console.log(`- Subject:   ${report.understanding.subjectAccuracy}% (${subjCorrect}/${subjTotal})`);
-  console.log(`- Grade:     ${report.understanding.gradeAccuracy}% (${gradeCorrect}/${gradeTotal})`);
-  console.log(`- Intent:    ${report.understanding.intentAccuracy}% (${intentCorrect}/${intentTotal})`);
-  console.log(`- Audience:  ${report.understanding.audienceAccuracy}% (${audCorrect}/${audTotal})`);
-  console.log(`    · aniq markerli:  ${report.understanding.audienceExplicitAccuracy}% (${audExplicitCorrect}/${audExplicitTotal})`);
-  console.log(`    · markersiz (xulosa/standart):     ${report.understanding.audienceDefaultAgreement}% (${audDefaultAgree}/${audDefaultTotal})`);
+  console.log(
+    `- Language:  ${report.understanding.languageAccuracy}% (${langCorrect}/${langTotal})`,
+  );
+  console.log(
+    `- Subject:   ${report.understanding.subjectAccuracy}% (${subjCorrect}/${subjTotal})`,
+  );
+  console.log(
+    `- Grade:     ${report.understanding.gradeAccuracy}% (${gradeCorrect}/${gradeTotal})`,
+  );
+  console.log(
+    `- Intent:    ${report.understanding.intentAccuracy}% (${intentCorrect}/${intentTotal})`,
+  );
+  console.log(
+    `- Audience:  ${report.understanding.audienceAccuracy}% (${audCorrect}/${audTotal})`,
+  );
+  console.log(
+    `    · aniq markerli:  ${report.understanding.audienceExplicitAccuracy}% (${audExplicitCorrect}/${audExplicitTotal})`,
+  );
+  console.log(
+    `    · markersiz (xulosa/standart):     ${report.understanding.audienceDefaultAgreement}% (${audDefaultAgree}/${audDefaultTotal})`,
+  );
   for (const [res, stat] of Object.entries(report.understanding.audienceByResolution)) {
     const s2 = stat as { total: number; correct: number; accuracy: number };
-    console.log(`    · ${res.padEnd(18)} ${String(s2.accuracy).padStart(6)}% (${s2.correct}/${s2.total})`);
+    console.log(
+      `    · ${res.padEnd(18)} ${String(s2.accuracy).padStart(6)}% (${s2.correct}/${s2.total})`,
+    );
   }
 
   console.log("\n## 2. CANDIDATE RETRIEVAL");
@@ -633,36 +799,58 @@ async function main() {
   console.log(`- nDCG@5:   ${report.reranker.ndcg5}`);
 
   console.log("\n## 4. ABSTENTION (ikkala populyatsiya ham haqiqiy)");
-  console.log(`- Precision: ${abstentionPrecision}% (${correctlyAbstained}/${correctlyAbstained + wronglyAbstained})`);
-  console.log(`- Recall:    ${abstentionRecall}% (${correctlyAbstained}/${shouldAbstainTotal})`);
+  console.log(
+    `- Precision: ${abstentionPrecision}% (${correctlyAbstained}/${correctlyAbstained + wronglyAbstained})`,
+  );
+  console.log(
+    `- Recall:    ${abstentionRecall}% (${correctlyAbstained}/${shouldAbstainTotal})`,
+  );
   console.log(`- False grounding: ${falseGrounding}`);
 
   console.log("\n## 5. CROSS-GRADE");
-  console.log(`- Accuracy: ${report.crossGrade.accuracy}% (${crossGradeCorrect}/${crossGradeTotal})`);
+  console.log(
+    `- Accuracy: ${report.crossGrade.accuracy}% (${crossGradeCorrect}/${crossGradeTotal})`,
+  );
   console.log(`- False positives: ${crossGradeFalsePositive}/${nonCrossGradeTotal}`);
 
   console.log("\n## 6. GROUNDING");
   console.log(`- Supported claim rate: ${report.grounding.supportedClaimRate}%`);
-  console.log(`- Contradiction rate:   ${report.grounding.contradictionRate}% (turlar: ${JSON.stringify(contradictionsByType)})`);
-  console.log(`    · FACTUAL_CONTRADICTION: ${report.grounding.factualContradictionRate}%`);
+  console.log(
+    `- Contradiction rate:   ${report.grounding.contradictionRate}% (turlar: ${JSON.stringify(contradictionsByType)})`,
+  );
+  console.log(
+    `    · FACTUAL_CONTRADICTION: ${report.grounding.factualContradictionRate}%`,
+  );
   console.log(`    · SOURCE_CONFLICT:       ${report.grounding.sourceConflictRate}%`);
-  console.log(`    · GRADE_CONFLICT:        ${report.grounding.gradeConflictRate}%  (shaffoflik ogohlantirishi)`);
-  console.log(`    · javob-dalil ziddiyati (gate): ${report.grounding.answerEvidenceConflictRate}%`);
+  console.log(
+    `    · GRADE_CONFLICT:        ${report.grounding.gradeConflictRate}%  (shaffoflik ogohlantirishi)`,
+  );
+  console.log(
+    `    · javob-dalil ziddiyati (gate): ${report.grounding.answerEvidenceConflictRate}%`,
+  );
   console.log(`- Fake DTS citations:   ${fakeCitations}/${totalCitations}`);
-  console.log(`- Soat ziddiyati zondi: ${report.grounding.hoursProbe.detectionRate}% (${hoursContradictionDetected}/${hoursProbeTotal}), yolg'on musbat: ${hoursFalsePositive}`);
+  console.log(
+    `- Soat ziddiyati zondi: ${report.grounding.hoursProbe.detectionRate}% (${hoursContradictionDetected}/${hoursProbeTotal}), yolg'on musbat: ${hoursFalsePositive}`,
+  );
 
   console.log("\n## 7. SECURITY");
-  console.log(`- Adversarial: ${securityTotal}, leaks: ${securityLeaks}, pass: ${report.security.passRate}%`);
+  console.log(
+    `- Adversarial: ${securityTotal}, leaks: ${securityLeaks}, pass: ${report.security.passRate}%`,
+  );
 
   console.log("\n## 8. LATENCY (mahalliy quvur, LLMsiz)");
-  console.log(`- p50: ${report.latencyLocalPipelineMs.p50} ms | p95: ${report.latencyLocalPipelineMs.p95} ms | p99: ${report.latencyLocalPipelineMs.p99} ms`);
+  console.log(
+    `- p50: ${report.latencyLocalPipelineMs.p50} ms | p95: ${report.latencyLocalPipelineMs.p95} ms | p99: ${report.latencyLocalPipelineMs.p99} ms`,
+  );
 
   console.log("\n## 9. FAILURE BUCKETS (nolga teng bo'lmaganlari)");
   for (const [bucket, count] of Object.entries(buckets)) {
     if (count > 0) console.log(`- ${bucket.padEnd(32)} ${count}`);
   }
 
-  console.log("\n✅ reports/search-v5-evaluation.json va search-v5-failures.json yozildi.");
+  console.log(
+    "\n✅ reports/search-v5-evaluation.json va search-v5-failures.json yozildi.",
+  );
   await prisma.$disconnect();
 }
 

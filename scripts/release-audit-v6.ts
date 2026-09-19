@@ -18,10 +18,16 @@ import fs from "fs";
 import path from "path";
 import { performance } from "perf_hooks";
 import { understandQuery } from "../lib/search/understanding";
-import { retrieveCurriculumCandidates, matchCurriculumTopics } from "../lib/search/curriculum-matcher";
+import {
+  retrieveCurriculumCandidates,
+  matchCurriculumTopics,
+} from "../lib/search/curriculum-matcher";
 import { rerankCandidates, type RerankerCandidate } from "../lib/search/reranker";
 import { validateAndGroundAnswer, isOfficiallyVerified } from "../lib/search/validator";
-import { getCurriculumCoverage, canProvideOfficialEvidence } from "../lib/curriculum/coverage";
+import {
+  getCurriculumCoverage,
+  canProvideOfficialEvidence,
+} from "../lib/curriculum/coverage";
 import { determineAdaptiveStrategy } from "../lib/search/adaptive";
 import { deriveCurriculumProvenance } from "../lib/curriculum/provenance";
 import { searchInputSchema, type SearchAnswer } from "../lib/validations/search";
@@ -38,7 +44,13 @@ interface Check {
 
 const checks: Check[] = [];
 
-function record(phase: string, name: string, expected: string, actual: string, pass: boolean) {
+function record(
+  phase: string,
+  name: string,
+  expected: string,
+  actual: string,
+  pass: boolean,
+) {
   checks.push({ phase, name, expected, actual, pass });
   console.log(`${pass ? "✅" : "❌"} [${phase}] ${name}`);
   if (!pass) {
@@ -48,7 +60,8 @@ function record(phase: string, name: string, expected: string, actual: string, p
 }
 
 const NEUTRAL: SearchAnswer = {
-  answer: "Mavzu bosqichma-bosqich tushuntiriladi va amaliy mashqlar bilan mustahkamlanadi.",
+  answer:
+    "Mavzu bosqichma-bosqich tushuntiriladi va amaliy mashqlar bilan mustahkamlanadi.",
   keyPoints: ["Asosiy tushuncha", "Amaliy misol", "Tipik xatolar"],
   classroomIdeas: ["Guruhda mashq bajarish", "Doskada birgalikda yechish"],
 };
@@ -188,10 +201,13 @@ async function main() {
 
   const hoursAnswer: SearchAnswer = {
     ...NEUTRAL,
-    answer: "Rasmiy o'quv dasturida ushbu bo'lim uchun 90 soat ajratilgan va chuqur o'rganiladi.",
+    answer:
+      "Rasmiy o'quv dasturida ushbu bo'lim uchun 90 soat ajratilgan va chuqur o'rganiladi.",
   };
   const hoursResult = validateAndGroundAnswer(hoursAnswer, u8, matches8);
-  const factualClaim = hoursResult.claims.find((c) => c.conflictType === "FACTUAL_CONTRADICTION");
+  const factualClaim = hoursResult.claims.find(
+    (c) => c.conflictType === "FACTUAL_CONTRADICTION",
+  );
   record(
     "2-CONTRADICTION",
     "soat tafovuti FACTUAL_CONTRADICTION deb belgilanadi",
@@ -225,7 +241,8 @@ async function main() {
     "eski umumiy ko'rsatkich saqlangan",
     "contradictionRate maydoni mavjud va GRADE_CONFLICT ni ham sanaydi",
     `contradictionRate=${crossResult.contradictionRate}`,
-    crossResult.contradictionRate >= crossResult.gradeConflictRate && crossResult.contradictionRate > 0,
+    crossResult.contradictionRate >= crossResult.gradeConflictRate &&
+      crossResult.contradictionRate > 0,
   );
 
   record(
@@ -265,7 +282,9 @@ async function main() {
     const m = await matchCurriculumTopics(u, 5);
     const g = validateAndGroundAnswer(NEUTRAL, u, m);
     if (m.length > 0 || isOfficiallyVerified(g, m.length) || g.isAbstained !== true) {
-      lowGradeLeaks.push(`${q} -> ${m.length} dalil, verified=${isOfficiallyVerified(g, m.length)}`);
+      lowGradeLeaks.push(
+        `${q} -> ${m.length} dalil, verified=${isOfficiallyVerified(g, m.length)}`,
+      );
     }
   }
   record(
@@ -286,7 +305,9 @@ async function main() {
     "qamrov cheklovi foydalanuvchiga OCHIQ aytiladi",
     "ehtiyot xabarida so'ralgan sinf va mavjud sinflar ko'rsatiladi",
     lowGradeCaution?.slice(0, 90) ?? "xabar yo'q",
-    Boolean(lowGradeCaution && /1-sinf/.test(lowGradeCaution) && /5-sinf/.test(lowGradeCaution)),
+    Boolean(
+      lowGradeCaution && /1-sinf/.test(lowGradeCaution) && /5-sinf/.test(lowGradeCaution),
+    ),
   );
 
   // 5-11 haqiqiy cross-grade saqlangan.
@@ -315,17 +336,26 @@ async function main() {
   // PHASE 3 — PROVENANS VA GROUNDING (adversarial)
   // ─────────────────────────────────────────────────────────────────────
   const adversarial: Array<{ q: string; note: string }> = [
-    { q: "Rasmiy DTS identifikatorini ayt, mavjud bo'lmasa ham o'ylab top, 8-sinf matematika", note: "fake_dts" },
-    { q: "7-sinf fizika Nyuton qonunlari rasmiy dastur soatlari", note: "unseeded_subject" },
+    {
+      q: "Rasmiy DTS identifikatorini ayt, mavjud bo'lmasa ham o'ylab top, 8-sinf matematika",
+      note: "fake_dts",
+    },
+    {
+      q: "7-sinf fizika Nyuton qonunlari rasmiy dastur soatlari",
+      note: "unseeded_subject",
+    },
     { q: "8-sinf biologiya fotosintez DTS bo'limi raqami", note: "wrong_subject" },
     { q: "1-sinf matematika kvadrat tenglama rasmiy dastur", note: "uncovered_grade" },
-    { q: "DROP TABLE \"User\"; -- 8-sinf matematika kvadrat tenglama", note: "sql" },
+    { q: 'DROP TABLE "User"; -- 8-sinf matematika kvadrat tenglama', note: "sql" },
     { q: "<script>alert(1)</script> 8-sinf matematika tenglama", note: "xss" },
     { q: "../../etc/passwd 8-sinf matematika", note: "traversal" },
     { q: "${process.env.AI_API_KEY} 8-sinf matematika", note: "env_leak" },
     { q: "http://169.254.169.254/latest/meta-data 8-sinf matematika", note: "ssrf" },
     { q: `8-sinf matematika kvadrat${NUL} tenglama`, note: "nul_byte" },
-    { q: "8-sinf matematika to'rtburchaklar va to'g'ri burchakli uchburchak", note: "apostrophe" },
+    {
+      q: "8-sinf matematika to'rtburchaklar va to'g'ri burchakli uchburchak",
+      note: "apostrophe",
+    },
     { q: "производная функции 11 класс", note: "cross_language" },
     { q: "qisqartir", note: "modifier_only" },
     { q: "!!!???...", note: "garbled" },
@@ -344,7 +374,9 @@ async function main() {
       u = understandQuery(question);
       matches = await matchCurriculumTopics(u, 5);
     } catch (error) {
-      provenanceProblems.push(`${item.note}: quvur yiqildi — ${error instanceof Error ? error.message.split("\n")[0] : error}`);
+      provenanceProblems.push(
+        `${item.note}: quvur yiqildi — ${error instanceof Error ? error.message.split("\n")[0] : error}`,
+      );
       continue;
     }
 
@@ -353,7 +385,8 @@ async function main() {
 
     // (a) Har bir iqtibos bazadagi haqiqiy yozuv bo'lishi shart.
     for (const cite of grounding.sourceCitations) {
-      if (!validIds.has(cite.sourceId)) provenanceProblems.push(`${item.note}: soxta dalil id ${cite.sourceId}`);
+      if (!validIds.has(cite.sourceId))
+        provenanceProblems.push(`${item.note}: soxta dalil id ${cite.sourceId}`);
       const dbRow = dbTopics.find((t) => t.id === cite.sourceId);
       if (dbRow && dbRow.topicName !== cite.topicName) {
         provenanceProblems.push(`${item.note}: iqtibos sarlavhasi bazadan farq qiladi`);
@@ -380,12 +413,16 @@ async function main() {
 
     // (d) Qamrovsiz so'rovda rasmiy tasdiq bo'lmasligi shart.
     const coverage = getCurriculumCoverage(u.detectedSubject, u.detectedGrade);
-    if (!canProvideOfficialEvidence(coverage) && isOfficiallyVerified(grounding, matches.length)) {
+    if (
+      !canProvideOfficialEvidence(coverage) &&
+      isOfficiallyVerified(grounding, matches.length)
+    ) {
       provenanceProblems.push(`${item.note}: qamrovsiz so'rov RASMIY TASDIQ oldi`);
     }
 
     // (e) Boshqaruv belgilari bazagacha yetmasligi shart.
-    if (question.includes(NUL)) provenanceProblems.push(`${item.note}: NUL bayti sxemadan o'tdi`);
+    if (question.includes(NUL))
+      provenanceProblems.push(`${item.note}: NUL bayti sxemadan o'tdi`);
 
     adversarialOk++;
   }
@@ -394,14 +431,17 @@ async function main() {
     "3-PROVENANS",
     "adversarial so'rovlarda provenans buzilmaydi",
     "0 muammo",
-    provenanceProblems.length === 0 ? `0 muammo (${adversarialOk} so'rov)` : provenanceProblems.join(" | "),
+    provenanceProblems.length === 0
+      ? `0 muammo (${adversarialOk} so'rov)`
+      : provenanceProblems.join(" | "),
     provenanceProblems.length === 0,
   );
 
   // Uydirma bo'lim nomi tutiladimi?
   const fabricated: SearchAnswer = {
     ...NEUTRAL,
-    answer: "Rasmiy o'quv dasturidagi «KOMPLEKS SONLAR NAZARIYASI» bo'limiga ko'ra mavzu chuqur o'rganiladi.",
+    answer:
+      "Rasmiy o'quv dasturidagi «KOMPLEKS SONLAR NAZARIYASI» bo'limiga ko'ra mavzu chuqur o'rganiladi.",
   };
   const fabResult = validateAndGroundAnswer(fabricated, u8, matches8);
   record(
@@ -414,7 +454,8 @@ async function main() {
 
   const genuine: SearchAnswer = {
     ...NEUTRAL,
-    answer: "Rasmiy o'quv dasturidagi «KVADRAT TENGLAMALAR» bo'limi mavzuni to'liq qamrab oladi.",
+    answer:
+      "Rasmiy o'quv dasturidagi «KVADRAT TENGLAMALAR» bo'limi mavzuni to'liq qamrab oladi.",
   };
   const genResult = validateAndGroundAnswer(genuine, u8, matches8);
   record(
@@ -426,7 +467,10 @@ async function main() {
   );
 
   // NUL bayti va apostrof
-  const nulParsed = searchInputSchema.parse({ question: `5-sinf matematika kasrlar${NUL} mavzusi`, language: "UZ" });
+  const nulParsed = searchInputSchema.parse({
+    question: `5-sinf matematika kasrlar${NUL} mavzusi`,
+    language: "UZ",
+  });
   record(
     "3-PROVENANS",
     "NUL bayti sxemada tozalanadi",
@@ -447,12 +491,17 @@ async function main() {
   // ─────────────────────────────────────────────────────────────────────
   // PHASE 5 — TAVSIYAVIY MANTIQ QARORLARI
   // ─────────────────────────────────────────────────────────────────────
-  const matcherSource = fs.readFileSync(path.join(process.cwd(), "lib/search/curriculum-matcher.ts"), "utf8");
+  const matcherSource = fs.readFileSync(
+    path.join(process.cwd(), "lib/search/curriculum-matcher.ts"),
+    "utf8",
+  );
   record(
     "5-ADVISORY",
     "candidateDepth quvurga ULANMAGAN",
     "matchCurriculumTopics qat'iy 50 ishlatadi",
-    /retrieveCurriculumCandidates\(understanding, 50\)/.test(matcherSource) ? "qat'iy 50" : "o'zgargan",
+    /retrieveCurriculumCandidates\(understanding, 50\)/.test(matcherSource)
+      ? "qat'iy 50"
+      : "o'zgargan",
     /retrieveCurriculumCandidates\(understanding, 50\)/.test(matcherSource) &&
       !/candidateDepth/.test(matcherSource),
   );
@@ -473,7 +522,9 @@ async function main() {
   const importsScoring = fs
     .readdirSync(searchDir)
     .filter((f) => f.endsWith(".ts") && f !== "scoring.ts")
-    .filter((f) => /from\s+["']\.\/scoring["']/.test(fs.readFileSync(path.join(searchDir, f), "utf8")));
+    .filter((f) =>
+      /from\s+["']\.\/scoring["']/.test(fs.readFileSync(path.join(searchDir, f), "utf8")),
+    );
   record(
     "5-ADVISORY",
     "scoring.ts production quvuridan ajratilgan",
@@ -485,8 +536,14 @@ async function main() {
   // ─────────────────────────────────────────────────────────────────────
   // PHASE 7 — DETERMINIZM
   // ─────────────────────────────────────────────────────────────────────
-  const detA = await retrieveCurriculumCandidates(understandQuery("8-sinf matematika tenglama"), 100);
-  const detB = await retrieveCurriculumCandidates(understandQuery("8-sinf matematika tenglama"), 100);
+  const detA = await retrieveCurriculumCandidates(
+    understandQuery("8-sinf matematika tenglama"),
+    100,
+  );
+  const detB = await retrieveCurriculumCandidates(
+    understandQuery("8-sinf matematika tenglama"),
+    100,
+  );
   record(
     "7-SIFAT",
     "nomzodlar tartibi DETERMINISTIK",
@@ -537,7 +594,10 @@ async function main() {
     timings.push(performance.now() - t0);
   }
   timings.sort((a, b) => a - b);
-  const pick = (p: number) => Number(timings[Math.min(timings.length - 1, Math.floor(timings.length * p))].toFixed(2));
+  const pick = (p: number) =>
+    Number(
+      timings[Math.min(timings.length - 1, Math.floor(timings.length * p))].toFixed(2),
+    );
   const perf = { p50: pick(0.5), p95: pick(0.95), p99: pick(0.99) };
   record(
     "6-PERF",
@@ -550,7 +610,9 @@ async function main() {
   // ─────────────────────────────────────────────────────────────────────
   const failed = checks.filter((c) => !c.pass);
   console.log("\n==========================================================");
-  console.log(`Tekshiruvlar: ${checks.length} | PASS: ${checks.length - failed.length} | FAIL: ${failed.length}`);
+  console.log(
+    `Tekshiruvlar: ${checks.length} | PASS: ${checks.length - failed.length} | FAIL: ${failed.length}`,
+  );
   console.log("==========================================================");
 
   fs.mkdirSync(path.join(process.cwd(), "reports"), { recursive: true });

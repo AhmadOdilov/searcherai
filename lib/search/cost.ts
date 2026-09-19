@@ -18,8 +18,8 @@ export interface TokenPricing {
 }
 
 const DEFAULT_PRICING: TokenPricing = {
-  inputPerMillion: 0.10, // $0.10 per 1M tokens
-  outputPerMillion: 0.40, // $0.40 per 1M tokens
+  inputPerMillion: 0.1, // $0.10 per 1M tokens
+  outputPerMillion: 0.4, // $0.40 per 1M tokens
 };
 
 export interface SearchCostMetrics {
