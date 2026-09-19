@@ -57,21 +57,54 @@ export function parseImagePayload(image: string): {
   base64: string;
   bytes: number;
 } {
+  const trimmed = image.trim();
+
   /*
-    `[\s\S]*` — nuqta o'rniga ataylab: base64 satri uzun bo'lsa unda
-    yangi qator bo'lishi mumkin, `.` esa uni tutmaydi. (`s` bayrog'i
-    loyihaning TypeScript maqsad versiyasida mavjud emas.)
+    Prefiks va yuk ALOHIDA ajratiladi — regex BUTUN satrga qo'llanmaydi.
+
+    ── Nega (o'lchangan) ─────────────────────────────────────────────────────
+    Ilgari bu yerda bitta naqsh turardi:
+
+        /^data:([a-zA-Z0-9/+.-]+);base64,([\s\S]+)$/
+
+    `([\s\S]+)` butun base64 yukini tutadi, ya'ni V8 regexp mexanizmi
+    ~7 MB satr bo'ylab yuradi va buning uchun JS stack'idan foydalanadi.
+    Stack qolgan zaxirasi yetmasa `RegExp.exec` `RangeError: Maximum
+    call stack size exceeded` tashlaydi — bu ApiError EMAS, shuning
+    uchun `withErrorHandling` uni 400 emas, 500 qilib qaytarardi.
+
+    Aynan shu `tests/e2e/vision.e2e.ts` dagi "JUDA KATTA rasmni rad
+    etadi" sinovining beqarorligi edi: fayl yolg'iz ishlatilganda stack
+    bo'sh va naqsh o'tib ketadi, to'liq e2e to'plamida esa `next dev`
+    ning chuqur chaqiruv zanjiri zaxirani yeydi va o'sha so'rov 500
+    bo'lib chiqadi. Stack bilan tasdiqlangan:
+        RangeError: Maximum call stack size exceeded
+            at RegExp.exec (<anonymous>)
+            at parseImagePayload (...)
+    Hajmning o'zi sabab emas — 48 MB satr ham bo'sh stack'da bemalol
+    o'tadi, ya'ni chegarani ko'tarish muammoni yopmaydi.
+
+    Vergulgacha bo'lgan qism esa har doim qisqa (`data:image/png;base64`)
+    — unga naqsh xavfsiz. Yuk umuman regexdan o'tmaydi.
+
+    Xatti-harakat o'zgarmaydi: MIME belgilar to'plamida vergul yo'q,
+    ya'ni eski naqsh ham aynan BIRINCHI vergulda ajratardi.
   */
-  const match = /^data:([a-zA-Z0-9/+.-]+);base64,([\s\S]+)$/.exec(image.trim());
-  if (match === null) {
+  const separator = trimmed.indexOf(",");
+  const prefixMatch =
+    separator === -1
+      ? null
+      : /^data:([a-zA-Z0-9/+.-]+);base64$/.exec(trimmed.slice(0, separator));
+  const base64 = separator === -1 ? "" : trimmed.slice(separator + 1);
+
+  if (prefixMatch === null || base64.length === 0) {
     throw apiErrors.validation(
       { image: ["errors.validation.imageNotReadable"] },
       "errors.validation.imageNotReadable",
     );
   }
 
-  const declaredType = match[1]!.toLowerCase();
-  const base64 = match[2]!;
+  const declaredType = prefixMatch[1]!.toLowerCase();
 
   let buffer: Buffer;
   try {

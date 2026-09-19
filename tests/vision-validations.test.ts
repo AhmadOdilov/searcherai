@@ -7,6 +7,8 @@ import {
   visionInputSchema,
 } from "../lib/validations/vision";
 import { buildVisionSystemPrompt, buildVisionUserPrompt } from "../lib/vision/prompt";
+import { parseImagePayload } from "../lib/vision/service";
+import { ApiError } from "../lib/api/errors";
 
 /**
  * Rasm tahlili — sxema, format aniqlash va prompt sinovlari.
@@ -66,6 +68,111 @@ describe("detectImageType — fayl IMZOSI bo'yicha", () => {
     */
     const executable = Buffer.from([0x4d, 0x5a, 0x90, 0x00]); // "MZ" — .exe
     assert.equal(detectImageType(executable), null);
+  });
+});
+
+/** `parseImagePayload` xatosini tarjima kaliti bo'yicha tekshiradi. */
+function rejectsWith(image: string, key: string): void {
+  assert.throws(
+    () => parseImagePayload(image),
+    (error: unknown) =>
+      error instanceof ApiError &&
+      error.code === "validation_error" &&
+      error.messageKey === key,
+    `kutilgan xato: ${key}`,
+  );
+}
+
+/**
+ * `parseImagePayload` — data URI ni ajratish.
+ *
+ * Ilgari bu yerda sinov umuman yo'q edi: funksiya faqat e2e orqali
+ * tekshirilardi. Aynan shu bo'shliq tufayli prefiksni ajratish usuli
+ * o'zgarganda (butun yukka qo'llanadigan regex olib tashlanganda)
+ * xatti-harakat mosligini isbotlaydigan narsa qolmasdi.
+ */
+describe("parseImagePayload — data URI ajratish", () => {
+  it("MIME turini va baytlarni ajratadi", () => {
+    const bytes = pngBytes(128);
+    const result = parseImagePayload(`data:image/png;base64,${bytes.toString("base64")}`);
+
+    assert.equal(result.mimeType, "image/png");
+    assert.equal(result.bytes, 128);
+  });
+
+  it("atrofdagi BO'SHLIQNI e'tiborsiz qoldiradi", () => {
+    const uri = `  data:image/png;base64,${pngBytes().toString("base64")}\n`;
+    assert.equal(parseImagePayload(uri).mimeType, "image/png");
+  });
+
+  it("base64 ichidagi YANGI QATOR halal bermaydi", () => {
+    /*
+      Uzun base64 satri qatorlarga bo'lingan holda kelishi mumkin
+      (ba'zi klientlar shunday yuboradi) — ajratish buni saqlab
+      qolishi kerak, dekodlash esa bo'shliqni o'zi tashlab yuboradi.
+    */
+    const raw = pngBytes(96).toString("base64");
+    const wrapped = `${raw.slice(0, 20)}\n${raw.slice(20)}`;
+    assert.equal(parseImagePayload(`data:image/png;base64,${wrapped}`).bytes, 96);
+  });
+
+  it("E'LON QILINGAN tur emas, HAQIQIY imzo qaytadi", () => {
+    const uri = `data:image/jpeg;base64,${pngBytes().toString("base64")}`;
+    assert.equal(parseImagePayload(uri).mimeType, "image/png");
+  });
+
+  it("VERGULSIZ satrni rad etadi", () => {
+    rejectsWith("data:image/png;base64", "errors.validation.imageNotReadable");
+  });
+
+  it("BO'SH yukni rad etadi", () => {
+    rejectsWith("data:image/png;base64,", "errors.validation.imageNotReadable");
+  });
+
+  it("data URI BO'LMAGAN satrni rad etadi", () => {
+    rejectsWith("shunchaki matn, rasm emas", "errors.validation.imageNotReadable");
+  });
+
+  it("noto'g'ri KODLASH nomini rad etadi", () => {
+    rejectsWith(
+      `data:image/png;base32,${pngBytes().toString("base64")}`,
+      "errors.validation.imageNotReadable",
+    );
+  });
+
+  it("prefiksdan OLDIN begona belgi bo'lsa rad etadi", () => {
+    rejectsWith(
+      `xdata:image/png;base64,${pngBytes().toString("base64")}`,
+      "errors.validation.imageNotReadable",
+    );
+  });
+
+  it("rasm bo'lmagan baytlarni rad etadi", () => {
+    rejectsWith(
+      `data:image/png;base64,${Buffer.alloc(64, 7).toString("base64")}`,
+      "errors.validation.imageFormatNotSupported",
+    );
+  });
+
+  /*
+    ── Regressiya: 5 MB dan katta yuk YIQILMASLIGI kerak ────────────────────
+    Ilgari ajratish butun yukka regex qo'llardi va V8 regexp mexanizmi
+    JS stack'ini yeb qo'yardi: chuqur chaqiruv zanjirida (`next dev`)
+    `RegExp.exec` `RangeError: Maximum call stack size exceeded`
+    tashlardi. U ApiError emas, ya'ni foydalanuvchi 400 o'rniga 500
+    olardi va `tests/e2e/vision.e2e.ts` beqaror bo'lib qolgandi.
+
+    DIQQAT: bu sinov o'sha portlashni QAYTA HOSIL QILMAYDI — u stack
+    zaxirasiga bog'liq, birlik sinovida esa zaxira deyarli to'liq.
+    Bu yerda faqat SHARTNOMA mahkamlanadi: katta yuk validatsiya
+    xatosi bilan qaytadi.
+  */
+  it("5 MB dan KATTA yuk validatsiya xatosi beradi", () => {
+    const big = pngBytes(MAX_IMAGE_BYTES + 1024);
+    rejectsWith(
+      `data:image/png;base64,${big.toString("base64")}`,
+      "errors.validation.imageTooLarge",
+    );
   });
 });
 
