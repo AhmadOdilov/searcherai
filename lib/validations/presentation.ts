@@ -97,6 +97,49 @@ export type SlideType = z.infer<typeof slideTypeSchema>;
  * `bullets` chegaralari ataylab qattiq: slaydga sig'maydigan matn
  * prezentatsiyani ishlatib bo'lmaydigan qiladi. 220 belgi ≈ 2-3 qator.
  */
+/**
+ * Slayd MAKETI (layout) — mazmun shakliga qarab tanlanadi.
+ *
+ * ── Nega kerak ────────────────────────────────────────────────────────────
+ * V6 gacha renderer ikkitagina chizish funksiyasiga ega edi: sarlavha
+ * slaydi va "sarlavha + bandlar" slaydi. Ya'ni 10 slaydli prezentatsiyaning
+ * 9 tasi AYNAN bir xil ko'rinardi — bu "eski uslubdagi PowerPoint"
+ * taassurotining asosiy sababi.
+ *
+ * Maket mazmundan KELIB CHIQADI: uchta tushuncha bo'lsa uch ustun, bitta
+ * katta raqam bo'lsa statistika maketi, taqqoslash bo'lsa ikki ustun.
+ * Tanlovni `lib/presentations/layout-engine.ts` qiladi, AI emas —
+ * shunda natija barqaror bo'ladi.
+ */
+export const slideLayoutSchema = z.enum([
+  "cover",
+  "statement",
+  "statistic",
+  "bullets",
+  "threeCards",
+  "fourCards",
+  "comparison",
+  "timeline",
+  "process",
+  "chart",
+  "quote",
+  "conclusion",
+]);
+
+export type SlideLayout = z.infer<typeof slideLayoutSchema>;
+
+/** Bitta karta — uch/to'rt ustunli maketlar uchun. */
+const cardSchema = z.object({
+  title: z.string().trim().min(1, "Karta sarlavhasi bo'sh").max(60, "Karta sarlavhasi uzun"),
+  body: z.string().trim().max(160, "Karta matni uzun").optional(),
+});
+
+/** Bosqich — timeline va process maketlari uchun. */
+const stepSchema = z.object({
+  label: z.string().trim().min(1, "Bosqich nomi bo'sh").max(60, "Bosqich nomi uzun"),
+  body: z.string().trim().max(140, "Bosqich matni uzun").optional(),
+});
+
 export const slideSchema = z.object({
   /*
     Xabarlar TABIIY MATN (tarjima kaliti emas) — bu sxemadan AI javobi
@@ -141,6 +184,88 @@ export const slideSchema = z.object({
    * o'qilishi kerak.
    */
   hidden: z.boolean().optional(),
+
+  /*
+    ── V6: MAZMUNGA MOS MAKET MAYDONLARI ─────────────────────────────────
+
+    Barchasi IXTIYORIY va bu ataylab: bazadagi eski yozuvlarda ular yo'q,
+    lekin ular baribir ochilishi va tahrirlanishi kerak. Maket berilmasa
+    renderer eski xatti-harakatga (`type` bo'yicha) qaytadi.
+  */
+
+  /** Maket — berilmasa `type` dan keltirib chiqariladi. */
+  layout: slideLayoutSchema.optional(),
+
+  /** Sarlavha ustidagi kichik yorliq: "BOZOR", "MUAMMO". */
+  eyebrow: z.string().trim().max(40, "Yorliq juda uzun").optional(),
+
+  /**
+   * Slaydning YAGONA asosiy fikri.
+   *
+   * "One slide = one idea" qoidasi shu maydon orqali amalga oshadi:
+   * u sarlavhadan keyin katta shriftda chiqadi va bandlar uni
+   * QO'LLAB-QUVVATLAYDI, takrorlamaydi.
+   */
+  keyMessage: z.string().trim().max(200, "Asosiy fikr juda uzun").optional(),
+
+  /** Bitta katta raqam — statistika maketi uchun. */
+  statistic: z
+    .object({
+      value: z.string().trim().min(1).max(16, "Raqam juda uzun"),
+      caption: z.string().trim().min(1).max(160, "Izoh juda uzun"),
+    })
+    .optional(),
+
+  /** 2-4 ta karta — ustunli maketlar uchun. */
+  cards: z.array(cardSchema).min(2).max(4).optional(),
+
+  /** Ikki tomonlama taqqoslash. */
+  comparison: z
+    .object({
+      leftTitle: z.string().trim().min(1).max(60),
+      leftItems: z.array(z.string().trim().min(1).max(120)).min(1).max(5),
+      rightTitle: z.string().trim().min(1).max(60),
+      rightItems: z.array(z.string().trim().min(1).max(120)).min(1).max(5),
+    })
+    .optional(),
+
+  /** 3-6 bosqich — timeline yoki process. */
+  steps: z.array(stepSchema).min(3).max(6).optional(),
+
+  /**
+   * NATIVE diagramma — PowerPointda tahrirlanadigan grafik.
+   *
+   * Rasm emas: `pptxgenjs.addChart` orqali haqiqiy chart obyekti
+   * quriladi, foydalanuvchi uni PowerPointda ochib ma'lumotini
+   * o'zgartira oladi.
+   */
+  chart: z
+    .object({
+      kind: z.enum(["bar", "line", "pie", "doughnut"]),
+      categories: z.array(z.string().trim().min(1).max(40)).min(2).max(8),
+      series: z
+        .array(
+          z.object({
+            name: z.string().trim().min(1).max(40),
+            values: z.array(z.number()).min(2).max(8),
+          }),
+        )
+        .min(1)
+        .max(3),
+      source: z.string().trim().max(160).optional(),
+    })
+    .optional(),
+
+  /** Iqtibos. */
+  quote: z
+    .object({
+      text: z.string().trim().min(10).max(300),
+      author: z.string().trim().max(80).optional(),
+    })
+    .optional(),
+
+  /** Ma'lumot manbasi — slayd pastida kichik shriftda. */
+  source: z.string().trim().max(160).optional(),
 });
 
 export type Slide = z.infer<typeof slideSchema>;

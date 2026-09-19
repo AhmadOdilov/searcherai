@@ -63,6 +63,15 @@ export interface PptxPalette {
    * qolgan hammasi rang bilan hal bo'ladi.
    */
   accentBar: string | null;
+
+  /**
+   * Karta va ustunlarning ichki foni (V6 maketlari uchun).
+   *
+   * Slayd fonidan BIR POG'ONA farq qiladi: kartaning chegarasi bilan
+   * birga u "qalqib turgan" blok hissini beradi. To'q shablonda fon
+   * biroz ochroq, oq shablonda esa biroz iliqroq bo'ladi.
+   */
+  cardFill: string;
 }
 
 /**
@@ -89,6 +98,7 @@ export const TEMPLATES = {
     rule: MAKTAB.rule,
     summary: MAKTAB.primaryDark,
     accentBar: null,
+    cardFill: MAKTAB.canvas,
   },
   /** To'q fon, och matn — qorong'i xona va yangi proyektorlar uchun. */
   zamonaviy: {
@@ -102,6 +112,7 @@ export const TEMPLATES = {
     rule: MAKTAB.primary,
     summary: MAKTAB.primaryLight,
     accentBar: null,
+    cardFill: "26231F",
   },
   /** Oq fon, to'ldirilgan sarlavha slaydi va har slaydda rangli tasma. */
   rangli: {
@@ -115,6 +126,7 @@ export const TEMPLATES = {
     rule: MAKTAB.primary,
     summary: MAKTAB.accent,
     accentBar: MAKTAB.primary,
+    cardFill: MAKTAB.white,
   },
 } as const satisfies Record<string, PptxPalette>;
 

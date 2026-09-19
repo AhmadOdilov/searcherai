@@ -14,6 +14,16 @@ import {
   type PptxPalette,
   type PptxTemplate,
 } from "@/lib/pptx/theme";
+import { planLayouts } from "@/lib/presentations/layout-engine";
+import {
+  addCardsSlide,
+  addChartSlide,
+  addComparisonSlide,
+  addQuoteSlide,
+  addStatementSlide,
+  addStatisticSlide,
+  addStepsSlide,
+} from "./layouts";
 
 /**
  * .pptx generatsiya qatlami.
@@ -88,16 +98,59 @@ export async function generatePptx(
     .filter((slide) => slide.hidden !== true)
     .slice(0, EDIT_MAX_SLIDES);
 
+  /*
+    ── MAKETNI DVIGATEL TANLAYDI (V6) ─────────────────────────────────────
+
+    Ilgari bu yerda `slide.type` bo'yicha uchta shox bor edi va amalda
+    ikkita chizish funksiyasi ishlardi: sarlavha va "sarlavha + bandlar".
+    Ya'ni 10 slaydli prezentatsiyaning 9 tasi AYNAN bir xil ko'rinardi.
+
+    Endi maket mazmun shakliga qarab tanlanadi (`planLayouts`) va har
+    maketning o'z chizish funksiyasi bor. Maket yo'q eski yozuvlar
+    `bullets` / `cover` / `conclusion` ga tushadi — xatti-harakat
+    o'zgarmaydi.
+  */
+  const layouts = planLayouts(slides);
+
   slides.forEach((slide, index) => {
-    switch (slide.type) {
-      case "title":
+    const position = index + 1;
+    const layout = layouts[index];
+
+    switch (layout) {
+      case "cover":
         addTitleSlide(pptx, palette, slide);
         break;
-      case "summary":
-        addContentSlide(pptx, palette, slide, index + 1, slides.length, true);
+      case "conclusion":
+        addContentSlide(pptx, palette, slide, position, slides.length, true);
         break;
-      default:
-        addContentSlide(pptx, palette, slide, index + 1, slides.length, false);
+      case "statement":
+        addStatementSlide(pptx, palette, slide, position, slides.length);
+        break;
+      case "statistic":
+        addStatisticSlide(pptx, palette, slide, position, slides.length);
+        break;
+      case "threeCards":
+      case "fourCards":
+        addCardsSlide(pptx, palette, slide, position, slides.length);
+        break;
+      case "comparison":
+        addComparisonSlide(pptx, palette, slide, position, slides.length);
+        break;
+      case "timeline":
+        addStepsSlide(pptx, palette, slide, position, slides.length, false);
+        break;
+      case "process":
+        addStepsSlide(pptx, palette, slide, position, slides.length, true);
+        break;
+      case "chart":
+        addChartSlide(pptx, palette, slide, position, slides.length);
+        break;
+      case "quote":
+        addQuoteSlide(pptx, palette, slide, position, slides.length);
+        break;
+      case "bullets":
+        addContentSlide(pptx, palette, slide, position, slides.length, false);
+        break;
     }
   });
 
@@ -139,8 +192,18 @@ function addTitleSlide(pptx: PptxGenJS, palette: PptxPalette, slide: Slide): voi
     shrinkText: true,
   });
 
-  // Bandlar bo'lsa — sarlavha ostida kichik matn (masalan fan, sinf).
-  const subtitle = slide.bullets.slice(0, 3).join("  ·  ");
+  /*
+    Sarlavha ostidagi kichik matn.
+
+    `keyMessage` USTUN turadi: V6 da muqova slaydi uchun asosiy fikr aynan
+    shu maydonga yoziladi ("Investorlar uchun 2026-yil sharhi"). Faqat
+    bandlarga qarab qolsak, u jimgina yo'qolardi — vizual tekshiruvda
+    aynan shu holat aniqlandi.
+
+    Bandlar zaxira bo'lib qoladi: eski yozuvlarda fan/sinf aynan shu
+    yerda saqlangan.
+  */
+  const subtitle = slide.keyMessage ?? slide.bullets.slice(0, 3).join("  ·  ");
   if (subtitle.length > 0) {
     target.addText(clamp(subtitle, 200), {
       x: MARGIN.x,
