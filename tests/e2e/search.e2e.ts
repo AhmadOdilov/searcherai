@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import { TestClient, cleanupTestUsers, findAiPrompt, testEmail } from "./helpers/client";
-import { MARKER_BAD_SHAPE, MARKER_SERVER_ERROR } from "./helpers/mock-ai.ts";
+import {
+  MARKER_BAD_SHAPE,
+  MARKER_NOT_JSON,
+  MARKER_SERVER_ERROR,
+} from "./helpers/mock-ai.ts";
 import { text } from "./helpers/messages";
 
 /**
@@ -189,5 +193,100 @@ describe("qidiruv — xatolar", () => {
       row.outputTokens !== null && row.outputTokens > 0,
       `chiqish tokenlari yozilmadi: ${row.outputTokens}`,
     );
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════════
+// Kvota qaytarilishi
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Foydalanuvchining joriy oynadagi kvota yozuvlari soni.
+ *
+ * `consumeAiQuota()` aynan shu sonni sanaydi (60 s oyna), ya'ni bu
+ * o'lchov "o'qituvchi yana nechta so'rov yubora oladi" degan savolga
+ * to'g'ridan-to'g'ri javob beradi.
+ */
+async function quotaUsed(email: string): Promise<number> {
+  const { prisma } = await import("../../lib/db");
+  return prisma.aiRequest.count({
+    where: { user: { email }, createdAt: { gte: new Date(Date.now() - 60_000) } },
+  });
+}
+
+/**
+ * Kvota shartnomasi — generatsiya modullari va rasm tahlilidagi bilan
+ * bir xil (`tests/e2e/generation-lifecycle.e2e.ts`, `vision.e2e.ts`).
+ *
+ * Bandlik AI chaqiruvidan OLDIN olinadi (parallel so'rovlar chegarani
+ * chetlab o'tmasligi uchun), shuning uchun MUVAFFAQIYATSIZLIKDA u
+ * qaytarilishi shart: javob kelmagan bo'lsa, o'qituvchi daqiqalik
+ * uchta so'rovidan bittasini bekorga yo'qotmasligi kerak.
+ *
+ * ── Nega TIMEOUT uchun alohida sinov yo'q ─────────────────────────────────
+ * Timeout `generateJson()` dan `AiError({ kind: "aborted" })` bo'lib
+ * chiqadi — ya'ni provayder xatosi va sxema xatosi bilan AYNI yo'ldan,
+ * `runSearch()` ni rad etish orqali. Uni sinash uchun `AI_TIMEOUT_MS`
+ * ni butun to'plam uchun tushirish kerak bo'lardi (soxta serverning
+ * kechikishi 3 s, chegara esa 15 s) — bu qolgan sinovlarni
+ * beqarorlashtirardi. Shu sababli shu yerda uchta BOSHQA-BOSHQA xato
+ * turi qamrab olingan, ularning hammasi o'sha yo'ldan o'tadi.
+ */
+describe("qidiruv — kvota qaytarilishi", () => {
+  it("MUVAFFAQIYATLI qidiruv kvotani SARFLAYDI", async () => {
+    /*
+      Teskari tomoni ham muhim: qaytarish mantig'i muvaffaqiyatli
+      so'rovni ham o'chirib yuborsa, cheklov umuman ishlamay qolardi.
+    */
+    const { client, email } = await signedInClientWithEmail("kvota-qidiruv-ok");
+
+    const result = await client.request("/api/search", {
+      method: "POST",
+      body: { question: "Bug'lanish va kondensatsiya qanday farq qiladi?" },
+    });
+
+    assert.equal(result.status, 200);
+    assert.equal(await quotaUsed(email), 1, "muvaffaqiyatda kvota sarflanmadi");
+  });
+
+  it("PROVAYDER XATOSIDA kvota QAYTARILADI", async () => {
+    /*
+      Eng og'rituvchi holat: provayder uzilgan paytda o'qituvchi uch
+      marta urinadi, uchalasi ham yiqiladi va u BIR DAQIQAGA
+      bloklanadi — o'z aybisiz.
+    */
+    const { client, email } = await signedInClientWithEmail("kvota-qidiruv-provayder");
+
+    const result = await client.request("/api/search", {
+      method: "POST",
+      body: { question: `Fotosintez qanday kechadi? ${MARKER_SERVER_ERROR}` },
+    });
+
+    assert.equal(result.ok, false);
+    assert.equal(await quotaUsed(email), 0, "provayder xatosida kvota qaytarilmadi");
+  });
+
+  it("SXEMA XATOSIDA kvota QAYTARILADI", async () => {
+    const { client, email } = await signedInClientWithEmail("kvota-qidiruv-sxema");
+
+    const result = await client.request("/api/search", {
+      method: "POST",
+      body: { question: `Fotosintez qanday kechadi? ${MARKER_BAD_SHAPE}` },
+    });
+
+    assert.equal(result.ok, false);
+    assert.equal(await quotaUsed(email), 0, "sxema xatosida kvota qaytarilmadi");
+  });
+
+  it("JSON BO'LMAGAN javobda ham kvota QAYTARILADI", async () => {
+    const { client, email } = await signedInClientWithEmail("kvota-qidiruv-json");
+
+    const result = await client.request("/api/search", {
+      method: "POST",
+      body: { question: `Fotosintez qanday kechadi? ${MARKER_NOT_JSON}` },
+    });
+
+    assert.equal(result.ok, false);
+    assert.equal(await quotaUsed(email), 0, "buzuq javobda kvota qaytarilmadi");
   });
 });

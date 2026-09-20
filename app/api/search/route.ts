@@ -1,6 +1,6 @@
 import { ok, parseJsonBody, withErrorHandling } from "@/lib/api/with-error-handling";
 import { requireUser } from "@/lib/auth/session";
-import { consumeAiQuota, recordAiUsage } from "@/lib/ai/rate-limit";
+import { consumeAiQuota, recordAiUsage, releaseAiQuota } from "@/lib/ai/rate-limit";
 import { runSearch } from "@/lib/search/service";
 import { searchInputSchema } from "@/lib/validations/search";
 
@@ -23,7 +23,26 @@ export const POST = withErrorHandling(async (request) => {
   // foydalanuvchining kvotasini yemasligi kerak.
   const reservation = await consumeAiQuota(user.id, "search");
 
-  const result = await runSearch(input);
+  /*
+    Qidiruv yiqilsa — bandlikni QAYTARAMIZ.
+
+    `consumeAiQuota()` AI chaqiruvidan OLDIN yozadi (parallel himoya
+    uchun), lekin `runSearch()` javobsiz tugashi mumkin: provayder
+    xatosi, timeout (`AiError` → `kind: "aborted"`), sxemaga mos
+    kelmagan yoki umuman JSON bo'lmagan javob. Qaytarilmasa,
+    provayder uzilgan paytda o'qituvchi uch marta urinib, hech narsa
+    olmasdan BIR DAQIQAGA bloklanardi — o'z aybisiz.
+
+    Bu generatsiya modullari va rasm tahlilidagi bilan AYNI shartnoma
+    (lib/lesson-plans/service.ts, app/api/vision-analyze/route.ts).
+    `releaseAiQuota` faqat `model` BO'SH yozuvni o'chiradi, ya'ni
+    muvaffaqiyatli chaqiruvdan keyin (`recordAiUsage` modelni yozgach)
+    u hech narsani qaytarmaydi.
+  */
+  const result = await runSearch(input).catch(async (caught: unknown) => {
+    await releaseAiQuota(reservation);
+    throw caught;
+  });
 
   /*
     Tokenlar kvota yozuviga.
