@@ -19,6 +19,8 @@ import {
   plannedSlideSchema,
 } from "../lib/validations/presentation-plan";
 import { slideSchema, type Slide } from "../lib/validations/presentation";
+import { generatePresentationContent } from "../lib/presentations/pipeline";
+import { AiError } from "../lib/ai/types";
 
 /**
  * PHASE 2 TEST HOLATLARI — foydalanuvchi spetsifikatsiyasidan.
@@ -445,5 +447,83 @@ describe("Phase 2 — bosqich promptlari", () => {
     }
     assert.match(prompt, /heading ≤/);
     assert.match(prompt, /O'YLAB TOPMA/);
+  });
+});
+
+describe("PRESENTATION_AI_MODEL — model tanlovi ANIQ bo'lishi kerak", () => {
+  /*
+    ── Nega bu sinov bor ──────────────────────────────────────────────────
+    Ilgari prezentatsiya moduli `AI_MODEL` ga JIMGINA qaytardi. Natijada
+    tizimda eng ko'p erkin matn yozadigan modul uchun model HECH KIM
+    tomonidan tanlanmagan edi — qidiruv va kalendar reja uchun esa
+    tanlangan. Bazadagi haqiqiy generatsiyada bu o'zini matn sifatida
+    ko'rsatdi ("ayirish" o'rniga "yasash").
+
+    Jim zaxira qaytib kelmasligi uchun sozlanmagan holat AYNAN xato
+    berishi kerak — `VISION_AI_MODEL` dagi bilan bir xil shartnoma.
+  */
+  function withEnv<T>(patch: Record<string, string | undefined>, run: () => T): T {
+    const previous = Object.fromEntries(
+      Object.keys(patch).map((key) => [key, process.env[key]]),
+    );
+    Object.assign(process.env, patch);
+    for (const [key, value] of Object.entries(patch)) {
+      if (value === undefined) delete process.env[key];
+    }
+
+    try {
+      return run();
+    } finally {
+      for (const [key, value] of Object.entries(previous)) {
+        if (value === undefined) delete process.env[key];
+        else process.env[key] = value;
+      }
+    }
+  }
+
+  const context = { topic: "Fotosintez", language: "UZ" } as const;
+
+  /*
+    `getEnv()` BUTUN sxemani tekshiradi, shuning uchun majburiy
+    o'zgaruvchilar ham berilishi kerak — aks holda sinov `EnvError` ga
+    urilib, tekshirmoqchi bo'lgan shartgacha yetib bormaydi.
+  */
+  const REQUIRED = {
+    DATABASE_URL: "postgresql://sinov@localhost:5432/sinov",
+    AUTH_SECRET: "sinov-uchun-kamida-o-ttiz-ikki-belgili-kalit",
+  };
+
+  it("model sozlanmagan bo'lsa TUSHUNARLI xato beradi", async () => {
+    const promise = withEnv(
+      { ...REQUIRED, AI_API_KEY: "sinov-kaliti", PRESENTATION_AI_MODEL: undefined },
+      () => generatePresentationContent({ ...context }),
+    );
+
+    await assert.rejects(promise, (error: unknown) => {
+      assert.ok(error instanceof AiError, "AiError kutilgan edi");
+      assert.equal(error.kind, "not_configured");
+      assert.match(error.message, /PRESENTATION_AI_MODEL/);
+      return true;
+    });
+  });
+
+  it("AI_MODEL ga JIM qaytmaydi", async () => {
+    // AI_MODEL to'ldirilgan, lekin prezentatsiya modeli emas — ilgari
+    // aynan shu holat "ishlayapti" deb hisoblanardi.
+    const promise = withEnv(
+      {
+        ...REQUIRED,
+        AI_API_KEY: "sinov-kaliti",
+        AI_MODEL: "umumiy-model",
+        PRESENTATION_AI_MODEL: undefined,
+      },
+      () => generatePresentationContent({ ...context }),
+    );
+
+    await assert.rejects(promise, (error: unknown) => {
+      assert.ok(error instanceof AiError);
+      assert.equal(error.kind, "not_configured");
+      return true;
+    });
   });
 });

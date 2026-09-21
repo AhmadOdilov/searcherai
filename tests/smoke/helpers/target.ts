@@ -103,6 +103,7 @@ export function appEnv(aiBaseUrl: string): Record<string, string> {
     AI_BASE_URL: aiBaseUrl,
     AI_MODEL: "mock-lesson-model",
     VISION_AI_MODEL: "mock-vision-model",
+    PRESENTATION_AI_MODEL: "mock-presentation-model",
     AI_MAX_RETRIES: "0",
     AI_TIMEOUT_MS: "15000",
     NEXT_TELEMETRY_DISABLED: "1",

@@ -98,6 +98,32 @@ const envSchema = z.object({
   SEARCH_AI_MODEL: z.string().default(""),
 
   /**
+   * Prezentatsiya matni uchun model.
+   *
+   * ── Nega ALOHIDA va nega standart qiymat YO'Q ─────────────────────────
+   * Bu modul butun tizimda eng ko'p ERKIN MATN yozadi: sakkizta
+   * slaydning sarlavhasi, asosiy fikri, bandlari, kartalari va
+   * bosqichlari. Erkin matnda modelning o'zbek tili sifati darhol
+   * ko'rinadi.
+   *
+   * Ilgari u `AI_MODEL` ga JIMGINA qaytardi va aynan shu narsa
+   * o'lchanmay qolgan edi: bazadagi haqiqiy generatsiyada model
+   * "ayirish" o'rniga "yasash", "olma" o'rniga "elma" yozgan. Qidiruv
+   * moduli uchun model ataylab tanlangan (`SEARCH_AI_MODEL`),
+   * prezentatsiya uchun esa hech kim tanlamagan — chunki tanlash
+   * TALAB QILINMAGAN.
+   *
+   * Shuning uchun bu yerda ham `VISION_AI_MODEL` dagi qoida: zaxira
+   * yo'q. Sozlanmagan bo'lsa prezentatsiya generatsiyasi tushunarli
+   * xato bilan to'xtaydi (ilova qulab tushmaydi), model esa
+   * TASODIFAN tanlanmaydi.
+   *
+   * Yandex AI Studio namunasi:
+   *   PRESENTATION_AI_MODEL="gpt://<folder-id>/qwen3-235b-a22b-fp8/latest"
+   */
+  PRESENTATION_AI_MODEL: z.string().default(""),
+
+  /**
    * Rasm tushunish (vision) uchun model.
    *
    * ── Nega ALOHIDA va nega standart qiymat YO'Q ─────────────────────────
@@ -154,6 +180,10 @@ export type AppEnv = z.infer<typeof envSchema> & {
   calendarPlanAiModel: string;
   /** Qidiruv uchun model — belgilanmasa `aiModel`. */
   searchAiModel: string;
+  /** Prezentatsiya matni uchun model. Bo'sh bo'lsa generatsiya o'chiq. */
+  presentationAiModel: string;
+  /** Prezentatsiya generatsiyasi yoqilganmi — kalit ham, model ham bormi. */
+  presentationConfigured: boolean;
   /** Rasm tahlili uchun model. Bo'sh bo'lsa vision o'chiq. */
   visionAiModel: string;
   /** Rasm tahlili yoqilganmi — kalit ham, model ham sozlanganmi. */
@@ -225,6 +255,13 @@ export function getEnv(): AppEnv {
     aiModel: data.AI_MODEL || defaults.model,
     calendarPlanAiModel: data.CALENDAR_PLAN_AI_MODEL || data.AI_MODEL || defaults.model,
     searchAiModel: data.SEARCH_AI_MODEL || data.AI_MODEL || defaults.model,
+    /*
+      Zaxira ATAYLAB yo'q — `VISION_AI_MODEL` dagi kabi. Model tanlovi
+      aniq bo'lishi kerak, aks holda u o'lchanmay qoladi.
+    */
+    presentationAiModel: data.PRESENTATION_AI_MODEL,
+    presentationConfigured:
+      data.AI_API_KEY.length > 0 && data.PRESENTATION_AI_MODEL.length > 0,
     visionAiModel: data.VISION_AI_MODEL,
     visionConfigured: data.AI_API_KEY.length > 0 && data.VISION_AI_MODEL.length > 0,
     // Oxiridagi "/" ni olib tashlaymiz — URL yig'ishda ikkilanish bo'lmasin.

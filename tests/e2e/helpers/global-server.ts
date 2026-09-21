@@ -77,6 +77,8 @@ export async function globalSetup(): Promise<void> {
   // serverda model nomi ahamiyatsiz, lekin u BO'SH bo'lmasligi kerak,
   // aks holda funksiya o'chiq deb hisoblanadi.
   process.env.VISION_AI_MODEL = "mock-vision-model";
+  // Prezentatsiya ham alohida model talab qiladi — xuddi shu sabab bilan.
+  process.env.PRESENTATION_AI_MODEL = "mock-presentation-model";
   // Sinovlar tez tugashi uchun qayta urinish yo'q — qayta urinish
   // mantig'i birlik sinovlarida (tests/ai-provider.test.ts) tekshirilgan.
   process.env.AI_MAX_RETRIES = "0";

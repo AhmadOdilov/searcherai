@@ -1,5 +1,7 @@
 import "server-only";
 import { generateJson } from "@/lib/ai/provider";
+import { AiError } from "@/lib/ai/types";
+import { getEnv } from "@/lib/env";
 import { buildBrief, type PresentationBrief } from "@/lib/presentations/brief";
 import { compressSlide } from "@/lib/presentations/density";
 import { layoutForContentType } from "@/lib/presentations/layout-engine";
@@ -83,6 +85,23 @@ export interface PipelineResult {
 export async function generatePresentationContent(
   context: PresentationPromptContext,
 ): Promise<PipelineResult> {
+  const env = getEnv();
+
+  /*
+    Model ANIQ tanlangan bo'lishi kerak — `AI_MODEL` ga jim qaytish yo'q.
+
+    Prezentatsiya tizimdagi eng ko'p erkin matn yozadigan modul va
+    modelning o'zbek tili sifati natijada darhol ko'rinadi. Jim zaxira
+    aynan shu tanlovni o'lchanmas qilib qo'ygan edi.
+    Batafsil: lib/env.ts → PRESENTATION_AI_MODEL
+  */
+  if (!env.presentationConfigured) {
+    throw new AiError({
+      kind: "not_configured",
+      detail: "PRESENTATION_AI_MODEL sozlanmagan — prezentatsiya generatsiyasi o'chiq",
+    });
+  }
+
   const brief = buildBrief({
     topic: context.topic,
     subject: context.subject ?? null,
@@ -105,6 +124,7 @@ export async function generatePresentationContent(
     schema: outlineSchemaFor(beats.length),
     systemPrompt: buildOutlineSystemPrompt(brief.language),
     prompt: buildOutlineUserPrompt({ brief, beats, allowed, contextBlock }),
+    model: env.presentationAiModel,
   });
 
   const outline: PresentationOutline = outlineCall.data;
@@ -122,6 +142,7 @@ export async function generatePresentationContent(
       title: outline.title,
       contextBlock,
     }),
+    model: env.presentationAiModel,
   });
 
   // ── 4-BOSQICH: SIQISH VA MAKET ─────────────────────────────────────────
