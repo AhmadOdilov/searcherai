@@ -114,6 +114,41 @@ describe("MultiTurnService (Phase 10 Backend Context & Security)", () => {
     const userId = "scale-tester";
     const thread = MultiTurnService.createThread(userId, "Scale test thread");
 
+    /*
+      ── Nega MUTLAQ vaqt emas, O'SISH NISBATI ─────────────────────────────
+
+      Ilgari bu yerda `tDuration < 500` turardi. U kodni emas, MASHINANI
+      o'lchaydi: shu sikl Apple Silicon'da ~150 ms, GitHub'ning umumiy
+      runner'ida esa 618 ms davom etdi — ya'ni CI hech qanday regressiyasiz
+      qizil bo'lardi (birinchi ishga tushishdayoq shunday bo'ldi).
+
+      Sikl tuzilishi bo'yicha CHIZIQLI: har burilish doimiy ish bajaradi —
+      `Map.get`, `push` va chegaradan oshgach qat'iy 50 elementli `slice`.
+      Demak 10 barobar ko'p burilish ~10 barobar ko'p vaqt oladi va bu
+      nisbat protsessor tezligiga BOG'LIQ EMAS: u kasrda qisqaradi.
+      Kvadratik regressiya esa nisbatni ~100 ga ko'taradi.
+
+      Chegara 20 tanlandi: kutilgan 10 dan ikki barobar zaxira (JIT isishi
+      va runner tebranishi uchun), kvadratik signaldan esa besh barobar
+      past. O'lchangan qiymatlar: mahalliy 9.97-10.55.
+
+      Har bosqich IKKI marta o'lchanib, eng tezi olinadi. Minimum shovqinga
+      eng chidamli baho: tashqi yuk vaqtni faqat OSHIRADI, kamaytirmaydi.
+    */
+    const timeBatch = (label: string, turns: number): number => {
+      const batch = MultiTurnService.createThread(userId, label);
+      const started = performance.now();
+      for (let i = 1; i <= turns; i++) {
+        const u = understandQuery(`Savol ${i} matematika kasrlar`);
+        MultiTurnService.addTurn(batch.id, userId, `Savol ${i}`, u);
+      }
+      return performance.now() - started;
+    };
+
+    // Isitish: JIT jarimasi birinchi o'lchovga tushib, nisbatni buzmasin.
+    timeBatch("isitish", 200);
+    const smallMs = Math.min(timeBatch("kichik-1", 100), timeBatch("kichik-2", 100));
+
     const t0 = performance.now();
     for (let i = 1; i <= 1000; i++) {
       const u = understandQuery(`Savol ${i} matematika kasrlar`);
@@ -121,8 +156,15 @@ describe("MultiTurnService (Phase 10 Backend Context & Security)", () => {
     }
     const tDuration = performance.now() - t0;
 
-    // 1000 iterations must complete smoothly under 500ms (sub-millisecond per turn)
-    assert.ok(tDuration < 500, `1000 turn qo'shish juda sekin: ${tDuration}ms`);
+    const largeMs = Math.min(tDuration, timeBatch("katta-2", 1000));
+    const growth = largeMs / smallMs;
+
+    assert.ok(
+      growth < 20,
+      `100 → 1000 burilishda o'sish chiziqlidan uzoq: ${growth.toFixed(2)}× ` +
+        `(kutilgan ~10, kvadratik ~100). t100=${smallMs.toFixed(1)}ms, ` +
+        `t1000=${largeMs.toFixed(1)}ms`,
+    );
 
     // Must be safely capped at 50 turns
     const currentThread = MultiTurnService.getThread(thread.id, userId);
