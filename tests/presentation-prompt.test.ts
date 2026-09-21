@@ -5,7 +5,8 @@ import {
   buildUserPrompt,
   type PresentationPromptContext,
 } from "../lib/presentations/prompt";
-import { MAX_SLIDES, MIN_SLIDES } from "../lib/validations/presentation";
+import { CONTENT_TYPES } from "../lib/presentations/storyline";
+import { SHAPE_FIELDS } from "../lib/presentations/stage-prompts";
 import type { LessonPlanContent } from "../lib/validations/lesson-plan";
 
 /**
@@ -79,18 +80,81 @@ describe("buildSystemPrompt", () => {
     }
   });
 
-  it("slaydlar sonini ANIQ raqam bilan belgilaydi", () => {
-    // Raqamlar sxemadan olinadi — ikkisi bir-biridan ajralib ketmasligi
-    // kerak, aks holda AI sxemadan o'tmaydigan javob qaytaradi.
+  /*
+    ── Bu sinov TESKARISIGA o'zgardi (Phase 0) ─────────────────────────────
+    Ilgari u system promptda "5 dan 15 gacha slayd" oralig'i BORLIGINI
+    talab qilardi. Ko'p bosqichli quvurda bu ziddiyat: slaydlar soni
+    brifda hal qilinadi va `contentSchemaFor` AYNAN rejadagi sonni
+    talab qiladi. Oraliq aytilsa model ikki ko'rsatma orasida qoladi.
+
+    DIQQAT: bu yerda raqam qidirish MUMKIN EMAS. Yangi promptda
+    "10-15 so'z" degan tavsiya bor va u `String(MAX_SLIDES)` ni
+    tasodifan qanoatlantiradi — ya'ni raqamga asoslangan tekshiruv
+    yolg'on ijobiy beradi. Shuning uchun eski BUYRUQ matni qidiriladi.
+  */
+  it("slaydlar sonini BELGILAMAYDI — uni reja hal qiladi", () => {
+    const forbidden: Record<"UZ" | "RU" | "EN", string> = {
+      UZ: "Slaydlar soni:",
+      RU: "Количество слайдов:",
+      EN: "Number of slides:",
+    };
+
+    for (const language of ["UZ", "RU", "EN"] as const) {
+      assert.ok(
+        !buildSystemPrompt(language).includes(forbidden[language]),
+        `${language}: system prompt hali ham slaydlar sonini buyurmoqda`,
+      );
+    }
+  });
+
+  /*
+    ── P0-3 REGRESSIYASI ──────────────────────────────────────────────────
+    System prompt V6 blok shartnomasini bilmasdi: `cards`, `steps`,
+    `comparison`, `statistic`, `chart`, `quote`, `keyMessage` so'zlari
+    unda UMUMAN yo'q edi. `stage-prompts.ts` esa aynan shu maydonlarni
+    so'rardi — model ikki zid ko'rsatma orasida qolib, odatda
+    bandlar yozardi va kartalar faylga tushmasdi.
+
+    Shartnoma `SHAPE_FIELDS` da yozilgan; ikkala prompt ham shundan
+    kelib chiqishi kerak.
+  */
+  it("HAR BIR mazmun shakli va uning maydoni system promptda bor", () => {
     for (const language of ["UZ", "RU", "EN"] as const) {
       const prompt = buildSystemPrompt(language);
-      assert.ok(
-        prompt.includes(String(MIN_SLIDES)),
-        `${language}: MIN_SLIDES (${MIN_SLIDES}) ko'rsatilmagan`,
-      );
-      assert.ok(
-        prompt.includes(String(MAX_SLIDES)),
-        `${language}: MAX_SLIDES (${MAX_SLIDES}) ko'rsatilmagan`,
+
+      for (const contentType of CONTENT_TYPES) {
+        assert.ok(
+          prompt.includes(contentType),
+          `${language}: "${contentType}" mazmun shakli tushuntirilmagan`,
+        );
+
+        /*
+          `SHAPE_FIELDS` dagi asosiy maydon nomi: "cards: [...]" → "cards",
+          "keyMessage (bullets: [])" → "keyMessage". Shuning uchun ":" bo'yicha
+          bo'lish yetarli emas — birinchi identifikator olinadi.
+        */
+        const field = SHAPE_FIELDS[contentType].match(/^[A-Za-z]+/)?.[0] ?? "";
+        assert.ok(field.length > 0, `${contentType}: maydon nomi o'qilmadi`);
+        assert.ok(
+          prompt.includes(`"${field}"`),
+          `${language}: "${contentType}" uchun "${field}" maydoni ko'rsatilmagan`,
+        );
+      }
+    }
+  });
+
+  it("mavjud bo'lmagan maydon o'ylab topish TAQIQLANADI", () => {
+    assert.match(buildSystemPrompt("UZ"), /O'YLAB TOPMANG/);
+    assert.match(buildSystemPrompt("RU"), /НЕ ВЫДУМЫВАЙТЕ/);
+    assert.match(buildSystemPrompt("EN"), /Do NOT invent/);
+  });
+
+  it("shakl bandlar BO'LMASA bullets bo'sh massiv ekani aytiladi", () => {
+    for (const language of ["UZ", "RU", "EN"] as const) {
+      assert.match(
+        buildSystemPrompt(language),
+        /\[\]/,
+        `${language}: bo'sh massiv ko'rsatmasi yo'q`,
       );
     }
   });

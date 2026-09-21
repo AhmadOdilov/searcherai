@@ -383,8 +383,17 @@ const CONTENT_LABELS: Record<
   },
 };
 
-/** Mazmun shakli uchun JSON maydonlari — model nimani to'ldirishini bilsin. */
-const SHAPE_FIELDS: Record<ContentType, string> = {
+/**
+ * Mazmun shakli uchun JSON maydonlari — model nimani to'ldirishini bilsin.
+ *
+ * EKSPORT QILINGAN: bu ikki promptning umumiy SHARTNOMASI. Mazmun
+ * bosqichining system prompti (`lib/presentations/prompt.ts`) shu
+ * maydonlarni tushuntiradi, bu yerdagi per-slayd topshiriq esa ularni
+ * so'raydi. Ikkisi ajralib ketsa model qaysi biriga ergashishini
+ * bilmaydi — aynan shu bo'lgan edi. `tests/presentation-prompt.test.ts`
+ * mosligini tekshiradi.
+ */
+export const SHAPE_FIELDS: Record<ContentType, string> = {
   statement: "keyMessage (bullets: [])",
   bullets: "bullets",
   cards: 'cards: [{ "title", "body" }]',
