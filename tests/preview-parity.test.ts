@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import JSZip from "jszip";
 import { generatePptx } from "../lib/pptx/generate";
-import { textsOf, viewOf } from "../lib/presentations/blocks";
+import { textsOfLegacy, viewOfLegacy } from "../lib/presentations/blocks";
 import type { Slide, SlideLayout } from "../lib/validations/presentation";
 
 /**
@@ -18,7 +18,7 @@ import type { Slide, SlideLayout } from "../lib/validations/presentation";
  * "yuklab olgandan keyin bilib qolasiz" degan mahsulot.
  *
  * ── Bu sinov nimani qulflaydi ─────────────────────────────────────────────
- * `viewOf(slide)` — ekran uchun yagona manba. Bu yerda uning chiqishi
+ * `viewOfLegacy(slide)` — ekran uchun yagona manba. Bu yerda uning chiqishi
  * HAQIQIY `.pptx` bilan IKKALA YO'NALISHDA solishtiriladi:
  *
  *   1. ekranda ko'rinadigan har bir matn faylda ham bor;
@@ -260,7 +260,7 @@ describe("preview shartnomasi — ekran va .pptx BIR XIL matnni ko'rsatadi", () 
 
   for (const [layout, slide] of SAMPLES) {
     it(`${layout} — ekranda ko'ringan matn faylda ham bor`, async () => {
-      const onScreen = textsOf(slide).map(normalize);
+      const onScreen = textsOfLegacy(slide).map(normalize);
       const inFile = (await slideTexts(slide)).map(normalize);
 
       for (const text of onScreen) {
@@ -274,7 +274,7 @@ describe("preview shartnomasi — ekran va .pptx BIR XIL matnni ko'rsatadi", () 
     });
 
     it(`${layout} — faylda ko'ringan matn ekranda ham bor`, async () => {
-      const onScreen = textsOf(slide).map(normalize);
+      const onScreen = textsOfLegacy(slide).map(normalize);
       const inFile = (await slideTexts(slide)).map(normalize);
 
       for (const text of inFile) {
@@ -291,11 +291,11 @@ describe("preview shartnomasi — ekran va .pptx BIR XIL matnni ko'rsatadi", () 
 
 describe("viewOf — maket qarori renderer bilan bir xil", () => {
   it("yozuvdagi maket hurmat qilinadi", () => {
-    assert.equal(viewOf(SAMPLES[4][1]).layout, "threeCards");
+    assert.equal(viewOfLegacy(SAMPLES[4][1]).layout, "threeCards");
   });
 
   it("maketsiz slaydda mazmundan keltirib chiqariladi", () => {
-    const view = viewOf({
+    const view = viewOfLegacy({
       type: "content",
       heading: "Maketsiz",
       bullets: [],
@@ -309,13 +309,17 @@ describe("viewOf — maket qarori renderer bilan bir xil", () => {
     o'qituvchi sarlavhasi faylga tushmasligini bilib turishi kerak.
   */
   it("iqtibos maketi sarlavha chizmasligini AYTADI", () => {
-    assert.equal(viewOf(SAMPLES[10][1]).showsHeading, false);
+    assert.equal(viewOfLegacy(SAMPLES[10][1]).showsHeading, false);
   });
 
   it("qolgan maketlar sarlavha chizadi", () => {
     for (const [layout, slide] of SAMPLES) {
       if (layout === "quote") continue;
-      assert.equal(viewOf(slide).showsHeading, true, `${layout}: sarlavha yo'qolgan`);
+      assert.equal(
+        viewOfLegacy(slide).showsHeading,
+        true,
+        `${layout}: sarlavha yo'qolgan`,
+      );
     }
   });
 });

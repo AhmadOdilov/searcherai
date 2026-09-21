@@ -13,6 +13,16 @@ import { setStage } from "@/lib/generation/stages";
 import { generatePptx } from "@/lib/pptx/generate";
 import { DEFAULT_TEMPLATE } from "@/lib/pptx/theme";
 import { generatePresentationContent } from "@/lib/presentations/pipeline";
+import {
+  adaptLegacyContent,
+  deckToContent,
+  nextRevision,
+} from "@/lib/presentations/legacy-adapter";
+import { parseDeck } from "@/lib/validations/deck";
+import {
+  presentationPlanSchema,
+  type PresentationPlan,
+} from "@/lib/validations/presentation-plan";
 import type { PresentationPromptContext } from "@/lib/presentations/prompt";
 import { deleteFile, saveFile } from "@/lib/storage/files";
 import { parseLessonPlanContent } from "@/lib/validations/lesson-plan";
@@ -51,6 +61,14 @@ const DETAIL_FIELDS = {
   ...LIST_FIELDS,
   template: true,
   content: true,
+  /*
+    IR v2 — mijoz uchun yangi, qat'iyroq model. Eski yozuvlarda `null`
+    bo'ladi va mijoz avvalgidek `content` bilan ishlashda davom etadi.
+
+    `plan` ATAYLAB chiqarilmaydi: u generatsiya ichki qarori va uning
+    o'rni endi IR ichida.
+  */
+  ir: true,
   filePath: true,
   aiModel: true,
   aiDurationMs: true,
@@ -300,8 +318,12 @@ export async function regeneratePresentation(
         `Prisma.DbNull` — ustunga SQL NULL yozadi. `Prisma.JsonNull`
         bo'lsa JSON'ning o'zida `null` qiymati saqlanardi va "reja yo'q"
         bilan "reja null" bir-biridan farq qilmay qolardi.
+
+        IR ham tozalanadi: u eski mazmunning modeli va yangi
+        generatsiyaga tegishli emas.
       */
       plan: Prisma.DbNull,
+      ir: Prisma.DbNull,
     },
   });
 
@@ -349,6 +371,7 @@ async function runGeneration(
     const {
       content: data,
       plan,
+      brief,
       meta,
     } = await generatePresentationContent(promptContext);
 
@@ -367,13 +390,43 @@ async function runGeneration(
       outputTokens: meta.outputTokens,
     });
 
-    // Fayl AI javobidan KEYIN yasaladi — shu tartib muhim: AI yiqilsa
-    // keraksiz fayl qolib ketmaydi.
+    /*
+      IR v2 — yozuvning yangi haqiqat manbai.
+
+      Deck AYNAN `content` dan quriladi (bir xil legacy adapter), ya'ni
+      ikkisi hech qachon ajralib ketmaydi. `spec` esa taxmin qilinmaydi:
+      u generatsiya brifidan keladi, ya'ni "nega bu deck shunday chiqdi"
+      degan savolga rost javob saqlanadi.
+    */
+    const template = record?.template ?? DEFAULT_TEMPLATE;
+    const deck = adaptLegacyContent(data, {
+      language: promptContext.language,
+      template,
+      topic: promptContext.topic,
+      subject: promptContext.subject ?? null,
+      grade: promptContext.grade ?? null,
+      plan,
+      spec: {
+        topic: brief.topic.slice(0, 500),
+        ...(brief.subject ? { subject: brief.subject.slice(0, 120) } : {}),
+        ...(brief.grade ? { grade: brief.grade.slice(0, 60) } : {}),
+        audience: brief.audience,
+        goal: brief.purpose,
+        ...(brief.audienceAge === null ? {} : { audienceAge: brief.audienceAge }),
+        slideCount: brief.slideCount,
+      },
+    });
+
+    /*
+      Fayl AI javobidan KEYIN yasaladi — shu tartib muhim: AI yiqilsa
+      keraksiz fayl qolib ketmaydi.
+
+      Renderer DECK'dan oziqlanadi: `deckToContent` — vaqtinchalik
+      ko'prik (`lib/presentations/legacy-adapter.ts`), chizuvchilar hali
+      slayd maydonlari bilan ishlaydi.
+    */
     await setStage("presentation", id, "BUILDING_FILE");
-    const { buffer, slideCount } = await generatePptx(
-      data,
-      record?.template ?? DEFAULT_TEMPLATE,
-    );
+    const { buffer, slideCount } = await generatePptx(deckToContent(deck), template);
     await setStage("presentation", id, "SAVING");
     const { filePath, fileSize } = await saveFile("pptx", id, buffer);
 
@@ -386,6 +439,7 @@ async function runGeneration(
         // Slayd shartnomasi — keyingi bosqichlar (tasvir generatsiyasi)
         // uchun. Tahrirlashda tegilmaydi.
         plan,
+        ir: deck,
         filePath,
         fileSize,
         slideCount,
@@ -449,7 +503,18 @@ export async function updatePresentationContent(
   const existing = await prisma.presentation.findFirst({
     // Egalik sharti — begona yozuvni tahrirlab bo'lmaydi.
     where: { id, userId },
-    select: { id: true, status: true, template: true },
+    select: {
+      id: true,
+      status: true,
+      template: true,
+      // IR qayta quriladi — eski versiya raqami undan olinadi.
+      ir: true,
+      plan: true,
+      language: true,
+      topic: true,
+      subject: true,
+      grade: true,
+    },
   });
 
   if (!existing) throw notFound();
@@ -469,16 +534,40 @@ export async function updatePresentationContent(
     );
   }
 
-  const { buffer, slideCount } = await generatePptx(
-    content,
-    existing.template || DEFAULT_TEMPLATE,
-  );
+  /*
+    IR yangi mazmundan QAYTA quriladi.
+
+    ── Nega qayta quriladi, yamalmaydi ────────────────────────────────────
+    O'qituvchi tahriri butun `content` ni almashtiradi: slayd qo'shilishi,
+    o'chirilishi va joyi almashishi mumkin. Bloklarni yamashga urinish
+    ikki modelni bir-biridan ajratib yuborardi — adapter esa har doim
+    mazmunning o'zidan kelib chiqadi.
+
+    ── Versiya ────────────────────────────────────────────────────────────
+    Har bir SAQLANGAN o'zgarishda `revision` bittaga oshadi. AI Editor
+    kelganda u eski raqam bilan yozishga urinsa, yozuv rad etiladi.
+  */
+  const previous = parseDeck(existing.ir);
+  const template = existing.template || DEFAULT_TEMPLATE;
+
+  const deck = adaptLegacyContent(content, {
+    language: existing.language,
+    template,
+    topic: existing.topic,
+    subject: existing.subject,
+    grade: existing.grade,
+    plan: parsePlanColumn(existing.plan),
+    revision: previous === null ? 1 : nextRevision(previous),
+  });
+
+  const { buffer, slideCount } = await generatePptx(deckToContent(deck), template);
   const { filePath, fileSize } = await saveFile("pptx", id, buffer);
 
   return prisma.presentation.update({
     where: { id },
     data: {
       content,
+      ir: deck,
       // Sarlavha yozuvda alohida ustunda ham turadi (ro'yxatda ko'rinadi)
       // — tahrirda u ham yangilanishi kerak, aks holda ro'yxat va
       // hujjat bir-biriga mos kelmay qoladi.
@@ -561,6 +650,17 @@ export async function listLessonPlanOptions(userId: string) {
     orderBy: { createdAt: "desc" },
     take: 100,
   });
+}
+
+/**
+ * Bazadagi `plan` (Json) ustunini xavfsiz o'qiydi.
+ *
+ * Buzuq yoki eski shakldagi reja `null` qaytaradi — IR o'sha maydonlarsiz
+ * quriladi, ilova esa yiqilmaydi.
+ */
+function parsePlanColumn(value: unknown): PresentationPlan | null {
+  const parsed = presentationPlanSchema.safeParse(value);
+  return parsed.success ? parsed.data : null;
 }
 
 function notFound() {

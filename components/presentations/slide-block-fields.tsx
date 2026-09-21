@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Plus, X } from "lucide-react";
 import { cn } from "@/lib/ui/cn";
 import { viewOf, type SlideBlock } from "@/lib/presentations/blocks";
+import { adaptLegacySlide } from "@/lib/presentations/legacy-adapter";
 import type { Slide } from "@/lib/validations/presentation";
 
 /**
@@ -79,7 +80,14 @@ export function SlideBlockFields({
 }) {
   const t = useTranslations("presentations.editor");
 
-  const rendered = new Set(viewOf(slide).blocks.map((block) => block.kind));
+  /*
+    Qaysi maydon chizilishini IR aytadi: eski yozuv avval IR slaydiga
+    aylantiriladi, keyin `viewOf` bloklarni beradi. Muharrirning o'zi
+    hali eski `content` ni tahrirlaydi — IR saqlash qatlami alohida.
+  */
+  const rendered = new Set(
+    viewOf(adaptLegacySlide(slide, index)).blocks.map((block) => block.kind),
+  );
 
   /** Maydon ko'rsatiladimi: maket chizadi yoki yozuvda mavjud. */
   const shows = (kind: SlideBlock["kind"], present: boolean) =>

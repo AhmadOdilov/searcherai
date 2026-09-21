@@ -1,6 +1,6 @@
 import { cn } from "@/lib/ui/cn";
 import { viewOf, type SlideBlock } from "@/lib/presentations/blocks";
-import type { Slide } from "@/lib/validations/presentation";
+import type { IrSlide } from "@/lib/validations/deck";
 
 /**
  * SLAYD TUVALI — slaydni ekranda `.pptx` dagidek chizadi.
@@ -22,7 +22,13 @@ import type { Slide } from "@/lib/validations/presentation";
  * Fayl bilan bir xil nisbat: bu yerda sig'magan matn faylda ham sig'maydi.
  */
 
-export function SlideCanvas({ slide, className }: { slide: Slide; className?: string }) {
+export function SlideCanvas({
+  slide,
+  className,
+}: {
+  slide: IrSlide;
+  className?: string;
+}) {
   const view = viewOf(slide);
   const isCover = view.layout === "cover";
 

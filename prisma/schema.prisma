@@ -354,6 +354,27 @@ model Presentation {
   /// yozib qo'yadi, keyingi bosqichlar (tasvir generatsiyasi) uchun.
   plan Json?
 
+  /// PRESENTATION IR v2 — prezentatsiyaning yagona haqiqat manbai.
+  ///
+  /// Shakli: lib/validations/deck.ts → deckSchema
+  ///
+  /// ── Nega `content` dan alohida ustun ──────────────────────────────────
+  /// `content` renderlash uchun yetarli, lekin AI tahriri uchun emas:
+  /// unda slaydning BARQAROR identifikatori yo'q. "3-slaydni qisqartir"
+  /// buyrug'ini indeks bo'yicha bajarib bo'lmaydi — slayd qo'shilishi
+  /// bilan indeks siljiydi va buyruq boshqa slaydga tushadi.
+  ///
+  /// IR'da bundan tashqari generatsiya qarorlari (nega bu slayd bor,
+  /// qaysi vizual kerak) va `revision` optimistik qulfi bor.
+  ///
+  /// ── Nega `content` va `plan` O'CHIRILMADI ─────────────────────────────
+  /// O'tish DANGASA: `ir` bo'lmasa `content` legacy adapter orqali
+  /// Deck'ga aylantiriladi (lib/presentations/legacy-adapter.ts). Eski
+  /// yozuvlar buzilmaydi va orqaga qaytish yo'li ochiq qoladi.
+  ///
+  /// Nullable: bazadagi eski yozuvlarda bu maydon yo'q.
+  ir Json?
+
   /// Generatsiya qilingan .pptx faylning saqlagichdagi yo'li.
   ///
   /// DIQQAT: fayllar `public/` papkasida SAQLANMAYDI. Aks holda Next.js

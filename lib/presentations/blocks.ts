@@ -1,5 +1,13 @@
-import type { Slide } from "@/lib/validations/presentation";
+import type { Slide, SlideLayout } from "@/lib/validations/presentation";
+import type { IrSlide, SlideBlock } from "@/lib/validations/deck";
 import { legacyLayoutFor } from "@/lib/presentations/layout-engine";
+
+/*
+  Blok tipi IR sxemasidan KELADI (`lib/validations/deck.ts`), bu yerda
+  qayta e'lon qilinmaydi — bitta shartnoma. Iste'molchilar uni shu
+  moduldan import qilishda davom etadi.
+*/
+export type { SlideBlock } from "@/lib/validations/deck";
 
 /**
  * SLAYD BLOKLARI — slaydda NIMA CHIZILISHINI aytadigan yagona ro'yxat.
@@ -38,50 +46,9 @@ import { legacyLayoutFor } from "@/lib/presentations/layout-engine";
  * shu funksiya o'rnini bosadi, iste'molchilar o'zgarmaydi.
  */
 
-export interface CardBlockItem {
-  title: string;
-  body?: string;
-}
-
-export interface StepBlockItem {
-  label: string;
-  body?: string;
-}
-
-export interface ComparisonColumn {
-  title: string;
-  items: string[];
-}
-
-export interface ChartSeries {
-  name: string;
-  values: number[];
-}
-
-export type SlideBlock =
-  /** Sarlavha ustidagi kichik yorliq. */
-  | { kind: "eyebrow"; text: string }
-  /** Slaydning yagona asosiy fikri — katta matn. */
-  | { kind: "keyMessage"; text: string }
-  | { kind: "bullets"; items: string[] }
-  | { kind: "cards"; items: CardBlockItem[] }
-  /** `withBodies: false` — faqat yorliqlar chiziladi (timeline). */
-  | { kind: "steps"; items: StepBlockItem[]; withBodies: boolean }
-  | { kind: "comparison"; left: ComparisonColumn; right: ComparisonColumn }
-  | { kind: "statistic"; value: string; caption: string }
-  | {
-      kind: "chart";
-      chartKind: "bar" | "line" | "pie" | "doughnut";
-      categories: string[];
-      series: ChartSeries[];
-    }
-  | { kind: "quote"; text: string; author?: string }
-  /** Slayd pastidagi manba qatori. */
-  | { kind: "source"; text: string };
-
 export interface SlideView {
   /** Renderer ishlatadigan maket — yozuvdan yoki mazmundan. */
-  layout: string;
+  layout: SlideLayout;
   /**
    * Sarlavha CHIZILADIMI.
    *
@@ -135,12 +102,18 @@ function eyebrowBlock(slide: Slide): SlideBlock[] {
 }
 
 /**
- * Slaydning ko'rinishini hisoblaydi.
+ * ESKI yozuvdagi slaydning ko'rinishini hisoblaydi.
  *
  * Mantiq `lib/pptx/generate.ts` va `lib/pptx/layouts.ts` ni takrorlaydi —
  * ikkisi ajralib ketmasligini parity sinovi qulflaydi.
+ *
+ * ── Nega "legacy" ─────────────────────────────────────────────────────────
+ * IR v2 da bloklar allaqachon yozuvda turadi va ularni qayta hisoblash
+ * shart emas. Bu funksiya `ir === null` bo'lgan eski yozuvlar uchun va
+ * legacy adapter uchun qoladi — bloklarni MAZMUNDAN keltirib chiqaradigan
+ * yagona joy.
  */
-export function viewOf(slide: Slide): SlideView {
+export function viewOfLegacy(slide: Slide): SlideView {
   const layout = slide.layout ?? legacyLayoutFor(slide);
 
   const base = { layout, showsHeading: true, heading: slide.heading };
@@ -298,9 +271,22 @@ export function viewOf(slide: Slide): SlideView {
   }
 }
 
-/** Faqat bloklar kerak bo'lganda — qisqa yo'l. */
-export function blocksOf(slide: Slide): SlideBlock[] {
-  return viewOf(slide).blocks;
+/**
+ * IR slaydining ko'rinishi.
+ *
+ * Bu yerda HECH NARSA hisoblanmaydi: bloklar va maket yozuvda turibdi.
+ * Yagona qaror — sarlavha chiziladimi: `quote` maketi uni chizmaydi,
+ * iqtibos butun slaydni egallaydi.
+ */
+export function viewOf(slide: IrSlide): SlideView {
+  const hasQuote = slide.blocks.some((block) => block.kind === "quote");
+
+  return {
+    layout: slide.layout,
+    showsHeading: !(slide.layout === "quote" && hasQuote),
+    heading: slide.heading,
+    blocks: slide.blocks,
+  };
 }
 
 /**
@@ -345,11 +331,20 @@ export function textsOfBlock(block: SlideBlock): string[] {
   }
 }
 
-/** Slaydda ko'rinadigan barcha matn — sarlavha bilan birga. */
-export function textsOf(slide: Slide): string[] {
-  const view = viewOf(slide);
+/** Ko'rinishdagi barcha matn — sarlavha bilan birga. */
+function textsOfView(view: SlideView): string[] {
   return [
     ...(view.showsHeading ? [view.heading] : []),
     ...view.blocks.flatMap(textsOfBlock),
   ];
+}
+
+/** ESKI slaydda ko'rinadigan barcha matn. */
+export function textsOfLegacy(slide: Slide): string[] {
+  return textsOfView(viewOfLegacy(slide));
+}
+
+/** IR slaydida ko'rinadigan barcha matn. */
+export function textsOf(slide: IrSlide): string[] {
+  return textsOfView(viewOf(slide));
 }

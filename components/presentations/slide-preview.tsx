@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { SlideCanvas } from "@/components/presentations/slide-canvas";
+import { adaptLegacySlide } from "@/lib/presentations/legacy-adapter";
 import type { PresentationContent } from "@/lib/validations/presentation";
 
 /**
@@ -37,7 +38,16 @@ export function SlidePreview({
 }) {
   const t = useTranslations("presentations.editor");
 
-  const visible = content.slides.filter((slide) => slide.hidden !== true);
+  /*
+    Slaydlar IR shakliga o'tkaziladi va tuval aynan shuni chizadi —
+    ya'ni ekran `Presentation.ir` bilan bir xil modeldan oziqlanadi.
+    Identifikator ASL pozitsiyadan olinadi: yashirin slaydlar
+    chiqarilgach ham u siljimasin.
+  */
+  const visible = content.slides
+    .map((slide, index) => ({ slide, index }))
+    .filter(({ slide }) => slide.hidden !== true)
+    .map(({ slide, index }) => adaptLegacySlide(slide, index));
   const total = visible.length;
 
   const [index, setIndex] = useState(() =>
@@ -178,10 +188,10 @@ export function SlidePreview({
           </NavButton>
         </div>
 
-        {slide.speakerNotes !== undefined && (
+        {slide.notes !== undefined && (
           <p className="mt-4 max-h-24 overflow-y-auto rounded-md bg-neutral-900/60 px-4 py-3 text-base leading-relaxed text-neutral-200">
             <span className="font-medium">{t("speakerNotes")}: </span>
-            {slide.speakerNotes}
+            {slide.notes}
           </p>
         )}
       </div>
