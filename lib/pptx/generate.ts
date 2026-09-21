@@ -278,8 +278,27 @@ function addContentSlide(
     line: { color: isSummary ? palette.summary : palette.rule, width: 1.5 },
   });
 
-  // Bandlar
-  const bullets = slide.bullets
+  /*
+    Bandlar.
+
+    ── Bandsiz, lekin asosiy fikri bor slayd ──────────────────────────────
+    `conclusion` maketi shu funksiyaga tushadi va u bandlardan boshqa
+    hech narsa chizmasdi. Zichlik qoidasi esa `statement` shaklidagi
+    slaydda bandlarni bo'shatadi (`maxBullets: 0`) — natijada bitta
+    kuchli jumla bilan tugaydigan xulosa slaydi FAYLDA sarlavha va
+    sahifa raqamidan iborat bo'lib qolardi.
+
+    Jonli generatsiyada aynan shu holat chiqdi: model 8-slaydga
+    "Asosiy xulosa" sarlavhasi va bitta `keyMessage` bergan, faylda esa
+    faqat sarlavha ko'ringan.
+
+    Bu maket TANLASH emas — mavjud matnni chizish: band bo'lmasa,
+    asosiy fikrning o'zi band o'rnida turadi.
+  */
+  const source =
+    slide.bullets.length > 0 ? slide.bullets : slide.keyMessage ? [slide.keyMessage] : [];
+
+  const bullets = source
     .slice(0, MAX_BULLETS_PER_SLIDE)
     .filter((bullet) => bullet.trim().length > 0)
     .map((bullet) => clamp(bullet, MAX_BULLET_CHARS));

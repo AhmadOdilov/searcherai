@@ -472,6 +472,22 @@ describe("XULOSA slaydi mazmunini yo'qotmaydi (P0-2)", () => {
       },
       ["SUMMARY_HEADING", "LEFT_COLUMN", "LEFT_ITEM_ALPHA", "RIGHT_COLUMN"],
     ],
+    /*
+      Jonli generatsiyada topilgan holat: model xulosa slaydiga bitta
+      kuchli jumla (`keyMessage`) bergan, bandlar esa zichlik qoidasi
+      bilan bo'shatilgan. `conclusion` maketi faqat bandlarni chizgani
+      uchun faylda sarlavhadan boshqa hech narsa qolmagan.
+    */
+    [
+      "summary + statement (faqat asosiy fikr)",
+      {
+        type: "summary",
+        heading: "SUMMARY_HEADING",
+        bullets: [],
+        keyMessage: "KEY_MESSAGE_ALPHA",
+      },
+      ["SUMMARY_HEADING", "KEY_MESSAGE_ALPHA"],
+    ],
     [
       "summary + statistic",
       {
@@ -490,6 +506,42 @@ describe("XULOSA slaydi mazmunini yo'qotmaydi (P0-2)", () => {
       await assertRendered(slide, expected, name);
     });
   }
+});
+
+describe("bandsiz, lekin asosiy fikri bor slayd bo'sh chiqmaydi", () => {
+  /*
+    `bullets` va `conclusion` maketlari bitta chizuvchiga tushadi va u
+    ilgari faqat bandlarni chizardi. Zichlik qoidasi `statement`
+    shaklidagi slaydda bandlarni bo'shatadi, ya'ni bu holat quvurdan
+    ham chiqadi — jonli generatsiyada aynan shunday bo'ldi.
+  */
+  it("bullets maketi bandsiz kelsa asosiy fikrni chizadi", async () => {
+    await assertRendered(
+      {
+        type: "content",
+        layout: "bullets",
+        heading: "BULLETS_HEADING",
+        bullets: [],
+        keyMessage: "KEY_MESSAGE_ALPHA",
+      },
+      ["BULLETS_HEADING", "KEY_MESSAGE_ALPHA"],
+      "bullets (bandsiz)",
+    );
+  });
+
+  it("conclusion maketi bandsiz kelsa asosiy fikrni chizadi", async () => {
+    await assertRendered(
+      {
+        type: "summary",
+        layout: "conclusion",
+        heading: "CONCLUSION_HEADING",
+        bullets: [],
+        keyMessage: "KEY_MESSAGE_ALPHA",
+      },
+      ["CONCLUSION_HEADING", "KEY_MESSAGE_ALPHA"],
+      "conclusion (bandsiz)",
+    );
+  });
 });
 
 describe("maket mazmunga mos kelmasa ham slayd BO'SH chiqmaydi", () => {
