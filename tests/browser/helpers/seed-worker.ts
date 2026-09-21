@@ -105,6 +105,72 @@ async function seedWorkspace(baseUrl: string, suffix: string): Promise<SeededWor
     ...(index === 5 ? { hidden: true } : {}),
   }));
 
+  /*
+    ── V6 blokli slaydlar ─────────────────────────────────────────────────
+    Yuqoridagi yigirmata slaydda faqat bandlar bor va aynan shuning uchun
+    brauzer sinovlari uzoq vaqt kartali/bosqichli slaydlarni HECH QACHON
+    ko'rmagan. Ko'rish rejimi ularni chizmasligi ham shu sababdan
+    sezilmagan edi.
+
+    Markerlar (`KARTA-ALFA` kabi) ataylab to'qnashmaydigan: ekranda
+    ularni qidirish boshqa matnga tushib ketmasin.
+  */
+  const blockSlides = [
+    {
+      type: "content",
+      heading: "Kartalar slaydi",
+      bullets: [] as string[],
+      layout: "threeCards",
+      eyebrow: "YORLIQ-ALFA",
+      cards: [
+        { title: "KARTA-ALFA", body: "Karta tavsifi alfa" },
+        { title: "KARTA-BETA", body: "Karta tavsifi beta" },
+        { title: "KARTA-GAMMA" },
+      ],
+      source: "MANBA-ALFA",
+    },
+    {
+      type: "content",
+      heading: "Bosqichlar slaydi",
+      bullets: [] as string[],
+      layout: "process",
+      steps: [
+        { label: "BOSQICH-ALFA", body: "Bosqich tavsifi alfa" },
+        { label: "BOSQICH-BETA", body: "Bosqich tavsifi beta" },
+        { label: "BOSQICH-GAMMA", body: "Bosqich tavsifi gamma" },
+      ],
+    },
+    {
+      type: "content",
+      heading: "Taqqoslash slaydi",
+      bullets: [] as string[],
+      layout: "comparison",
+      comparison: {
+        leftTitle: "CHAP-USTUN",
+        leftItems: ["CHAP-ALFA", "CHAP-BETA"],
+        rightTitle: "ONG-USTUN",
+        rightItems: ["ONG-ALFA"],
+      },
+    },
+    {
+      type: "content",
+      heading: "Statistika slaydi",
+      bullets: [] as string[],
+      layout: "statistic",
+      statistic: { value: "78%", caption: "STATISTIKA-IZOHI" },
+    },
+    {
+      type: "content",
+      heading: "Iqtibos slaydi",
+      bullets: [] as string[],
+      layout: "quote",
+      quote: { text: "IQTIBOS-MATNI yetarlicha uzun jumla.", author: "IQTIBOS-MUALLIFI" },
+    },
+  ];
+
+  // Xulosa OXIRIDA qolsin — bloklar undan oldin joylashtiriladi.
+  slides.splice(slides.length - 1, 0, ...blockSlides);
+
   const presentation = await prisma.presentation.create({
     data: {
       userId: user.id,
@@ -113,7 +179,7 @@ async function seedWorkspace(baseUrl: string, suffix: string): Promise<SeededWor
       language: "UZ",
       template: "klassik",
       status: "READY",
-      slideCount: 19,
+      slideCount: 24,
       content: { title: "Brauzer sinovi — uzun prezentatsiya nomi bilan", slides },
     },
   });

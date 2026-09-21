@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { cn } from "@/lib/ui/cn";
+import { SlideCanvas } from "@/components/presentations/slide-canvas";
 import type { PresentationContent } from "@/lib/validations/presentation";
 
 /**
@@ -146,42 +146,15 @@ export function SlidePreview({
         sig'gan matn faylda ham sig'adi.
       */}
       <div className="flex w-full max-w-4xl flex-col">
-        <div
-          className={cn(
-            "flex aspect-video w-full max-w-full flex-col justify-center rounded-lg px-6 py-8 sm:px-12",
-            slide.type === "title"
-              ? "bg-primary text-on-primary"
-              : "bg-surface text-neutral-900",
-          )}
-        >
-          <h2
-            className={cn(
-              "text-balance",
-              slide.type === "title"
-                ? "text-2xl font-semibold sm:text-4xl"
-                : "text-xl font-semibold sm:text-3xl",
-            )}
-          >
-            {slide.heading}
-          </h2>
+        {/*
+          Slaydni `SlideCanvas` chizadi — u `.pptx` renderer bilan bir xil
+          blok modelidan (`lib/presentations/blocks.ts`) foydalanadi.
 
-          {slide.bullets.length > 0 && (
-            <ul className="mt-4 space-y-2 overflow-y-auto sm:mt-6 sm:space-y-3">
-              {slide.bullets.map((bullet, bulletIndex) => (
-                <li key={bulletIndex} className="flex gap-3">
-                  <span
-                    aria-hidden
-                    className={cn(
-                      "mt-2 size-1.5 shrink-0 rounded-full sm:mt-3 sm:size-2",
-                      slide.type === "title" ? "bg-on-primary" : "bg-primary",
-                    )}
-                  />
-                  <span className="text-base leading-relaxed sm:text-xl">{bullet}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+          Ilgari bu yerda sarlavha va bandlarni chizadigan mahalliy kod
+          turardi: kartali, bosqichli yoki diagrammali slayd ekranda
+          BO'SH ko'rinar, faylda esa to'la chiqardi.
+        */}
+        <SlideCanvas slide={slide} />
 
         {/* ── Boshqaruv ────────────────────────────────────────────── */}
         <div className="mt-4 flex items-center justify-center gap-4">
