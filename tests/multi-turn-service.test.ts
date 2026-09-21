@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { describe, it, beforeEach } from "node:test";
-import { MultiTurnService } from "../lib/search/multi-turn-service";
+import {
+  MultiTurnService,
+  deriveConversationContext,
+} from "../lib/search/multi-turn-service";
 import { understandQuery } from "../lib/search/understanding";
 
 describe("MultiTurnService (Phase 10 Backend Context & Security)", () => {
@@ -130,5 +133,61 @@ describe("MultiTurnService (Phase 10 Backend Context & Security)", () => {
     const win = MultiTurnService.getContextWindowSummary(thread.id, userId, 5);
     assert.strictEqual(win.recentTurns.length, 5);
     assert.ok(win.summary.includes("Avvalgi bosqichlarda muhokama qilingan mavzular"));
+  });
+});
+
+/**
+ * Meros mantig'i endi ikkita ombor tomonidan ishlatiladi: xotiradagi
+ * `MultiTurnService` va bazadagi `lib/search/conversation-store.ts`.
+ * Shuning uchun u sof funksiya sifatida alohida tekshiriladi — bazasiz.
+ */
+describe("deriveConversationContext (ikkala ombor uchun umumiy mantiq)", () => {
+  it("bo'sh ro'yxat uchun kontekst bermaydi", () => {
+    assert.strictEqual(deriveConversationContext([]), undefined);
+  });
+
+  it("eng YANGI qiymat ustun turadi", () => {
+    const context = deriveConversationContext([
+      { understanding: { detectedGrade: "5-sinf", extractedTopic: "kasrlar" } },
+      {
+        understanding: { detectedGrade: "8-sinf", extractedTopic: "kvadrat tenglamalar" },
+      },
+    ]);
+
+    assert.ok(context);
+    assert.strictEqual(context.previousGrade, "8-sinf");
+    assert.strictEqual(context.previousTopic, "kvadrat tenglamalar");
+  });
+
+  it("yangi burilishda yo'q maydon eskisidan to'ldiriladi", () => {
+    /*
+      Aynan shu holat «endi buni oddiyroq tushuntir» degan savolda
+      yuzaga keladi: yangi burilishda fan ham, sinf ham yo'q.
+    */
+    const context = deriveConversationContext([
+      {
+        understanding: {
+          detectedSubject: "Matematika",
+          detectedGrade: "8-sinf",
+          extractedTopic: "kvadrat tenglamalar",
+        },
+      },
+      { understanding: { extractedTopic: "" } },
+    ]);
+
+    assert.ok(context);
+    assert.strictEqual(context.previousSubject, "Matematika");
+    assert.strictEqual(context.previousGrade, "8-sinf");
+    assert.strictEqual(context.previousTopic, "kvadrat tenglamalar");
+  });
+
+  it("tahlili yo'q burilish tashlab ketiladi", () => {
+    const context = deriveConversationContext([
+      { understanding: { detectedSubject: "Biologiya" } },
+      {},
+    ]);
+
+    assert.ok(context);
+    assert.strictEqual(context.previousSubject, "Biologiya");
   });
 });

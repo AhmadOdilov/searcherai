@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-19T05:41:06.352Z",
+  "timestamp": "2026-09-21T05:16:19.926Z",
   "conversations": 50,
   "turns": 180,
   "subjectRetention": {
@@ -30,9 +30,9 @@
   "boundedMemoryAt1000Turns": true,
   "retainedTurnsAt1000": 50,
   "productionWiring": {
-    "apiRouteUsesConversationContext": false,
-    "searchConversationTablesUsed": false,
-    "note": "MultiTurnService hech qaysi API yo'nalishiga ulanmagan. Bu o'lchovlar kutubxona qatlamiga tegishli, mahsulotdagi ishlayotgan xususiyatga emas."
+    "apiRouteUsesConversationContext": true,
+    "searchConversationTablesUsed": true,
+    "note": "Bu o'lchovlar KUTUBXONA qatlamiga tegishli (MultiTurnService to'g'ridan-to'g'ri chaqiriladi). Mahsulot yo'li — /api/search + SearchConversation — ulangan va tests/e2e/search-multiturn-api.e2e.ts da alohida tekshiriladi."
   },
   "failures": [],
   "totalFailures": 0

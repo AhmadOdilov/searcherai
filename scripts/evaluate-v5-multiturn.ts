@@ -9,13 +9,16 @@
  * Kontekst `MultiTurnService` orqali olinadi — ya'ni testdagi soxta
  * kontekst emas, mahsulotdagi haqiqiy servis.
  *
- * ── MUHIM CHEKLOV (halol aytilishi shart) ─────────────────────────────────
- * `MultiTurnService` hozircha HECH QAYSI API yo'nalishiga ulanmagan:
- * `POST /api/search` `runSearch(input)` ni kontekstsiz chaqiradi va
- * `SearchConversation` / `SearchMessage` jadvallari (migratsiyasi bor)
- * hech qayerda o'qilmaydi ham, yozilmaydi ham. Ya'ni bu skript kutubxona
- * qatlamining to'g'riligini isbotlaydi, mahsulotda ko'p bosqichli suhbat
- * ishlayotganini EMAS.
+ * ── Bu raqamlar NIMANI o'lchaydi (halol aytilishi shart) ──────────────────
+ * Bu skript KUTUBXONA qatlamini o'lchaydi: `MultiTurnService` ni
+ * to'g'ridan-to'g'ri chaqiradi, HTTP, baza va sessiya ishtirok etmaydi.
+ *
+ * Mahsulot qatlami endi ulangan (`POST /api/search` kontekstni
+ * `lib/search/conversation-store.ts` orqali bazadan o'qiydi), lekin uni
+ * SHU skript emas, `tests/e2e/search-multiturn-api.e2e.ts` isbotlaydi.
+ * Ikkalasi bir xil meros mantig'iga (`deriveConversationContext`)
+ * tayanadi — shuning uchun bu yerdagi 100% mahsulotdagi xatti-harakatdan
+ * sezdirmay ajralib keta olmaydi, lekin baribir uning O'RNINI BOSMAYDI.
  */
 
 import fs from "fs";
@@ -183,11 +186,12 @@ function main() {
     boundedMemoryAt1000Turns: boundedMemory,
     retainedTurnsAt1000: afterStress?.turns.length ?? 0,
     productionWiring: {
-      apiRouteUsesConversationContext: false,
-      searchConversationTablesUsed: false,
+      apiRouteUsesConversationContext: true,
+      searchConversationTablesUsed: true,
       note:
-        "MultiTurnService hech qaysi API yo'nalishiga ulanmagan. Bu o'lchovlar kutubxona " +
-        "qatlamiga tegishli, mahsulotdagi ishlayotgan xususiyatga emas.",
+        "Bu o'lchovlar KUTUBXONA qatlamiga tegishli (MultiTurnService to'g'ridan-to'g'ri " +
+        "chaqiriladi). Mahsulot yo'li — /api/search + SearchConversation — ulangan va " +
+        "tests/e2e/search-multiturn-api.e2e.ts da alohida tekshiriladi.",
     },
     failures: failures.slice(0, 100),
     totalFailures: failures.length,
@@ -220,7 +224,10 @@ function main() {
   console.log(
     `- 1000 bosqichda chegaralangan xotira: ${boundedMemory ? "HA" : "YO'Q"} (${report.retainedTurnsAt1000} bosqich saqlangan)`,
   );
-  console.log(`\n⚠  Ishlab chiqarishda ulanmagan: /api/search kontekstni UZATMAYDI.`);
+  console.log(
+    `\nℹ  Bu — kutubxona o'lchovi. Mahsulot yo'li (/api/search + suhbat jadvallari) ` +
+      `tests/e2e/search-multiturn-api.e2e.ts da tekshiriladi.`,
+  );
 
   if (failures.length > 0) {
     console.log(`\nNosozliklar: ${failures.length}`);

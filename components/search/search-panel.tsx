@@ -35,6 +35,14 @@ import type { SearchCostMetrics } from "@/lib/search/cost";
 import type { SearchLatencyBreakdown } from "@/lib/search/service";
 
 interface SearchResponse {
+  /**
+   * Suhbat identifikatori — keyingi savolni shu suhbatga bog'lash uchun.
+   *
+   * Backend uni FAQAT suhbat ochilgan (yoki davom etayotgan) bo'lsa
+   * qaytaradi; yozuv yiqilsa `undefined` keladi va UI davomiy savolni
+   * taklif qilmaydi (`lib/search/conversation-store.ts`).
+   */
+  conversationId?: string;
   answer: SearchAnswer;
   understanding?: QueryUnderstanding;
   curriculumMatches?: RankedCurriculumMatch[];
@@ -60,23 +68,48 @@ export function SearchPanel() {
   const [askedQuestion, setAskedQuestion] = useState<string>("");
   const [questionText, setQuestionText] = useState<string>("");
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  /*
+    ── Ko'p bosqichli suhbat ───────────────────────────────────────────────
+
+    Birinchi savol suhbat ochadi (`startConversation`), backend esa
+    `conversationId` qaytaradi. Davomiy savol shu identifikator bilan
+    yuboriladi va oldingi mavzu, fan hamda sinfni meros oladi — ya'ni
+    «endi buni oddiyroq tushuntir» deb yozish yetadi.
+
+    Kontekstning O'ZI bu yerda saqlanmaydi: uni server o'z yozuvidan
+    o'qiydi. Brauzerda faqat identifikator va ko'rsatish uchun savollar
+    ro'yxati turadi.
+  */
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  /** Shu suhbatda AVVAL berilgan savollar — eng eskisidan boshlab. */
+  const [previousQuestions, setPreviousQuestions] = useState<string[]>([]);
+  const [followUpText, setFollowUpText] = useState<string>("");
+  /**
+   * Suhbat boshlangan til.
+   *
+   * Davomiy savolda ham yuborilishi SHART: `language` maydonining
+   * standart qiymati «UZ» va uni tashlab ketish rus tilidagi suhbatni
+   * jimgina o'zbekchaga o'girib yuborardi.
+   */
+  const [conversationLanguage, setConversationLanguage] = useState<string>("UZ");
+  /**
+   * Suhbat SO'RALGAN, lekin ochilmagan holat (baza yozuvi yiqilgan).
+   *
+   * `conversationId === null` ning o'zi yetarli emas: «Yangi suhbat
+   * boshlash» tugmasidan keyin ham u null bo'ladi, lekin u yerda hech
+   * narsa buzilmagan va ogohlantirish o'rinsiz bo'lardi.
+   */
+  const [conversationFailed, setConversationFailed] = useState(false);
+
+  /** Ikkala formaning umumiy qismi: so'rov, xato va natijani yangilash. */
+  async function ask(
+    body: Record<string, unknown>,
+    question: string,
+    onSuccess: (res: SearchResponse) => void,
+  ): Promise<void> {
     setLoading(true);
     setFormError(null);
     setFieldErrors({});
-
-    const formData = new FormData(event.currentTarget);
-    const question = questionText.trim() || String(formData.get("question") ?? "");
-
-    const body: Record<string, unknown> = {
-      question,
-      language: formData.get("language"),
-    };
-    const subject = String(formData.get("subject") ?? "").trim();
-    const grade = String(formData.get("grade") ?? "").trim();
-    if (subject !== "") body.subject = subject;
-    if (grade !== "") body.grade = grade;
 
     try {
       const res = await apiRequest<SearchResponse>("/api/search", {
@@ -85,16 +118,98 @@ export function SearchPanel() {
       });
       setResult(res);
       setAskedQuestion(question);
+      onSuccess(res);
     } catch (error) {
       if (error instanceof ApiClientError) {
         if (error.fieldErrors) setFieldErrors(error.fieldErrors);
         else setFormError(error.message);
+
+        /*
+          Suhbat topilmadi (404) — masalan 30 kunlik muddat o'tgan yoki
+          boshqa qurilmada o'chirilgan. Identifikatorni tashlaymiz, aks
+          holda keyingi har bir savol ham shu xato bilan qaytardi.
+        */
+        if (error.status === 404) {
+          setConversationId(null);
+          setConversationFailed(false);
+          setPreviousQuestions([]);
+        }
       } else {
         setFormError(tRoot("common.unexpectedError"));
       }
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const question = questionText.trim() || String(formData.get("question") ?? "");
+
+    const language = String(formData.get("language") ?? "UZ");
+    const body: Record<string, unknown> = {
+      question,
+      language,
+      /*
+        Yangi savol — yangi suhbat. Eskisi bazada qoladi (30 kun) va
+        «Yangi suhbat boshlash» tugmasi orqali o'chiriladi.
+      */
+      startConversation: true,
+    };
+    const subject = String(formData.get("subject") ?? "").trim();
+    const grade = String(formData.get("grade") ?? "").trim();
+    if (subject !== "") body.subject = subject;
+    if (grade !== "") body.grade = grade;
+
+    await ask(body, question, (res) => {
+      setConversationLanguage(language);
+      setConversationId(res.conversationId ?? null);
+      setConversationFailed(res.conversationId === undefined);
+      setPreviousQuestions([]);
+      setFollowUpText("");
+    });
+  }
+
+  /** Davomiy savol — oldingi kontekstni meros oladi. */
+  async function handleFollowUp(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (conversationId === null) return;
+
+    const question = followUpText.trim();
+    if (question === "") return;
+
+    const previous = askedQuestion;
+    await ask(
+      { question, conversationId, language: conversationLanguage },
+      question,
+      () => {
+        setPreviousQuestions((asked) => [...asked, previous]);
+        setFollowUpText("");
+      },
+    );
+  }
+
+  /**
+   * Suhbatni tugatish — yozuv BAZADAN o'chiriladi.
+   *
+   * Nega shunchaki holatni tozalash yetarli emas: savollar 30 kun
+   * saqlanadi, o'qituvchi esa ularni darhol o'chira olishi kerak
+   * (`docs/MULTI_TURN_V3_SPEC.md` §2.4).
+   */
+  async function handleResetConversation(): Promise<void> {
+    const id = conversationId;
+    setConversationId(null);
+    setConversationFailed(false);
+    setPreviousQuestions([]);
+    setFollowUpText("");
+    if (id === null) return;
+
+    // O'chirish yiqilsa ham suhbat UI'da tugagan — muddat baribir 30 kun.
+    await apiRequest(`/api/search/conversations/${id}`, { method: "DELETE" }).catch(
+      () => undefined,
+    );
   }
 
   return (
@@ -192,14 +307,88 @@ export function SearchPanel() {
           />
         )
       ) : (
-        <AnswerView
-          result={result}
-          question={askedQuestion}
-          onSelectClarification={(opt) => {
-            setQuestionText(opt);
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }}
-        />
+        <>
+          <AnswerView
+            result={result}
+            question={askedQuestion}
+            onSelectClarification={(opt) => {
+              setQuestionText(opt);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          />
+
+          {conversationId !== null ? (
+            <Card className="mt-6">
+              <form onSubmit={handleFollowUp} className="space-y-5">
+                <div>
+                  <h2 className="text-2xl font-semibold text-neutral-900">
+                    {t("conversation.followUpTitle")}
+                  </h2>
+                  <p className="mt-2 text-base text-neutral-600">
+                    {t("conversation.followUpHint")}
+                  </p>
+                </div>
+
+                {previousQuestions.length > 0 && (
+                  <div className="rounded-md bg-neutral-100 px-4 py-3">
+                    <p className="text-sm font-semibold text-neutral-700">
+                      {t("conversation.historyTitle")}
+                    </p>
+                    <ol className="mt-2 space-y-1 text-base text-neutral-700">
+                      {previousQuestions.map((asked, index) => (
+                        <li key={`${index}-${asked}`}>
+                          {index + 1}. {asked}
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                )}
+
+                <Textarea
+                  label={t("conversation.followUpLabel")}
+                  name="followUp"
+                  rows={2}
+                  value={followUpText}
+                  onChange={(e) => setFollowUpText(e.target.value)}
+                  placeholder={t("conversation.followUpPlaceholder")}
+                  disabled={loading}
+                />
+
+                <div className="flex flex-wrap gap-3">
+                  <Button
+                    type="submit"
+                    loading={loading}
+                    disabled={loading || followUpText.trim() === ""}
+                    icon={
+                      loading ? undefined : <Sparkles aria-hidden className="size-5" />
+                    }
+                  >
+                    {loading ? t("asking") : t("conversation.followUpSubmit")}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    disabled={loading}
+                    onClick={() => void handleResetConversation()}
+                  >
+                    {t("conversation.reset")}
+                  </Button>
+                </div>
+              </form>
+            </Card>
+          ) : (
+            /*
+              Suhbat ochilmagan — yozuv yiqilgan bo'lsa shu holat. Javob
+              yetkazildi, lekin davomiy savol kontekstsiz qolardi, shuning
+              uchun forma ko'rsatilmaydi va sabab aytiladi.
+            */
+            conversationFailed && (
+              <p className="mt-6 text-center text-base text-neutral-600">
+                {t("conversation.unavailable")}
+              </p>
+            )
+          )}
+        </>
       )}
     </>
   );

@@ -686,6 +686,7 @@
       "lessonPlanNotFound": "Dars ishlanmasi topilmadi.",
       "presentationNotFound": "Prezentatsiya topilmadi.",
       "calendarPlanNotFound": "Kalendar reja topilmadi.",
+      "searchConversationNotFound": "Suhbat topilmadi. «Yangi suhbat boshlash» tugmasini bosing.",
       "emailTaken": "Bu email allaqachon ro'yxatdan o'tgan. Kirish sahifasiga o'ting.",
       "invalidCredentials": "Email yoki parol noto'g'ri. Yana bir marta tekshirib ko'ring.",
       "loginRequired": "Davom etish uchun tizimga kiring.",
@@ -784,6 +785,16 @@
       "first": "Fotosintezni 6-sinf o'quvchisiga qanday tushuntirsam bo'ladi?",
       "second": "Kasrlarni qo'shishda o'quvchilar qanday xatolarga yo'l qo'yadi?",
       "third": "Amir Temur davri haqida darsni qiziqarli boshlash uchun nima qilsam bo'ladi?"
+    },
+    "conversation": {
+      "followUpTitle": "Suhbatni davom ettirish",
+      "followUpHint": "Keyingi savolingiz shu mavzuga bog'lanadi — «endi buni oddiyroq tushuntir» yoki «misol ber» deb yozsangiz ham bo'ladi.",
+      "followUpLabel": "Keyingi savolingiz",
+      "followUpPlaceholder": "endi buni oddiyroq tushuntir",
+      "followUpSubmit": "So'rash",
+      "reset": "Yangi suhbat boshlash",
+      "historyTitle": "Shu suhbatdagi savollar",
+      "unavailable": "Suhbatni saqlab bo'lmadi — keyingi savol alohida ishlanadi."
     },
     "detected": {
       "subject": "Fan",

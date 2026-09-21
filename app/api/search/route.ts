@@ -1,6 +1,12 @@
 import { ok, parseJsonBody, withErrorHandling } from "@/lib/api/with-error-handling";
 import { requireUser } from "@/lib/auth/session";
 import { consumeAiQuota, recordAiUsage, releaseAiQuota } from "@/lib/ai/rate-limit";
+import {
+  appendTurnBestEffort,
+  createConversationBestEffort,
+  loadConversationContext,
+  requireOwnedConversation,
+} from "@/lib/search/conversation-store";
 import { runSearch } from "@/lib/search/service";
 import { searchInputSchema } from "@/lib/validations/search";
 
@@ -10,14 +16,37 @@ import { searchInputSchema } from "@/lib/validations/search";
  * ── Nega bu yerda fon rejimi YO'Q ─────────────────────────────────────────
  * Qolgan uch modul `202 Accepted` qaytarib, ishni `after()` da davom
  * ettiradi (ular 20-90 soniya davom etadi). Qidiruv 5-10 soniyada
- * tugaydi va hech narsa saqlamaydi — javobni darhol berish ancha sodda
- * va foydalanuvchi uchun ham tushunarliroq.
+ * tugaydi — javobni darhol berish ancha sodda va foydalanuvchi uchun ham
+ * tushunarliroq.
+ *
+ * ── Ko'p bosqichli suhbat ─────────────────────────────────────────────────
+ * Standart holatda har bir so'rov MUSTAQIL: hech narsa yozilmaydi, hech
+ * narsa meros olinmaydi. Mijoz `startConversation: true` yuborsa, javob
+ * bilan birga `conversationId` qaytadi; keyingi so'rovda o'sha
+ * identifikator berilsa, oldingi mavzu, fan va sinf meros olinadi — ya'ni
+ * «endi buni oddiyroq tushuntir» degan savol nima haqida ekanini biladi.
+ *
+ * Kontekst BAZADAN o'qiladi, mijozdan emas: `lib/search/conversation-store.ts`.
  */
 export const POST = withErrorHandling(async (request) => {
   // Kirish tekshiruvi: javob shaxsiy emas, lekin AI chaqiruvi pul turadi.
   const user = await requireUser();
 
   const input = await parseJsonBody(request, searchInputSchema);
+
+  /*
+    Suhbat kontekstini kvotadan OLDIN o'qiymiz.
+
+    Sabab validatsiyanikiga o'xshash: mavjud bo'lmagan yoki o'zga
+    foydalanuvchining identifikatori 404 bilan tugaydi, ya'ni AI
+    chaqiruvi umuman bo'lmaydi — bunday so'rov kvotani yemasligi kerak.
+  */
+  const conversation = input.conversationId
+    ? await requireOwnedConversation(input.conversationId, user.id)
+    : null;
+  const conversationContext = conversation
+    ? await loadConversationContext(conversation.id)
+    : undefined;
 
   // Kvota tekshiruvi validatsiyadan KEYIN: noto'g'ri so'rov
   // foydalanuvchining kvotasini yemasligi kerak.
@@ -39,10 +68,12 @@ export const POST = withErrorHandling(async (request) => {
     muvaffaqiyatli chaqiruvdan keyin (`recordAiUsage` modelni yozgach)
     u hech narsani qaytarmaydi.
   */
-  const result = await runSearch(input).catch(async (caught: unknown) => {
-    await releaseAiQuota(reservation);
-    throw caught;
-  });
+  const result = await runSearch(input, conversationContext).catch(
+    async (caught: unknown) => {
+      await releaseAiQuota(reservation);
+      throw caught;
+    },
+  );
 
   /*
     Tokenlar kvota yozuviga.
@@ -62,7 +93,39 @@ export const POST = withErrorHandling(async (request) => {
     outputTokens: result.usage.outputTokens,
   });
 
+  /*
+    Suhbatni saqlash — javob TAYYOR bo'lgandan keyin.
+
+    Yangi suhbat faqat mijoz so'raganda ochiladi. Yozuv yiqilsa javob
+    baribir yetkaziladi (`appendTurnBestEffort`): AI chaqiruvi allaqachon
+    to'langan, bazaning vaqtinchalik nosozligi uchun o'qituvchini
+    natijasiz qoldirish mantiqsiz.
+  */
+  let conversationId = conversation?.id;
+  if (!conversationId && input.startConversation === true) {
+    conversationId = await createConversationBestEffort(
+      user.id,
+      input.question,
+      input.language,
+    );
+  }
+
+  if (conversationId !== undefined) {
+    await appendTurnBestEffort({
+      conversationId,
+      question: input.question,
+      understanding: result.understanding,
+      answerSnippet: result.answer.answer,
+      retrievedTopicIds: result.curriculumMatches.slice(0, 5).map((m) => m.sourceId),
+    });
+  }
+
   return ok({
+    /*
+      Mijoz keyingi savolni shu identifikator bilan yuboradi. Suhbat
+      so'ralmagan bo'lsa — `undefined`, ya'ni javob shakli avvalgidek.
+    */
+    conversationId,
     answer: result.answer,
     understanding: result.understanding,
     curriculumMatches: result.curriculumMatches,

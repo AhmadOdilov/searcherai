@@ -15,11 +15,16 @@ import { stripTags } from "@/lib/validations/sanitize";
  * bo'ladigan material kerak. Havolalar ortidan yurish — bu vaqt, u esa
  * yo'q.
  *
- * ── Nega bazaga yozilmaydi ────────────────────────────────────────────────
+ * ── Nega natija standart holatda bazaga yozilmaydi ────────────────────────
  * Qolgan uch modul natijani saqlaydi, chunki ular FAYL yasaydi va
  * generatsiya 20-90 soniya oladi. Qidiruv esa 5-10 soniyada tugaydi va
- * natija bir martalik — saqlash uchun jadval, migratsiya, ro'yxat sahifasi
- * va o'chirish oqimi kerak bo'lardi. MVP uchun bu ortiqcha.
+ * natija bir martalik — har bir savolni yozib borish jadvalni behuda
+ * to'ldirardi va maxfiylik xavfini oshirardi.
+ *
+ * ISTISNO: o'qituvchi suhbatni davom ettirmoqchi bo'lsa
+ * (`startConversation`), savol va javob `SearchConversation` ga
+ * yoziladi — keyingi savol oldingi mavzuni meros olishi uchun.
+ * Batafsil: `lib/search/conversation-store.ts`.
  */
 
 /** Foydalanuvchi savoli. */
@@ -45,6 +50,28 @@ export const searchInputSchema = z.object({
 
   /** Javob tili — interfeys tilidan mustaqil. */
   language: languageSchema.default("UZ"),
+
+  /*
+    ── Ko'p bosqichli suhbat ───────────────────────────────────────────────
+
+    Ikkita maydon, chunki ikkita ALOHIDA qaror bor:
+
+      · `startConversation` — "bu savoldan boshlab kontekst eslansin".
+        Berilmasa API avvalgidek ishlaydi: hech narsa yozilmaydi, hech
+        narsa meros olinmaydi. Ya'ni saqlash — ATAYLAB tanlanadigan
+        holat, standart emas (`docs/MULTI_TURN_V3_SPEC.md` §2.2).
+
+      · `conversationId` — "bu savol mana shu suhbatning davomi".
+        Faqat egasiga tegishli suhbat qabul qilinadi; boshqasi 404
+        beradi.
+
+    Nega kontekstning O'ZI (previousTopic va h.k.) mijozdan olinmaydi:
+    u holda har qanday mijoz javobga ta'sir qiladigan soxta kontekst
+    yubora olardi va serverdagi suhbat tarixi bilan mijozdagi holat
+    ajralib ketardi. Server faqat O'ZI yozgan burilishlarga ishonadi.
+  */
+  conversationId: z.string().trim().min(1).max(64).optional(),
+  startConversation: z.boolean().optional(),
 });
 
 export type SearchInput = z.infer<typeof searchInputSchema>;

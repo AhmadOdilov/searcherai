@@ -3,25 +3,35 @@ import { after, before, describe, it } from "node:test";
 import { TestClient, cleanupTestUsers, testEmail } from "./helpers/client";
 
 /**
- * V6 PHASE 4 — ko'p bosqichli suhbat MAHSULOT darajasida ishlaydimi?
+ * Ko'p bosqichli suhbat MAHSULOT darajasida ishlaydimi?
  *
  * ── Nega bu test kerak ────────────────────────────────────────────────────
  * `scripts/evaluate-v5-multiturn.ts` kutubxona qatlamida 100% ko'rsatadi,
  * chunki u `MultiTurnService` ni TO'G'RIDAN-TO'G'RI chaqiradi. Bu esa
- * mahsulotda xususiyat ishlayotganini isbotlamaydi.
+ * mahsulotda xususiyat ishlayotganini isbotlamaydi — V6 auditida aynan shu
+ * sabab «Multi-turn API integratsiyasi» qamrovdan TASHQARIDA deb yozilgan
+ * edi.
  *
- * Ushbu test HTTP yo'nalishi orqali o'tadi va hozirgi HAQIQIY holatni
- * qayd etadi: `/api/search` suhbat kontekstini qabul qilmaydi.
+ * Ushbu test HTTP yo'nalishi orqali o'tadi va endi ULANGAN xatti-harakatni
+ * tekshiradi: `/api/search` suhbat kontekstini bazadan o'qiydi
+ * (`lib/search/conversation-store.ts`).
  *
- * Test ATAYLAB shu holatni tasdiqlaydi, chunki:
- *   · hisobotda "multi-turn 100%" deb yozish yolg'on bo'lardi;
- *   · kontekst ulanganda bu test YIQILADI va uni yangilash kerak bo'ladi —
- *     ya'ni u cheklovning bexosdan unutilishiga yo'l qo'ymaydi.
+ * Shartnomaning ikkala yarmi ham qattiq tekshiriladi:
+ *   · suhbat SO'RALGANDA kontekst meros olinadi;
+ *   · so'ralmaganda hech narsa saqlanmaydi va hech narsa meros olinmaydi
+ *     (bu maxfiylik qarori, tasodif emas — `docs/MULTI_TURN_V3_SPEC.md` §2.2).
+ *
+ * ── Kvota haqida ──────────────────────────────────────────────────────────
+ * Bitta foydalanuvchi daqiqada 3 ta AI so'rovi qila oladi (`lib/ai/rate-limit.ts`).
+ * Shuning uchun har bir holat ALOHIDA foydalanuvchi bilan ishlaydi va hech
+ * biri 3 tadan ortiq qidiruv yubormaydi.
  */
 
 const PASSWORD = "juda-maxfiy-parol";
+const OPENING_QUESTION = "8-sinf matematika kvadrat tenglamalar nima?";
 
 interface SearchPayload {
+  conversationId?: string;
   answer: { answer: string; keyPoints: string[]; classroomIdeas: string[] };
   understanding?: {
     detectedSubject?: string;
@@ -40,6 +50,28 @@ async function signedInClient(suffix: string): Promise<TestClient> {
   return client;
 }
 
+/** Suhbat ochadigan birinchi savol — identifikatorni qaytaradi. */
+async function openConversation(
+  client: TestClient,
+): Promise<{ conversationId: string; topic: string }> {
+  const opening = await client.request<SearchPayload>("/api/search", {
+    method: "POST",
+    body: { question: OPENING_QUESTION, language: "UZ", startConversation: true },
+  });
+  assert.equal(opening.status, 200);
+
+  const conversationId = opening.data!.conversationId;
+  assert.ok(
+    typeof conversationId === "string" && conversationId.length > 0,
+    "suhbat so'ralgan, lekin identifikator qaytmadi",
+  );
+
+  const topic = opening.data!.understanding?.extractedTopic ?? "";
+  assert.match(topic, /kvadrat|tenglama/i, "birinchi bosqichda mavzu aniqlanishi kerak");
+
+  return { conversationId, topic };
+}
+
 before(async () => {
   await cleanupTestUsers();
 });
@@ -47,121 +79,167 @@ after(async () => {
   await cleanupTestUsers();
 });
 
-describe("multi-turn API holati (V6 — hozirgi cheklov qayd etiladi)", () => {
-  it("API suhbat identifikatorini QABUL QILMAYDI — u jimgina tashlab yuboriladi", async () => {
-    const client = await signedInClient("mt-api-contract");
+describe("multi-turn API — suhbat konteksti", () => {
+  it("MODIFIKATOR so'rov oldingi mavzu va fanni meros oladi", async () => {
+    const client = await signedInClient("mt-api-modifier");
+    const { conversationId } = await openConversation(client);
 
-    const result = await client.request<SearchPayload>("/api/search", {
+    // Keyingi bosqich — faqat modifikator, mavzu aytilmagan.
+    const second = await client.request<SearchPayload>("/api/search", {
       method: "POST",
-      body: {
-        question: "8-sinf matematika kvadrat tenglamalar nima?",
-        language: "UZ",
-        conversationId: "some-thread-id",
-        previousTopic: "kvadrat tenglamalar",
-      },
+      body: { question: "endi buni oddiyroq tushuntir", language: "UZ", conversationId },
     });
+    assert.equal(second.status, 200);
 
-    // So'rov rad etilmaydi (qo'shimcha maydonlar sxemadan tushib qoladi),
-    // lekin kontekst hech qayerda ishlatilmaydi.
-    assert.equal(result.status, 200);
+    assert.match(
+      second.data!.understanding?.extractedTopic ?? "",
+      /kvadrat tenglama/i,
+      "kontekst uzatilgani uchun mavzu saqlanishi kerak",
+    );
+    assert.equal(second.data!.understanding?.detectedSubject, "Matematika");
+    assert.equal(second.data!.understanding?.detectedGrade, "8-sinf");
+
+    // Suhbat davom etadi: identifikator o'zgarmaydi.
+    assert.equal(second.data!.conversationId, conversationId);
   });
 
-  it("MODIFIKATOR so'rov oldingi mavzuni SAQLAMAYDI (hozirgi holat)", async () => {
-    const client = await signedInClient("mt-api-modifier");
+  it("to'rtala modifikator turi ham kontekstni meros oladi", async () => {
+    /*
+      Talab qilingan to'rt modifikator: «oddiyroq tushuntir», «misol ber»,
+      «rus tilida ayt», «qisqartir». Har biri suhbat ichida yuboriladi va
+      oldingi mavzuni meros olishi kerak.
+
+      Har bir modifikator ALOHIDA foydalanuvchi bilan: AI kvotasi
+      foydalanuvchi bo'yicha daqiqada 3 ta so'rov, bu yerda esa har bir
+      holat 2 ta so'rov yuboradi.
+    */
+    const modifiers = ["oddiyroq tushuntir", "misol ber", "rus tilida ayt", "qisqartir"];
+    const lost: string[] = [];
+
+    for (const [index, modifier] of modifiers.entries()) {
+      const client = await signedInClient(`mt-api-mod-${index}`);
+      const { conversationId } = await openConversation(client);
+
+      const res = await client.request<SearchPayload>("/api/search", {
+        method: "POST",
+        body: { question: modifier, language: "UZ", conversationId },
+      });
+      assert.equal(res.status, 200, modifier);
+
+      const topic = res.data!.understanding?.extractedTopic ?? "";
+      if (!/kvadrat tenglama/i.test(topic))
+        lost.push(`${modifier} -> ${topic || "(bo'sh)"}`);
+    }
+
+    assert.deepEqual(
+      lost,
+      [],
+      "har bir modifikator oldingi mavzuni meros olishi kerak edi",
+    );
+  });
+
+  it("fan ham meros olinadi — boshqa fandagi suhbatda", async () => {
+    const client = await signedInClient("mt-api-subject");
+
+    const opening = await client.request<SearchPayload>("/api/search", {
+      method: "POST",
+      body: {
+        question: "6-sinf ona tili so'z turkumlari haqida",
+        language: "UZ",
+        startConversation: true,
+      },
+    });
+    assert.equal(opening.status, 200);
+    const conversationId = opening.data!.conversationId;
+    assert.ok(typeof conversationId === "string");
+
+    const follow = await client.request<SearchPayload>("/api/search", {
+      method: "POST",
+      body: { question: "misol ber", language: "UZ", conversationId },
+    });
+    assert.equal(follow.status, 200);
+    assert.equal(follow.data!.understanding?.detectedSubject, "Ona tili");
+  });
+});
+
+describe("multi-turn API — suhbatsiz rejim standart bo'lib qoladi", () => {
+  it("suhbat so'ralmasa identifikator qaytmaydi va kontekst saqlanmaydi", async () => {
+    const client = await signedInClient("mt-api-stateless");
 
     const first = await client.request<SearchPayload>("/api/search", {
       method: "POST",
-      body: { question: "8-sinf matematika kvadrat tenglamalar nima?", language: "UZ" },
+      body: { question: OPENING_QUESTION, language: "UZ" },
     });
     assert.equal(first.status, 200);
-    const firstTopic = first.data!.understanding?.extractedTopic ?? "";
-    assert.match(
-      firstTopic,
-      /kvadrat|tenglama/i,
-      "birinchi bosqichda mavzu aniqlanishi kerak",
+    assert.equal(
+      first.data!.conversationId,
+      undefined,
+      "so'ralmagan suhbat ochilmasligi kerak — saqlash ATAYLAB tanlanadigan holat",
     );
 
-    // Keyingi bosqich — faqat modifikator.
     const second = await client.request<SearchPayload>("/api/search", {
       method: "POST",
       body: { question: "endi buni oddiyroq tushuntir", language: "UZ" },
     });
     assert.equal(second.status, 200);
-
-    const secondTopic = second.data!.understanding?.extractedTopic ?? "";
     assert.doesNotMatch(
-      secondTopic,
+      second.data!.understanding?.extractedTopic ?? "",
       /kvadrat tenglama/i,
-      "HOZIRGI HOLAT: kontekst uzatilmagani uchun mavzu saqlanmaydi. " +
-        "Agar bu tasdiq yiqilsa — multi-turn API'ga ulangan, testni va " +
-        "hisobotdagi cheklovni yangilang.",
+      "identifikatorsiz so'rov mustaqil ishlanishi kerak",
     );
   });
+});
 
-  it("V6 audit: barcha modifikator turlari kontekstni meros olmaydi", async () => {
+describe("multi-turn API — egalik va o'chirish", () => {
+  it("boshqa foydalanuvchining suhbati 404 beradi (IDOR)", async () => {
+    const owner = await signedInClient("mt-api-owner");
+    const { conversationId } = await openConversation(owner);
+
+    const intruder = await signedInClient("mt-api-intruder");
+    const stolen = await intruder.request<SearchPayload>("/api/search", {
+      method: "POST",
+      body: { question: "misol ber", language: "UZ", conversationId },
+    });
+
     /*
-      Talab qilingan to'rt modifikator: «oddiyroq tushuntir», «misol ber»,
-      «rus tilida ayt», «qisqartir». Har biri oldingi so'rovdan keyin
-      yuboriladi va hech biri mavzuni meros olmasligi qayd etiladi.
+      404, 403 emas: «bunday suhbat bor, lekin sizniki emas» degan javob
+      identifikator taxmin qilgan odamga boshqa o'qituvchining faoliyatini
+      bildirardi.
     */
-    /*
-      Har bir modifikator ALOHIDA foydalanuvchi bilan yuboriladi.
-      Sabab: AI kvotasi foydalanuvchi bo'yicha daqiqalik oynada
-      cheklangan va bitta hisobdan ketma-ket 5 so'rov 429 beradi —
-      bu chegara to'g'ri ishlayotganining belgisi, testning maqsadi emas.
-    */
-    const modifiers = ["oddiyroq tushuntir", "misol ber", "rus tilida ayt", "qisqartir"];
-    const inherited: string[] = [];
+    assert.equal(stolen.status, 404);
+  });
 
-    for (const [index, modifier] of modifiers.entries()) {
-      const client = await signedInClient(`mt-api-mod-${index}`);
+  it("mavjud bo'lmagan identifikator 404 beradi va kvotani yemaydi", async () => {
+    const client = await signedInClient("mt-api-missing");
 
-      const opening = await client.request<SearchPayload>("/api/search", {
-        method: "POST",
-        body: { question: "8-sinf matematika kvadrat tenglamalar nima?", language: "UZ" },
-      });
-      assert.equal(opening.status, 200, `ochilish (${modifier})`);
-      assert.match(
-        opening.data!.understanding?.extractedTopic ?? "",
-        /kvadrat|tenglama/i,
-      );
-
+    for (let i = 0; i < 4; i++) {
       const res = await client.request<SearchPayload>("/api/search", {
         method: "POST",
-        body: { question: modifier, language: "UZ" },
+        body: { question: "misol ber", language: "UZ", conversationId: "yoq-bunday-id" },
       });
-      assert.equal(res.status, 200, modifier);
-      const topic = res.data!.understanding?.extractedTopic ?? "";
-      if (/kvadrat tenglama/i.test(topic)) inherited.push(`${modifier} -> ${topic}`);
+      /*
+        To'rt marta — kvota chegarasi (daqiqada 3) dan ko'p. Hammasi 404
+        bo'lishi kerak: suhbat AI chaqiruvidan OLDIN tekshiriladi, ya'ni
+        noto'g'ri identifikator o'qituvchining kvotasini yemaydi.
+      */
+      assert.equal(res.status, 404, `${i + 1}-urinish`);
     }
-
-    assert.deepEqual(
-      inherited,
-      [],
-      "HOZIRGI HOLAT: /api/search kontekstni uzatmaydi, shuning uchun hech bir " +
-        "modifikator oldingi mavzuni meros olmaydi. Bu tasdiq yiqilsa — " +
-        "multi-turn ulangan, testni va hisobotdagi cheklovni yangilang.",
-    );
   });
 
-  it("fan ham saqlanmaydi — har bir so'rov mustaqil ishlanadi", async () => {
-    const client = await signedInClient("mt-api-subject");
+  it("o'chirilgan suhbat davom ettirilmaydi", async () => {
+    const client = await signedInClient("mt-api-delete");
+    const { conversationId } = await openConversation(client);
 
-    await client.request<SearchPayload>("/api/search", {
-      method: "POST",
-      body: { question: "6-sinf ona tili so'z turkumlari haqida", language: "UZ" },
-    });
+    const deleted = await client.request<{ deleted: boolean }>(
+      `/api/search/conversations/${conversationId}`,
+      { method: "DELETE" },
+    );
+    assert.equal(deleted.status, 200);
 
     const follow = await client.request<SearchPayload>("/api/search", {
       method: "POST",
-      body: { question: "misol ber", language: "UZ" },
+      body: { question: "misol ber", language: "UZ", conversationId },
     });
-
-    assert.equal(follow.status, 200);
-    assert.notEqual(
-      follow.data!.understanding?.detectedSubject,
-      "Ona tili",
-      "HOZIRGI HOLAT: oldingi fan meros qilib olinmaydi.",
-    );
+    assert.equal(follow.status, 404);
   });
 });

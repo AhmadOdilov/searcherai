@@ -38,7 +38,13 @@ const AI_ENDPOINTS = [
   /\/api\/lesson-plans$/,
   /\/api\/presentations$/,
   /\/api\/calendar-plans$/,
-  /\/api\/search/,
+  /*
+    Aynan `/api/search` — pastki yo'llar EMAS. `DELETE
+    /api/search/conversations/[id]` suhbatni o'chiradi va AI
+    chaqirmaydi; oxiridagi `$` bo'lmasa u ham AI so'rovi deb
+    hisoblanardi.
+  */
+  /\/api\/search$/,
   /\/api\/vision-analyze/,
 ];
 

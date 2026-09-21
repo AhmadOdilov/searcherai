@@ -40,6 +40,54 @@ const IN_MEMORY_THREADS = new Map<string, ConversationThread>();
 const MAX_TURNS_PER_THREAD = 50;
 const THREAD_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 kun
 
+/**
+ * Kontekst merosining YAGONA manbasi: burilishlar ro'yxatidan oldingi
+ * mavzu, fan, sinf, til va niyatni ajratib oladi.
+ *
+ * ── Nega alohida, sinfdan tashqarida ──────────────────────────────────────
+ * Ikkita ombor bor: `MultiTurnService` (xotira — kutubxona baholari va
+ * birlik sinovlari uchun) va `lib/search/conversation-store.ts` (baza —
+ * mahsulot yo'li). Meros SEMANTIKASI ikkalasida bir xil bo'lishi shart,
+ * aks holda `npm run search:eval-multiturn` o'lchagan narsa mahsulotda
+ * ishlaydiganidan farq qilib qoladi. Shuning uchun mantiq shu yerda BIR
+ * marta yozilgan, ikkala ombor esa uni chaqiradi.
+ *
+ * Ro'yxat XRONOLOGIK tartibda kutiladi (eng eskisi birinchi): qidiruv
+ * oxiridan boshlanadi, ya'ni eng yangi qiymat ustun turadi.
+ */
+export function deriveConversationContext(
+  turns: Array<{ understanding?: Partial<QueryUnderstanding> }>,
+): ConversationTurnContext | undefined {
+  if (turns.length === 0) return undefined;
+
+  let previousTopic: string | undefined;
+  let previousSubject: string | undefined;
+  let previousGrade: string | undefined;
+  let previousLanguage: LanguageCode | undefined;
+  let previousIntent: SearchIntent | undefined;
+
+  for (let i = turns.length - 1; i >= 0; i--) {
+    const u = turns[i].understanding;
+    if (!u) continue;
+
+    if (!previousTopic && u.extractedTopic) previousTopic = u.extractedTopic;
+    if (!previousSubject && u.detectedSubject) previousSubject = u.detectedSubject;
+    if (!previousGrade && u.detectedGrade) previousGrade = u.detectedGrade;
+    if (!previousLanguage && u.detectedLanguage) previousLanguage = u.detectedLanguage;
+    if (!previousIntent && u.detectedIntent) previousIntent = u.detectedIntent;
+
+    if (previousTopic && previousSubject && previousGrade) break;
+  }
+
+  return {
+    previousTopic,
+    previousSubject,
+    previousGrade,
+    previousLanguage,
+    previousIntent,
+  };
+}
+
 export class MultiTurnService {
   /**
    * Yangi suhbat oqimi (Thread) ochish
@@ -136,35 +184,9 @@ export class MultiTurnService {
     userId: string,
   ): ConversationTurnContext | undefined {
     const thread = this.getThread(threadId, userId);
-    if (!thread || thread.turns.length === 0) return undefined;
+    if (!thread) return undefined;
 
-    // Oxirgi burilishlardan mavzu, fan va sinfni qidiramiz
-    let previousTopic: string | undefined;
-    let previousSubject: string | undefined;
-    let previousGrade: string | undefined;
-    let previousLanguage: LanguageCode | undefined;
-    let previousIntent: SearchIntent | undefined;
-
-    for (let i = thread.turns.length - 1; i >= 0; i--) {
-      const u = thread.turns[i].understanding;
-      if (!u) continue;
-
-      if (!previousTopic && u.extractedTopic) previousTopic = u.extractedTopic;
-      if (!previousSubject && u.detectedSubject) previousSubject = u.detectedSubject;
-      if (!previousGrade && u.detectedGrade) previousGrade = u.detectedGrade;
-      if (!previousLanguage && u.detectedLanguage) previousLanguage = u.detectedLanguage;
-      if (!previousIntent && u.detectedIntent) previousIntent = u.detectedIntent;
-
-      if (previousTopic && previousSubject && previousGrade) break;
-    }
-
-    return {
-      previousTopic,
-      previousSubject,
-      previousGrade,
-      previousLanguage,
-      previousIntent,
-    };
+    return deriveConversationContext(thread.turns);
   }
 
   /**

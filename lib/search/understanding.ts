@@ -1221,11 +1221,122 @@ export function understandQuery(
     "chiqar",
     "davom",
     "ettir",
+    /*
+      ── Ko'rsatish olmoshlari ─────────────────────────────────────────────
+
+      «endi BUNI oddiyroq tushuntir» — ro'yxatdagi hamma so'z modifikator
+      edi, «buni» dan tashqari. Natijada mavzu «buni oddiyroq» bo'lib
+      qolar va suhbat kontekstini YO'QOTARDI.
+
+      Bu so'zlar ta'rifiga ko'ra oldingi burilishga ishora qiladi va
+      hech qachon mavzu bo'la olmaydi — «buni» nimani anglatishini
+      faqat oldingi savol biladi.
+    */
+    "bu",
+    "buni",
+    "bunga",
+    "bundan",
+    "buning",
+    "shu",
+    "shuni",
+    "shunga",
+    "shundan",
+    "shuning",
+    "uni",
+    "unga",
+    "undan",
+    "uning",
+    "ular",
+    "ularni",
+    "bular",
+    "bularni",
+    "shular",
+    "shularni",
+    /*
+      ── Ruscha modifikatorlar ─────────────────────────────────────────────
+
+      Normalizatsiya kirillni lotinga o'giradi, shuning uchun ro'yxatda
+      aynan O'GIRILGAN shakl turadi: «объясни проще» → «ob'yasni proshe».
+
+      Interfeys ham, javob ham rus tilida bo'lishi mumkin, ya'ni davomiy
+      savol ham ruscha keladi. Ular yo'q edi va ruscha suhbat birinchi
+      modifikatordayoq kontekstni yo'qotardi.
+    */
+    "obyasni",
+    "ob'yasni",
+    "rasskaji",
+    "skaji",
+    "skajite",
+    "napishi",
+    "pokaji",
+    "privedi",
+    "perevedi",
+    "sokrati",
+    "dopolni",
+    "proshe",
+    "poproshe",
+    "koroche",
+    "podrobnee",
+    "podrobno",
+    "primer",
+    "primeri",
+    "primerov",
+    "zadacha",
+    "zadachi",
+    "eto",
+    "etogo",
+    "etomu",
+    "etu",
+    "ego",
+    "ix",
+    "eshe",
+    "yeshe",
+    "uzbekski",
+    "russki",
   ]);
 
+  /*
+    ── «Rus tilida ayt» — til ko'rsatkichi mavzu emas ──────────────────────
+
+    Bu iborani so'zma-so'z ro'yxatga qo'shib bo'lmaydi: «rus tili» —
+    maktab FANI, ya'ni haqiqiy mavzu bo'lishi mumkin. Farq kelishikda:
+    «rus tilIDA ayt» javobning tilini ko'rsatadi, «rus tili» esa fanning
+    o'zi.
+
+    Shuning uchun faqat o'rin-payt shakli («...tilida/tilda/tilga»)
+    tekshiriladi va o'sha ibora modifikator sanog'idan chiqariladi.
+  */
+  const LANGUAGE_MEDIUM_PATTERN =
+    /(?:^|\s)(?:rus|o['\u2018\u2019\u02BB\u02BC]?zbek|ingliz|qoraqalpoq|qozoq|tojik)\s+til(?:ida|da|ga|iga)(?=$|\s)/iu;
+
+  const LANGUAGE_MEDIUM_TOKENS = new Set([
+    "rus",
+    "ozbek",
+    "o'zbek",
+    "ingliz",
+    "qoraqalpoq",
+    "qozoq",
+    "tojik",
+    "til",
+    "tili",
+    "tilida",
+    "tilda",
+    "tilga",
+    "tiliga",
+  ]);
+
+  const modifierCandidates = LANGUAGE_MEDIUM_PATTERN.test(normalized.normalized)
+    ? keywords.filter(
+        (w) =>
+          !LANGUAGE_MEDIUM_TOKENS.has(
+            w.toLowerCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'"),
+          ),
+      )
+    : keywords;
+
   const isAllFollowupKeywords =
-    keywords.length > 0 &&
-    keywords.every((w) => {
+    modifierCandidates.length > 0 &&
+    modifierCandidates.every((w) => {
       const cleanW = w.toLowerCase().replace(/['\u2018\u2019\u02BB\u02BC]/g, "'");
       return (
         FOLLOWUP_MODIFIER_WORDS.has(cleanW) ||

@@ -35,9 +35,24 @@ export async function register(): Promise<void> {
     ham tortib kelardi.
   */
   const { recoverStaleGenerations } = await import("@/lib/generation/stale");
+  const { pruneExpiredConversations } = await import("@/lib/search/conversation-store");
 
   try {
     await recoverStaleGenerations();
+
+    /*
+      Eskirgan qidiruv suhbatlari (30 kun tegilmagan) shu yerda tozalanadi.
+
+      Nega aynan shu nuqta: yuqoridagi sabab bilan bir xil — loyihada
+      rejalashtiruvchi yo'q va uning soxtasi yaratilmadi. Tozalash bitta
+      `deleteMany` ga sig'adi, xabarlar esa `onDelete: Cascade` bilan
+      o'zi ketadi. Server kamdan-kam qayta ishga tushsa, jadval biroz
+      uzoqroq to'la turadi — bu xavf emas, faqat joy.
+    */
+    const pruned = await pruneExpiredConversations();
+    if (pruned > 0) {
+      console.log(`[fon] ${pruned} ta eskirgan qidiruv suhbati tozalandi`);
+    }
   } catch (error) {
     /*
       Tozalash ishlamagani serverni ko'tarilishiga TO'SQINLIK QILMASLIGI
