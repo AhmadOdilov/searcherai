@@ -64,9 +64,18 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          # Next.js 16 kamida 20.9 ni talab qiladi; Dockerfile 22 dan
-          # foydalanadi — bir xil bo'lgani ma'qul.
-          node-version: 22
+          # Kamida 24 (LTS).
+          #
+          # Next.js 16 ning o'zi 20.9 dan boshlab ishlaydi, lekin sinov
+          # skriptlari `--test-global-setup` bayrog'iga tayanadi
+          # (`test:e2e`, `test:smoke`, `test:smoke:docker`) va u Node 22
+          # da YO'Q — `node: bad option: --test-global-setup`. Birinchi
+          # CI ishga tushishi aynan shunda yiqilgan edi.
+          #
+          # Ishlab chiqarish image'i (`Dockerfile`) 22 da QOLADI va bu
+          # to'g'ri: ilovaning o'zi bu bayroqni ishlatmaydi, u faqat
+          # test runner'ga kerak.
+          node-version: 24
           cache: npm
 
       # `npm ci` — lockfile aynan bajariladi, `npm install` kabi uni
@@ -78,6 +87,18 @@ jobs:
       - run: npx prisma generate
 
       - run: npx prisma migrate deploy
+
+      # ── Next O'ZI yasaydigan tiplar ───────────────────────────────────
+      # `PageProps` va `LayoutProps` global tiplari `.next/types` da
+      # turadi va ularni Next generatsiya qiladi. Toza checkout'da
+      # `.next` yo'q, ya'ni `tsc` ularni topa olmaydi va 9 ta TS2304
+      # beradi. Mahalliy mashinada muammo KO'RINMAYDI: u yerda `.next`
+      # `next dev`/`next build` dan qolgan bo'ladi — shuning uchun bu
+      # nosozlik faqat CI'da chiqdi.
+      #
+      # `next typegen` aynan shu tiplarni to'liq build'siz yasaydi (~3 s),
+      # ya'ni pastdagi `npm run build` takrorlanmaydi.
+      - run: npx next typegen
 
       # ── Statik tekshiruvlar: eng tez yiqiladiganlari oldinda ──────────
       - run: npm run typecheck
@@ -189,7 +210,9 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          # Yuqoridagi ish bilan bir xil sabab: smoke to'plami
+          # `--test-global-setup` bayrog'i bilan ishga tushadi.
+          node-version: 24
           cache: npm
 
       - run: npm ci
