@@ -2,7 +2,7 @@ import type { Slide, SlideLayout, SlideType } from "@/lib/validations/presentati
 import type { ContentType } from "@/lib/presentations/storyline";
 
 /**
- * MAKET DVIGATELI — slayd mazmuniga qarab maket tanlaydi.
+ * MAKET DVIGATELI — maket qarori QABUL QILINADIGAN yagona joy.
  *
  * ── Muammo ────────────────────────────────────────────────────────────────
  * V6 gacha renderer ikkitagina chizish funksiyasiga ega edi: sarlavha
@@ -16,42 +16,65 @@ import type { ContentType } from "@/lib/presentations/storyline";
  * uni tekshirish yana bir xato manbai bo'ladi.
  *
  * Shuning uchun AI MAZMUN beradi (kartalar, bosqichlar, raqam, chart),
- * maketni esa shu yerdagi deterministik qoidalar tanlaydi. Bir xil mazmun
- * har doim bir xil maketga tushadi va buni test bilan qulflash mumkin.
+ * maketni esa shu yerdagi deterministik qoidalar tanlaydi.
  *
- * ── Vizual ritm ───────────────────────────────────────────────────────────
- * Maket to'g'ri tanlangan bo'lsa ham, ketma-ket kelgan bir xil maketlar
- * prezentatsiyani zeriktiradi. Shuning uchun ikkinchi bosqichda ritm
- * tekshiriladi: uch marta ketma-ket bir xil maket bo'lsa, o'rtadagisi
- * mazmuni ruxsat bergan muqobilga almashtiriladi.
+ * ── Nega maket qarori BITTA joyda ─────────────────────────────────────────
+ * Ilgari qaror IKKI joyda edi: quvur `layoutForContentType` bilan maketni
+ * tanlar va uni yozuvga yozardi, keyin `generatePptx` o'sha yozuvni
+ * `planLayouts()` bilan QAYTA hisoblardi. Ikkinchi hisob birinchisini
+ * bekor qilishi mumkin edi va bekor qilish mazmunni tekshirmasdi:
+ *
+ *     reja "kartalar" dedi  →  renderer "statement" ga o'tkazdi
+ *     →  `addStatementSlide` faqat `keyMessage` ni chizadi
+ *     →  kartalar faylga umuman tushmadi.
+ *
+ * 8 mavzuli o'lchovda 68 slayddan 13 tasi aynan shu sababdan mazmunini
+ * yo'qotgan edi. Endi qoida qat'iy:
+ *
+ *     PLANNER TANLAYDI → YOZUV SAQLAYDI → RENDERER FAQAT CHIZADI.
+ *
+ * Renderer bu fayldan faqat `legacyLayoutFor()` ni chaqiradi va u ham
+ * MAKET YO'Q eski yozuvlar uchun — ya'ni yozuvda qaror umuman bo'lmagan
+ * holat uchun.
+ *
+ * ── Vizual ritm qayerda ───────────────────────────────────────────────────
+ * Ketma-ket bir xil maketlar prezentatsiyani zeriktiradi, lekin bu
+ * PLANNER masalasi: `lib/presentations/slide-plan.ts` ketma-ket uchinchi
+ * bir xil mazmun shaklini almashtiradi. Renderer qatlamidagi ikkinchi,
+ * undan qattiqroq qoida ATAYLAB olib tashlandi — u xilma-xillikni
+ * mazmun hisobiga sotib olardi.
  */
 
-/** Mazmun shakliga qarab maket tanlash (yakka slayd uchun). */
-export function inferLayout(slide: Slide, index: number, total: number): SlideLayout {
-  // AI yoki o'qituvchi maketni ochiq bergan bo'lsa — hurmat qilamiz.
+/**
+ * MAKETSIZ (eski) slayd uchun maketni mazmundan keltirib chiqaradi.
+ *
+ * ── Bu renderer qarori EMAS ───────────────────────────────────────────────
+ * Bazadagi eski `content` yozuvlarida `layout` maydoni yo'q — u V6 da
+ * qo'shilgan. Bunday yozuvda tanlanadigan qaror UMUMAN yo'q, shuning
+ * uchun uni mazmundan tiklash yagona yo'l. Maketi BOR yozuvga bu
+ * funksiya hech qachon qo'llanmaydi.
+ */
+export function legacyLayoutFor(slide: Slide): SlideLayout {
+  // Yozuvda qaror bo'lsa — u hurmat qilinadi, boshqa hech narsa qaralmaydi.
   if (slide.layout) return slide.layout;
 
   /*
-    Muqova va xulosani `type` BELGILAYDI, pozitsiya emas.
+    Muqovani `type` BELGILAYDI, pozitsiya emas.
 
     Ilgari bu yerda `index === 0` sharti ham bor edi va u regressiya
     keltirib chiqardi: qisqa deckda (masalan ikkita slayd) mazmun slaydi
     birinchi o'rinda tursa, u muqovaga aylanib, bandlari sarlavha ostidagi
-    kichik matnga aylanib qolardi. `tests/pptx-generate.test.ts` dagi
-    uchta test aynan shuni tutdi.
-
-    Pozitsiya faqat `type` hech narsa aytmaganda qo'shimcha ishora
-    bo'lishi mumkin edi, lekin unga ehtiyoj yo'q: AI muqovani har doim
-    `type: "title"` bilan, xulosani `type: "summary"` bilan beradi.
+    kichik matnga aylanib qolardi.
   */
   if (slide.type === "title") return "cover";
-  if (slide.type === "summary") return "conclusion";
-  void index;
-  void total;
 
   /*
     Tartib MUHIM: eng aniq signal eng oldin tekshiriladi.
     Chart > statistika > taqqoslash > bosqichlar > kartalar > iqtibos.
+
+    DIQQAT: bu tekshiruvlar `type === "summary"` dan OLDIN turadi.
+    Sabab: kartali xulosa slaydi `conclusion` maketiga tushsa, uning
+    kartalari chizilmay qolardi — aynan P0-2 nuqsoni.
   */
   if (slide.chart) return "chart";
   if (slide.statistic) return "statistic";
@@ -68,6 +91,9 @@ export function inferLayout(slide: Slide, index: number, total: number): SlideLa
   }
 
   if (slide.quote) return "quote";
+
+  // Xulosa — `bullets` maketning o'ziga xos ko'rinishi (boshqa rang).
+  if (slide.type === "summary") return "conclusion";
 
   /*
     Bandsiz, lekin asosiy fikri bor slayd — bu "statement" slaydi:
@@ -106,115 +132,75 @@ function layoutIsRenderable(slide: Slide, layout: SlideLayout): boolean {
   }
 }
 
-/**
- * Ketma-ket bir xil maketlarni kamaytirish.
- *
- * Faqat MAZMUN ruxsat bergan almashtirish qilinadi — maket mazmunsiz
- * qolib, bo'sh slayd chiqib ketmasligi kerak.
- */
-function breakMonotony(
-  slide: Slide,
-  current: SlideLayout,
-  previous: SlideLayout | null,
-): SlideLayout {
-  if (current !== previous) return current;
-
-  // Muqova va xulosa takrorlanmaydi, ularga tegmaymiz.
-  if (current === "cover" || current === "conclusion") return current;
-
-  const alternatives: SlideLayout[] =
-    current === "bullets"
-      ? ["threeCards", "statement", "process"]
-      : current === "threeCards"
-        ? ["bullets", "process"]
-        : current === "process"
-          ? ["timeline", "bullets"]
-          : current === "timeline"
-            ? ["process", "bullets"]
-            : ["bullets"];
-
-  for (const candidate of alternatives) {
-    if (layoutIsRenderable(slide, candidate)) return candidate;
+/** Mazmun shaklining "tabiiy" maketi — slayd maqsadidan qat'i nazar. */
+function shapeLayoutFor(contentType: ContentType, slide: Slide): SlideLayout {
+  switch (contentType) {
+    case "statement":
+      return "statement";
+    case "bullets":
+      return "bullets";
+    case "cards":
+      return (slide.cards?.length ?? 0) >= 4 ? "fourCards" : "threeCards";
+    case "steps":
+      return slide.steps?.some((step) => (step.body ?? "").length > 0)
+        ? "process"
+        : "timeline";
+    case "comparison":
+      return "comparison";
+    case "statistic":
+      return "statistic";
+    case "chart":
+      return "chart";
+    case "quote":
+      return "quote";
   }
-  return current;
 }
 
 /**
- * Butun prezentatsiya uchun maketlarni hisoblaydi.
+ * MAZMUN SHAKLIDAN maket — quvurning YAGONA maket qarori.
  *
- * Natija — slaydlar bilan BIR XIL uzunlikdagi massiv. Slaydlar
- * o'zgartirilmaydi: renderer maketni shu yerdan oladi, shunda saqlangan
- * yozuv va chizish mantiqi bir-biriga bog'lanib qolmaydi.
- */
-export function planLayouts(slides: Slide[]): SlideLayout[] {
-  const planned: SlideLayout[] = [];
-  let previous: SlideLayout | null = null;
-
-  for (const [index, slide] of slides.entries()) {
-    let layout = inferLayout(slide, index, slides.length);
-
-    // Maket mazmunga mos kelmasa — xavfsiz zaxiraga tushamiz.
-    if (!layoutIsRenderable(slide, layout)) {
-      layout = slide.bullets.length > 0 || slide.keyMessage ? "bullets" : "statement";
-      if (!layoutIsRenderable(slide, layout)) layout = "bullets";
-    }
-
-    layout = breakMonotony(slide, layout, previous);
-    planned.push(layout);
-    previous = layout;
-  }
-
-  return planned;
-}
-
-/**
- * MAZMUN SHAKLIDAN maket — Phase 2 rejalashtiruvchisi uchun ko'prik.
+ * ── Nega mazmundan emas, shakldan ─────────────────────────────────────────
+ * `legacyLayoutFor` maketni TAYYOR mazmundan keltirib chiqaradi va bu
+ * eski yozuvlar uchun to'g'ri. Quvurda esa qaror ERTAROQ qabul qilinadi:
+ * mazmun shakli ("uchta tushuncha") matn yozilishidan OLDIN ma'lum va AI
+ * unga qarab yozadi.
  *
- * ── Nega alohida yo'l ─────────────────────────────────────────────────────
- * `inferLayout` maketni TAYYOR mazmundan keltirib chiqaradi va bu
- * o'qituvchi qo'lda tahrirlagan yozuvlar uchun to'g'ri. Phase 2 da esa
- * qaror ERTAROQ qabul qilinadi: mazmun shakli ("uchta tushuncha")
- * matn yozilishidan OLDIN ma'lum bo'ladi va AI unga qarab yozadi.
+ * Natija baribir mazmunga qarshi TEKSHIRILADI: model kartalar so'ralgan
+ * slaydda kartalarni qaytarmasa, maket mazmunga mos zaxiraga tushadi.
  *
- * Shuning uchun bu yerda mazmun shakli → maket moslashuvi bor. Natija
- * baribir mazmunga qarshi TEKSHIRILADI: model kartalar so'ralgan
- * slaydda kartalarni qaytarmasa, maket mazmunga mos zaxiraga tushadi
- * va bo'sh slayd chiqmaydi.
+ * ── Nega `summary` alohida ko'rib chiqiladi ───────────────────────────────
+ * `summary` — slaydning MAQSADI, `contentType` esa mazmun SHAKLI. Ilgari
+ * ikkisi bir tushunchaga qo'shib yuborilgan edi: har qanday xulosa
+ * slaydi `conclusion` maketiga tushardi. `conclusion` esa amalda
+ * `bullets` maketning boshqa rangli ko'rinishi, ya'ni faqat bandlarni
+ * chizadi. Zichlik qoidasi kartalar uchun bandlarni bo'shatgani sababli
+ * natija sarlavha + sahifa raqamidan iborat BO'SH slayd bo'lardi.
+ *
+ * Endi `conclusion` faqat bandli/bir jumlali xulosaga qo'llanadi —
+ * ya'ni u haqiqatan mos kelgan holatda. Kartalar, bosqichlar va
+ * taqqoslash o'z maketida qoladi; xulosa ekanini renderer `slide.type`
+ * dan biladi va sarlavhani xulosa rangida chizadi.
  */
 export function layoutForContentType(
   contentType: ContentType,
   slideType: SlideType,
   slide: Slide,
 ): SlideLayout {
-  // Muqova va yakun — hikoyadagi o'rni bilan belgilanadi.
+  // Muqova — hikoyadagi o'rni bilan belgilanadi, mazmun shakli bilan emas.
   if (slideType === "title") return "cover";
-  if (slideType === "summary") return "conclusion";
 
-  const candidate = ((): SlideLayout => {
-    switch (contentType) {
-      case "statement":
-        return "statement";
-      case "bullets":
-        return "bullets";
-      case "cards":
-        return (slide.cards?.length ?? 0) >= 4 ? "fourCards" : "threeCards";
-      case "steps":
-        return slide.steps?.some((step) => (step.body ?? "").length > 0)
-          ? "process"
-          : "timeline";
-      case "comparison":
-        return "comparison";
-      case "statistic":
-        return "statistic";
-      case "chart":
-        return "chart";
-      case "quote":
-        return "quote";
-    }
-  })();
+  const candidate = shapeLayoutFor(contentType, slide);
 
-  // Reja mazmun bilan mos kelmasa — Phase 1 mantiqiga qaytamiz.
-  return layoutIsRenderable(slide, candidate) ? candidate : inferLayout(slide, 0, 1);
+  // Reja mazmun bilan mos kelmasa — mazmunning o'zidan kelib chiqamiz.
+  const chosen = layoutIsRenderable(slide, candidate)
+    ? candidate
+    : legacyLayoutFor({ ...slide, layout: undefined });
+
+  if (slideType === "summary" && (chosen === "bullets" || chosen === "statement")) {
+    return "conclusion";
+  }
+
+  return chosen;
 }
 
 /** Prezentatsiyadagi maket xilma-xilligi (0..1) — QA uchun. */

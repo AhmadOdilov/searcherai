@@ -14,7 +14,7 @@ import {
   type PptxPalette,
   type PptxTemplate,
 } from "@/lib/pptx/theme";
-import { planLayouts } from "@/lib/presentations/layout-engine";
+import { legacyLayoutFor } from "@/lib/presentations/layout-engine";
 import {
   addCardsSlide,
   addChartSlide,
@@ -99,22 +99,26 @@ export async function generatePptx(
     .slice(0, EDIT_MAX_SLIDES);
 
   /*
-    ── MAKETNI DVIGATEL TANLAYDI (V6) ─────────────────────────────────────
+    ── MAKETNI RENDERER TANLAMAYDI ────────────────────────────────────────
 
-    Ilgari bu yerda `slide.type` bo'yicha uchta shox bor edi va amalda
-    ikkita chizish funksiyasi ishlardi: sarlavha va "sarlavha + bandlar".
-    Ya'ni 10 slaydli prezentatsiyaning 9 tasi AYNAN bir xil ko'rinardi.
+    Maket quvurda (`lib/presentations/layout-engine.ts` →
+    `layoutForContentType`) tanlanadi va yozuv bilan birga saqlanadi.
+    Bu yerda u faqat O'QILADI.
 
-    Endi maket mazmun shakliga qarab tanlanadi (`planLayouts`) va har
-    maketning o'z chizish funksiyasi bor. Maket yo'q eski yozuvlar
-    `bullets` / `cover` / `conclusion` ga tushadi — xatti-harakat
-    o'zgarmaydi.
+    Ilgari bu yerda `planLayouts(slides)` turardi va u saqlangan qarorni
+    QAYTA hisoblardi: qo'shni slaydlarning maketi bir xil bo'lsa,
+    ikkinchisini "xilma-xillik uchun" boshqa maketga o'tkazardi.
+    Almashtirish faqat yangi maketning chizilishi mumkinligini
+    tekshirardi, mazmunning saqlanishini emas — natijada bandlar,
+    kartalar va bosqichlar jimgina yo'qolardi (8 mavzuli o'lchovda
+    68 slayddan 13 tasi).
+
+    Maket YO'Q eski yozuvlar uchun `legacyLayoutFor` maketni mazmundan
+    tiklaydi — u yerda tanlanadigan qaror umuman yo'q.
   */
-  const layouts = planLayouts(slides);
-
   slides.forEach((slide, index) => {
     const position = index + 1;
-    const layout = layouts[index];
+    const layout = slide.layout ?? legacyLayoutFor(slide);
 
     switch (layout) {
       case "cover":

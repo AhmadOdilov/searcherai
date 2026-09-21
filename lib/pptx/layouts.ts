@@ -58,6 +58,16 @@ function addHeader(
     y += 0.28;
   }
 
+  /*
+    Xulosa slaydining sarlavhasi boshqa rangda.
+
+    Ilgari buni faqat `conclusion` maketi bilardi. Endi xulosa slaydi
+    kartalar yoki bosqichlar maketida ham chiqishi mumkin (mazmuni
+    yo'qolmasligi uchun), shuning uchun "bu xulosa" degan ma'lumot
+    maketdan emas, slaydning O'ZIDAN olinadi.
+  */
+  const accent = slide.type === "summary" ? palette.summary : palette.heading;
+
   target.addText(clamp(slide.heading, 120), {
     x: MARGIN.x,
     y,
@@ -66,7 +76,7 @@ function addHeader(
     fontFace: FONT.family,
     fontSize: options.compact ? 22 : FONT.headingSize,
     bold: true,
-    color: palette.heading,
+    color: accent,
     valign: "top",
   });
   y += options.compact ? 0.62 : 0.78;
@@ -76,10 +86,59 @@ function addHeader(
     y,
     w: 1.1,
     h: 0,
-    line: { color: palette.rule, width: 2.5 },
+    line: {
+      color: slide.type === "summary" ? palette.summary : palette.rule,
+      width: 2.5,
+    },
   });
 
   return y + 0.28;
+}
+
+/**
+ * Maket kutgan mazmun YO'Q bo'lganda slaydni bo'sh qoldirmaydi.
+ *
+ * ── Nega kerak ────────────────────────────────────────────────────────────
+ * Quvur maketni mazmunga qarshi tekshiradi, ya'ni generatsiyadan bunday
+ * slayd chiqmaydi. Lekin `PATCH /api/presentations/[id]` orqali
+ * o'qituvchi istalgan maketni qo'yishi mumkin (sxema maket bilan
+ * mazmunni bog'lamaydi). Ilgari chizuvchilar bunday holatda `return`
+ * qilardi va slayd FON bilan bo'sh chiqardi.
+ *
+ * ── Nega boshqa maket tanlanmaydi ─────────────────────────────────────────
+ * Renderer maket tanlamaydi — bu qoida. U shunchaki mavjud matnni
+ * chizadi: bor narsa ko'rsatiladi, yo'q narsa o'ylab topilmaydi.
+ */
+function addFallbackBody(
+  target: Target,
+  palette: PptxPalette,
+  slide: Slide,
+  y: number,
+): void {
+  const lines = [
+    ...(slide.keyMessage ? [slide.keyMessage] : []),
+    ...slide.bullets.filter((bullet) => bullet.trim().length > 0),
+  ].slice(0, 8);
+
+  if (lines.length === 0) return;
+
+  target.addText(
+    lines.map((line) => ({
+      text: clamp(line, 300),
+      options: { bullet: { code: "2022" }, paraSpaceAfter: 8 },
+    })),
+    {
+      x: MARGIN.x,
+      y,
+      w: CONTENT_WIDTH,
+      h: SLIDE.height - y - MARGIN.bottom - 0.3,
+      fontFace: FONT.family,
+      fontSize: 16,
+      color: palette.body,
+      valign: "top",
+      shrinkText: true,
+    },
+  );
 }
 
 /** Slayd raqami va (bo'lsa) manba — pastki qator. */
@@ -170,7 +229,11 @@ export function addStatisticSlide(
   const target = baseSlide(pptx, palette);
   const y = addHeader(target, palette, slide);
   const stat = slide.statistic;
-  if (!stat) return;
+  if (!stat) {
+    addFallbackBody(target, palette, slide, y);
+    addFooter(target, palette, slide, position, total);
+    return;
+  }
 
   /*
     Raqam shrifti uzunlikka qarab tushadi: "78%" va "1 250 000" bir xil
@@ -219,7 +282,11 @@ export function addCardsSlide(
   const target = baseSlide(pptx, palette);
   const y = addHeader(target, palette, slide);
   const cards = slide.cards ?? [];
-  if (cards.length === 0) return;
+  if (cards.length === 0) {
+    addFallbackBody(target, palette, slide, y);
+    addFooter(target, palette, slide, position, total);
+    return;
+  }
 
   const gap = 0.24;
   const cardWidth = (CONTENT_WIDTH - gap * (cards.length - 1)) / cards.length;
@@ -293,7 +360,11 @@ export function addComparisonSlide(
   const target = baseSlide(pptx, palette);
   const y = addHeader(target, palette, slide);
   const cmp = slide.comparison;
-  if (!cmp) return;
+  if (!cmp) {
+    addFallbackBody(target, palette, slide, y);
+    addFooter(target, palette, slide, position, total);
+    return;
+  }
 
   const gap = 0.3;
   const colWidth = (CONTENT_WIDTH - gap) / 2;
@@ -374,7 +445,11 @@ export function addStepsSlide(
   const target = baseSlide(pptx, palette);
   const y = addHeader(target, palette, slide);
   const steps = slide.steps ?? [];
-  if (steps.length === 0) return;
+  if (steps.length === 0) {
+    addFallbackBody(target, palette, slide, y);
+    addFooter(target, palette, slide, position, total);
+    return;
+  }
 
   const gap = 0.18;
   const stepWidth = (CONTENT_WIDTH - gap * (steps.length - 1)) / steps.length;
@@ -459,7 +534,11 @@ export function addChartSlide(
   const target = baseSlide(pptx, palette);
   const y = addHeader(target, palette, slide, { compact: true });
   const chart = slide.chart;
-  if (!chart) return;
+  if (!chart) {
+    addFallbackBody(target, palette, slide, y);
+    addFooter(target, palette, slide, position, total);
+    return;
+  }
 
   const chartType =
     chart.kind === "line"
@@ -533,7 +612,13 @@ export function addQuoteSlide(
 ): void {
   const target = baseSlide(pptx, palette);
   const quote = slide.quote;
-  if (!quote) return;
+  if (!quote) {
+    // Iqtibos maketi sarlavha chizmaydi — zaxira yo'lda u ham kerak.
+    const y = addHeader(target, palette, slide);
+    addFallbackBody(target, palette, slide, y);
+    addFooter(target, palette, slide, position, total);
+    return;
+  }
 
   target.addText("“", {
     x: MARGIN.x,

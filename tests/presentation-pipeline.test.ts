@@ -317,11 +317,49 @@ describe("Phase 2 — umumiy kafolatlar", () => {
     }
   });
 
-  it("muqova va xulosa MAKETI hikoyadagi o'rnidan keladi", () => {
+  it("muqova MAKETI hikoyadagi o'rnidan keladi", () => {
     for (const topic of topics) {
       const slides = runPipeline(topic).slides;
       assert.equal(slides[0].layout, "cover");
-      assert.equal(slides[slides.length - 1].layout, "conclusion");
+    }
+  });
+
+  /*
+    ── P0-2 dan keyin o'zgargan kutilma ───────────────────────────────────
+    Ilgari bu yerda `layout === "conclusion"` tekshirilardi va u
+    NUQSONNI qulflab qo'ygan edi: `conclusion` amalda `bullets`
+    maketning boshqa rangli ko'rinishi, ya'ni faqat bandlarni chizadi.
+    Kartali yoki bosqichli xulosa slaydi unga tushsa, mazmuni faylga
+    umuman tushmasdi.
+
+    To'g'ri invariant — maket nomi emas, ikki shart: slayd XULOSA
+    ekanligi va maketning uning MAZMUNINI chiza olishi.
+  */
+  it("xulosa slaydi mazmunini chiza oladigan maket oladi", () => {
+    const rendersBullets: Array<string | undefined> = ["conclusion", "bullets"];
+
+    for (const topic of topics) {
+      const slides = runPipeline(topic).slides;
+      const last = slides[slides.length - 1];
+
+      assert.equal(last.type, "summary", `${topic}: oxirgi slayd xulosa emas`);
+
+      if (last.cards && last.cards.length > 0) {
+        assert.ok(
+          last.layout === "threeCards" || last.layout === "fourCards",
+          `${topic}: kartali xulosa "${last.layout}" maketiga tushdi — kartalar yo'qoladi`,
+        );
+      } else if (last.steps && last.steps.length > 0) {
+        assert.ok(
+          last.layout === "process" || last.layout === "timeline",
+          `${topic}: bosqichli xulosa "${last.layout}" maketiga tushdi`,
+        );
+      } else {
+        assert.ok(
+          rendersBullets.includes(last.layout),
+          `${topic}: bandli xulosa kutilmagan maket oldi: ${last.layout}`,
+        );
+      }
     }
   });
 

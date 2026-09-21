@@ -1,25 +1,31 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
-  planLayouts,
-  inferLayout,
+  layoutForContentType,
   layoutVariety,
+  legacyLayoutFor,
 } from "../lib/presentations/layout-engine";
-import type { Slide } from "../lib/validations/presentation";
+import type { Slide, SlideLayout } from "../lib/validations/presentation";
 
 /*
   V6 — maket dvigateli.
 
   Muammo: renderer ikkitagina chizish funksiyasiga ega edi, shuning uchun
   10 slaydli prezentatsiyaning 9 tasi aynan bir xil ko'rinardi.
+
+  Phase 0 dan keyin maket qarori BITTA joyda: `layoutForContentType`
+  (quvur) va `legacyLayoutFor` (maketsiz eski yozuvlar). Renderer
+  qatlamidagi ikkinchi qaror (`planLayouts` + `breakMonotony`) olib
+  tashlandi — u xilma-xillikni mazmun hisobiga sotib olardi. Mazmun
+  faylga tushishini `tests/pptx-render-contract.test.ts` tekshiradi.
 */
 
 function slide(partial: Partial<Slide> = {}): Slide {
   return { type: "content", heading: "Sarlavha", bullets: [], ...partial };
 }
 
-describe("maket mazmun shakliga qarab tanlanadi", () => {
-  const cases: Array<[string, Slide, string]> = [
+describe("legacyLayoutFor — maketsiz slayd uchun maket mazmundan keladi", () => {
+  const cases: Array<[string, Slide, SlideLayout]> = [
     [
       "chart bo'lsa",
       slide({
@@ -79,7 +85,7 @@ describe("maket mazmun shakliga qarab tanlanadi", () => {
 
   for (const [name, s, expected] of cases) {
     it(name, () => {
-      assert.equal(inferLayout(s, 2, 6), expected);
+      assert.equal(legacyLayoutFor(s), expected);
     });
   }
 
@@ -88,77 +94,163 @@ describe("maket mazmun shakliga qarab tanlanadi", () => {
 
     Boshida bu qoida pozitsiyaga ham bog'langan edi va u regressiya berdi:
     qisqa deckda mazmun slaydi birinchi o'rinda tursa muqovaga aylanib,
-    bandlari yo'qolardi. `tests/pptx-generate.test.ts` buni tutdi.
+    bandlari yo'qolardi. Endi pozitsiya umuman argument emas.
   */
   it("type=title muqova beradi", () => {
-    assert.equal(inferLayout(slide({ type: "title" }), 3, 5), "cover");
+    assert.equal(legacyLayoutFor(slide({ type: "title" })), "cover");
   });
 
-  it("type=summary xulosa beradi", () => {
+  it("type=summary bandlar bilan xulosa beradi", () => {
     assert.equal(
-      inferLayout(slide({ type: "summary", bullets: ["a"] }), 1, 5),
+      legacyLayoutFor(slide({ type: "summary", bullets: ["a"] })),
       "conclusion",
     );
   });
 
-  it("birinchi o'rindagi MAZMUN slaydi muqovaga AYLANMAYDI", () => {
-    assert.equal(inferLayout(slide({ bullets: ["a", "b"] }), 0, 5), "bullets");
-  });
-
-  it("oxirgi o'rindagi mazmun slaydi xulosaga AYLANMAYDI", () => {
-    assert.equal(inferLayout(slide({ bullets: ["a"] }), 4, 5), "bullets");
-  });
-});
-
-describe("maket mazmunga mos kelmasa xavfsiz zaxiraga tushadi", () => {
-  it("chart maketi so'ralgan, lekin chart yo'q", () => {
-    const layouts = planLayouts([
-      slide({ type: "title" }),
-      slide({ layout: "chart", bullets: ["band"] }),
-      slide({ type: "summary" }),
-    ]);
-    assert.notEqual(layouts[1], "chart", "mazmunsiz maket ishlatilmasligi kerak");
-    assert.equal(layouts[1], "bullets");
-  });
-
-  it("kartalar maketi so'ralgan, lekin kartalar yo'q", () => {
-    const layouts = planLayouts([
-      slide({ type: "title" }),
-      slide({ layout: "fourCards", keyMessage: "fikr" }),
-    ]);
-    assert.notEqual(layouts[1], "fourCards");
-  });
-});
-
-describe("vizual ritm — ketma-ket bir xil maketlar kamaytiriladi", () => {
-  it("uchta ketma-ket bandli slayd bir xil qolmaydi", () => {
-    const layouts = planLayouts([
-      slide({ type: "title" }),
-      slide({
-        bullets: ["a", "b"],
-        cards: [{ title: "1" }, { title: "2" }, { title: "3" }],
-      }),
-      slide({
-        bullets: ["c", "d"],
-        cards: [{ title: "1" }, { title: "2" }, { title: "3" }],
-      }),
-      slide({ type: "summary", bullets: ["e"] }),
-    ]);
-    assert.notEqual(
-      layouts[1],
-      layouts[2],
-      "qo'shni slaydlar bir xil maket olmasligi kerak",
+  /*
+    P0-2 ning eski yozuvlardagi ko'rinishi: kartali xulosa slaydi
+    `conclusion` ga tushsa, kartalari chizilmay qolardi. Mazmun
+    signali `type` dan USTUN turadi.
+  */
+  it("type=summary KARTALAR bilan conclusion BERMAYDI", () => {
+    assert.equal(
+      legacyLayoutFor(
+        slide({
+          type: "summary",
+          cards: [{ title: "1" }, { title: "2" }, { title: "3" }],
+        }),
+      ),
+      "threeCards",
     );
   });
 
-  it("muqova va xulosa almashtirilmaydi", () => {
-    const layouts = planLayouts([
-      slide({ type: "title" }),
-      slide({ type: "title" }),
-      slide({ type: "summary", bullets: ["a"] }),
-      slide({ type: "summary", bullets: ["b"] }),
-    ]);
-    assert.deepEqual(layouts, ["cover", "cover", "conclusion", "conclusion"]);
+  it("yozuvdagi maket HURMAT QILINADI", () => {
+    // Maket saqlangan bo'lsa — qaror allaqachon qabul qilingan.
+    assert.equal(legacyLayoutFor(slide({ layout: "quote", bullets: ["a"] })), "quote");
+  });
+});
+
+describe("layoutForContentType — quvurning YAGONA maket qarori", () => {
+  it("muqova hikoyadagi o'rnidan keladi", () => {
+    assert.equal(layoutForContentType("bullets", "title", slide()), "cover");
+  });
+
+  it("mazmun shakli maketni belgilaydi", () => {
+    assert.equal(
+      layoutForContentType(
+        "cards",
+        "content",
+        slide({ cards: [{ title: "1" }, { title: "2" }, { title: "3" }] }),
+      ),
+      "threeCards",
+    );
+  });
+
+  /*
+    Reja "kartalar" desa-yu, model kartalarni qaytarmasa — maket
+    MAZMUNGA mos zaxiraga tushadi, aks holda bo'sh slayd chiqardi.
+    Bu tekshiruv renderer qatlamida EMAS, aynan shu yerda turadi.
+  */
+  it("reja mazmun bilan mos kelmasa mazmunga qaytadi", () => {
+    assert.equal(
+      layoutForContentType("cards", "content", slide({ bullets: ["a", "b"] })),
+      "bullets",
+    );
+    assert.equal(
+      layoutForContentType("chart", "content", slide({ keyMessage: "fikr" })),
+      "statement",
+    );
+  });
+
+  /*
+    ── P0-2 REGRESSIYASI ──────────────────────────────────────────────────
+    `summary` — slaydning MAQSADI, `contentType` esa mazmun SHAKLI.
+    Ilgari har qanday xulosa slaydi `conclusion` maketiga tushardi, u esa
+    faqat bandlarni chizadi. Zichlik kartalar uchun bandlarni
+    bo'shatgani sababli natija BO'SH slayd bo'lardi.
+  */
+  it("xulosa + bandlar — conclusion", () => {
+    assert.equal(
+      layoutForContentType("bullets", "summary", slide({ bullets: ["a"] })),
+      "conclusion",
+    );
+  });
+
+  it("xulosa + bitta fikr — conclusion", () => {
+    assert.equal(
+      layoutForContentType("statement", "summary", slide({ keyMessage: "fikr" })),
+      "conclusion",
+    );
+  });
+
+  it("xulosa + kartalar — KARTALAR maketi (conclusion emas)", () => {
+    assert.equal(
+      layoutForContentType(
+        "cards",
+        "summary",
+        slide({ cards: [{ title: "1" }, { title: "2" }, { title: "3" }] }),
+      ),
+      "threeCards",
+    );
+  });
+
+  it("xulosa + bosqichlar — bosqichlar maketi", () => {
+    assert.equal(
+      layoutForContentType(
+        "steps",
+        "summary",
+        slide({ steps: [{ label: "a", body: "x" }, { label: "b" }, { label: "c" }] }),
+      ),
+      "process",
+    );
+  });
+
+  it("xulosa + taqqoslash — taqqoslash maketi", () => {
+    assert.equal(
+      layoutForContentType(
+        "comparison",
+        "summary",
+        slide({
+          comparison: {
+            leftTitle: "A",
+            leftItems: ["1"],
+            rightTitle: "B",
+            rightItems: ["2"],
+          },
+        }),
+      ),
+      "comparison",
+    );
+  });
+
+  it("xulosa + statistika — statistika maketi", () => {
+    assert.equal(
+      layoutForContentType(
+        "statistic",
+        "summary",
+        slide({ statistic: { value: "78%", caption: "izoh" } }),
+      ),
+      "statistic",
+    );
+  });
+
+  /*
+    Xulosa slaydida karta SO'RALGAN, lekin model uni qaytarmagan:
+    mazmun bandlarga tushadi, ya'ni yana klassik `conclusion`.
+  */
+  it("xulosa + kartalar so'ralgan, lekin kartalar yo'q — conclusion", () => {
+    assert.equal(
+      layoutForContentType("cards", "summary", slide({ bullets: ["a"] })),
+      "conclusion",
+    );
+  });
+
+  it("bir xil kirish — bir xil maket (pozitsiyaga bog'liq emas)", () => {
+    const s = slide({ bullets: ["a", "b"] });
+    assert.equal(
+      layoutForContentType("bullets", "content", s),
+      layoutForContentType("bullets", "content", s),
+    );
   });
 });
 
@@ -168,8 +260,8 @@ describe("xilma-xillik o'lchovi", () => {
     assert.equal(layoutVariety(["cover", "chart", "statistic", "conclusion"]), 1);
   });
 
-  it("to'liq deck yuqori xilma-xillik beradi", () => {
-    const layouts = planLayouts([
+  it("turli mazmunli deck yuqori xilma-xillik beradi", () => {
+    const layouts = [
       slide({ type: "title" }),
       slide({ statistic: { value: "78%", caption: "izoh" } }),
       slide({ cards: [{ title: "1" }, { title: "2" }, { title: "3" }] }),
@@ -190,23 +282,23 @@ describe("xilma-xillik o'lchovi", () => {
         },
       }),
       slide({ type: "summary", bullets: ["xulosa"] }),
-    ]);
+    ].map(legacyLayoutFor);
+
     assert.ok(
       layoutVariety(layouts) >= 0.9,
       `xilma-xillik past: ${layoutVariety(layouts)}`,
     );
-    const consecutive = layouts.filter((l, i) => i > 0 && l === layouts[i - 1]).length;
-    assert.equal(consecutive, 0);
   });
 });
 
 describe("eski yozuvlar buzilmaydi (orqaga moslik)", () => {
   it("faqat type va bullets bo'lgan eski slaydlar ishlaydi", () => {
-    const layouts = planLayouts([
+    const layouts = [
       { type: "title", heading: "Eski muqova", bullets: ["Matematika", "8-sinf"] },
       { type: "content", heading: "Eski mazmun", bullets: ["band 1", "band 2"] },
       { type: "summary", heading: "Eski xulosa", bullets: ["xulosa"] },
-    ]);
+    ].map((s) => legacyLayoutFor(s as Slide));
+
     assert.deepEqual(layouts, ["cover", "bullets", "conclusion"]);
   });
 });
