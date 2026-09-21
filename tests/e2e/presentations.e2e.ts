@@ -46,7 +46,23 @@ interface PresentationPayload {
     aiDurationMs: number | null;
     content: {
       title: string;
-      slides: Array<{ type: string; heading: string; bullets: string[] }>;
+      slides: Array<{
+        type: string;
+        heading: string;
+        bullets: string[];
+        layout?: string;
+        keyMessage?: string;
+        cards?: Array<{ title: string; body?: string }>;
+        steps?: Array<{ label: string; body?: string }>;
+        comparison?: {
+          leftTitle: string;
+          leftItems: string[];
+          rightTitle: string;
+          rightItems: string[];
+        };
+        statistic?: { value: string; caption: string };
+        quote?: { text: string; author?: string };
+      }>;
     } | null;
   };
 }
@@ -749,5 +765,100 @@ describe("ro'yxat", () => {
     assert.equal(firstList.data!.items[0].topic, "Birinchi mavzu");
     assert.equal(secondList.data!.items.length, 1);
     assert.equal(secondList.data!.items[0].topic, "Ikkinchi mavzu");
+  });
+});
+
+/** XML'dagi matn bo'laklari — XML belgilari ochilgan holda. */
+function textsIn(xml: string): string[] {
+  return [...xml.matchAll(/<a:t>([^<]*)<\/a:t>/g)].map((match) =>
+    match[1]
+      .replaceAll("&apos;", "'")
+      .replaceAll("&quot;", '"')
+      .replaceAll("&lt;", "<")
+      .replaceAll("&gt;", ">")
+      .replaceAll("&amp;", "&"),
+  );
+}
+
+describe("render shartnomasi — SAQLANGAN mazmun faylga tushadi", () => {
+  /*
+    ── Nega bu sinov bor ──────────────────────────────────────────────────
+    Soxta AI allaqachon kartalar, bosqichlar va taqqoslash qaytarardi,
+    quvur ularni yozuvga yozardi va .pptx yasalardi — lekin birorta E2E
+    sinovi faylning ICHIGA qaramasdi. Shu sababli renderer maketni
+    almashtirib mazmunni tashlab yuborgani 308 ta E2E sinovidan JIMGINA
+    o'tib ketgan edi.
+
+    Fayl matnini o'qiydigan yordamchi allaqachon bor edi
+    (`presentation-editing.e2e.ts` → `slideTextOf`), lekin u faqat
+    QO'LDA tahrirlangan bandni tekshirishga qaratilgan edi.
+
+    Bu yerdagi invariant bitta va u butun zanjirni qamraydi
+    (HTTP → servis → quvur → soxta AI → pptxgenjs → fayl):
+
+        yozuvdagi har bir blok elementi yuklab olingan .pptx ichida bor.
+  */
+  it("kartalar, bosqichlar va bandlar yuklab olingan .pptx ichida bo'ladi", async () => {
+    const client = await signedInClient("pr-render-shartnoma");
+
+    const created = await createAndWait(client, {
+      mode: "standalone",
+      topic: "Fotosintez jarayoni",
+    });
+    assert.equal(created.status, "READY");
+
+    const slides = created.content!.slides;
+
+    /*
+      Sinov BO'SH ishlamasligi kerak: deckda kamida bitta kartali yoki
+      bosqichli slayd bo'lmasa, u hech narsani isbotlamaydi.
+    */
+    const rich = slides.filter(
+      (slide) => (slide.cards?.length ?? 0) > 0 || (slide.steps?.length ?? 0) > 0,
+    );
+    assert.ok(
+      rich.length > 0,
+      `deckda kartali/bosqichli slayd yo'q — sinov bo'sh ishlayapti: ${slides
+        .map((s) => s.layout)
+        .join(", ")}`,
+    );
+
+    const response = await client.fetchRaw(`/api/presentations/${created.id}/download`);
+    assert.equal(response.status, 200);
+    const zip = await JSZip.loadAsync(Buffer.from(await response.arrayBuffer()));
+
+    for (const [index, slide] of slides.entries()) {
+      const file = zip.file(`ppt/slides/slide${index + 1}.xml`);
+      assert.ok(file, `slide${index + 1}.xml topilmadi`);
+      const texts = textsIn(await file.async("string"));
+
+      /*
+        Bosqich TAVSIFLARI ataylab kutilmaydi: `timeline` maketi faqat
+        yorliqlarni chizadi va bu dizayn qarori, nuqson emas.
+      */
+      const expected = [
+        ...slide.bullets,
+        ...(slide.cards ?? []).flatMap((card) => [card.title, card.body ?? ""]),
+        ...(slide.steps ?? []).map((step) => step.label),
+        ...(slide.comparison
+          ? [
+              slide.comparison.leftTitle,
+              ...slide.comparison.leftItems,
+              slide.comparison.rightTitle,
+              ...slide.comparison.rightItems,
+            ]
+          : []),
+        ...(slide.statistic ? [slide.statistic.value, slide.statistic.caption] : []),
+        ...(slide.quote ? [slide.quote.text] : []),
+      ].filter((value) => value.trim().length > 0);
+
+      for (const want of expected) {
+        assert.ok(
+          texts.some((text) => text.includes(want)),
+          `${index + 1}-slayd (${slide.layout}): "${want}" faylda yo'q — ` +
+            `chizilgan: ${texts.join(" | ")}`,
+        );
+      }
+    }
   });
 });

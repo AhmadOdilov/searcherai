@@ -181,6 +181,22 @@ function addTitleSlide(pptx: PptxGenJS, palette: PptxPalette, slide: Slide): voi
   const target = pptx.addSlide();
   target.background = { color: palette.titleBackground };
 
+  // Muqovadagi yorliq — boshqa maketlardagi kabi sarlavha ustida.
+  if (slide.eyebrow) {
+    target.addText(slide.eyebrow.toUpperCase(), {
+      x: MARGIN.x,
+      y: 1.35,
+      w: SLIDE.width - MARGIN.x * 2,
+      h: 0.25,
+      fontFace: FONT.family,
+      fontSize: 12,
+      bold: true,
+      charSpacing: 1.6,
+      color: palette.titleSubtext,
+      align: "center",
+    });
+  }
+
   target.addText(clamp(slide.heading, 150), {
     x: MARGIN.x,
     y: 1.7,
@@ -252,6 +268,27 @@ function addContentSlide(
       h: SLIDE.height,
       fill: { color: isSummary ? palette.summary : palette.accentBar },
       line: { color: isSummary ? palette.summary : palette.accentBar, width: 0 },
+    });
+  }
+
+  /*
+    Sarlavha ustidagi kichik yorliq ("MUAMMO", "BOZOR").
+
+    `lib/pptx/layouts.ts` dagi yetti maket uni allaqachon chizardi, bu
+    yerdagi ikkitasi (`bullets`, `conclusion`) esa yo'q — ya'ni bir xil
+    maydon maketga qarab goh ko'rinar, goh jimgina yo'qolardi.
+  */
+  if (slide.eyebrow) {
+    target.addText(slide.eyebrow.toUpperCase(), {
+      x: MARGIN.x,
+      y: MARGIN.top - 0.22,
+      w: SLIDE.width - MARGIN.x * 2,
+      h: 0.22,
+      fontFace: FONT.family,
+      fontSize: 11,
+      bold: true,
+      charSpacing: 1.6,
+      color: palette.muted,
     });
   }
 

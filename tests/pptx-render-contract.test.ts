@@ -508,6 +508,67 @@ describe("XULOSA slaydi mazmunini yo'qotmaydi (P0-2)", () => {
   }
 });
 
+describe("eyebrow yorlig'i HAR BIR maketda chiziladi", () => {
+  /*
+    `eyebrow` — V6 maydoni va yangi system prompt uni modelga ochiq
+    taklif qiladi. Lekin uni faqat `lib/pptx/layouts.ts` dagi yetti
+    maket chizardi; `bullets`, `conclusion` va `cover` esa jimgina
+    tashlab yuborardi. Bir xil maydon maketga qarab goh ko'rinib, goh
+    yo'qolishi — mazmun yo'qolishining aynan o'sha turi.
+  */
+  const cases: Array<[SlideLayout, Slide]> = [
+    [
+      "bullets",
+      {
+        type: "content",
+        layout: "bullets",
+        heading: "HEADING",
+        bullets: ["BULLET_ALPHA"],
+        eyebrow: "EYEBROW",
+      },
+    ],
+    [
+      "conclusion",
+      {
+        type: "summary",
+        layout: "conclusion",
+        heading: "HEADING",
+        bullets: ["BULLET_ALPHA"],
+        eyebrow: "EYEBROW",
+      },
+    ],
+    [
+      "cover",
+      {
+        type: "title",
+        layout: "cover",
+        heading: "HEADING",
+        bullets: [],
+        keyMessage: "KEY_MESSAGE",
+        eyebrow: "EYEBROW",
+      },
+    ],
+    [
+      "threeCards",
+      {
+        type: "content",
+        layout: "threeCards",
+        heading: "HEADING",
+        bullets: [],
+        eyebrow: "EYEBROW",
+        cards: [{ title: "CARD_ALPHA" }, { title: "CARD_BETA" }],
+      },
+    ],
+  ];
+
+  for (const [layout, slide] of cases) {
+    it(`${layout} maketida yorliq ko'rinadi`, async () => {
+      // Renderer yorliqni BOSH HARFGA o'giradi.
+      await assertRendered(slide, ["EYEBROW"], `${layout} eyebrow`);
+    });
+  }
+});
+
 describe("bandsiz, lekin asosiy fikri bor slayd bo'sh chiqmaydi", () => {
   /*
     `bullets` va `conclusion` maketlari bitta chizuvchiga tushadi va u
