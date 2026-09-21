@@ -10,6 +10,7 @@ import {
   parsePresentationContent,
   presentationContentSchema,
   presentationInputSchema,
+  slideSchema,
   presentationListQuerySchema,
   type Slide,
 } from "../lib/validations/presentation";
@@ -469,5 +470,75 @@ describe("presentationListQuerySchema", () => {
       presentationListQuerySchema.safeParse({ status: "BOSHQA" }).success,
       false,
     );
+  });
+});
+
+describe("ro'yxat chegaralari — muharrir shu raqamlarga tayanadi", () => {
+  /*
+    ── Nega bu sinov bor ──────────────────────────────────────────────────
+    `components/presentations/slide-block-fields.tsx` dagi `COUNTS`
+    o'chirish va qo'shish tugmalarini shu minimum/maksimumlar bo'yicha
+    o'chiradi. Ular sxemadan ajralib ketsa, o'qituvchi sxemadan
+    O'TMAYDIGAN holatga tushib qolardi: kartani o'chirar, keyin saqlay
+    olmasdi va sababini tushunmasdi.
+
+    Sxema o'zgarsa bu sinov yiqiladi va muharrirni ham yangilash
+    kerakligini aytadi.
+  */
+  /** Slayd sxemadan o'tadimi — faqat ha/yo'q. */
+  function parseSlide(value: unknown): boolean {
+    return slideSchema.safeParse(value).success;
+  }
+
+  function withCards(count: number) {
+    return parseSlide({
+      type: "content",
+      heading: "Kartalar",
+      bullets: [],
+      cards: Array.from({ length: count }, (_, i) => ({ title: `K${i + 1}` })),
+    });
+  }
+
+  function withSteps(count: number) {
+    return parseSlide({
+      type: "content",
+      heading: "Bosqichlar",
+      bullets: [],
+      steps: Array.from({ length: count }, (_, i) => ({ label: `B${i + 1}` })),
+    });
+  }
+
+  it("kartalar: 2 dan kam ham, 4 dan ko'p ham bo'lmaydi", () => {
+    assert.equal(withCards(1), false, "1 ta karta o'tmasligi kerak");
+    assert.equal(withCards(2), true);
+    assert.equal(withCards(4), true);
+    assert.equal(withCards(5), false, "5 ta karta o'tmasligi kerak");
+  });
+
+  it("bosqichlar: 3 dan kam ham, 6 dan ko'p ham bo'lmaydi", () => {
+    assert.equal(withSteps(2), false, "2 ta bosqich o'tmasligi kerak");
+    assert.equal(withSteps(3), true);
+    assert.equal(withSteps(6), true);
+    assert.equal(withSteps(7), false, "7 ta bosqich o'tmasligi kerak");
+  });
+
+  it("taqqoslash ustuni: kamida bitta, ko'pi bilan beshta qator", () => {
+    const column = (count: number) =>
+      parseSlide({
+        type: "content",
+        heading: "Taqqoslash",
+        bullets: [],
+        comparison: {
+          leftTitle: "A",
+          leftItems: Array.from({ length: count }, (_, i) => `chap ${i + 1}`),
+          rightTitle: "B",
+          rightItems: ["o'ng"],
+        },
+      });
+
+    assert.equal(column(0), false, "bo'sh ustun o'tmasligi kerak");
+    assert.equal(column(1), true);
+    assert.equal(column(5), true);
+    assert.equal(column(6), false, "6 qator o'tmasligi kerak");
   });
 });

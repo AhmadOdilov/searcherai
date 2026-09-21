@@ -145,3 +145,83 @@ test.describe("ko'rish rejimi — V6 bloklari ekranda", () => {
     expect(overflow).toBeLessThanOrEqual(1);
   });
 });
+
+test.describe("muharrir — V6 bloklari tahrirlanadi", () => {
+  /*
+    ── Nega bu sinov bor ───────────────────────────────────────────────────
+    Muharrir uchta maydonni tahrirlardi: sarlavha, bandlar, so'zlovchi
+    izohi. AI yozgan kartani, bosqichni yoki iqtibosni o'qituvchi TUZATA
+    OLMASDI — yagona yo'l butun slaydni qaytadan yaratish edi, ya'ni
+    yana AI chaqiruvi va yana pul.
+
+    Ma'lumot yo'qolmasdi (forma `...slide` ni tarqatadi), lekin
+    ko'rinmasdi ham — shuning uchun hech bir sinov buni sezmagan.
+  */
+  test("karta sarlavhasi tahrirlanadi va SAQLANADI", async ({ page }) => {
+    await page.goto(`/dashboard/presentations/${workspace.presentationId}/edit`, {
+      waitUntil: "domcontentloaded",
+    });
+
+    // Kartali slaydni ro'yxatdan tanlaymiz.
+    await page
+      .getByRole("button", { name: /Kartalar slaydi/ })
+      .first()
+      .click();
+
+    const cardTitle = page.getByLabel("Karta sarlavhasi").first();
+    await expect(cardTitle).toBeVisible();
+    await expect(cardTitle).toHaveValue("KARTA-ALFA");
+
+    await cardTitle.fill("KARTA-TAHRIRLANGAN");
+
+    const save = page.getByRole("button", { name: /saqlash/i });
+    await expect(save).toBeEnabled();
+
+    const [response] = await Promise.all([
+      page.waitForResponse(
+        (res) =>
+          res.url().includes(`/api/presentations/${workspace.presentationId}`) &&
+          res.request().method() === "PATCH",
+      ),
+      save.click(),
+    ]);
+    expect(response.status()).toBe(200);
+
+    // Yozuvda haqiqatan o'zgardimi — javobning o'zidan tekshiramiz.
+    const body = (await response.json()) as {
+      data: {
+        presentation: { content: { slides: Array<{ cards?: { title: string }[] }> } };
+      };
+    };
+    const titles = body.data.presentation.content.slides
+      .flatMap((slide) => slide.cards ?? [])
+      .map((card) => card.title);
+
+    expect(titles).toContain("KARTA-TAHRIRLANGAN");
+    expect(titles).not.toContain("KARTA-ALFA");
+  });
+
+  test("bosqich, iqtibos va statistika maydonlari ko'rinadi", async ({ page }) => {
+    await page.goto(`/dashboard/presentations/${workspace.presentationId}/edit`, {
+      waitUntil: "domcontentloaded",
+    });
+
+    await page
+      .getByRole("button", { name: /Bosqichlar slaydi/ })
+      .first()
+      .click();
+    await expect(page.getByLabel("Bosqich nomi").first()).toHaveValue("BOSQICH-ALFA");
+
+    await page
+      .getByRole("button", { name: /Iqtibos slaydi/ })
+      .first()
+      .click();
+    await expect(page.getByLabel("Iqtibos muallifi")).toHaveValue("IQTIBOS-MUALLIFI");
+
+    await page
+      .getByRole("button", { name: /Statistika slaydi/ })
+      .first()
+      .click();
+    await expect(page.getByLabel("Raqam izohi")).toHaveValue("STATISTIKA-IZOHI");
+  });
+});

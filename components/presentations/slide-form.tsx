@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { ChevronDown, ChevronUp, Plus, X } from "lucide-react";
 import { cn } from "@/lib/ui/cn";
+import { SlideBlockFields } from "@/components/presentations/slide-block-fields";
 import {
   slideTypeSchema,
   type Slide,
@@ -196,6 +197,16 @@ export function SlideForm({
           {t("addBullet")}
         </button>
       </div>
+
+      {/*
+        ── V6 bloklari ──────────────────────────────────────────────
+        Kartalar, bosqichlar, taqqoslash, statistika, iqtibos, yorliq,
+        asosiy fikr va manba. Ilgari bu maydonlar yozuvda bor edi,
+        renderer ularni chizardi, lekin muharrirda KO'RINMASDI — ya'ni
+        AI yozgan kartani tuzatishning yagona yo'li butun slaydni
+        qaytadan yaratish edi.
+      */}
+      <SlideBlockFields slide={slide} index={index} onChange={onChange} />
 
       {/* ── So'zlovchi izohi ────────────────────────────────────────── */}
       <div>
